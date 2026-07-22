@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hedge-fund-lab · Logs</title>
+<style>
+  /* ── Reset & Base ─────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: #0d1117;
+    color: #c9d1d9;
+    height: 100vh; display: flex; flex-direction: column;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Header ───────────────────────────────────────────── */
+  .header {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 0.75rem 1.25rem;
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
+    flex-shrink: 0;
+  }
+  .header h1 {
+    font-size: 1rem; font-weight: 600; color: #f0f6fc;
+    white-space: nowrap;
+  }
+  .header h1 small { font-weight: 400; color: #8b949e; font-size: 0.8rem; }
+  .status {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 999px;
+    margin-left: auto; white-space: nowrap;
+  }
+  .status.connected  { background: #0d5320; color: #7ee787; }
+  .status.disconnected{ background: #5c1a1a; color: #ff7b72; }
+  .status.waiting    { background: #3b2e00; color: #d29922; }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+  .status.connected .status-dot  { background: #3fb950; }
+  .status.disconnected .status-dot{ background: #f85149; }
+  .status.waiting .status-dot    { background: #d29922; animation: pulse 1.2s infinite; }
+  @keyframes pulse { 50% { opacity: 0.3; } }
+
+  .header-nav { display: flex; gap: 1rem; font-size: 0.85rem; }
+
+  /* ── Stats Bar ────────────────────────────────────────── */
+  .stats {
+    display: flex; gap: 0.5rem; padding: 0.5rem 1.25rem;
+    background: #0d1117; border-bottom: 1px solid #21262d;
+    flex-shrink: 0; overflow-x: auto; white-space: nowrap;
+  }
+  .stat { padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+  .stat-all   { color: #c9d1d9; background: #21262d; }
+  .stat-error { color: #ff7b72; background: #441010; }
+  .stat-warn  { color: #d29922; background: #3b2e00; }
+  .stat-info  { color: #58a6ff; background: #0c2d6b; }
+  .stat-debug { color: #8b949e; background: #1c2128; }
+
+  /* ── Filters ──────────────────────────────────────────── */
+  .filters {
+    display: flex; gap: 0.6rem; padding: 0.6rem 1.25rem;
+    background: #161b22; border-bottom: 1px solid #30363d;
+    flex-shrink: 0; flex-wrap: wrap;
+  }
+  .filters label { font-size: 0.75rem; color: #8b949e; display: flex; align-items: center; gap: 0.3rem; }
+  .filters input, .filters select {
+    background: #21262d; color: #c9d1d9; border: 1px solid #30363d;
+    border-radius: 6px; padding: 0.3rem 0.5rem; font-size: 0.8rem; outline: none;
+  }
+  .filters input:focus, .filters select:focus { border-color: #58a6ff; }
+  .filters input { width: 180px; }
+  .filters .btn {
+    background: #21262d; color: #c9d1d9; border: 1px solid #30363d;
+    border-radius: 6px; padding: 0.3rem 0.8rem; font-size: 0.8rem; cursor: pointer;
+  }
+  .filters .btn:hover { background: #30363d; }
+  .filters .btn-danger:hover { background: #441010; border-color: #f85149; color: #ff7b72; }
+
+  .filter-group { display: flex; align-items: center; gap: 0.4rem; }
+
+  /* ── Log Container ────────────────────────────────────── */
+  .log-container {
+    flex: 1; overflow-y: auto; padding: 0;
+    background: #0d1117;
+    font-family: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.78rem;
+    line-height: 1.55;
+  }
+  .log-container table {
+    width: 100%; border-collapse: collapse;
+  }
+  .log-container th {
+    position: sticky; top: 0; z-index: 2;
+    background: #1c2128; color: #8b949e; font-weight: 600; font-size: 0.72rem;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    padding: 0.4rem 0.6rem; text-align: left;
+    border-bottom: 1px solid #30363d;
+  }
+  .log-container td {
+    padding: 0.15rem 0.6rem;
+    border-bottom: 1px solid #161b22;
+    vertical-align: top;
+  }
+  .log-container tr:hover td { background: rgba(88,166,255,0.04); }
+
+  /* Colunas */
+  .col-time  { width: 175px; white-space: nowrap; color: #484f58; }
+  .col-level { width: 90px; }
+  .col-mod   { width: 160px; white-space: nowrap; color: #8b949e; cursor: pointer; }
+  .col-mod:hover { color: #58a6ff; }
+  .col-msg   { }
+
+  /* Level badges */
+  .badge {
+    display: inline-block; padding: 0.05rem 0.45rem; border-radius: 999px;
+    font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .badge-error { color: #ff7b72; background: #441010; }
+  .badge-warning,
+  .badge-warn  { color: #d29922; background: #3b2e00; }
+  .badge-info  { color: #58a6ff; background: #0c2d6b; }
+  .badge-debug { color: #8b949e; background: #1c2128; }
+
+  /* Row highlighting by level */
+  .row-error td  { background: rgba(248,81,73,0.06); }
+  .row-warning td,
+  .row-warn td   { background: rgba(210,153,34,0.04); }
+  .row-error:hover td  { background: rgba(248,81,73,0.10) !important; }
+  .row-warning:hover td,
+  .row-warn:hover td   { background: rgba(210,153,34,0.08) !important; }
+
+  /* Empty state */
+  .empty-state {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 3rem; color: #484f58; text-align: center;
+  }
+  .empty-state strong { font-size: 1.1rem; color: #8b949e; }
+  .empty-state p { margin-top: 0.5rem; font-size: 0.85rem; }
+
+  /* ── Responsive ───────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .header h1 { font-size: 0.85rem; }
+    .col-time  { width: 130px; font-size: 0.72rem; }
+    .col-level { width: 70px; }
+    .col-mod   { width: 110px; font-size: 0.72rem; }
+    .filters input { width: 120px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════ Header ════════════════ -->
+<div class="header">
+  <h1>📋 <small>Hedge-fund-lab</small> Logs</h1>
+  <nav class="header-nav">
+    <a href="/">Dashboard</a>
+    <a href="/logs" class="active">Logs</a>
+  </nav>
+  <span class="status disconnected" id="status">
+    <span class="status-dot"></span>
+    <span id="statusText">Desconectado</span>
+  </span>
+</div>
+
+<!-- ════════════════ Stats ════════════════ -->
+<div class="stats" id="stats">
+  <span class="stat stat-all"   id="statTotal">Total: 0</span>
+  <span class="stat stat-error" id="statError">ERROR: 0</span>
+  <span class="stat stat-warn"  id="statWarn">WARNING: 0</span>
+  <span class="stat stat-info"  id="statInfo">INFO: 0</span>
+  <span class="stat stat-debug" id="statDebug">DEBUG: 0</span>
+</div>
+
+<!-- ════════════════ Filters ════════════════ -->
+<div class="filters">
+  <div class="filter-group">
+    <label>Nível
+      <select id="filterLevel">
+        <option value="">Todos</option>
+        <option value="ERROR">ERROR</option>
+        <option value="WARNING">WARNING</option>
+        <option value="WARN">WARN</option>
+        <option value="INFO">INFO</option>
+        <option value="DEBUG">DEBUG</option>
+      </select>
+    </label>
+  </div>
+  <div class="filter-group">
+    <label>Módulo
+      <select id="filterModule"><option value="">Todos</option></select>
+    </label>
+  </div>
+  <div class="filter-group">
+    <label>🔍
+      <input type="text" id="filterSearch" placeholder="Buscar no texto..." autocomplete="off">
+    </label>
+  </div>
+  <div class="filter-group">
+    <label>
+      <input type="checkbox" id="autoScroll" checked> Auto-scroll
+    </label>
+  </div>
+  <div class="filter-group" style="margin-left:auto">
+    <button class="btn btn-danger" id="btnClear">🗑 Limpar</button>
+  </div>
+</div>
+
+<!-- ════════════════ Log Table ════════════════ -->
+<div class="log-container" id="logContainer">
+  <div class="empty-state" id="emptyState">
+    <div style="font-size:2.5rem;margin-bottom:0.5rem">⏳</div>
+    <strong>Aguardando logs...</strong>
+    <p>Execute o pipeline ETL para ver os logs aqui.<br>
+    <code style="background:#1c2128;padding:0.1rem 0.4rem;border-radius:4px;margin-top:0.3rem;display:inline-block">
+      python -m src.pipeline.flows
+    </code></p>
+  </div>
+  <table id="logTable" style="display:none">
+    <thead>
+      <tr>
+        <th class="col-time">Timestamp</th>
+        <th class="col-level">Nível</th>
+        <th class="col-mod">Módulo</th>
+        <th class="col-msg">Mensagem</th>
+      </tr>
+    </thead>
+    <tbody id="logBody"></tbody>
+  </table>
+</div>
+
+<!-- ════════════════ JS ════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  // ── State ──────────────────────────────────────────────
+  const state = {
+    allEntries: [],       // {time, level, module, message, raw}
+    modules: new Set(),
+    visible: [],
+  };
+
+  const LEVEL_ORDER = { ERROR: 0, WARNING: 1, WARN: 1, INFO: 2, DEBUG: 3 };
+  const LOG_FILE_SIZE = 5000; // max entries kept in memory
+
+  // ── DOM refs ───────────────────────────────────────────
+  const els = {
+    status:        document.getElementById('status'),
+    statusText:    document.getElementById('statusText'),
+    logBody:       document.getElementById('logBody'),
+    logTable:      document.getElementById('logTable'),
+    emptyState:    document.getElementById('emptyState'),
+    logContainer:  document.getElementById('logContainer'),
+    filterLevel:   document.getElementById('filterLevel'),
+    filterModule:  document.getElementById('filterModule'),
+    filterSearch:  document.getElementById('filterSearch'),
+    autoScroll:    document.getElementById('autoScroll'),
+    btnClear:      document.getElementById('btnClear'),
+    statTotal:     document.getElementById('statTotal'),
+    statError:     document.getElementById('statError'),
+    statWarn:      document.getElementById('statWarn'),
+    statInfo:      document.getElementById('statInfo'),
+    statDebug:     document.getElementById('statDebug'),
+  };
+
+  // ── Parse log line ─────────────────────────────────────
+  // Formato: "2026-07-10 12:00:00 | INFO     | src.config | mensagem"
+  function parseLine(line) {
+    const match = line.match(
+      /^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\s*\|\s*(\S+)\s*\|\s*([\w.]+)\s*\|\s*(.*)$/
+    );
+    if (!match) return null;
+    return {
+      time:    match[1],
+      level:   match[2].toUpperCase(),
+      module:  match[3],
+      message: match[4],
+      raw:     line,
+    };
+  }
+
+  // ── Render ─────────────────────────────────────────────
+  function render() {
+    const level = els.filterLevel.value.toUpperCase();
+    const mod   = els.filterModule.value;
+    const query = els.filterSearch.value.toLowerCase().trim();
+
+    state.visible = state.allEntries.filter(e => {
+      if (level && e.level !== level) return false;
+      if (mod && e.module !== mod) return false;
+      if (query && !e.raw.toLowerCase().includes(query)) return false;
+      return true;
+    });
+
+    // Stats
+    let counts = { ERROR: 0, WARNING: 0, WARN: 0, INFO: 0, DEBUG: 0 };
+    state.allEntries.forEach(e => { if (counts[e.level] !== undefined) counts[e.level]++; });
+    els.statTotal.textContent = `Total: ${state.allEntries.length}`;
+    els.statError.textContent = `ERROR: ${counts.ERROR}`;
+    els.statWarn.textContent  = `WARNING: ${counts.WARNING}`;
+    els.statInfo.textContent  = `INFO: ${counts.INFO}`;
+    els.statDebug.textContent = `DEBUG: ${counts.DEBUG}`;
+
+    // Empty / table visibility
+    const isEmpty = state.visible.length === 0;
+    els.emptyState.style.display = (state.allEntries.length === 0) ? 'flex' : 'none';
+    els.logTable.style.display = (state.allEntries.length === 0) ? 'none' : '';
+
+    // Rows
+    if (!isEmpty) {
+      const noResults = document.getElementById('noResults');
+      if (noResults) noResults.remove();
+
+      if (state.visible.length === 0 && state.allEntries.length > 0) {
+        // Filtro ativo sem resultados
+        els.logBody.innerHTML = `
+          <tr id="noResults"><td colspan="4" style="text-align:center;padding:2rem;color:#484f58;">
+            Nenhum log corresponde aos filtros ativos.
+          </td></tr>`;
+        return;
+      }
+    }
+
+    const fragment = document.createDocumentFragment();
+    // Only render last 1000 visible entries for performance
+    const toRender = state.visible.slice(-1000);
+
+    toRender.forEach(e => {
+      const badgeClass = `badge-${e.level.toLowerCase()}`;
+      const rowClass   = `row-${e.level.toLowerCase()}`;
+      const tr = document.createElement('tr');
+      tr.className = rowClass;
+      tr.innerHTML = `
+        <td class="col-time">${escHtml(e.time)}</td>
+        <td class="col-level"><span class="badge ${badgeClass}">${escHtml(e.level)}</span></td>
+        <td class="col-mod" data-module="${escHtml(e.module)}">${escHtml(e.module)}</td>
+        <td class="col-msg">${escHtml(e.message)}</td>
+      `;
+      // Click on module name filters by that module
+      tr.querySelector('.col-mod').addEventListener('click', function () {
+        els.filterModule.value = this.dataset.module;
+        render();
+      });
+      fragment.appendChild(tr);
+    });
+
+    els.logBody.innerHTML = '';
+    els.logBody.appendChild(fragment);
+
+    // Auto-scroll
+    if (els.autoScroll.checked) {
+      els.logContainer.scrollTop = els.logContainer.scrollHeight;
+    }
+  }
+
+  // ── Helpers ────────────────────────────────────────────
+  function escHtml(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function updateModules() {
+    const current = els.filterModule.value;
+    els.filterModule.innerHTML = '<option value="">Todos</option>';
+    const sorted = [...state.modules].sort();
+    sorted.forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = m;
+      opt.textContent = m;
+      els.filterModule.appendChild(opt);
+    });
+    els.filterModule.value = current;
+  }
+
+  function addEntries(lines) {
+    lines.forEach(line => {
+      if (!line.trim()) return;
+      // Skip the SSE heartbeat comments if any
+      if (line.startsWith(':')) return;
+
+      const parsed = parseLine(line);
+      if (!parsed) return;
+
+      state.allEntries.push(parsed);
+      state.modules.add(parsed.module);
+    });
+
+    // Trim if over limit
+    if (state.allEntries.length > LOG_FILE_SIZE) {
+      state.allEntries = state.allEntries.slice(-LOG_FILE_SIZE);
+    }
+
+    updateModules();
+    render();
+  }
+
+  // ── Clear ──────────────────────────────────────────────
+  els.btnClear.addEventListener('click', function () {
+    state.allEntries = [];
+    state.modules.clear();
+    state.visible = [];
+    render();
+  });
+
+  // ── Filter change events ───────────────────────────────
+  els.filterLevel.addEventListener('change', render);
+  els.filterModule.addEventListener('change', render);
+  els.filterSearch.addEventListener('input', render);
+
+  let scrollOverride = false;
+  els.autoScroll.addEventListener('change', function () {
+    if (this.checked) {
+      els.logContainer.scrollTop = els.logContainer.scrollHeight;
+    }
+  });
+  // Pause auto-scroll when user scrolls up
+  els.logContainer.addEventListener('scroll', function () {
+    if (!els.autoScroll.checked) return;
+    const atBottom = this.scrollHeight - this.scrollTop - this.clientHeight < 50;
+    if (!atBottom) {
+      // User scrolled up — don't fight them, but don't uncheck the box
+    }
+  });
+
+  // ── SSE Connection ─────────────────────────────────────
+  function connectSSE() {
+    setStatus('waiting', 'Conectando...');
+
+    const source = new EventSource('/api/logs');
+
+    source.onopen = function () {
+      setStatus('connected', 'Conectado');
+    };
+
+    source.onmessage = function (event) {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.reset) {
+          // Log file was rotated — clear all
+          state.allEntries = [];
+          state.modules.clear();
+        }
+        if (data.lines && data.lines.length > 0) {
+          addEntries(data.lines);
+        }
+        if (data.waiting) {
+          setStatus('waiting', 'Aguardando logs...');
+        }
+      } catch (e) {
+        // ignore parse errors
+      }
+    };
+
+    source.onerror = function () {
+      setStatus('disconnected', 'Desconectado');
+      source.close();
+      // Retry after 3 seconds
+      setTimeout(connectSSE, 3000);
+    };
+  }
+
+  function setStatus(type, text) {
+    els.status.className = 'status ' + type;
+    els.statusText.textContent = text;
+  }
+
+  // ── Boot ───────────────────────────────────────────────
+  connectSSE();
+})();
+</script>
+</body>
+</html>

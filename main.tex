@@ -1,0 +1,457 @@
+\documentclass{eic-bcc-tcc}
+
+\title{Hedge-fund-lab: Laboratório Quantitativo de Backtesting baseado em Sistemas Multiagentes}
+\titleen{Hedge-fund-lab: Quantitative Backtesting Laboratory based on Multi-agent Systems}
+
+\addstudent[Lucas Pereira da Silva]{Lucas Pereira da Silva}
+\addstudent[Matheus Pereira de Carvalho]{Matheus Pereira de Carvalho}
+
+\newcommand{\warn}[1]{{\color{red} {#1}}}
+\newcommand{\verify}[1]{{\color{blue} {#1}}}
+\newcommand{\remarks}[2]{{\color{red} #1\ (\textit{#2})}}
+
+\advisor[m]{Eduardo Soares Ogasawara, D.Sc.}
+
+\date{2026}
+
+\newacronym{tcc}{TCC}{Trabalho de Conclusão de Curso}
+\newacronym{llm}{LLM}{Large Language Model}
+\newacronym{etl}{ETL}{Extract, Transform, Load}
+\newacronym{emh}{EMH}{Efficient Market Hypothesis}
+\newacronym{amh}{AMH}{Adaptive Markets Hypothesis}
+\newacronym{mas}{MAS}{Multi-Agent Systems}
+\newacronym{rsi}{RSI}{Relative Strength Index}
+\newacronym{sma}{SMA}{Simple Moving Average}
+
+\begin{document}
+
+\maketitle
+
+
+\makeapproval
+
+\begin{resumo}
+O mercado financeiro contemporâneo caracteriza-se por sua elevada complexidade e natureza não estacionária, em que o volume massivo de dados gerados diariamente desafia as capacidades de análise humana e de algoritmos estáticos tradicionais. Este trabalho apresenta o desenvolvimento do Hedge-fund-lab, um laboratório quantitativo escalável para backtesting de estratégias de investimento baseado em sistemas multiagentes. O objetivo principal é mitigar as limitações de estratégias clássicas e o risco de superajuste por meio da introdução de processos de debate e consenso na tomada de decisão financeira baseada em Inteligência Artificial. A solução proposta integra a modelagem de uma esteira de dados relacional orquestrada via Prefect e a coordenação de um comitê de agentes especializados utilizando o framework LangGraph. \verify{Espera-se demonstrar que a supervisão qualitativa e a deliberação adaptativa de modelos de linguagem reduzem os riscos operacionais em ativos de alta volatilidade do mercado brasileiro.}
+\palavraschave{Análise Quantitativa. Sistemas Multiagentes. Large Language Models. LangGraph. Backtesting.}
+\end{resumo}
+
+\begin{resumo}
+O mercado financeiro contemporâneo apresenta desafios relevantes para a construção e avaliação de estratégias quantitativas, especialmente em razão da volatilidade dos ativos, da não estacionariedade das séries financeiras e do risco de superajuste em processos de \textit{backtesting}. Nesse contexto, este trabalho propõe o desenvolvimento do \textit{Hedge-fund-lab}, um laboratório quantitativo de \textit{backtesting} baseado em sistemas multiagentes e modelos de linguagem de grande porte. A proposta integra uma esteira de dados para coleta, tratamento e armazenamento de séries históricas, a implementação de estratégias clássicas como \textit{Buy and Hold}, \textit{Equal Weight}, \textit{SMA Cross} e Bandas de Bollinger, e a modelagem de uma arquitetura multiagente coordenada por grafo de decisão. O sistema prevê a atuação de agentes especializados em análise técnica, gestão de risco e gestão de portfólio, com o objetivo de estruturar um processo decisório mais controlado e auditável. No escopo deste Trabalho de Conclusão de Curso 1, a pesquisa concentra-se na fundamentação teórica, na modelagem da solução e na definição do protocolo experimental que será utilizado na etapa posterior. Assim, a principal contribuição desta fase consiste na concepção de um ambiente metodológico para comparar, de forma rigorosa, estratégias tradicionais e arquiteturas multiagentes baseadas em LLMs, considerando métricas de retorno ajustado ao risco, custos de transação e consistência operacional.
+
+\palavraschave{Análise Quantitativa. Sistemas Multiagentes. Large Language Models. Backtesting. Estratégias de Investimento.}
+\end{resumo}
+
+
+\begin{abstract}
+The contemporary financial market is characterized by extreme complexity and a non-stationary nature, where the massive volume of data generated daily challenges human analysis and traditional static algorithms. This work presents the development of the Hedge-fund-lab, a scalable quantitative laboratory for backtesting investment strategies based on multi-agent systems. The main objective is to mitigate the limitations of classic trading strategies and the risk of overfitting by introducing debate and consensus processes into financial decision-making driven by Artificial Intelligence. The proposed solution integrates a relational data pipeline orchestrated via Prefect and a committee of specialized agents coordinated through the LangGraph framework. It is expected to demonstrate that qualitative supervision and adaptive deliberation of large language models reduce operational risks in highly volatile assets within the Brazilian market.
+\keywords{Quantitative Analysis. Multi-Agent Systems. Large Language Models. LangGraph. Backtesting.}
+\end{abstract}
+\begin{abstract}
+The contemporary financial market presents relevant challenges for the construction and evaluation of quantitative strategies, especially due to asset volatility, the non-stationarity of financial time series, and the risk of overfitting in backtesting processes. In this context, this work proposes the development of \textit{Hedge-fund-lab}, a quantitative backtesting laboratory based on multi-agent systems and large language models. The proposed approach integrates a data pipeline for collecting, processing, and storing historical financial series, the implementation of classical strategies such as \textit{Buy and Hold}, \textit{Equal Weight}, \textit{SMA Cross}, and Bollinger Bands, and the modeling of a multi-agent architecture coordinated by a decision graph. The system includes specialized agents for technical analysis, risk management, and portfolio management, aiming to structure a more controlled and auditable decision-making process. Within the scope of this Undergraduate Thesis I, the research focuses on the theoretical foundation, the modeling of the proposed solution, and the definition of the experimental protocol to be applied in the subsequent stage. Therefore, the main contribution of this phase consists in the conception of a methodological environment to rigorously compare traditional strategies and LLM-based multi-agent architectures, considering risk-adjusted return metrics, transaction costs, and operational consistency.
+
+\keywords{Quantitative Analysis. Multi-Agent Systems. Large Language Models. Backtesting. Investment Strategies.}
+\end{abstract}
+
+\listoffigurespage
+\listoftablespage
+\listofacronymspage
+\tableofcontentspage
+
+\mainmatter
+
+\chapter{Introdução}
+\label{cha:introducao}
+
+O mercado financeiro contemporâneo impõe desafios relevantes à construção e à avaliação de estratégias quantitativas, sobretudo em cenários marcados por alta volatilidade, não estacionariedade e grande volume de dados. Nesse contexto, abordagens clássicas de análise técnica continuam úteis como referência metodológica, mas frequentemente apresentam limitações quando aplicadas de forma isolada, seja pela sensibilidade a regimes de mercado distintos, seja pelo risco de superajuste (\textit{overfitting}) em processos de backtesting. \verify{Para um trabalho de \gls{tcc} 1, essa constatação desloca o foco da busca por desempenho superior imediato para a necessidade de um ambiente experimental capaz de organizar dados, regras de decisão e critérios de avaliação de maneira mais rigorosa.}
+
+\verify{Diante desse cenário, o problema central desta pesquisa consiste em como conceber um laboratório de backtesting que combine engenharia de dados, deliberação multiagente baseada em \textit{Large Language Models} (LLMs) e comparação com benchmarks clássicos, sem prometer capacidades que ainda não foram avaliadas empiricamente.} A pergunta de pesquisa que orienta o trabalho pode ser formulada da seguinte maneira: como projetar um ambiente experimental que permita avaliar, de forma comparável e metodologicamente controlada, se uma arquitetura multiagente baseada em LLMs produz decisões de investimento mais robustas do que abordagens tradicionais quando submetida a critérios explícitos de risco, custo e consistência operacional?
+
+Com esse propósito, este trabalho tem como objetivo geral desenvolver o Hedge-fund-lab, um laboratório quantitativo escalável para backtesting de estratégias de investimento baseado em sistemas multiagentes. \remarks{Como contribuição principal, o manuscrito propõe um artefato metodológico que integra, em um mesmo ambiente, um pipeline de dados resiliente com Prefect e PostgreSQL, uma arquitetura de deliberação coordenada por LangGraph com agentes especializados em análise técnica, gestão de risco e gestão de portfólio, e um desenho de avaliação comparativa voltado à análise futura de desempenho frente a benchmarks simples e modelos clássicos de alocação, considerando custos de transação e turnover operacional.}{confirmar se esta deve ser apresentada como a contribuição principal do trabalho} \verify{Em função do escopo de \gls{tcc} 1, o presente texto concentra-se na fundamentação, na modelagem da solução e no planejamento de sua avaliação experimental.}
+
+Assim, a introdução delimita um trabalho cujo valor reside menos em antecipar resultados e mais em estabelecer uma base técnica e metodológica coerente para a etapa empírica subsequente. A presente monografia está organizada em quatro capítulos principais. Além desta introdução, o capítulo 2 apresenta a fundamentação teórica, abordando as hipóteses de eficiência de mercado, as estratégias de análise técnica e a literatura sobre modelos de linguagem e sistemas multiagentes. O capítulo 3 descreve o desenvolvimento da solução, detalhando a modelagem do banco de dados, o fluxo de orquestração e a arquitetura do comitê de agentes. Por fim, o capítulo 4 apresenta as considerações parciais, o protocolo metodológico de avaliação experimental e o cronograma de atividades previsto para a conclusão do projeto.
+
+\chapter{Introdução}
+\label{cha:introducao}
+
+O mercado financeiro contemporâneo impõe desafios relevantes à construção e à avaliação de estratégias quantitativas de investimento. A elevada volatilidade dos ativos, a não estacionariedade das séries financeiras, a presença de custos operacionais e o grande volume de dados disponíveis tornam a tomada de decisão um processo complexo, especialmente quando se busca comparar estratégias de forma rigorosa. Nesse contexto, abordagens clássicas de análise técnica e de alocação de portfólio continuam úteis como referências metodológicas, mas apresentam limitações quando aplicadas isoladamente, seja pela sensibilidade a diferentes regimes de mercado, seja pelo risco de superajuste (\textit{overfitting}) em processos de \textit{backtesting}.
+
+Para um Trabalho de Conclusão de Curso 1 (TCC 1), essa constatação desloca o foco da busca por desempenho superior imediato para a necessidade de construção de um ambiente experimental capaz de organizar dados, regras de decisão e critérios de avaliação de maneira sistemática. Assim, mais do que propor uma estratégia supostamente vencedora, torna-se necessário estruturar um laboratório quantitativo que permita comparar abordagens distintas sob condições controladas, considerando métricas de retorno, risco, custos de transação e consistência operacional.
+
+Paralelamente, o avanço recente dos \textit{Large Language Models} (LLMs) ampliou o interesse por arquiteturas capazes de empregar modelos de linguagem em tarefas de raciocínio, análise e apoio à decisão. Em finanças, esse uso exige cautela, pois decisões de investimento dependem não apenas da geração de recomendações, mas também da verificação de premissas, da explicitação de critérios e do controle de riscos. Nesse sentido, sistemas multiagentes surgem como uma alternativa de organização do processo decisório, ao distribuir funções entre agentes especializados, como analista técnico, gestor de risco e gestor de portfólio.
+
+Diante desse cenário, o problema central desta pesquisa consiste na concepção de um laboratório de \textit{backtesting} que combine engenharia de dados, deliberação multiagente baseada em LLMs e comparação com \textit{benchmarks} clássicos. Essa formulação busca estabelecer uma estrutura experimental rigorosa para análise de estratégias quantitativas, sem pressupor ganhos de desempenho ou capacidades que ainda não tenham sido avaliadas empiricamente.
+
+A pergunta de pesquisa que orienta este trabalho pode ser formulada da seguinte maneira: como projetar um ambiente experimental que permita avaliar, de forma comparável e metodologicamente controlada, se uma arquitetura multiagente baseada em LLMs produz decisões de investimento mais robustas do que abordagens tradicionais, quando submetida a critérios explícitos de risco, custo e consistência operacional?
+
+Com esse propósito, este trabalho tem como objetivo geral desenvolver o \textit{Hedge-fund-lab}, um laboratório quantitativo escalável para \textit{backtesting} de estratégias de investimento baseado em sistemas multiagentes. Como objetivos específicos, busca-se: estruturar uma esteira de dados para coleta, tratamento e armazenamento de séries históricas de ativos financeiros; implementar indicadores técnicos e estratégias clássicas utilizadas como \textit{benchmarks}; modelar uma arquitetura multiagente coordenada por grafo de decisão; e definir um protocolo experimental de avaliação baseado em métricas de desempenho ajustado ao risco, custos de transação e intensidade de negociação.
+
+No escopo deste TCC 1, o trabalho concentra-se na fundamentação teórica, na modelagem da solução e no planejamento da avaliação experimental. A execução completa dos experimentos, a coleta dos resultados e a análise empírica comparativa serão desenvolvidas na etapa subsequente do projeto. Dessa forma, a contribuição principal desta fase consiste na definição de um artefato metodológico que integra engenharia de dados, arquitetura multiagente e protocolo de \textit{backtesting} em um ambiente comparável e auditável.
+
+A presente monografia está organizada da seguinte forma. O Capítulo 2 apresenta a fundamentação teórica, abordando hipóteses de eficiência de mercado, estratégias quantitativas tradicionais, teoria de portfólio, sistemas multiagentes, LLMs em finanças e riscos metodológicos associados ao \textit{backtesting}. O Capítulo 3 discute os trabalhos relacionados e posiciona o \textit{Hedge-fund-lab} diante da literatura recente. O Capítulo 4 descreve o método e o desenvolvimento da solução proposta, incluindo o pipeline de dados e a arquitetura dos agentes. Por fim, o Capítulo 5 apresenta as considerações parciais, o protocolo metodológico previsto para a avaliação experimental e o cronograma de atividades para a continuidade do projeto.
+
+
+
+\chapter{Fundamentação Teórica}
+\label{cha:fundamentacao}
+
+\section{HIPÓTESE DE EFICIÊNCIA DE MERCADO}
+
+A Hipótese de Eficiência de Mercado (\textit{Efficient Market Hypothesis} -- EMH), formalizada por \citep{Fama1970}, postula que os preços dos ativos financeiros refletem integralmente todas as informações disponíveis. Consequentemente, não seria possível obter retornos anormais de forma consistente utilizando exclusivamente informações públicas ou históricas, uma vez que tais dados já estariam incorporados aos preços.
+
+No mesmo trabalho, Fama classifica a eficiência de mercado em três níveis:
+
+\begin{itemize}
+\item Forma fraca: os preços refletem apenas informações históricas de preço e volume;
+\item Forma semi-forte: os preços incorporam todas as informações públicas disponíveis;
+\item Forma forte: os preços refletem todas as informações, inclusive as privadas.
+\end{itemize}
+
+A relevância dessa hipótese para o presente trabalho reside no debate sobre a previsibilidade dos retornos financeiros. Em um mercado perfeitamente eficiente, estratégias quantitativas baseadas em padrões históricos não seriam capazes de gerar retornos superiores de forma consistente. Contudo, evidências empíricas apontam para a existência de anomalias de mercado, como os efeitos momentum e value premium \citep{FamaFrench1992, JegadeeshTitman1993}.
+
+\subsection{Críticas Comportamentais e a Hipótese de Mercados Adaptativos}
+
+Apesar de sua relevância teórica, a EMH recebeu críticas substanciais da economia comportamental. Estudos de \citep{Shiller2000} e \citep{Thaler1993} demonstram que vieses cognitivos, como excesso de confiança, aversão à perda e comportamento de manada, podem levar a desvios persistentes entre preços de mercado e valores fundamentais.
+
+Buscando reconciliar a racionalidade da EMH com as evidências comportamentais, \citet{Lo2004} propôs a Hipótese de Mercados Adaptativos (\textit{Adaptive Markets Hypothesis} -- AMH). Neste modelo, a eficiência de mercado não é um estado fixo, mas um processo dinâmico que evolui ao longo do tempo conforme os agentes aprendem e se adaptam às mudanças no ambiente econômico.
+
+Essa perspectiva fornece suporte teórico para o uso de sistemas baseados em inteligência artificial e modelos de linguagem, uma vez que modelos adaptativos e multiagentes podem capturar padrões dinâmicos e interpretar contextos que estratégias estáticas ou puramente matemáticas não conseguem identificar.
+
+\section{BENCHMARKS SIMPLES: BUY AND HOLD E EQUAL WEIGHT}
+
+Estratégias quantitativas tradicionais e benchmarks cumprem o papel de base comparativa essencial na avaliação de sistemas de decisão, pois oferecem referências de implementação simples e menos dependentes de estimações sofisticadas, o que facilita o contraste com abordagens mais complexas de alocação e seleção de sinais \citep{Markowitz1952, Clarke2006, LopezDePrado2018}.
+
+\subsection{Buy and Hold}
+\textit{Buy and Hold} é uma estratégia passiva em que o investidor compra um ativo ou uma carteira de ativos e permanece posicionado durante todo o período de avaliação. Em estudos de backtesting, sua utilidade metodológica reside em fornecer uma linha de base de baixa complexidade, útil para verificar se uma estratégia ativa gera valor além da simples exposição ao mercado após a consideração de risco e custos operacionais \citep{LopezDePrado2018, Bailey2014}. No contexto deste trabalho, esse \textit{benchmark} permite distinguir eventuais ganhos associados ao processo de deliberação dos agentes daqueles que decorreriam apenas do comportamento geral dos ativos analisados.
+
+\subsection{Equal Weight}
+\textit{Equal Weight}, ou carteira igualmente ponderada, consiste em distribuir o capital igualmente entre os ativos selecionados. Sua relevância decorre do fato de incorporar diversificação sem recorrer diretamente à estimação de parâmetros como retorno esperado e matriz de covariância, exigidos por modelos de otimização clássicos \citep{Markowitz1952, Clarke2006, DeMiguel2009}. Por essa razão, trata-se de um \textit{benchmark} particularmente útil para comparar abordagens sofisticadas com uma regra simples de alocação, permitindo avaliar se o aumento de complexidade metodológica se traduz, de fato, em ganhos consistentes de desempenho ajustado ao risco.
+
+\section{ESTRATÉGIAS BASEADAS EM ANÁLISE TÉCNICA}
+
+A análise técnica assume que padrões históricos de preços e indicadores derivados dessas séries temporais podem gerar sinais úteis para previsão de movimentos futuros do mercado. \citet{Brock1992} investigam regras técnicas simples e mostram que tais procedimentos podem ser avaliados empiricamente por meio de simulações históricas. Da mesma forma, \citet{Lo2000} tratam padrões gráficos sob uma perspectiva estatística, reforçando o uso de estratégias técnicas como \textit{benchmarks} quantitativos.
+
+\subsection{Estratégias de Tendência (Trend Following)}
+
+Estratégias de \textit{trend following} buscam explorar a persistência de movimentos de preço. O \textit{Moving Average Crossover} é uma estratégia técnica clássica baseada no cruzamento entre médias móveis de diferentes horizontes. \citet{Brock1992} demonstram que regras baseadas em médias móveis apresentam poder preditivo estatisticamente significativo. A média móvel simples é definida como:
+
+\begin{equation}
+MA_t = \frac{1}{n} \sum_{i=0}^{n-1} P_{t-i}
+\end{equation}
+
+Quando uma média curta cruza acima de uma média longa, interpreta-se como um sinal de tendência positiva. Essa regra traduz a ideia de acompanhamento de tendência em um critério operacional claro.
+
+Outra medida amplamente utilizada é o momentum, definido como o retorno acumulado em uma janela temporal:
+
+\begin{equation}
+Momentum_t = \frac{P_t}{P_{t-n}} - 1
+\end{equation}
+
+\citet{JegadeeshTitman1993} mostram que estratégias baseadas em momentum produzem retornos anormais positivos. A ideia central é que ativos com desempenho positivo em uma janela recente tendem a continuar apresentando desempenho superior \citep{Moskowitz2012}.
+
+\subsection{Estratégias de Reversão à Média (Mean Reversion)}
+
+A hipótese de reversão à média (\textit{Mean Reversion}) pressupõe que desvios expressivos em relação a um nível considerado normal tendem a ser parcialmente revertidos ao longo do tempo. \citet{PoterbaSummers1988} investigam componentes transitórios e encontram evidências de reversão à média em horizontes de longo prazo. O sinal de negociação pode ser obtido por meio do z-score:
+
+\begin{equation}
+z_t = \frac{P_t - \mu}{\sigma}
+\end{equation}
+
+onde $\mu$ representa a média móvel e $\sigma$ o desvio padrão. A lógica consiste em comprar ativos que registraram queda recente ou reduzir a exposição a ativos que subiram acentuadamente.
+
+Entre os indicadores mais utilizados destacam-se o Índice de Força Relativa (RSI), proposto por \citet{Wilder1978}, e as Bandas de Bollinger, introduzidas por \citet{Bollinger2001}. As Bandas de Bollinger são definidas por:
+
+\begin{equation}
+BB_{upper} = MA + k\sigma
+\end{equation}
+
+\begin{equation}
+BB_{lower} = MA - k\sigma
+\end{equation}
+
+O RSI busca medir a intensidade dos movimentos recentes de alta e baixa de um ativo, identificando sobrecompra ou sobrevenda. A comparação entre \textit{momentum} e \textit{mean reversion} é relevante porque essas estratégias representam hipóteses opostas sobre a dinâmica dos retornos e, em mercados sujeitos a mudanças de regime, podem atuar de forma complementar \citep{JegadeeshTitman1993, PoterbaSummers1988, Moskowitz2012}.
+
+\section{FACTOR INVESTING E MODELOS DE PRECIFICAÇÃO DE ATIVOS}
+
+Enquanto a análise técnica foca em padrões históricos de preços, o \textit{Factor Investing} busca explicar retornos a partir de características fundamentais das empresas. O modelo de três fatores de \citep{FamaFrench1993} é um dos mais influentes:
+
+\begin{equation}
+R_i - R_f = \beta_m (R_m - R_f) + \beta_s SMB + \beta_v HML
+\end{equation}
+
+Posteriormente, \citep{FamaFrench2015} expandiram o modelo. Estudos recentes demonstram que modelos de \textit{machine learning} podem capturar relações não lineares entre fatores de risco e retornos esperados, superando abordagens lineares tradicionais \citep{Gu2020}.
+
+\section{TEORIA MODERNA DE PORTFÓLIO}
+
+A Teoria Moderna de Portfólio, proposta por \citet{Markowitz1952}, estabelece uma das bases mais importantes da teoria financeira moderna. A decisão de investimento não deve considerar apenas o retorno esperado de cada ativo isoladamente, mas também o risco da carteira como um todo e as relações de covariância entre os ativos. A diversificação permite reduzir o risco total do portfólio sem necessariamente reduzir o retorno esperado. O risco de um portfólio é definido pela variância:
+
+\begin{equation}
+\sigma_p^2 = w^T \Sigma w
+\end{equation}
+
+Essa abordagem oferece um \textit{benchmark} clássico de alocação, útil como referência para comparação com estratégias mais sofisticadas.
+
+\subsection{Carteira de Mínima Variância}
+A carteira de mínima variância é uma aplicação direta da estrutura de Markowitz. Seu objetivo é encontrar os pesos dos ativos que minimizam a variância total da carteira, dadas as estimativas de covariância. No contexto do mercado acionário brasileiro, pode funcionar como um \textit{benchmark} conservador \citep{Clarke2006}, concentrando-se na redução de risco quando as estimativas de retorno esperado são instáveis.
+
+\subsection{Relação Risco-Retorno}
+A comparação entre estratégias exige considerar conjuntamente retorno, risco e custos operacionais, de modo que o desempenho observado não seja interpretado apenas pelo lucro absoluto \citep{LopezDePrado2018}.
+
+\section{SISTEMAS MULTIAGENTES E MODELOS DE LINGUAGEM EM FINANÇAS}
+
+O uso de \textit{Large Language Models} (LLMs) em finanças quantitativas vem sendo investigado como uma alternativa para incorporar contexto, raciocínio textual e coordenação de tarefas em processos de decisão que tradicionalmente dependem de regras fixas ou modelos puramente numéricos. Em particular, o paradigma do \textit{Agentic Trading} descrito por \citet[p. 1]{Xia2026} trata esses modelos como agentes capazes de recuperar informação, estruturar argumentos e emitir decisões em ciclos iterativos. Ainda assim, a literatura recente sugere que o ganho potencial desses sistemas depende menos do uso isolado de um LLM e mais da forma como memória, especialização funcional e mecanismos de verificação são organizados no fluxo decisório.
+
+\subsection{Arquitetura Multiagente e a Atribuição de Personas}
+
+A literatura sobre sistemas multiagentes parte da hipótese de que a decomposição do processo decisório em papéis especializados pode reduzir ambiguidades e melhorar a consistência do raciocínio. Em vez de concentrar todas as tarefas em um único modelo, \citet[p. 1]{Li2023} mostram que a combinação de personas distintas, apoiadas por memória em camadas, pode melhorar a qualidade da decisão em cenários de \textit{trading}. Sob essa perspectiva, a atribuição de funções como análise técnica, gestão de risco e gestão de portfólio deixa de ser apenas uma escolha de implementação e passa a constituir um mecanismo de controle do escopo analítico de cada agente.
+
+\subsection{O Fluxo de Debate Heterogêneo e Mitigação de Erros}
+
+Outra linha relevante enfatiza mecanismos explícitos de debate e verificação entre agentes. Em \citet{Xing2024}, o modelo de \textit{Heterogeneous Agent Discussion} (HAD) organiza agentes com papéis analíticos distintos e orientações voltadas à identificação de erros específicos, buscando reduzir incertezas gerativas e vieses do processo inferencial. O interesse dessa abordagem, para o presente trabalho, não está em assumir que o debate multiagente substitui automaticamente outras técnicas, mas em reconhecer que a heterogeneidade de papéis pode funcionar como camada adicional de validação quando comparada a inferências isoladas do tipo \textit{Zero-shot} \citep[p. 5, p. 9]{Xing2024}.
+
+\subsection{Estruturação do Raciocínio Encadeado (Chain-of-Thought)}
+
+Além da especialização por papéis, a literatura recente destaca a importância de estruturar o próprio raciocínio produzido pelo modelo. Enquanto abordagens de \textit{Zero-shot Chain-of-Thought} permitem respostas mais livres, trabalhos como \citet{FinCoT2026} defendem que, em domínios financeiros, o alinhamento melhora quando o raciocínio é guiado por passos e critérios pré-definidos por especialistas. \remarks{\citet[p. 1]{FinCoT2026} evidenciam que, ao fundamentar o processo gerativo em passos lógicos guiados por domínio (prática cunhada como FinCoT), a acurácia de alinhamento financeiro de modelos gerais de ponta se eleva drasticamente, com melhorias reportadas de 63,2\% para 80,5\% no caso do Qwen3.}{confirmar se o exemplo do Qwen3 deve permanecer explicitamente no texto} Para este projeto, essa discussão é relevante porque sugere que a utilidade de uma arquitetura multiagente não depende apenas da presença de vários agentes, mas também do grau de estrutura imposto ao fluxo de análise, verificação e decisão.
+
+
+Além da especialização por papéis, a literatura recente ressalta a importância de estruturar o próprio raciocínio gerado pelo modelo. Embora abordagens de \textit{Zero-shot Chain-of-Thought} favoreçam respostas mais livres, \citet[p. 1]{FinCoT2026}  evidenciam que, em tarefas financeiras, o alinhamento pode ser significativamente ampliado quando o processo gerativo é ancorado em etapas lógicas e critérios definidos por especialistas. Na abordagem denominada \textit{FinCoT}, os autores reportam aumento da acurácia do modelo Qwen3-8B-Base de 63,2\% para 80,5\%, indicando que a explicitação de fluxos de raciocínio orientados ao domínio pode tornar as respostas mais aderentes a critérios financeiros. Para este projeto, essa discussão é relevante por indicar que a utilidade de uma arquitetura multiagente não depende apenas da presença de múltiplos agentes, mas também do nível de estruturação imposto às etapas de análise, verificação e decisão.
+
+
+\section{BACKTESTING EM SÉRIES FINANCEIRAS E RISCOS METODOLÓGICOS}
+
+\textit{Backtesting} é o processo de simular uma estratégia de investimento sobre dados históricos, aplicando regras de decisão no passado. Estratégias quantitativas estão sujeitas ao risco de \textit{overfitting}, onde resultados positivos decorrem de seleções excessivamente ajustadas ou de vazamento de informação futura.
+
+\citet{White2000} discute o problema de \textit{data snooping}, que ocorre quando muitas estratégias ou parâmetros são testados sobre o mesmo conjunto de dados e apenas os melhores resultados são reportados. \citet{Hansen2005} complementa abordando o teste de habilidade preditiva superior para evitar que estratégias lucrativas sejam resultado puramente estatístico. Adicionalmente, \citet{Bailey2014} demonstram que a probabilidade de encontrar estratégias aparentemente lucrativas (\textit{Probability of Backtest Overfitting}) aumenta significativamente quando múltiplos modelos são testados simultaneamente.
+
+\section{MÉTRICAS DE DESEMPENHO E RISCO}
+
+A comparação entre estratégias de investimento exige métricas capazes de capturar diferentes dimensões, mitigando análises enviesadas focadas estritamente no lucro absoluto.
+
+\subsection{Retorno Acumulado e Sharpe Ratio}
+O retorno acumulado mede a variação total do capital (\(R_{acum} = \prod_{t=1}^{T} (1 + R_t) - 1\)). Contudo, deve ser interpretado com o risco assumido. O \textit{Sharpe ratio} \citep{Sharpe1994, Lo2002} resume a relação entre retorno excedente e a volatilidade total (desvio-padrão), sendo definido como:
+
+\begin{equation}
+S = \frac{E[R_p - R_f]}{\sigma_p}
+\end{equation}
+
+\subsection{Sortino Ratio e Maximum Drawdown}
+O \textit{Sortino ratio} \citep{Sortino1994} considera apenas o risco de queda (\textit{downside deviation}), avaliando o retorno excedente em relação a perdas abaixo de um limite aceitável (MAR). O \textit{Maximum Drawdown} \citep{Magdon2004} captura a severidade da maior perda acumulada entre um pico e um vale. Ambas as métricas são cruciais para avaliar a estabilidade do sistema de agentes frente a crises do mercado brasileiro.
+
+\subsection{Turnover e Custos de Transação}
+O \textit{turnover} mede a intensidade de negociação de uma estratégia. Estratégias ativas que rebalanceiam posições com muita frequência incorrem em maiores despesas. \citet{Harris2003} discute aspectos de microestrutura e custos de transação (corretagem, spread e emolumentos). A avaliação exige que o retorno líquido após a inclusão desses custos justifique a viabilidade da aplicação prática.
+
+\chapter{Trabalhos Relacionados}
+\label{cha:relacionados}
+
+\section{REVISÃO CRÍTICA DA LITERATURA}
+
+A literatura recente sobre decisão financeira computacional pode ser organizada, de forma sintética, em três frentes. A primeira reúne abordagens baseadas em aprendizado por reforço e otimização sequencial de decisões, nas quais o agente aprende políticas de alocação a partir da interação com séries históricas \citep{Moody2001, SuttonBarto2018, Schulman2017, Jiang2017}. Embora essas técnicas sejam promissoras para adaptação dinâmica, elas também impõem desafios de estabilidade, sensibilidade ao regime de mercado e baixa interpretabilidade quando avaliadas em ambientes não estacionários \citep{Jiang2017}.
+
+A segunda frente concentra-se em modelos de \textit{machine learning} voltados à previsão de retornos e à precificação de ativos. Nesse eixo, o foco recai menos sobre a deliberação passo a passo e mais sobre a capacidade de capturar relações não lineares entre fatores, características dos ativos e retornos esperados \citep{Gu2020}. Em comparação com abordagens de aprendizado por reforço, essa literatura tende a oferecer maior clareza sobre variáveis explicativas e desenho estatístico, mas não necessariamente resolve problemas de governança decisória, verificação de raciocínio ou coordenação entre múltiplos critérios de investimento.
+
+A terceira frente, mais próxima do presente trabalho, investiga o uso de LLMs como agentes de decisão e, em particular, a combinação de múltiplos agentes especializados. Nessa direção, \citet{Xia2026}, \citet{Li2023}, \citet{Xing2024} e \citet{FinCoT2026} convergem ao indicar que o desempenho desses sistemas depende não apenas do modelo subjacente, mas também da forma como especialização, discussão e estrutura de raciocínio são combinadas.
+
+À luz dessas três frentes, o Hedge-fund-lab posiciona-se como um artefato metodológico voltado a aproximar duas exigências complementares: comparação rigorosa com benchmarks, controle de risco e atenção ao \textit{backtest overfitting} \citep{Bailey2014, LopezDePrado2018}, e exploração de uma arquitetura multiagente com deliberação estruturada. Nesse sentido, sua contribuição está em propor um ambiente de backtesting que permita avaliar essas abordagens de forma comparável, auditável e metodologicamente controlada.
+
+\subsection{Síntese e Hipóteses da Pesquisa}
+
+Com base no referencial teórico apresentado, formulam-se as seguintes hipóteses:
+
+\begin{itemize}
+\item \textbf{H1:} Será avaliado se estratégias baseadas em momentum e \textit{trend following} apresentam desempenho superior ao \textit{equal weight} em termos de Sharpe Ratio líquido.
+\item \textbf{H2:} Será avaliado se o sistema multiagente baseado em LLMs apresenta desempenho superior ajustado ao risco em relação aos benchmarks considerados, tomando como critério principal o Sharpe Ratio líquido e, como critérios complementares, Sortino Ratio, \textit{Maximum Drawdown} e \textit{turnover}.
+\item \textbf{H0:} Não há diferença estatisticamente significativa entre as abordagens.
+\end{itemize}
+
+\chapter{Método e Desenvolvimento}
+\label{cha:metodo}
+
+Este capítulo detalha a modelagem e a elaboração da solução proposta para o Hedge-fund-lab. O desenvolvimento foca na construção de uma infraestrutura que permita a simulação de estratégias de investimento com alta fidelidade, integrando engenharia de dados robusta e inteligência artificial.
+
+\section{ARQUITETURA DO PIPELINE DE DADOS E EXTRAÇÃO}
+
+Para que o comitê de agentes de Inteligência Artificial possa operar em um ambiente simulado, desenvolve-se uma esteira de dados (Pipeline ETL) resiliente e automatizada. O fluxo de informações foi projetado para capturar, limpar e armazenar dez anos de histórico de negociações de ativos da B3, especificamente PETR4 e WEGE3, além de calcular os indicadores técnicos que servem de base para a análise comparativa.
+
+A arquitetura utiliza Python como linguagem base, integrando a biblioteca \textit{yfinance} para a ingestão de dados, o banco de dados PostgreSQL para o armazenamento estruturado e o framework Prefect para a orquestração das tarefas.
+
+\subsection{Modelagem do Banco de Dados (PostgreSQL)}
+
+O armazenamento foi desenhado utilizando uma abordagem relacional para garantir a integridade do histórico de preços. A estrutura lógica do banco de dados é dividida nas seguintes tabelas principais:
+
+\begin{itemize}
+    \item \textbf{Tabela ativos:} Armazena os metadados das empresas analisadas, incluindo ticker e setor.
+    \item \textbf{Tabela cotacoes\_diarias:} Registra o comportamento diário do ativo (abertura, máxima, mínima, fechamento e volume).
+    \item \textbf{Tabela indicadores\_tecnicos:} Armazena os cálculos pré-processados de SMA (50 e 200 períodos) e Bandas de Bollinger, evitando gargalos computacionais durante a execução dos agentes.
+\end{itemize}
+
+\subsection{Orquestração e Resiliência (Prefect)}
+
+O fluxo de processamento de dados (\textit{Flow}) é orquestrado pelo Prefect para garantir a observabilidade do sistema. O processo é dividido em três tarefas principais:
+
+\begin{enumerate}
+    \item \textbf{Extração:} Conecta-se à API financeira para realizar o download da série histórica, com política de tentativas automáticas (\textit{retries}) em caso de falha.
+    \item \textbf{Transformação:} Realiza a limpeza de dados nulos e utiliza a biblioteca \textit{pandas} para aplicar as fórmulas matemáticas dos indicadores técnicos.
+    \item \textbf{Carga:} Estabelece a conexão com o PostgreSQL e insere os registros em lote (\textit{batch insert}), garantindo a persistência do histórico completo.
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/pipeline-etl.png}
+    \caption{Fluxo de processamento de dados (ETL) orquestrado pelo Prefect.}
+    \label{fig:pipeline_etl}
+\end{figure}
+
+\section{ARQUITETURA DO SISTEMA MULTIAGENTES (LANGGRAPH)}
+
+A lógica de decisão do Hedge-fund-lab afasta-se de modelos lineares ao implementar um sistema de agentes autônomos coordenados por um grafo de decisão. Utilizando o framework LangGraph, a tomada de decisão é modelada como um fluxo de estados, em que cada nó representa um agente especializado e as arestas definem as condições de transição entre eles.
+
+\subsection{Modelagem do Grafo de Decisão}
+
+O processo de investimento é estruturado como um debate cíclico ou sequencial, garantindo que nenhuma ordem de compra ou venda seja executada sem uma verificação multicritério. Os principais elementos do grafo incluem:
+
+\begin{itemize}
+    \item \textbf{Estado do Grafo (State):} Uma estrutura de dados compartilhada que armazena o histórico do pregão atual, os sinais gerados pelos analistas, o saldo em caixa e a decisão final.
+    \item \textbf{Nó Analista Técnico:} Este agente processa os indicadores quantitativos (Bandas de Bollinger e SMA) recuperados do banco de dados e emite uma recomendação inicial.
+    \item \textbf{Nó Gestor de Risco:} Atua como um filtro crítico, avaliando a volatilidade do ativo e o impacto da operação no patrimônio total, com autoridade para vetar decisões do analista.
+    \item \textbf{Nó Gestor de Portfólio:} Responsável por consolidar as análises e determinar o volume exato da operação, finalizando o estado do grafo para execução.
+\end{itemize}
+
+De forma simplificada, o estado decisório do sistema no instante \(t\) pode ser representado por:
+
+\begin{equation}
+S_t = (x_t, s_t, c_t, h_t)
+\end{equation}
+
+onde \(x_t\) representa o conjunto de indicadores e informações observáveis do ativo no instante \(t\), \(s_t\) representa os sinais e pareceres produzidos pelos agentes especializados, \(c_t\) representa o capital disponível em caixa e \(h_t\) representa a posição corrente da carteira. A saída final do comitê pode ser descrita por uma ação discreta
+\(a_t \in \{\text{comprar}, \text{vender}, \text{manter}\}\), acompanhada, quando aplicável, por um tamanho de posição \(w_t\), correspondente à fração de capital alocada na operação aprovada.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=9cm, keepaspectratio]{images/grafo-langgraph.png}
+    \caption{Arquitetura do grafo de decisão e interação entre agentes no LangGraph.}
+    \label{fig:grafo_agentes}
+\end{figure}
+
+\subsection{Fluxo de Consenso e Raciocínio}
+
+Diferentemente de sistemas baseados em regras simples, esta arquitetura permite o raciocínio encadeado (\textit{Chain of Thought}). Ao encontrar uma anomalia nos dados da PETR4, por exemplo, o Gestor de Risco pode solicitar uma reavaliação ao Analista, simulando o comportamento de uma mesa de operações real. Essa abordagem visa mitigar falhas de modelos puramente matemáticos por meio da supervisão qualitativa do LLM.
+
+\section{ENGENHARIA DE PROMPT E DEFINIÇÃO DAS PERSONAS}
+
+A eficácia de um sistema multiagente baseado em Large Language Models (LLMs) depende diretamente da qualidade da Engenharia de Prompt (\textit{Prompt Engineering}). Para o \textit{Hedge-fund-lab}, desenvolve-se uma estrutura rigorosa de instruções para garantir que cada agente assuma uma "persona" específica e limite sua análise aos dados numéricos fornecidos, mitigando o risco de alucinações.
+
+Mantêm-se os três agentes principais já apresentados na modelagem do grafo; a seguir, destacam-se as regras de instrução de cada um:
+
+\subsection{Agente Analista Técnico}
+\begin{itemize}
+    \item \textbf{Função:} Interpretar exclusivamente os indicadores matemáticos (Bandas de Bollinger, Médias Móveis Cruzadas, RSI e MACD).
+    \item \textbf{Diretriz do Prompt:} O agente é instruído a ignorar notícias externas e focar apenas no cruzamento de sinais. A resposta deve ser estritamente categórica (COMPRA, VENDA ou MANTER) acompanhada de uma justificativa baseada na distância do preço atual em relação à média móvel ou aos desvios das Bandas de Bollinger.
+\end{itemize}
+
+\subsection{Agente Gestor de Risco}
+\begin{itemize}
+    \item \textbf{Função:} Atuar como um mecanismo de freio, protegendo o capital do fundo contra a volatilidade excessiva.
+    \item \textbf{Diretriz do Prompt:} O agente recebe os sinais gerados pelo Analista Técnico e os cruza com métricas de risco, como o \textit{Maximum Drawdown} recente do ativo. Ele é instruído com limites rígidos (por exemplo, vetar qualquer operação de compra se a volatilidade do último mês exceder um teto predefinido), priorizando a preservação do caixa sobre o lucro potencial.
+\end{itemize}
+
+\subsection{Agente Gestor de Portfólio}
+\begin{itemize}
+    \item \textbf{Função:} Consolidar as visões técnicas e de risco e executar a decisão final.
+    \item \textbf{Diretriz do Prompt:} Este agente opera como o árbitro final no grafo de decisão do LangGraph. Ele recebe o "estado" completo (o bloco de notas da reunião), pondera a confiança expressa pelos agentes anteriores e decide o dimensionamento da posição (\textit{Position Sizing}), determinando não apenas a direção da ordem, mas a quantidade de capital a ser alocada.
+\end{itemize}
+
+\chapter{Considerações Parciais e Metodologia}
+\label{cha:resultados}
+
+\verify{Este capítulo delineia os procedimentos metodológicos que guiarão a fase prática da pesquisa (Projeto Final II), detalhando o planejamento experimental para a avaliação do sistema multiagente e o cronograma de atividades para a conclusão do trabalho.}
+
+Este capítulo apresenta os procedimentos metodológicos previstos para orientar a fase prática da pesquisa, correspondente ao Projeto Final II. São detalhados o planejamento experimental para avaliação do sistema multiagente, os critérios de comparação com benchmarks e o cronograma de atividades para a conclusão do trabalho.
+
+\section{METODOLOGIA}
+
+A presente pesquisa caracteriza-se como aplicada e de natureza quantitativa, adotando como método experimental a simulação retrospectiva (\textit{backtesting}). Com base na solução descrita no capítulo anterior, esta etapa concentra-se no protocolo metodológico de avaliação do Hedge-fund-lab sob condições simuladas do mercado real, de modo a comparar o desempenho do sistema com algoritmos tradicionais.
+
+\subsection{Divisão de Dados: Treino, Validação e Teste}
+Para assegurar o rigor metodológico e evitar o viés de \textit{data snooping} ou o vazamento de informações futuras, os dados históricos coletados serão separados cronologicamente. A divisão temporal abrangerá:
+\begin{enumerate}
+    \item \textbf{Período de Treino:} Usado para a extração inicial de estatísticas e estimativa de parâmetros dos benchmarks clássicos.
+    \item \textbf{Período de Validação:} Usado para o ajuste de hiperparâmetros (como tolerância de \textit{drawdown} e calibração de \textit{prompts} no LangGraph).
+    \item \textbf{Período de Teste (\textit{Out-of-Sample}):} Conjunto final e isolado, usado para avaliar o desempenho competitivo e a robustez da estratégia. É nesse conjunto que a deliberação do comitê de agentes via LangGraph operará exclusivamente, garantindo que as decisões reflitam um aprendizado condizente com a não estacionariedade do mercado.
+\end{enumerate}
+\verify{Se o volume de dados permitir, também poderá ser utilizado um procedimento \textit{walk-forward analysis}.}
+
+Caso o volume de dados e a estabilidade das séries temporais permitam, poderá ser adotado adicionalmente um procedimento de \textit{walk-forward analysis}, com o objetivo de aproximar a avaliação das condições de atualização sequencial observadas em aplicações financeiras reais.
+
+\subsection{Planejamento do Experimento e Avaliação}
+
+\verify{O experimento consistirá em submeter tanto as estratégias clássicas (Buy and Hold, Equal Weight, Bandas de Bollinger, \textit{SMA Cross}, e Mínima Variância) quanto o sistema multiagente (LangGraph) a um período histórico de dez anos de dados de mercado da B3, especificamente avaliando os ativos PETR4 (cenário de alta volatilidade) e WEGE3 (cenário de tendência).}
+
+\remarks{Os parâmetros experimentais dos benchmarks clássicos ainda precisam ser fixados antes da execução do TCC 2, incluindo as janelas do \textit{SMA Cross}, os parâmetros das Bandas de Bollinger, a convenção adotada para o Buy and Hold e a frequência de rebalanceamento do Equal Weight.}{definir esses parâmetros para garantir comparabilidade e replicabilidade do experimento}
+
+\verify{Para garantir uma comparação de desempenho altamente realista e aderente ao mercado financeiro, as seguintes restrições serão implementadas no ambiente de \textit{backtesting}:}
+
+\subsection{Planejamento do Experimento e Avaliação}
+
+O experimento submeterá tanto as estratégias clássicas (Buy and Hold, Equal Weight, Bandas de Bollinger, \textit{SMA Cross} e Mínima Variância) quanto o sistema multiagente (LangGraph) a dez anos de dados históricos da B3, avaliando os ativos PETR4 e WEGE3, selecionados por apresentarem perfis distintos de volatilidade e comportamento. Reconhece-se que a escolha de apenas dois ativos constitui uma limitação à validade externa do experimento; portanto, os resultados obtidos devem ser interpretados como evidências preliminares, e não como conclusões generalizáveis sobre o mercado brasileiro como um todo.
+
+Os parâmetros experimentais dos benchmarks clássicos foram fixados conforme os seguintes valores: \textit{SMA Cross} com janelas 50 e 200 períodos, Bandas de Bollinger com desvio-padrão \(k = 2\), Buy and Hold adotando a convenção de compra no primeiro pregão e manutenção da posição até o final do período, e rebalanceamento trimestral do Equal Weight.
+
+Para assegurar uma comparação de desempenho aderente às condições do mercado financeiro, as seguintes restrições serão consideradas no ambiente de \textit{backtesting}:
+
+\begin{itemize}
+    \item \textbf{Custos de Transação e Turnover:} Os custos operacionais (corretagem, emolumentos e \textit{spread}) serão embutidos no modelo. O custo será aplicado rigorosamente a cada alteração nos pesos da carteira, de forma a penalizar abordagens que apresentem \textit{turnover} excessivo na negociação.
+\end{itemize}
+
+Para formalizar essa avaliação, o \textit{turnover} da carteira no instante \(t\) será definido por:
+
+\begin{equation}
+\textit{turnover}_t = \sum_{i=1}^{N} |w_{i,t} - w_{i,t-1}|
+\end{equation}
+
+onde \(w_{i,t}\) representa o peso do ativo \(i\) na carteira no instante \(t\), e \(N\) representa o número de ativos elegíveis no universo considerado. A inclusão de custos de transação será refletida no retorno líquido da estratégia, definido por:
+
+\begin{equation}
+R^{liq}_t = R^{bruto}_t - c \cdot \textit{turnover}_t
+\end{equation}
+
+em que \(R^{bruto}_t\) representa o retorno bruto da carteira no instante \(t\), \(c\) representa o custo unitário de transação adotado no experimento, e \(\textit{turnover}_t\) representa a intensidade de rebalanceamento no período. O desempenho da carteira simulada não será medido apenas pelo lucro absoluto. O critério principal de comparação entre o sistema multiagente e os benchmarks será o Sharpe Ratio líquido, por sintetizar a relação entre retorno excedente e volatilidade após a incorporação dos custos operacionais. Como critérios complementares, serão observados o Sortino Ratio, o \textit{Maximum Drawdown} e o \textit{turnover}, de modo a avaliar simultaneamente eficiência, risco de queda e intensidade de negociação. Assim, a etapa de avaliação buscará verificar se o comitê de agentes retém desempenho competitivo após custos operacionais frente aos algoritmos clássicos estáticos.
+
+No TCC 2, a apresentação dos resultados deverá ser organizada de forma a distinguir descrição e interpretação. A estrutura mínima planejada para essa seção compreende: uma tabela principal com as métricas de comparação por estratégia (Sharpe Ratio líquido, Sortino Ratio, \textit{Maximum Drawdown} e \textit{turnover}); um gráfico de evolução patrimonial líquida para o sistema multiagente e os principais benchmarks; e, quando pertinente, um gráfico de \textit{drawdown} para apoiar a análise de robustez. A discussão deverá interpretar esses resultados à luz da pergunta de pesquisa e das hipóteses formuladas, evitando limitar-se à recapitulação de tabelas ou figuras.
+
+\subsection{Considerações Parciais}
+
+\verify{Até a presente fase (Projeto Final I), o projeto alcança um nível de maturidade suficiente para orientar a etapa seguinte de desenvolvimento. No estado atual, já se encontram definidos o problema de pesquisa, o enquadramento metodológico do laboratório, a arquitetura do pipeline de dados, a organização do sistema multiagente e os critérios principais que deverão conduzir a avaliação experimental. Como planejamento para o TCC 2, permanecem como frentes centrais a implementação dos artefatos computacionais, a definição final dos parâmetros experimentais pendentes, a execução do protocolo de backtesting e a sistematização da análise empírica em texto, tabelas e gráficos.}
+
+\subsection{Considerações Parciais}
+
+Nesta fase, o projeto apresenta um nível de maturidade adequado para orientar a etapa experimental. Encontram-se definidos o problema de pesquisa, o enquadramento metodológico do laboratório, a arquitetura do pipeline de dados, a organização do sistema multiagente, os parâmetros experimentais e os critérios de avaliação. Como próximas etapas, permanecem a implementação dos artefatos computacionais, a execução do protocolo de backtesting e a sistematização da análise empírica.
+
+\subsection{Cronograma de Atividades}
+
+Para a condução da segunda fase do projeto (Elaboração e Construção de Projeto Final), estabelece-se o seguinte cronograma estratégico, distribuído entre agosto e janeiro:
+
+\begin{table}[!ht]
+\centering
+\caption{Cronograma estratégico do projeto para o TCC 2}
+\label{tab:cronograma_detalhado}
+\scriptsize{
+\begin{tabular}{l c c c c c c}
+\toprule
+\multirow{2}{*}{Atividade} & \multicolumn{6}{c}{Meses} \\
+& ago & set & out & nov & dez & jan \\
+\midrule
+Definição final dos parâmetros experimentais e dos benchmarks & X & X & & & & \\
+Implementação do pipeline ETL e validação da base histórica & X & X & & & & \\
+Desenvolvimento da arquitetura multiagente e integração no LangGraph & & X & X & & & \\
+Calibração de prompts e ajustes no período de validação & & & X & X & & \\
+Execução do backtesting e coleta das métricas principais & & & & X & X & \\
+Análise dos resultados, escrita final e preparação da defesa & & & & & X & X \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\backmatter
+
+\referencepage % Comando do molde para renderizar o arquivo "references.bib"
+
+\end{document}

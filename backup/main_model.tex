@@ -1,0 +1,421 @@
+\documentclass{eic-bcc-tcc}
+
+%-----------------------------------------------
+% Metadados do Trabalho
+%-----------------------------------------------
+\title{Título do Trabalho de Conclusão de Curso sem Abreviações: Subtítulo se Houver}
+\titleen{Title of the Final Course Work without Abbreviations: Subtitle if Any}
+
+
+% Nome completo do/da(s) autor(es)
+% \addstudent[Full Name]{Nome Completo}
+% O comando recebe um parâmetro opcional para a formatação dos nomes em inglÊs
+\addstudent[First Full Name]{Primeiro Nome Completo}
+\addstudent[Second Full Name]{Segundo Nome Completo}
+\addstudent[Third Full Name]{Terceiro Nome Completo}
+
+
+% Nomes do/a(s) orientador/a(s) e participantes da banca. Nos exemplos abaixo, utiliza-se após o nome a titulação correspondente. Caso a titulação não seja D.Sc., utilizar a adequada (p.ex., Dr. Ing., M.Sc., Esp., entre outras)
+% Os comandos \advisor e \coadvisor possuem um parâmetro opcional m/f para alterar o texto para orientador ou orientadora
+\advisor[f]{Nome do(a) Orientador(a), D.Sc.\footnotemark[1]} 
+\coadvisor{Nome do(a) Coorientador(a), D.Sc.\footnotemark[1]}
+
+
+% Membros da Banca para folha de aprovação
+\addboardmember{Membro Interno}{Nome Membro Interno, D.Sc.\footnotemark[1]}
+\addboardmember{Membro Externo}{Nome Membro Externo, D.Sc.\footnotemark[1] \footnotetext[1]{Caso a titulação não seja D.Sc., utilizar a adequada (p.ex., Dr. Ing., M.Sc., Esp., entre outras)}}
+
+% Ano da defesa
+\date{2025}
+
+\newcommand{\warn}[1]{{\color{red} {#1}}}
+\newcommand{\verify}[1]{{\color{blue} {#1}}}
+\newcommand{\remarks}[2]{{\color{red} #1\ (\textit{#2})}}
+
+
+%-----------------------------------------------
+% Abreviações
+%-----------------------------------------------
+% \newacronym{label}{sigla}{descrição} - Define um novo acrônimo
+\newacronym{cefet}{Cefet/RJ}{Centro Federal de Educação Tecnológica Celso Suckow da Fonseca}
+\newacronym{tcc}{TCC}{Trabalho de Conlusão de Curso}
+\newacronym{abnt}{ABNT}{Associação Brasileira de Normas Técnicas}
+\newacronym{ia}{IA}{Inteligência Artificial}
+
+\begin{document}
+
+%-----------------------------------------------
+% Elementos pré-textuais
+%-----------------------------------------------
+\maketitle
+
+\begin{dedicatoria}
+A dedicatória é composta de um texto curto onde o autor dedica o trabalho a alguém, como forma de homenagem ou reverência. Esse é um elemento facultativo do TCC.
+\end{dedicatoria}
+
+
+\begin{agradecimentos}
+Os agradecimentos contêm a relação de pessoas que contribuíram para o sucesso do TCC.
+Trata-se, então, de espaço para identificar e reconhecer essa contribuição, na forma de agradecimento e homenagem.
+
+Esse é um elemento facultativo do TCC; porém, se houver algum apoio financeiro para o desenvolvimento do projeto, como bolsa de iniciação científica ou bolsa de financiamento do projeto, o agradecimento passa a ser obrigatório, devendo-se, minimamente, agradecer ao apoio financeiro obtido.
+\end{agradecimentos}
+
+
+% Cria a folha de aprovação. Adicione um arquivo termo.pdf com as assinaturas da baca para substituir o termo gerado.
+\makeapproval
+
+
+\begin{resumo}
+Elemento obrigatório, constituído de uma sequência de frases concisas e objetivas, fornecendo uma visão rápida e clara do conteúdo do estudo. O texto deverá conter no máximo 500 palavras e ser antecedido pela referência do estudo, além de não conter citações. O resumo deve ser redigido em parágrafo único.
+Um bom resumo apresenta os itens 
+\textbf{Contextualização:} descreve o contexto do trabalho sendo apresentado; 
+\textbf{Gap:} apresenta o que não está coberto pela literatura; 
+\textbf{Objetivo:} indicando o propósito do trabalho; 
+\textbf{Metodologia:} como o trabalho pretende alcançar o objetivo; e 
+\textbf{Resultados:} resumo dos principais resultados para estimular a leitura do trabalho, seguido das principais conclusões.
+Abaixo do resumo, apresentamos as palavras-chave que identificam o trabalho, permitindo uma classificação de indexação para facilitar sua localização por mecanismos de pesquisa apropriados. Utilizamos como palavras-chave as mais representativas do conteúdo do trabalho. Deve-se designar de três a cinco palavras-chaves, separadas entre si por ponto e finalizadas também por ponto.
+
+\palavraschave{Palavra-chave 1. Palavra-chave 2. Palavra-chave 3. Palavra-chave 4. Palavra-chave 5.}
+\end{resumo}
+
+
+\begin{abstract}
+Mandatory element, consting of a sequence of concise and objective sentences, providing a quick and clear overview of the study's content. The text must contain a maximum of 500 words and be preceded by the study's reference. It should not include citations and must be written as a single paragraph.
+A good abstract presents the following elements:
+\textbf{Contextualization:} describes the context of the study being presented;
+\textbf{Gap:} indicates what is not yet covered in the literature;
+\textbf{Objective:} states the purpose of the study; 
+\textbf{Methodology:} explains how the study intends to achieve its objective; and
+\textbf{Results:} summarizes the main findings to encourage reading of the full work, followed by the main conclusions.
+Below the abstract, keywords are provided to identify the study, allowing for indexing classification and facilitating its retrieval through appropriate search mechanisms. The most representative words related to the content of the work should be used. Three to five keywords must be provided, separated by periods and ending with a period as well.
+
+\keywords{Keyword 1. Keyword 2. Keyword 3. Keyword 4. Keyword 5.}
+\end{abstract}
+
+% Lista de Figuras
+\listoffigurespage
+
+% Lista de Tabelas
+\listoftablespage
+
+% Lista de acrônimos
+\listofacronymspage
+
+% Sumário
+\tableofcontentspage
+
+% --- ELEMENTOS TEXTUAIS ---
+\mainmatter
+
+
+\chapter{Escrita de um TCC}
+
+\section{Forma de Escrita}
+
+A forma de escrita varia de acordo com o estilo do(s) orientador(es) e do(s) discente(s), mas existem alguns aspectos que devem ser atentados. Em textos científicos, as frases devem ser curtas, para não gerar ambiguidade. Pode-se dizer, genericamente, que um parágrafo é constituído por pelo menos três frases. Adicionalmente, cada parágrafo tem uma única ideia central, \textit{i.e.}, uma frase curta que sumariza o parágrafo.
+
+O texto de um TCC como um todo precisa estar coeso. Para tanto, é necessário que haja o encadeamento dos seus parágrafos. A conexão dos parágrafos é feita a partir da concatenação de suas ideias centrais. Desta forma, a ideia central de cada parágrafo leva à ideia central do próximo e assim por diante.
+
+Para facilitar o entendimento, tente analisar as ideias centrais dos dois primeiros parágrafos desta seção. A do primeiro pode ser entendida como ``Cada parágrafo tem uma ideia central e contém, no mínimo, três frases curtas''. A ideia central do segundo parágrafo diz que ``O encadeamento de um TCC é feito a partir do encadeamento de suas ideias centrais''. Observe que a ideia central do primeiro conduz à ideia central do segundo, estabelecendo uma relação de dependência. Este tipo de organização deve estar presente ao longo do texto todo.
+
+\section{Estrutura Básica de um TCC}
+
+Um \gls{tcc} é constituído pelos artefatos computacionais produzidos, e principalmente por este documento (monografia). A estrutura básica deste documento é flexível, mas deve conter, no mínimo, os seguintes capítulos: 1 – Introdução, 2 - Fundamentação Teórica\footnote{O nome da seção pode ser alterado para ficar mais condizente com o trabalho}, 3 - Desenvolvimento\footnote{O nome da seção pode ser alterado para o nome principal do artefato}, 4 - Avaliação Experimental, 5 – Conclusão (ou Considerações Finais), e Referências.
+
+Estes itens são mais bem descritos em cada capítulo, mas em linhas gerais, a Introdução (Capítulo~\ref{cha:introducao}) é constituída pela motivação, definição do problema, objetivos e organização do trabalho. Já a fundamentação teórica (Capítulo~\ref{cha:fundamentacao}) consiste em apresentar os principais conceitos. Os trabalhos relacionados (Capítulo~\ref{cha:relacionados}) apresenta os principais trabalhos relacionados, por meio de um mapa sistemático, que compreendem o domínio do problema envolvido na solução. O método (Capítulo~\ref{cha:metodo}) descreve o percurso técnico e científico adotado no trabalho. Os resultados (Capítulo~\ref{cha:resultados}) apresentam a avaliação qualitativa e/ou quantitativa da proposta. Finalmente, a conclusão (Capítulo~\ref{cha:conclusao}) apresenta uma sumarização dos principais resultados do trabalho, limitações e trabalhos futuros.
+
+Cada capítulo pode ser subdividido em seções. Os comandos \texttt{section}, \texttt{subsection}, \texttt{subsubsection} e \texttt{paragraph} criam essa estrutura conforme necessário. Abaixo são apresentados exemplos dos comandos. Repare como essas seções são apresentadas no sumário.
+
+\section{O TÍTULO DE UMA SEÇÃO SECUNDÁRIA} % Deve estar todo em maiúsculo
+\label{sec:nome} % permite a referência para essa seção
+Texto da seção secundária
+
+\subsection{O Título de uma Seção Terciária} % Deve estar com a primeira letra das palavras em maiúsculo
+\label{sub:nome} % permite a referência para essa seção
+Texto da seção terciária
+
+\subsubsection{O título de uma seção quaternária} % Deve estar com apenas a primeira letra em maiúsculo
+\label{ssub:nome} % permite a referência para essa seção
+Texto da seção quaternária
+
+\paragraph{O título de uma seção quinária} % Deve estar com apenas a primeira letra em maiúsculo
+\label{par:nome} % permite a referência para essa seção
+Texto da seção quinária
+
+
+\section{Elementos pré-textuais}
+Os elementos pré-textuais definem as informações iniciais do texto, como capa, contra-capa, ficha catalográfica, dedicatória, agradecimentos, termo de aprovação, resumo, \textit{abstract}, as listas de figuras, tabelas, acrônimos e sumário.
+
+\subsection{Lista de Figuras}
+
+Lista as figuras apresentadas ao longo do \gls{tcc}. Para incluir uma figura, utiliza-se o ambiente \verb|figure|, cujo resultado é apresentado na Figura~\ref{fig:exemplo}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{figuras/figure.png}
+    \caption{Exemplo de figura}
+    \label{fig:exemplo}
+\end{figure}
+
+A Figura~\ref{fig:exemplo} é gerada pelo comando a seguir:
+
+\begin{verbatim}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figuras/figure.png}
+    \caption{Exemplo de figura}
+    \label{fig:exemplo}
+\end{figure}
+\end{verbatim}
+
+Para mais informações sobre como incluir figuras no TCC, recomenda-se a leitura da referência \url{https://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions}.
+
+
+\subsection{Lista de Tabelas}
+
+Lista as tabelas apresentadas ao longo do \gls{tcc}. Para incluir uma tabela, utiliza-se o ambiente \verb|table|, conforme o exemplo abaixo.
+
+\begin{verbatim}
+\begin{table}[h]
+    \centering
+    \caption{Exemplo de Tabela}
+    \label{tab:exemplo}
+    \begin{tabular}{c|c}
+        \hline
+        \textbf{Coluna 1} & \textbf{Coluna 2} \\
+        \hline
+        célula 1 & célula 2 \\
+        célula 3 & célula 4 \\
+        \hline
+    \end{tabular}
+\end{table}
+\end{verbatim}
+
+O resultado do comando acima é apresentado na Tabela~\ref{tab:exemplo}.
+
+\begin{table}[h]
+    \centering
+    \caption{Exemplo de Tabela}
+    \label{tab:exemplo}
+    \begin{tabular}{c|c}
+        \hline
+        \textbf{Coluna 1} & \textbf{Coluna 2} \\
+        \hline
+        célula 1 & célula 2 \\
+        célula 3 & célula 4 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Para mais informações sobre como incluir tabelas no TCC, recomenda-se a leitura da página \url{https://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions}
+
+
+\subsection{Lista de Acrônimos}
+
+A lista de acrônimos organiza uma relação das abreviaturas e siglas com os seus respectivos significados, por ordem alfabética (exemplo: \textbf{TCC} Trabalho de Conclusão de Curso). No texto do trabalho, o acrônimo deve estar entre parênteses, logo após a primeira apresentação de seu significado. Nas próximas ocorrências de texto que mencionam o significado do acrônimo, tiramos o significado e usamos apenas o acrônimo, conforme abaixo:
+\begin{itemize}
+    \item apresentação do acrônimo em sua primeira utilização do texto: ``... \acrfull{tcc} ...'';
+    \item utilização do acrônimo no restante do texto: ``... um \acrshort{tcc} deve ...''.
+\end{itemize}
+
+Os comandos \texttt{gls}, \texttt{glspl}, \texttt{acrshort}, \texttt{acrlong} e \texttt{acrfull} podem ser utilizados para controlar a apresentação de acrônimos. O comando \verb|\gls{label}| usa o acrônimo de forma inteligente, abrindo apenas a primeira utilização no texto. O comando \verb|\glspl{label}| funciona igual ao comando anterior, mas apresenta a forma no plural. Por exemplo, \verb|\glspl{tcc}| apresenta \glspl{tcc}. O comando \verb|\acrshort{label}| força a apresentação da forma abreviada. Por exemplo, \verb|\acrshort{tcc}| apresenta \acrshort{tcc}. O comando \verb|\acrlong{label}| obriga a apresentação da forma extensa. Por exemplo, \verb|\acrlong{tcc}| apresenta \acrlong{tcc}. O comando \verb|\acrfull{label}| direciona a apresentação da forma completa. Por exemplo, \verb|\acrfull{tcc}| apresenta \acrfull{tcc}.
+
+
+\section{Referências}
+
+As referências devem conter a identificação dos trabalhos e pesquisas citados (referenciados) ao longo do trabalho, conforme as normas de formatação adotadas pelo template provido pelo Data Analytics Lab.
+
+O uso de referências ao longo do texto é feito utilizando os comandos do pacote \texttt{natbib}. A chave utilizada para citação deve estar cadastrada no arquivo \texttt{references.bib} para correto funcionamento. Sendo assim, o comando \verb|\citep{livro}| cita a referência de um livro produzindo \citep{livro}, enquanto o comando \verb|\citep{artigo}| cita a referência de um artigo produzindo \citep{artigo}.
+
+É possível citar mais de uma referência de uma só vez.
+
+\begin{quote}
+\verb|\citep{livro,artigo}| produz \citep{livro,artigo}.
+\end{quote}
+
+Já o comando \verb|\citet{artigo}| produz \citet{artigo} para referências diretas.
+
+As informações das referências devem ser cadastradas no arquivo \texttt{references.bib}. Como exemplo, o arquivo traz uma referência para um artigo e para um livro, conforme o exemplo abaixo:
+\begin{verbatim}
+@book{livro,
+    author = {Autor, A. and Autor, B.},
+    title = {Título do Livro},
+    publisher = {Editora},
+    year = {2023},
+    address = {Cidade}
+}
+
+@article{artigo,
+    author = {Autor, C. and Autor, D.},
+    title = {Título do Artigo},
+    journal = {Nome do Periódico},
+    volume = {10},
+    number = {2},
+    pages = {100-120},
+    year = {2024}
+}
+\end{verbatim}
+
+Para informações adicionais sobre como cadastrar outros tipos de referências, recomenda-se a leitura complementar \url{https://en.wikibooks.org/wiki/LaTeX/Bibliography_Management#Standard_templates}.
+
+
+\section{Apêndices}
+
+Os apêndices compõem os elementos pós-textuais do \gls{tcc} e são formados por todos os materiais complementares que possibilitem uma melhor compreensão do \gls{tcc}. Podemos colocar como apêndices o manual de usuário, as listagens de programas e as estatísticas do estudo realizado, dentre outros conteúdos.
+
+\section{Anexos}
+
+Os anexos, assim como os apêndices. são elementos pós-textuais do \gls{tcc} que conspiram de forma complementar na enriquecimento da compreensão semântica do \gls{tcc}.
+
+A diferenciação entre apêndices e anexos reside na natureza da autoria de produção: quando o material suplementar for produzido pelo autor do \gls{tcc}, classificamo-no como apêndice. Caso contrário, trata-se de anexo.
+
+
+\chapter{Introdução}
+\label{cha:introducao}
+
+Assim como o resumo de um trabalho pode ser entendido como uma vitrine do \gls{tcc}, a introdução pode ser comparada à sala de estar da monografia. A partir dela, o leitor deve decidir se o seu projeto final é interessante e se ele vai se dedicar à leitura do restante do seu trabalho. Desta forma, a escrita da introdução é fundamental, devendo se apresentar de modo bem encadeado.
+
+Em linhas gerais, todo parágrafo que não contenha citação é entendido como de autoria dos discentes. Trechos transcritos sem referência configuram plágio. Todas as obras citadas devem aparecer na lista de referências. A escrita da introdução não deve usar subtítulos. A presença dos elementos estruturais deve ocorrer pelo encadeamento textual.
+
+Os elementos que compõem a introdução são: \emph{motivação}, \emph{definição do problema}, \emph{hipótese}, \emph{objetivos}, \emph{contribuições} e \emph{estrutura do texto}. A ordem desses elementos pode variar, desde que o raciocínio seja claro. Cada parágrafo deve conter uma ideia central, levando à formulação progressiva do problema.
+
+A \emph{motivação} estabelece a relevância do tema. Ela pode partir de um problema prático, de uma lacuna tecnológica, de um desafio metodológico ou de uma oportunidade de contribuição científica. O ponto central é explicar por que o tema merece ser estudado e por que sua investigação é pertinente no contexto do curso e da área.
+
+A \emph{definição do problema} consiste na apresentação clara e objetiva da situação a ser investigada, com base na motivação previamente apresentada. O problema deve ser cientificamente investigável, limitado em escopo e compatível com os recursos disponíveis. Uma boa definição de problema não é apenas um tema amplo, mas uma situação concreta a ser compreendida, resolvida, modelada ou avaliada.
+
+A \emph{hipótese} é a suposição que guiará a investigação e será analisada à luz dos métodos adotados. Ela deve estar diretamente relacionada ao problema e ser apresentada apenas quando fizer sentido para a natureza do trabalho.
+
+Os \emph{objetivos} são as metas do trabalho. O objetivo geral apresenta a intenção principal do \gls{tcc}. Os objetivos específicos detalham as etapas necessárias para atingir essa meta, explicitando o caminho de desenvolvimento, avaliação e análise da proposta.
+
+As \emph{contribuições} esperadas decorrem do atendimento dos objetivos. Elas devem ser descritas de modo concreto, indicando o que o trabalho agrega em termos de conhecimento, artefato, avaliação ou aplicabilidade.
+
+Por fim, a \emph{estrutura do trabalho} deve ser apresentada no último parágrafo da introdução. Esse parágrafo descreve o conteúdo dos capítulos seguintes. Um exemplo de organização é: o Capítulo~\ref{cha:fundamentacao} apresenta a fundamentação teórica; o Capítulo~\ref{cha:relacionados} descreve os trabalhos relacionados; o Capítulo~\ref{cha:metodo} detalha o método adotado; o Capítulo~\ref{cha:resultados} apresenta e discute os resultados; e o Capítulo~\ref{cha:conclusao} encerra o trabalho com as conclusões e os trabalhos futuros.
+
+Todos esses elementos devem estar articulados de forma clara. A qualidade deste capítulo determina a compreensão do problema, a consistência do raciocínio e o alinhamento das seções subsequentes.
+
+
+\chapter{Fundamentação Teórica}
+\label{cha:fundamentacao}
+
+A fundamentação teórica apresenta os principais conceitos relacionados ao domínio do problema. O objetivo deste capítulo não é apresentar um conhecimento novo, mas sim caracterizar o domínio do problema, apresentando os principais conceitos que viabilizem o desenvolvimento de uma solução. Pode ser entendida como a explanação de conceitos teóricos computacionais e científicos utilizados no desenvolvimento do trabalho.
+
+Este capítulo pode ter várias subseções, uma para cada diferente tema abordado. Por exemplo, se o objetivo do projeto final abordar a implementação de um jogo computacional de competição em ferramentas de redes sociais, pode-se ter uma subseção tratando os jogos computacionais e seus aspectos e, posteriormente, uma outra subseção tratando de redes sociais. Esta organização deve ser bem definida entre o(s) aluno(s) e o(s) professor(es) orientador(es), mas o principio básico do bom encadeamento deve ser preservado.
+
+Os conceitos apresentados devem ser organizados de forma hierárquica e progressiva, com clareza terminológica e profundidade compatível com o escopo do trabalho. Cada parágrafo deve tratar de um conceito ou grupo de conceitos relacionados, sempre com referências científicas confiáveis e atualizadas. Trechos de definição ou exposição de ideias sem referência explícita serão entendidos como opinião dos autores e precisam ser justificados ou retirados.
+
+A fundamentação também deve explicitar a articulação entre os conceitos discutidos e a proposta do trabalho. Para isso, pode-se utilizar parágrafos de síntese ou transição, relacionando a base teórica ao problema definido e justificando a escolha da abordagem adotada.
+
+\textbf{Figuras, tabelas e equações}: Esses elementos fazem parte do conteúdo analítico do trabalho e devem ser inseridos apenas quando contribuem diretamente para a compreensão de um conceito, modelo, experimento ou resultado. Todas devem ser numeradas, conter legendas descritivas e ser referenciadas no corpo do texto. Sempre que possível, um parágrafo explicativo deve acompanhar o elemento visual, contextualizando sua função no argumento apresentado.
+
+\textbf{Boas práticas}:
+\begin{itemize}
+    \item Não repetir no texto o que já está evidente na tabela ou figura; é preferível interpretar e relacionar.
+    \item Evitar excesso de equações sem propósito analítico claro.
+    \item Usar o ambiente \texttt{equation} apenas para fórmulas que serão referenciadas no texto.
+    \item Em tabelas, evitar formatação decorativa desnecessária.
+    \item Nas figuras, indicar a fonte quando elas não forem de autoria própria.
+\end{itemize}
+
+\textit{\textbf{Dica:} Pense na fundamentação teórica como o que um leitor sem conhecimento da área precisa saber para entender seu trabalho. Limite-se exclusivamente aos temas utilizados em seu trabalho.}
+
+
+\chapter{Trabalhos Relacionados}
+\label{cha:relacionados}
+
+Este capítulo demonstra o estado da arte do tema alvo do projeto. Descrevemos, de forma resumida, os trabalhos e pesquisas já efetuados na área do tema do \gls{tcc}, indicando os estudos realizados e os resultados obtidos por seus autores.
+
+Podemos resumir este capítulo como aquele que apresenta trabalhos que realizam estudos semelhantes ao seu. Em alguns casos, pode não ser possível identificar soluções similares à sua. Nesse caso, é preciso refinar a busca para um contexto mais próximo, apesar de não exatamente igual.
+
+Mais do que descrever, este capítulo deve comparar e posicionar a proposta do \gls{tcc} frente à produção existente. A seleção dos trabalhos revisados deve seguir critérios claros, como recorte temporal, recorte temático ou recorte metodológico. Sempre que possível, convém indicar as bases de dados utilizadas na busca e as palavras-chave empregadas.
+
+Espera-se que o texto destaque pontos fortes, limitações e lacunas dos trabalhos analisados, estabelecendo um espaço claro para a contribuição do trabalho corrente. A revisão deve ser escrita em linguagem analítica, evitando compilações descritivas ou simples enumerações de resultados.
+
+Abaixo, é apresentada uma sugestão de estrutura para o capítulo de trabalhos relacionados:
+\begin{itemize}
+    \item Apresentação dos tipos de trabalhos considerados como relacionados, ou seja, o que um estudo disponível na literatura precisa apresentar para ser considerado um trabalho relacionado.
+    
+    \item Apresentação de uma estrutura de busca sistemática, contendo minimamente uma (ou mais, se necessário) \textit{String(s)} de busca usada(s) para encontrar os trabalhos relacionados, a(s) base(s) de dados de periódicos em foi(foram) feita(s) a(s) busca(s), os critérios de inclusão e exclusão de resultados e, por fim, os parâmetros para priorização de relevância dos trabalhos eleitos. Recomenda-se, na área de Computação, o uso da base Scopus\footnote{\url{https://www.scopus.com}} como fonte primária de consulta - o que não descarta a utilização de outras bases de dados de periódicos, em função da natureza e necessidades do tema do projeto.
+    
+    \item Apresentação dos trabalhos. Pode ser em uma das opções abaixo:
+    \begin{itemize}
+        \item Quando se tem poucos trabalhos, apresenta-se um parágrafo para cada artigo, resumindo suas principais características e resultados obtidos.
+        \item Na hipótese de ocorrência de muitos trabalhos, pode-se agrupar os que tem características comuns em um parágrafo e apresentá-los resumindo as principais características.
+    \end{itemize}
+    
+    \item Apresentação de uma comparação entre o trabalho corrente e os relacionados, considerando as principais características. Uma tabela comparativa ajuda muito nessa comparação.
+\end{itemize}
+
+\textbf{Nota metodológica}: A revisão de literatura deve ser sistemática e seletiva. A análise dos trabalhos deve ir além da descrição, incluindo comparação entre abordagens, posicionamento frente à proposta e identificação de lacunas. A ausência de revisão crítica compromete a fundamentação da proposta e é um dos erros mais comuns em TCCs.
+
+\textit{\textbf{Dica:} Reflita sobre quais são as principais características a serem usadas para comparação antes de escrever sobre os trabalhos. Idealmente, faça isso na etapa de busca.}
+
+
+\chapter{Método}
+\label{cha:metodo}
+
+O capítulo de Método descreve o percurso técnico e científico adotado para alcançar os objetivos do trabalho. Deve apresentar, com clareza e em ordem lógica, o processo utilizado para desenvolver a solução proposta, os critérios de avaliação aplicados e os recursos utilizados. Esse capítulo é fundamental para garantir a reprodutibilidade do estudo e a credibilidade das conclusões.
+
+Espera-se que o capítulo explicite os seguintes aspectos:
+\begin{itemize}
+    \item a natureza e a origem do objeto de estudo, como conjunto de dados, população-alvo, plataforma utilizada ou contexto de aplicação;
+    \item o ambiente computacional, as linguagens, ferramentas, bibliotecas e demais recursos empregados;
+    \item o modelo, a arquitetura ou a estratégia de construção da solução proposta;
+    \item as etapas metodológicas adotadas, como levantamento de requisitos, modelagem, implementação, prototipagem e testes;
+    \item os procedimentos de avaliação, incluindo métricas, instrumentos, critérios de análise e ameaças à validade;
+    \item as limitações reconhecidas e as justificativas das principais escolhas técnicas.
+\end{itemize}
+
+Cada uma dessas dimensões deve ser descrita de forma objetiva, evitando enumerações genéricas e preferindo descrições fundamentadas na literatura e no problema definido. Ao longo do capítulo, é recomendável explicitar as decisões de projeto, as alternativas consideradas e os motivos que levaram à solução adotada.
+
+Quando pertinente, o método pode incluir diagramas, algoritmos, tabelas e outros artefatos técnicos. Nesses casos, cada elemento apresentado deve ser explicado no texto, de modo que o leitor compreenda sua função na solução proposta e sua relação com os objetivos do trabalho.
+
+\textbf{Nota metodológica}: A descrição do método deve ser suficientemente clara para permitir a replicação do estudo. O foco não é listar tecnologias ou etapas de forma superficial, mas construir uma explicação técnica consistente do caminho adotado.
+
+
+\chapter{Resultados}
+\label{cha:resultados}
+
+Este capítulo tem como finalidade apresentar os resultados obtidos a partir da aplicação do método proposto e analisá-los criticamente à luz da fundamentação teórica e dos trabalhos relacionados. A apresentação dos resultados deve ser clara, objetiva e bem estruturada, com apoio em figuras, tabelas, gráficos e outros elementos que contribuam para a compreensão do desempenho da solução desenvolvida.
+
+Os resultados devem ser organizados em blocos coerentes, respeitando o encadeamento entre os objetivos do trabalho e as perguntas que os dados respondem. A cada apresentação de dado, deve seguir-se uma interpretação: o que ele significa, como se relaciona com os objetivos, com a hipótese formulada e com os resultados encontrados em outros estudos.
+
+Quando aplicável, convém tratar os dados estatisticamente, mesmo que de forma descritiva, por meio de medidas como média, mediana, desvio padrão, proporção e frequência. A discussão deve considerar limitações dos dados, possíveis vieses e o que os achados indicam sobre a validade, a aplicabilidade e a generalização da proposta.
+
+\textbf{Nota metodológica}: Resultados sem discussão perdem valor analítico; discussão sem dados compromete a objetividade científica. O capítulo deve apresentar os achados de modo honesto, sem omitir resultados que contrariem expectativas iniciais.
+
+
+\chapter{Conclusão}
+\label{cha:conclusao}
+
+O capítulo de Conclusão encerra o trabalho, retomando os principais objetivos propostos e os resultados alcançados com base em uma síntese argumentativa que evidencie as contribuições efetivas do estudo. Não se trata de repetir o que já foi dito, mas de reorganizar os achados à luz da proposta inicial, indicando se os objetivos foram cumpridos, quais foram as descobertas relevantes e quais limitações foram enfrentadas.
+
+A conclusão deve contemplar a retomada do objetivo geral e dos objetivos específicos, a síntese dos principais resultados obtidos, a avaliação crítica do que foi alcançado e do que permaneceu em aberto, a identificação das limitações do estudo e a indicação fundamentada de trabalhos futuros.
+
+Conclusões bem escritas apresentam juízo crítico sem exageros e permanecem conectadas ao corpo do texto. Recomenda-se evitar a introdução de novos dados ou referências nessa etapa. O foco deve estar em consolidar o que foi demonstrado, indicar limitações e apontar desdobramentos plausíveis para pesquisas futuras.
+
+\textbf{Nota metodológica}: Conclusões bem escritas apresentam juízo crítico sem exageros e permanecem conectadas ao corpo do texto. Recomenda-se evitar a introdução de novos dados ou referências nessa etapa. O foco deve estar em consolidar o que foi demonstrado, indicar limitações e apontar desdobramentos plausíveis para trabalhos futuros.
+
+
+
+
+% --- ELEMENTOS PÓS-TEXTUAIS ---
+\backmatter
+
+% % Referências
+\referencepage
+
+% % Apêndices
+\appendix
+\chapter{Título do Apêndice}
+Conteúdo do apêndice...
+
+\chapter{Título do Apêndice}
+Conteúdo do apêndice...
+
+% % Anexos
+\anexos
+\chapter{Título do Anexo}
+Conteúdo do anexo...
+
+\end{document}

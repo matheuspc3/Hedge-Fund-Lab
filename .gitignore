@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# Environment variables
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data cache
+data/raw/
+
+# Dashboard data (generated)
+dashboard/data.json

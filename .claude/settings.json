@@ -1,0 +1,15 @@
+{
+  "allow": {
+    "Bash": [
+      "pytest",
+      "pytest --cov=src",
+      "python -m src.prototype.fetch_data",
+      "docker compose up -d"
+    ],
+    "glob": true,
+    "grep": true,
+    "read": true,
+    "write": true,
+    "edit": true
+  }
+}

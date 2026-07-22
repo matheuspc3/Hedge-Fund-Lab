@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hedge-fund-lab · Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <!-- ─── Header ─── -->
+    <header class="header">
+        <div>
+            <h1>HEDGE-FUND-LAB</h1>
+            <span class="subtitle">Laboratório Quantitativo de Backtesting · Dashboard</span>
+        </div>
+        <div class="header-right">
+            <span class="status" id="data-status">● Carregando...</span>
+        </div>
+    </header>
+
+    <!-- ─── Tab Navigation ─── -->
+    <div class="tab-bar">
+        <button class="tab active" data-tab="portfolio">Portfólio Multi-Ativo</button>
+        <button class="tab" data-tab="analise">Análise por Ativo</button>
+    </div>
+
+    <!-- Loading / Error (fora das abas, visível sempre) -->
+    <div id="loading" class="loading">Carregando dados...</div>
+    <div id="error-message" class="error-message" style="display:none;"></div>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- TAB 1: PORTFÓLIO MULTI-ATIVO                    -->
+    <!-- ════════════════════════════════════════════════ -->
+    <div id="tab-portfolio" class="tab-content active">
+
+        <div class="portfolio-header">
+            <h2>Portfólio Multi-Ativo</h2>
+            <span class="portfolio-subtitle">Comparação de estratégias sobre 10 ativos · R$ 100.000</span>
+        </div>
+
+        <!-- Cards de métricas do portfólio -->
+        <div class="portfolio-metrics-grid" id="portfolio-metrics">
+            <!-- preenchido por JS -->
+        </div>
+
+        <!-- Gráfico: Equity Curves Comparativas -->
+        <div class="card chart-card" style="margin: 1rem 2rem;">
+            <div class="card-title">Evolução Patrimonial por Estratégia</div>
+            <div class="chart-container-high" id="chart-equity-container">
+                <canvas id="chart-portfolio-equity"></canvas>
+            </div>
+        </div>
+
+        <!-- Gráfico: Drawdown Comparativo -->
+        <div class="card chart-card" style="margin: 1rem 2rem;">
+            <div class="card-title">Drawdown por Estratégia</div>
+            <div class="chart-container-high" id="chart-drawdown-container">
+                <canvas id="chart-portfolio-drawdown"></canvas>
+            </div>
+        </div>
+
+        <!-- Gráfico: Risco × Retorno (Scatter) -->
+        <div class="card chart-card" style="margin: 1rem 2rem;">
+            <div class="card-title">Risco × Retorno · Sharpe (cor)</div>
+            <div class="chart-container-high" id="chart-scatter-container">
+                <canvas id="chart-risk-return"></canvas>
+            </div>
+        </div>
+
+        <!-- Grid: Alocação + Tabela -->
+        <div class="portfolio-bottom-grid">
+            <div class="card chart-card">
+                <div class="card-title">Alocação Atual — Equal Weight</div>
+                <div class="chart-container">
+                    <canvas id="chart-allocation"></canvas>
+                </div>
+            </div>
+            <div class="card chart-card">
+                <div class="card-title">Alocação Atual — Min Variance</div>
+                <div class="chart-container">
+                    <canvas id="chart-allocation-mv"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela Comparativa -->
+        <div class="table-container">
+            <div class="card-title" style="padding: 0 0 0.75rem 0;">Tabela Comparativa de Métricas</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Estratégia</th>
+                        <th>Tipo</th>
+                        <th>Sharpe</th>
+                        <th>Sortino</th>
+                        <th>Max Drawdown</th>
+                        <th>Retorno</th>
+                        <th>Trades</th>
+                    </tr>
+                </thead>
+                <tbody id="comparison-table-body">
+                    <tr><td colspan="7">Carregando...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- TAB 2: ANÁLISE POR ATIVO                        -->
+    <!-- ════════════════════════════════════════════════ -->
+    <div id="tab-analise" class="tab-content">
+
+        <div class="controls">
+            <label for="ticker-select">Ativo:</label>
+            <select id="ticker-select">
+                <option value="PETR4.SA">PETR4</option>
+                <option value="VALE3.SA">VALE3</option>
+                <option value="ITUB4.SA">ITUB4</option>
+                <option value="BBDC4.SA">BBDC4</option>
+                <option value="BBAS3.SA">BBAS3</option>
+                <option value="ABEV3.SA">ABEV3</option>
+                <option value="WEGE3.SA">WEGE3</option>
+                <option value="CMIG4.SA">CMIG4</option>
+                <option value="RENT3.SA">RENT3</option>
+                <option value="SUZB3.SA">SUZB3</option>
+            </select>
+            <span id="periodo-info" class="periodo-info">2016 – 2025</span>
+            <span id="data-count" class="data-count"></span>
+        </div>
+
+        <div class="dashboard-grid" id="dashboard">
+            <aside class="sidebar">
+                <div class="card">
+                    <div class="card-title">Resumo</div>
+                    <div class="resumo-grid">
+                        <div class="metric-card">
+                            <div class="label">Fechamento</div>
+                            <div class="value neutral" id="ultimo-fechamento">—</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="label">Tendência</div>
+                            <div class="value neutral" id="tendencia">—</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="label">SMA 50</div>
+                            <div class="value neutral" id="sma50-valor">—</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="label">SMA 200</div>
+                            <div class="value neutral" id="sma200-valor">—</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="label">RSI (14)</div>
+                            <div class="value neutral" id="rsi-valor">—</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="label">MACD</div>
+                            <div class="value neutral" id="macd-valor">—</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Estatísticas</div>
+                    <div class="resumo-grid">
+                        <div class="metric-card">
+                            <div class="label">Sharpe Ratio</div>
+                            <div class="value neutral" id="sharpe-valor">—</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="label">Vol. Anual.</div>
+                            <div class="value neutral" id="vol-valor">—</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="label">Max Drawdown</div>
+                            <div class="value neutral" id="maxdd-valor">—</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="label">Pregões</div>
+                            <div class="value neutral" id="pregoes-valor">—</div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <div class="card chart-card">
+                    <div class="card-title">Preço · SMA · Bollinger Bands</div>
+                    <div class="chart-container">
+                        <canvas id="chart-price"></canvas>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="card chart-card">
+                        <div class="card-title">RSI (14)</div>
+                        <div class="chart-container">
+                            <canvas id="chart-rsi"></canvas>
+                        </div>
+                    </div>
+                    <div class="card chart-card">
+                        <div class="card-title">MACD (12, 26, 9)</div>
+                        <div class="chart-container">
+                            <canvas id="chart-macd"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div class="table-container">
+            <div class="card-title" style="padding: 0 0 0.75rem 0;">Últimos Pregões</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Fechamento</th>
+                        <th>SMA 50</th>
+                        <th>SMA 200</th>
+                        <th>RSI</th>
+                        <th>MACD</th>
+                        <th>Volume</th>
+                    </tr>
+                </thead>
+                <tbody id="data-table-body">
+                    <tr><td colspan="7">Carregando...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ─── Filosofia ─── -->
+    <section class="philosophy" id="philosophy-text"></section>
+
+    <!-- Chart.js (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

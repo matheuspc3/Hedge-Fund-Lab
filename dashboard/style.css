@@ -1,0 +1,563 @@
+/* ═══════════════════════════════════════════════
+   Hedge-fund-lab · Design System (Dark Theme)
+   ═══════════════════════════════════════════════ */
+
+/* ─── Variables ─── */
+:root {
+    --bg-primary: #0a0e17;
+    --bg-secondary: #0f1724;
+    --bg-card: #111827;
+    --bg-card-hover: #1a2332;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent-green: #22c55e;
+    --accent-red: #ef4444;
+    --accent-blue: #3b82f6;
+    --accent-yellow: #eab308;
+    --accent-purple: #a855f7;
+    --accent-cyan: #06b6d4;
+    --border-color: #1e293b;
+    --border-light: rgba(255, 255, 255, 0.05);
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --radius: 0.75rem;
+    --radius-sm: 0.5rem;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* ─── Reset ─── */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+/* ─── Header ─── */
+.header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-secondary);
+}
+
+.header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--accent-blue);
+    letter-spacing: -0.02em;
+}
+
+.header .subtitle {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    display: block;
+    margin-top: 0.15rem;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.status {
+    padding: 0.375rem 0.875rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.status.online {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--accent-green);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.status.loading {
+    background: rgba(234, 179, 8, 0.1);
+    color: var(--accent-yellow);
+    border: 1px solid rgba(234, 179, 8, 0.2);
+}
+
+/* ─── Controls ─── */
+.controls {
+    padding: 0.875rem 2rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    flex-wrap: wrap;
+}
+
+.controls label {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.controls select {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 0.45rem 1rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.controls select:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+.periodo-info {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    margin-left: 0.5rem;
+}
+
+.data-count {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    margin-left: auto;
+}
+
+/* ─── Loading / Error ─── */
+.loading,
+.error-message {
+    padding: 2rem;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+}
+
+.loading {
+    color: var(--text-muted);
+}
+
+.error-message {
+    color: var(--accent-red);
+    background: rgba(239, 68, 68, 0.05);
+    border: 1px solid rgba(239, 68, 68, 0.15);
+    margin: 1rem 2rem;
+    border-radius: var(--radius);
+}
+
+/* ─── Dashboard Grid ─── */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 1rem;
+    padding: 1rem 2rem;
+}
+
+/* ─── Card (universal) ─── */
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.card:hover {
+    background: var(--bg-card-hover);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.card-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+/* ─── Metric Cards (sidebar) ─── */
+.resumo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.metric-card {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: var(--radius-sm);
+    padding: 0.65rem 0.5rem;
+    text-align: center;
+    transition: background 0.2s;
+}
+
+.metric-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.metric-card .label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    font-weight: 500;
+}
+
+.metric-card .value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    margin-top: 0.2rem;
+    transition: color 0.3s;
+}
+
+.value.positive {
+    color: var(--accent-green);
+}
+.value.negative {
+    color: var(--accent-red);
+}
+.value.neutral {
+    color: var(--text-primary);
+}
+.value.overbought {
+    color: var(--accent-red);
+}
+.value.oversold {
+    color: var(--accent-green);
+}
+
+/* ─── Tab Navigation ─── */
+.tab-bar {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    padding: 0 2rem;
+}
+
+.tab {
+    padding: 0.75rem 1.5rem;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.tab:hover {
+    color: var(--text-secondary);
+}
+
+.tab.active {
+    color: var(--accent-blue);
+    border-bottom-color: var(--accent-blue);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* ─── Portfolio ─── */
+.portfolio-header {
+    padding: 1.25rem 2rem 0.5rem;
+}
+
+.portfolio-header h2 {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    color: var(--accent-blue);
+}
+
+.portfolio-subtitle {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.portfolio-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+    padding: 0.75rem 2rem;
+}
+
+.portfolio-metric-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1rem;
+    text-align: center;
+    transition: border-color 0.2s;
+}
+
+.portfolio-metric-card:hover {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.portfolio-metric-card.highlight {
+    border-color: var(--accent-green);
+    box-shadow: 0 0 12px rgba(34, 197, 94, 0.1);
+}
+
+.portfolio-metric-name {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+}
+
+.portfolio-metric-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+}
+
+.portfolio-metric-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    margin-top: 0.1rem;
+}
+
+.portfolio-metric-sub {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-top: 0.4rem;
+    font-family: var(--font-mono);
+}
+
+.portfolio-bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 0 2rem 1rem;
+}
+
+.chart-container-high {
+    position: relative;
+    height: 380px;
+    width: 100%;
+}
+
+/* ─── Badges (tabela comparativa) ─── */
+.badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.badge-single {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--accent-blue);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.badge-portfolio {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--accent-green);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+/* ─── Charts ─── */
+.chart-card {
+    margin-bottom: 0;
+}
+
+.chart-container {
+    position: relative;
+    height: 260px;
+    width: 100%;
+}
+
+/* ─── Table ─── */
+.table-container {
+    overflow-x: auto;
+    padding: 1rem 2rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+}
+
+thead {
+    position: sticky;
+    top: 0;
+}
+
+th {
+    text-align: left;
+    padding: 0.7rem 0.5rem;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+    white-space: nowrap;
+    background: var(--bg-primary);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+td {
+    padding: 0.5rem;
+    border-bottom: 1px solid rgba(30, 41, 59, 0.4);
+    white-space: nowrap;
+    color: var(--text-primary);
+}
+
+tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* ─── Philosophy Section ─── */
+.philosophy {
+    padding: 2.5rem 2rem;
+    border-top: 1px solid var(--border-color);
+    max-width: 820px;
+    margin: 0 auto;
+}
+
+.philosophy h2 {
+    color: var(--accent-blue);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.01em;
+}
+
+.philosophy p {
+    color: var(--text-secondary);
+    line-height: 1.85;
+    margin-bottom: 0.85rem;
+    font-size: 0.875rem;
+}
+
+.philosophy strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.philosophy em {
+    color: var(--accent-cyan);
+    font-style: normal;
+    font-weight: 500;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 0.75rem;
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .header h1 {
+        font-size: 1.2rem;
+    }
+
+    .sidebar {
+        grid-template-columns: 1fr;
+    }
+
+    .controls {
+        padding: 0.75rem 1rem;
+    }
+
+    .dashboard-grid {
+        padding: 0.75rem 1rem;
+    }
+
+    .table-container {
+        padding: 0.75rem 1rem;
+    }
+
+    .philosophy {
+        padding: 1.5rem 1rem;
+    }
+
+    .chart-container {
+        height: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .resumo-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .controls select {
+        flex: 1;
+        min-width: 120px;
+    }
+
+    .data-count {
+        display: none;
+    }
+}
