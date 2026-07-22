@@ -58,7 +58,9 @@ class BollingerBandsStrategy(Strategy):
                 n_sell += 1
                 logger.info(
                     "BB VENDA em %s: preço=%.2f > banda_sup=%.2f",
-                    data.index[i], close.iloc[i], upper.iloc[i],
+                    data.index[i],
+                    close.iloc[i],
+                    upper.iloc[i],
                 )
 
             # Preço estava dentro e saiu pra baixo → COMPRA
@@ -72,12 +74,16 @@ class BollingerBandsStrategy(Strategy):
                 n_buy += 1
                 logger.info(
                     "BB COMPRA em %s: preço=%.2f < banda_inf=%.2f",
-                    data.index[i], close.iloc[i], lower.iloc[i],
+                    data.index[i],
+                    close.iloc[i],
+                    lower.iloc[i],
                 )
 
         logger.debug(
             "BB: %d compra(s), %d venda(s) em %d dias",
-            n_buy, n_sell, len(signals),
+            n_buy,
+            n_sell,
+            len(signals),
         )
         return signals
 

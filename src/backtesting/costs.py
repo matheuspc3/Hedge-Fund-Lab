@@ -22,9 +22,7 @@ class CostModel:
 
     def __post_init__(self):
         if self.brokerage_fixed < 0:
-            raise ValueError(
-                f"brokerage_fixed must be >= 0, got {self.brokerage_fixed}"
-            )
+            raise ValueError(f"brokerage_fixed must be >= 0, got {self.brokerage_fixed}")
         if self.spread_bps < 0:
             raise ValueError(f"spread_bps must be >= 0, got {self.spread_bps}")
         if self.tax_rate < 0:
@@ -32,7 +30,9 @@ class CostModel:
         if self.brokerage_fixed > 0 or self.spread_bps > 0 or self.tax_rate > 0:
             logger.info(
                 "CostModel criado: brokerage=%.2f spread=%.1fbps tax=%.4f",
-                self.brokerage_fixed, self.spread_bps, self.tax_rate,
+                self.brokerage_fixed,
+                self.spread_bps,
+                self.tax_rate,
             )
 
     def _apply(self, trade_value: float) -> float:
@@ -48,9 +48,7 @@ class CostModel:
             ValueError: Se trade_value < 0.
         """
         if trade_value < 0:
-            raise ValueError(
-                f"trade_value must be >= 0, got {trade_value}"
-            )
+            raise ValueError(f"trade_value must be >= 0, got {trade_value}")
         spread_cost = trade_value * (self.spread_bps / 10_000)
         tax_cost = trade_value * self.tax_rate
         return self.brokerage_fixed + spread_cost + tax_cost

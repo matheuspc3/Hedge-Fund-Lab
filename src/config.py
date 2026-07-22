@@ -12,8 +12,16 @@ class Settings(BaseSettings):
 
     database_url: str = "sqlite:///hedgefundlab.db"
     default_tickers: list[str] = [
-        "PETR4.SA", "VALE3.SA", "ITUB4.SA", "BBDC4.SA", "BBAS3.SA",
-        "ABEV3.SA", "WEGE3.SA", "CMIG4.SA", "RENT3.SA", "SUZB3.SA",
+        "PETR4.SA",
+        "VALE3.SA",
+        "ITUB4.SA",
+        "BBDC4.SA",
+        "BBAS3.SA",
+        "ABEV3.SA",
+        "WEGE3.SA",
+        "CMIG4.SA",
+        "RENT3.SA",
+        "SUZB3.SA",
     ]
     start_date: str = "2016-01-01"
     end_date: str = "2025-12-31"

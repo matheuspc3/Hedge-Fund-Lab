@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 import pandas as pd
 import pytest
 
-from src.db.models import Ativo, CotacaoDiaria, IndicadorTecnico
+from src.db.models import Ativo
 from src.pipeline.load import DataLoader
 
 
@@ -49,7 +49,9 @@ class TestDataLoader:
     def test_empty_dataframe(self, mock_session_factory):
         """DataFrame vazio → sem chamadas a add_all."""
         mock_session = mock_session_factory()
-        df = pd.DataFrame(columns=["data", "abertura", "maxima", "minima", "fechamento", "volume"])
+        df = pd.DataFrame(
+            columns=["data", "abertura", "maxima", "minima", "fechamento", "volume"]
+        )
 
         with patch.object(DataLoader, "_get_or_create_ativo", return_value=1):
             loader = DataLoader(mock_session_factory)
@@ -89,7 +91,9 @@ class TestDataLoader:
 
         with patch.object(DataLoader, "_get_or_create_ativo", return_value=1):
             loader = DataLoader(mock_session_factory)
-            count = loader.batch_insert_indicators("PETR4.SA", sample_indicadores_df, batch_size=10)
+            count = loader.batch_insert_indicators(
+                "PETR4.SA", sample_indicadores_df, batch_size=10
+            )
 
         assert count == 10
         assert mock_session.bulk_insert_mappings.called
@@ -100,7 +104,9 @@ class TestDataLoader:
         mock_session = mock_session_factory()
         existing = MagicMock(spec=Ativo)
         existing.id = 42
-        mock_session.query.return_value.filter_by.return_value.first.return_value = existing
+        mock_session.query.return_value.filter_by.return_value.first.return_value = (
+            existing
+        )
 
         loader = DataLoader(mock_session_factory)
         ativo_id = loader._get_or_create_ativo(mock_session, "PETR4.SA")
@@ -123,7 +129,7 @@ class TestDataLoader:
         ativo_id = loader._get_or_create_ativo(mock_session, "NOVO4.SA")
 
         assert ativo_id == 99
-        mock_session.add.called_once()
+        mock_session.add.assert_called_once()
 
     def test_upsert_rollback_on_failure(self, mock_session_factory, sample_cotacoes_df):
         """Falha no upsert → rollback chamado."""
@@ -138,7 +144,9 @@ class TestDataLoader:
         assert mock_session.rollback.called
         assert mock_session.close.called
 
-    def test_batch_insert_indicators_rollback(self, mock_session_factory, sample_indicadores_df):
+    def test_batch_insert_indicators_rollback(
+        self, mock_session_factory, sample_indicadores_df
+    ):
         """Falha no insert de indicadores → rollback chamado."""
         mock_session = mock_session_factory()
         mock_session.commit.side_effect = Exception("erro no commit")

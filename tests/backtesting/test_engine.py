@@ -1,12 +1,10 @@
 """Testes para o motor de backtesting."""
 
-import numpy as np
 import pandas as pd
 import pytest
 
 from src.backtesting.costs import CostModel
 from src.backtesting.engine import BacktestEngine, Trade
-from tests.conftest import synthetic_clean_data  # noqa: F401
 
 
 class MockStrategy:
@@ -55,7 +53,9 @@ class TestBacktestEngineInit:
         with pytest.raises(ValueError, match="initial_capital must be > 0"):
             BacktestEngine(
                 strategy=strategy,
-                data=pd.DataFrame({"fechamento": [100.0]}, index=pd.DatetimeIndex(["2023-01-02"])),
+                data=pd.DataFrame(
+                    {"fechamento": [100.0]}, index=pd.DatetimeIndex(["2023-01-02"])
+                ),
                 initial_capital=0.0,
             )
 
@@ -65,7 +65,9 @@ class TestBacktestEngineInit:
         with pytest.raises(ValueError, match="initial_capital must be > 0"):
             BacktestEngine(
                 strategy=strategy,
-                data=pd.DataFrame({"fechamento": [100.0]}, index=pd.DatetimeIndex(["2023-01-02"])),
+                data=pd.DataFrame(
+                    {"fechamento": [100.0]}, index=pd.DatetimeIndex(["2023-01-02"])
+                ),
                 initial_capital=-1000.0,
             )
 
@@ -139,7 +141,9 @@ class TestBacktestEngineRun:
         df = pd.DataFrame({"fechamento": prices}, index=dates)
         signals = pd.Series([-1, 0, 0], index=dates, dtype=int)
         strategy = MockStrategy(signals)
-        engine = BacktestEngine(strategy, df, 100_000.0, cost_model=CostModel(), allow_short=False)
+        engine = BacktestEngine(
+            strategy, df, 100_000.0, cost_model=CostModel(), allow_short=False
+        )
         result = engine.run()
         # Sem posição para vender, sinal -1 ignorado
         assert len(result.trades) == 0
@@ -191,8 +195,10 @@ class TestBacktestEngineRun:
 
         engine_sem_custo = BacktestEngine(strategy, df, 100_000.0, cost_model=CostModel())
         engine_com_custo = BacktestEngine(
-            strategy, df, 100_000.0,
-            cost_model=CostModel(brokerage_fixed=10.0, spread_bps=50.0, tax_rate=0.0003)
+            strategy,
+            df,
+            100_000.0,
+            cost_model=CostModel(brokerage_fixed=10.0, spread_bps=50.0, tax_rate=0.0003),
         )
 
         result_sem = engine_sem_custo.run()
@@ -228,8 +234,7 @@ class TestLookAheadBias:
     def test_informacao_futura_nao_afeta_sinal(self):
         """Sinal gerado com dados parciais (até t) não vê t+1."""
         dates = pd.bdate_range("2023-01-01", periods=10)
-        prices = [100.0, 101.0, 102.0, 103.0, 104.0,
-                  50.0, 51.0, 52.0, 53.0, 54.0]
+        prices = [100.0, 101.0, 102.0, 103.0, 104.0, 50.0, 51.0, 52.0, 53.0, 54.0]
         df = pd.DataFrame({"fechamento": prices}, index=dates)
 
         # Mock que retorna COMPRA apenas se a média dos preços futuros > 100

@@ -1,7 +1,7 @@
 """Testes para o módulo de extração (src/pipeline/extract.py)."""
 
 from pathlib import Path
-from unittest.mock import ANY, MagicMock, patch
+from unittest.mock import patch
 
 import pandas as pd
 import pytest
@@ -27,7 +27,13 @@ class TestDataExtractor:
     def test_download_success(self, tmp_path: Path):
         """Download bem-sucedido retorna DataFrame com colunas normalizadas."""
         mock_df = pd.DataFrame(
-            {"Open": [100.0], "High": [101.0], "Low": [99.0], "Close": [100.5], "Volume": [1_000_000]},
+            {
+                "Open": [100.0],
+                "High": [101.0],
+                "Low": [99.0],
+                "Close": [100.5],
+                "Volume": [1_000_000],
+            },
             index=pd.to_datetime(["2024-01-02"]),
         )
 
@@ -51,14 +57,20 @@ class TestDataExtractor:
 
         # Cria cache manualmente
         cached_df = pd.DataFrame(
-            {"abertura": [100.0], "maxima": [101.0], "minima": [99.0], "fechamento": [100.5], "volume": [1_000_000]},
+            {
+                "abertura": [100.0],
+                "maxima": [101.0],
+                "minima": [99.0],
+                "fechamento": [100.5],
+                "volume": [1_000_000],
+            },
             index=pd.to_datetime(["2024-01-02"]),
         )
         cached_df.to_csv(cache_path)
 
         with patch("yfinance.download", side_effect=Exception("não deve chamar")):
             extractor = DataExtractor(cache_dir=str(tmp_path))
-            df = extractor.download(ticker, "2024-01-01", "2024-01-31")
+            df = extractor.download(ticker, "2024-01-01", "2024-01-02")
 
         assert not df.empty
         assert df.iloc[0]["fechamento"] == 100.5

@@ -22,10 +22,10 @@ from src.backtesting.portfolio import (
     PortfolioTrade,
 )
 
-
 # ═══════════════════════════════════════════════════════════════════
 # Fixtures
 # ═══════════════════════════════════════════════════════════════════
+
 
 @pytest.fixture
 def synthetic_2assets() -> dict[str, pd.DataFrame]:
@@ -79,6 +79,7 @@ def two_dates_dict() -> dict[str, pd.DataFrame]:
 # PortfolioStrategy (ABC)
 # ═══════════════════════════════════════════════════════════════════
 
+
 class TestPortfolioStrategy:
     def test_nao_instancia_abc(self):
         """PortfolioStrategy não pode ser instanciada diretamente."""
@@ -89,6 +90,7 @@ class TestPortfolioStrategy:
 # ═══════════════════════════════════════════════════════════════════
 # EqualWeightPortfolio
 # ═══════════════════════════════════════════════════════════════════
+
 
 class TestEqualWeightPortfolio:
     def test_2_ativos_pesos_meio(self, two_dates_dict):
@@ -102,7 +104,7 @@ class TestEqualWeightPortfolio:
         strat = EqualWeightPortfolio()
         w = strat.get_weights(synthetic_3assets, pd.Timestamp("2021-01-04"))
         assert len(w) == 3
-        for ticker, weight in w.items():
+        for _ticker, weight in w.items():
             assert weight == pytest.approx(1 / 3)
 
     def test_soma_um(self, synthetic_2assets):
@@ -125,6 +127,7 @@ class TestEqualWeightPortfolio:
 # ═══════════════════════════════════════════════════════════════════
 # MinVariancePortfolio
 # ═══════════════════════════════════════════════════════════════════
+
 
 class TestMinVariancePortfolio:
     def test_2_ativos_soma_um(self, synthetic_2assets):
@@ -181,6 +184,7 @@ class TestMinVariancePortfolio:
 # PortfolioBacktestResult
 # ═══════════════════════════════════════════════════════════════════
 
+
 class TestPortfolioBacktestResult:
     def test_returns_property(self):
         """returns deriva de equity_curve.pct_change()."""
@@ -200,6 +204,7 @@ class TestPortfolioBacktestResult:
 # ═══════════════════════════════════════════════════════════════════
 # PortfolioBacktestEngine — Init
 # ═══════════════════════════════════════════════════════════════════
+
 
 class TestPortfolioBacktestEngineInit:
     def test_init_valido(self, synthetic_2assets):
@@ -230,6 +235,7 @@ class TestPortfolioBacktestEngineInit:
 # ═══════════════════════════════════════════════════════════════════
 # PortfolioBacktestEngine — Run
 # ═══════════════════════════════════════════════════════════════════
+
 
 class TestPortfolioBacktestEngineRun:
     def test_equity_inicial(self, synthetic_2assets):
@@ -266,8 +272,9 @@ class TestPortfolioBacktestEngineRun:
     def test_primeiro_rebalanceamento(self, synthetic_2assets):
         """Após rebalanceamento inicial, posições são alocadas."""
         strat = EqualWeightPortfolio()
-        engine = PortfolioBacktestEngine(strat, synthetic_2assets, 100_000,
-                                          rebalance_freq=1)
+        engine = PortfolioBacktestEngine(
+            strat, synthetic_2assets, 100_000, rebalance_freq=1
+        )
         result = engine.run()
         # No primeiro dia com rebalance_freq=1, metade do capital vai pra cada ativo
         first_alloc = result.allocation_history.iloc[0]
@@ -279,8 +286,9 @@ class TestPortfolioBacktestEngineRun:
     def test_sem_rebalanceamento_so_drift(self, two_dates_dict):
         """Com rebalance_freq muito alto, só alocação inicial + drift."""
         strat = EqualWeightPortfolio()
-        engine = PortfolioBacktestEngine(strat, two_dates_dict, 100_000,
-                                          rebalance_freq=999)
+        engine = PortfolioBacktestEngine(
+            strat, two_dates_dict, 100_000, rebalance_freq=999
+        )
         result = engine.run()
         # 2 trades de BUY no primeiro dia (alocação inicial), sem rebalanceamentos depois
         assert len(result.trades) == 2
@@ -291,10 +299,12 @@ class TestPortfolioBacktestEngineRun:
         strat = EqualWeightPortfolio()
         cost_model = CostModel(brokerage_fixed=10.0, spread_bps=50)
 
-        engine_sem = PortfolioBacktestEngine(strat, synthetic_2assets, 100_000,
-                                               rebalance_freq=10)
-        engine_com = PortfolioBacktestEngine(strat, synthetic_2assets, 100_000,
-                                              rebalance_freq=10, cost_model=cost_model)
+        engine_sem = PortfolioBacktestEngine(
+            strat, synthetic_2assets, 100_000, rebalance_freq=10
+        )
+        engine_com = PortfolioBacktestEngine(
+            strat, synthetic_2assets, 100_000, rebalance_freq=10, cost_model=cost_model
+        )
 
         result_sem = engine_sem.run()
         result_com = engine_com.run()
@@ -305,8 +315,9 @@ class TestPortfolioBacktestEngineRun:
     def test_min_variance_executa(self, synthetic_2assets):
         """MinVariancePortfolio no motor não quebra."""
         strat = MinVariancePortfolio(window=100)
-        engine = PortfolioBacktestEngine(strat, synthetic_2assets, 100_000,
-                                          rebalance_freq=30)
+        engine = PortfolioBacktestEngine(
+            strat, synthetic_2assets, 100_000, rebalance_freq=30
+        )
         result = engine.run()
         assert result.final_equity > 0
         assert len(result.equity_curve) > 0
@@ -314,8 +325,9 @@ class TestPortfolioBacktestEngineRun:
     def test_resultado_contem_trades(self, synthetic_2assets):
         """Com rebalance_freq pequeno, trades são gerados."""
         strat = EqualWeightPortfolio()
-        engine = PortfolioBacktestEngine(strat, synthetic_2assets, 100_000,
-                                          rebalance_freq=20)
+        engine = PortfolioBacktestEngine(
+            strat, synthetic_2assets, 100_000, rebalance_freq=20
+        )
         result = engine.run()
         assert len(result.trades) > 0
         trade = result.trades[0]
@@ -347,6 +359,7 @@ class TestPortfolioBacktestEngineRun:
 # ═══════════════════════════════════════════════════════════════════
 # PortfolioTrade
 # ═══════════════════════════════════════════════════════════════════
+
 
 class TestPortfolioTrade:
     def test_create_trade(self):

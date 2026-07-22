@@ -51,8 +51,10 @@ def setup_logger(
     root.setLevel(getattr(logging, level))
 
     # ── Console handler ───────────────────────────────────────────
-    if not any(isinstance(h, logging.StreamHandler) and not isinstance(h, logging.FileHandler)
-               for h in root.handlers):
+    if not any(
+        isinstance(h, logging.StreamHandler) and not isinstance(h, logging.FileHandler)
+        for h in root.handlers
+    ):
         console = logging.StreamHandler(sys.stdout)
         console.setLevel(getattr(logging, level))
         console.setFormatter(logging.Formatter(_LOG_FORMAT, datefmt=_DATE_FORMAT))

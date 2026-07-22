@@ -5,14 +5,14 @@ import pandas as pd
 import pytest
 
 from src.backtesting.metrics import (
-    sharpe_ratio,
-    sortino_ratio,
-    max_drawdown,
-    max_drawdown_duration,
-    turnover,
-    cumulative_return,
     annualized_volatility,
     calmar_ratio,
+    cumulative_return,
+    max_drawdown,
+    max_drawdown_duration,
+    sharpe_ratio,
+    sortino_ratio,
+    turnover,
 )
 
 

@@ -5,8 +5,7 @@ import math
 import numpy as np
 import pandas as pd
 import pytest
-from hypothesis import given, settings
-from hypothesis import strategies as st
+from hypothesis import given, settings, strategies as st
 
 from src.pipeline.transform import DataTransformer
 
@@ -16,7 +15,7 @@ class TestDataTransformerClean:
         """NaN no meio da série → forward-filled."""
         df = DataTransformer.clean(synthetic_data_with_nan)
         # Linha 10 tinha NaN em fechamento — deve ter sido forward-filled
-        assert not df.iloc[10]["fechamento"] is np.nan
+        assert df.iloc[10]["fechamento"] is not np.nan
 
     def test_drop_all_nan_row(self, synthetic_data_with_nan):
         """Linhas totalmente NaN removidas."""
@@ -47,18 +46,14 @@ class TestDataTransformerIndicators:
         df = DataTransformer().calculate_indicators(synthetic_clean_data)
         close = synthetic_clean_data["fechamento"]
         expected_sma = close.rolling(50).mean()
-        pd.testing.assert_series_equal(
-            df["sma_50"], expected_sma, check_names=False
-        )
+        pd.testing.assert_series_equal(df["sma_50"], expected_sma, check_names=False)
 
     def test_sma_200(self, synthetic_clean_data):
         """SMA 200 com valores conhecidos."""
         df = DataTransformer().calculate_indicators(synthetic_clean_data)
         close = synthetic_clean_data["fechamento"]
         expected_sma = close.rolling(200).mean()
-        pd.testing.assert_series_equal(
-            df["sma_200"], expected_sma, check_names=False
-        )
+        pd.testing.assert_series_equal(df["sma_200"], expected_sma, check_names=False)
 
     def test_bollinger_bands(self, synthetic_clean_data):
         """Bollinger Bands: upper >= middle >= lower (ignorando NaN do warm-up)."""
@@ -160,8 +155,14 @@ class TestDataTransformerIndicators:
         """DataFrame resultante tem todas as colunas de indicadores esperadas."""
         df = DataTransformer().calculate_indicators(synthetic_clean_data)
         expected_cols = {
-            "sma_50", "sma_200", "bb_upper", "bb_middle", "bb_lower",
-            "rsi", "macd", "macd_sinal",
+            "sma_50",
+            "sma_200",
+            "bb_upper",
+            "bb_middle",
+            "bb_lower",
+            "rsi",
+            "macd",
+            "macd_sinal",
         }
         assert expected_cols.issubset(set(df.columns))
 

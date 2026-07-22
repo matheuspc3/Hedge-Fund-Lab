@@ -71,12 +71,14 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                     if LOG_FILE.exists():
                         current_size = LOG_FILE.stat().st_size
                         if current_size > last_size:
-                            with open(LOG_FILE, "r", encoding="utf-8", errors="replace") as f:
+                            with open(LOG_FILE, encoding="utf-8", errors="replace") as f:
                                 f.seek(last_size)
                                 new_lines = f.readlines()
                                 last_size = current_size
                             if new_lines:
-                                payload = json.dumps({"lines": [l.rstrip("\n\r") for l in new_lines]})
+                                payload = json.dumps(
+                                    {"lines": [line.rstrip("\n\r") for line in new_lines]}
+                                )
                                 self.wfile.write(f"data: {payload}\n\n".encode())
                                 self.wfile.flush()
                         elif current_size < last_size:
@@ -90,7 +92,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                         payload = json.dumps({"lines": [], "waiting": True})
                         self.wfile.write(f"data: {payload}\n\n".encode())
                         self.wfile.flush()
-                except (OSError, IOError):
+                except OSError:
                     # Race condition: arquivo deletado entre stat() e open()
                     last_size = 0
 

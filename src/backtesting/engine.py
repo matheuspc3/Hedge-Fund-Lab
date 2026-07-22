@@ -81,9 +81,7 @@ class BacktestEngine:
         if data.empty:
             raise ValueError("data cannot be empty")
         if initial_capital <= 0:
-            raise ValueError(
-                f"initial_capital must be > 0, got {initial_capital}"
-            )
+            raise ValueError(f"initial_capital must be > 0, got {initial_capital}")
 
         self.strategy = strategy
         self.data = data
@@ -142,17 +140,22 @@ class BacktestEngine:
                     if quantity > 0:
                         cash -= quantity * current_price + trade_cost
                         position += quantity
-                        trades.append(Trade(
-                            date=self.data.index[t],
-                            type="BUY",
-                            price=current_price,
-                            quantity=quantity,
-                            cost=trade_cost,
-                        ))
+                        trades.append(
+                            Trade(
+                                date=self.data.index[t],
+                                type="BUY",
+                                price=current_price,
+                                quantity=quantity,
+                                cost=trade_cost,
+                            )
+                        )
                         logger.debug(
                             "BUY %d x %.2f = %.2f (custo=%.2f) cash=%.2f",
-                            quantity, current_price, quantity * current_price,
-                            trade_cost, cash,
+                            quantity,
+                            current_price,
+                            quantity * current_price,
+                            trade_cost,
+                            cash,
                         )
 
                 elif current_signal == -1 and position > 0:
@@ -160,17 +163,22 @@ class BacktestEngine:
                     trade_value = position * current_price
                     trade_cost = self.cost_model.apply_sell(trade_value)
                     cash += trade_value - trade_cost
-                    trades.append(Trade(
-                        date=self.data.index[t],
-                        type="SELL",
-                        price=current_price,
-                        quantity=position,
-                        cost=trade_cost,
-                    ))
+                    trades.append(
+                        Trade(
+                            date=self.data.index[t],
+                            type="SELL",
+                            price=current_price,
+                            quantity=position,
+                            cost=trade_cost,
+                        )
+                    )
                     logger.debug(
                         "SELL %d x %.2f = %.2f (custo=%.2f) cash=%.2f",
-                        position, current_price, trade_value,
-                        trade_cost, cash,
+                        position,
+                        current_price,
+                        trade_value,
+                        trade_cost,
+                        cash,
                     )
                     position = 0
 
@@ -181,13 +189,15 @@ class BacktestEngine:
                         trade_cost = self.cost_model.apply_sell(current_price)
                         cash += quantity * current_price - trade_cost
                         position -= quantity
-                        trades.append(Trade(
-                            date=self.data.index[t],
-                            type="SELL",
-                            price=current_price,
-                            quantity=quantity,
-                            cost=trade_cost,
-                        ))
+                        trades.append(
+                            Trade(
+                                date=self.data.index[t],
+                                type="SELL",
+                                price=current_price,
+                                quantity=quantity,
+                                cost=trade_cost,
+                            )
+                        )
 
                 last_signal = current_signal
 

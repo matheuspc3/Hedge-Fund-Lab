@@ -35,6 +35,7 @@ logger.info(
 def init_db() -> None:
     """Cria as tabelas no banco se não existirem."""
     from src.db.models import Base
+
     Base.metadata.create_all(engine)
     logger.debug("Tabelas verificadas/criadas no banco.")
 
@@ -72,19 +73,34 @@ def load_task(
 
     cotacoes_cols = ["data", "abertura", "maxima", "minima", "fechamento", "volume"]
     indicadores_cols = [
-        "data", "sma_50", "sma_200", "bb_upper", "bb_middle",
-        "bb_lower", "rsi", "macd", "macd_sinal",
+        "data",
+        "sma_50",
+        "sma_200",
+        "bb_upper",
+        "bb_middle",
+        "bb_lower",
+        "rsi",
+        "macd",
+        "macd_sinal",
     ]
 
-    cotacoes_to_insert = cotacoes_df[[c for c in cotacoes_cols if c in cotacoes_df.columns]]
-    indicadores_to_insert = indicadores_df[[c for c in indicadores_cols if c in indicadores_df.columns]]
+    cotacoes_to_insert = cotacoes_df[
+        [c for c in cotacoes_cols if c in cotacoes_df.columns]
+    ]
+    indicadores_to_insert = indicadores_df[
+        [c for c in indicadores_cols if c in indicadores_df.columns]
+    ]
 
     loader.upsert_cotacoes(ticker, cotacoes_to_insert)
-    loader.batch_insert_indicators(ticker, indicadores_to_insert)
+    loader.upsert_indicadores(ticker, indicadores_to_insert)
     logger.info("Load OK: %s", ticker)
 
 
-@flow(name="pipeline-etl", log_prints=True, description="Pipeline ETL: yfinance -> indicadores -> PostgreSQL")
+@flow(
+    name="pipeline-etl",
+    log_prints=True,
+    description="Pipeline ETL: yfinance -> indicadores -> PostgreSQL",
+)
 def pipeline_etl(
     tickers: list[str] | None = None,
     start: str | None = None,
@@ -115,17 +131,25 @@ def pipeline_etl(
             df = extract_task(ticker, start, end)
             df = transform_task(df)
             load_task(ticker, df, df)
-            logger.info("[%d/%d] %s concluído — %d registros", i, len(tickers), ticker, len(df))
+            logger.info(
+                "[%d/%d] %s concluído — %d registros", i, len(tickers), ticker, len(df)
+            )
             n_ok += 1
         except Exception as exc:
-            logger.error("[%d/%d] %s FALHOU: %s", i, len(tickers), ticker, exc, exc_info=True)
+            logger.error(
+                "[%d/%d] %s FALHOU: %s", i, len(tickers), ticker, exc, exc_info=True
+            )
             n_fail += 1
 
     logger.info("=" * 50)
     if n_fail:
-        logger.warning("Pipeline ETL finalizado com falhas. OK=%d  FALHA=%d", n_ok, n_fail)
+        logger.warning(
+            "Pipeline ETL finalizado com falhas. OK=%d  FALHA=%d", n_ok, n_fail
+        )
     else:
-        logger.info("Pipeline ETL finalizado com sucesso. %d ticker(s) processados.", n_ok)
+        logger.info(
+            "Pipeline ETL finalizado com sucesso. %d ticker(s) processados.", n_ok
+        )
     logger.info("=" * 50)
 
 

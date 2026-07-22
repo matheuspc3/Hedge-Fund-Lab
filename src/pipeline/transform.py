@@ -12,10 +12,10 @@ import math
 
 import pandas as pd
 
-from src.indicators.sma import sma as _sma
 from src.indicators.bollinger import bollinger_bands as _bollinger
-from src.indicators.rsi import rsi as _rsi
 from src.indicators.macd import macd as _macd
+from src.indicators.rsi import rsi as _rsi
+from src.indicators.sma import sma as _sma
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +50,12 @@ class DataTransformer:
         df = df.sort_index()
         dropped = before - len(df)
         if dropped:
-            logger.debug("clean: %d → %d linhas (%d totalmente NaN removidas)", before, len(df), dropped)
+            logger.debug(
+                "clean: %d → %d linhas (%d totalmente NaN removidas)",
+                before,
+                len(df),
+                dropped,
+            )
         else:
             logger.debug("clean: %d linhas (sem alterações)", before)
         return df
@@ -124,12 +129,15 @@ class DataTransformer:
             pct = sma_200_nan / len(df) * 100
             logger.debug(
                 "SMA_200: %.1f%% NaN (%d/%d) — dados insuficientes para janela de 200",
-                pct, sma_200_nan, len(df),
+                pct,
+                sma_200_nan,
+                len(df),
             )
         if "rsi" in df.columns and df["rsi"].notna().any():
             logger.debug(
                 "RSI range: [%.1f, %.1f]",
-                df["rsi"].min(), df["rsi"].max(),
+                df["rsi"].min(),
+                df["rsi"].max(),
             )
 
         return df
@@ -158,5 +166,7 @@ class DataTransformer:
                     sanitized[k] = v
             result.append(sanitized)
         if n_sanitized:
-            logger.debug("Sanitize: %d valores NaN/Inf convertidos para None", n_sanitized)
+            logger.debug(
+                "Sanitize: %d valores NaN/Inf convertidos para None", n_sanitized
+            )
         return result

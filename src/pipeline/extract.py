@@ -7,8 +7,9 @@ Fornece:
 
 import logging
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
+from typing import ClassVar
 
 import pandas as pd
 import yfinance as yf
@@ -43,7 +44,7 @@ class DataExtractor:
         df = extractor.download("PETR4.SA", "2023-01-01", "2023-12-31")
     """
 
-    COLUMN_MAP = {
+    COLUMN_MAP: ClassVar[dict[str, str]] = {
         "open": "abertura",
         "high": "maxima",
         "low": "minima",
@@ -76,7 +77,7 @@ class DataExtractor:
             RuntimeError: Se esgotar as tentativas de retry.
         """
         logger.info("download(ticker=%s, start=%s, end=%s)", ticker, start, end)
-        cached = self._load_from_cache(ticker)
+        cached = self._load_from_cache(ticker, end)
         if cached is not None:
             return cached
 
@@ -91,7 +92,9 @@ class DataExtractor:
     def _cache_path(self, ticker: str) -> Path:
         return self.cache_dir / f"{ticker}.csv"
 
-    def _load_from_cache(self, ticker: str) -> pd.DataFrame | None:
+    def _load_from_cache(
+        self, ticker: str, end: str | None = None
+    ) -> pd.DataFrame | None:
         path = self._cache_path(ticker)
         if not path.exists():
             logger.debug("Cache MISS: %s", path)
@@ -101,6 +104,17 @@ class DataExtractor:
             if df.empty:
                 logger.warning("Cache vazio: %s — ignorando", path)
                 return None
+            if end:
+                target_end = pd.to_datetime(end)
+                cache_end = df.index.max()
+                if isinstance(cache_end, pd.Timestamp) and target_end.date() > cache_end.date():
+                    logger.info(
+                        "Cache desatualizado (%s < %s): %s — buscando dados novos",
+                        cache_end.date(),
+                        target_end.date(),
+                        path,
+                    )
+                    return None
             logger.info("Cache HIT: %s → %d registros", path, len(df))
             return df
         except Exception as exc:
@@ -119,12 +133,20 @@ class DataExtractor:
         delay = self.retry_policy.delay_seconds
         max_retries = self.retry_policy.max_retries
 
+        # yfinance trata 'end' como limite exclusivo, então somamos 1 dia para incluir o dia solicitado
+        yf_end = (pd.to_datetime(end) + pd.Timedelta(days=1)).strftime("%Y-%m-%d")
+
         for attempt in range(1, max_retries + 1):
             logger.info(
-                "Download %s — tentativa %d/%d", ticker, attempt, max_retries
+                "Download %s (start=%s, end=%s) — tentativa %d/%d",
+                ticker,
+                start,
+                yf_end,
+                attempt,
+                max_retries,
             )
             try:
-                df = yf.download(ticker, start=start, end=end, progress=False)
+                df = yf.download(ticker, start=start, end=yf_end, progress=False)
                 if df is None or df.empty:
                     raise ValueError(f"yfinance retornou dados vazios para {ticker}")
                 logger.debug("Download %s OK (tentativa %d)", ticker, attempt)
@@ -133,7 +155,10 @@ class DataExtractor:
                 last_exc = e
                 logger.warning(
                     "Erro no download %s (tentativa %d/%d): %s",
-                    ticker, attempt, max_retries, e,
+                    ticker,
+                    attempt,
+                    max_retries,
+                    e,
                 )
                 if attempt < max_retries:
                     logger.debug("Aguardando %.1fs antes de retentar...", delay)
@@ -142,7 +167,9 @@ class DataExtractor:
 
         logger.error(
             "Download de %s falhou após %d tentativas. Último erro: %s",
-            ticker, max_retries, last_exc,
+            ticker,
+            max_retries,
+            last_exc,
         )
         raise RuntimeError(
             f"Download de {ticker} falhou após {max_retries} tentativas. "

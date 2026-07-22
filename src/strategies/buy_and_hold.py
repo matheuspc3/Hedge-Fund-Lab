@@ -27,7 +27,8 @@ class BuyAndHold(Strategy):
             signals.iloc[0] = 1
             logger.info(
                 "BuyAndHold: entrada em %s a R$ %.2f",
-                data.index[0], data["fechamento"].iloc[0],
+                data.index[0],
+                data["fechamento"].iloc[0],
             )
         return signals
 

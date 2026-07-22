@@ -5,13 +5,11 @@ from unittest.mock import patch
 import pandas as pd
 import pytest
 
-from src.config import settings
-
 
 @pytest.fixture
 def mock_dataframe():
     """DataFrame simulado para retorno das tasks."""
-    dates = pd.bdate_range("2024-01-01", "2024-01-10")
+    dates = pd.date_range("2024-01-01", periods=10)
     return pd.DataFrame(
         {
             "fechamento": [100.0 + i for i in range(10)],
@@ -28,7 +26,7 @@ def mock_dataframe():
             "macd": [0.5] * 10,
             "macd_sinal": [0.3] * 10,
         },
-        index=pd.to_datetime([f"2024-01-{i+1:02d}" for i in range(10)]),
+        index=dates,
     )
 
 
@@ -128,7 +126,9 @@ class TestExtractTask:
             result = extract_task("PETR4.SA", "2024-01-01", "2024-01-31")
 
             pd.testing.assert_frame_equal(result, mock_dataframe)
-            instance.download.assert_called_once_with("PETR4.SA", "2024-01-01", "2024-01-31")
+            instance.download.assert_called_once_with(
+                "PETR4.SA", "2024-01-01", "2024-01-31"
+            )
 
 
 class TestTransformTask:
@@ -139,8 +139,13 @@ class TestTransformTask:
         from src.pipeline.flows import transform_task
 
         with (
-            patch("src.pipeline.flows.DataTransformer.clean", return_value=mock_dataframe),
-            patch("src.pipeline.flows.DataTransformer.calculate_indicators", return_value=mock_dataframe),
+            patch(
+                "src.pipeline.flows.DataTransformer.clean", return_value=mock_dataframe
+            ),
+            patch(
+                "src.pipeline.flows.DataTransformer.calculate_indicators",
+                return_value=mock_dataframe,
+            ),
         ):
             result = transform_task(mock_dataframe)
 
@@ -156,10 +161,10 @@ class TestLoadTask:
 
         with (
             patch("src.pipeline.flows.DataLoader") as MockLoader,
-            patch("src.pipeline.flows.get_session") as mock_get_session,
+            patch("src.pipeline.flows.get_session"),
         ):
             instance = MockLoader.return_value
             load_task("PETR4.SA", mock_dataframe, mock_dataframe)
 
             assert instance.upsert_cotacoes.called
-            assert instance.batch_insert_indicators.called
+            assert instance.upsert_indicadores.called

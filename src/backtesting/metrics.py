@@ -7,9 +7,7 @@ import numpy as np
 import pandas as pd
 
 
-def sharpe_ratio(
-    returns: pd.Series, rf: float = 0.0, freq: int = 252
-) -> float:
+def sharpe_ratio(returns: pd.Series, rf: float = 0.0, freq: int = 252) -> float:
     """Sharpe Ratio anualizado.
 
     Args:
@@ -168,9 +166,7 @@ def cumulative_return(equity_curve: pd.Series) -> float:
     return (equity_curve.iloc[-1] / equity_curve.iloc[0]) - 1.0
 
 
-def annualized_volatility(
-    returns: pd.Series, freq: int = 252
-) -> float:
+def annualized_volatility(returns: pd.Series, freq: int = 252) -> float:
     """Volatilidade anualizada dos retornos.
 
     Args:
@@ -194,9 +190,7 @@ def annualized_volatility(
     return float(vol * np.sqrt(freq))
 
 
-def calmar_ratio(
-    returns: pd.Series, max_dd: float, freq: int = 252
-) -> float:
+def calmar_ratio(returns: pd.Series, max_dd: float, freq: int = 252) -> float:
     """Calmar Ratio: retorno anualizado / |max_drawdown|.
 
     Args:

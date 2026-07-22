@@ -28,9 +28,7 @@ class SMACross(Strategy):
             )
         self.fast_window = fast_window
         self.slow_window = slow_window
-        logger.info(
-            "SMACross criada: fast=%d slow=%d", fast_window, slow_window
-        )
+        logger.info("SMACross criada: fast=%d slow=%d", fast_window, slow_window)
 
     def generate_signals(self, data: pd.DataFrame) -> pd.Series:
         if data.empty:
@@ -48,7 +46,11 @@ class SMACross(Strategy):
         # Só gera sinais após a SMA lenta ter valor válido
         valid_start = self.slow_window
         if len(signals) <= valid_start:
-            logger.debug("SMACross: dados insuficientes (%d < slow=%d)", len(signals), self.slow_window)
+            logger.debug(
+                "SMACross: dados insuficientes (%d < slow=%d)",
+                len(signals),
+                self.slow_window,
+            )
             return signals
 
         n_golden = 0
@@ -62,25 +64,37 @@ class SMACross(Strategy):
                 and not pd.isna(sma_slow.iloc[i - 1])
             ):
                 # Golden cross: fast cruza acima da slow
-                if sma_fast.iloc[i - 1] <= sma_slow.iloc[i - 1] and sma_fast.iloc[i] > sma_slow.iloc[i]:
+                if (
+                    sma_fast.iloc[i - 1] <= sma_slow.iloc[i - 1]
+                    and sma_fast.iloc[i] > sma_slow.iloc[i]
+                ):
                     signals.iloc[i] = 1
                     n_golden += 1
                     logger.info(
                         "GOLDEN CROSS em %s: fast=%.2f slow=%.2f",
-                        data.index[i], sma_fast.iloc[i], sma_slow.iloc[i],
+                        data.index[i],
+                        sma_fast.iloc[i],
+                        sma_slow.iloc[i],
                     )
                 # Death cross: fast cruza abaixo da slow
-                elif sma_fast.iloc[i - 1] >= sma_slow.iloc[i - 1] and sma_fast.iloc[i] < sma_slow.iloc[i]:
+                elif (
+                    sma_fast.iloc[i - 1] >= sma_slow.iloc[i - 1]
+                    and sma_fast.iloc[i] < sma_slow.iloc[i]
+                ):
                     signals.iloc[i] = -1
                     n_death += 1
                     logger.info(
                         "DEATH CROSS em %s: fast=%.2f slow=%.2f",
-                        data.index[i], sma_fast.iloc[i], sma_slow.iloc[i],
+                        data.index[i],
+                        sma_fast.iloc[i],
+                        sma_slow.iloc[i],
                     )
 
         logger.debug(
             "SMACross: %d golden cross(es), %d death cross(es) em %d dias",
-            n_golden, n_death, len(signals),
+            n_golden,
+            n_death,
+            len(signals),
         )
         return signals
 

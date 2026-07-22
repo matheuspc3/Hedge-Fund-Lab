@@ -10,9 +10,10 @@ build/
 venv/
 env/
 
-# IDE
+# IDE / AI Tools
 .vscode/
 .idea/
+.claude/
 
 # Environment variables
 .env
