@@ -7,6 +7,11 @@ técnicos (SMA, Bollinger Bands, RSI, MACD) e carrega em PostgreSQL. Inclui
 um dashboard web com **5 estratégias de backtesting**, gráficos de drawdown
 comparativo e scatter plot risco × retorno.
 
+<img width="1883" height="887" alt="image" src="https://github.com/user-attachments/assets/09975b86-897d-459e-b3f2-5b98372ff1e4" />
+<img width="1884" height="693" alt="image" src="https://github.com/user-attachments/assets/0f2d84cb-8405-4c77-817d-cd8fe7a23b41" />
+<img width="1891" height="901" alt="image" src="https://github.com/user-attachments/assets/2e2201ac-b637-4028-aeea-03be82b2bedb" />
+
+
 ## Stack
 
 - **Python ≥ 3.11** — core da aplicação
