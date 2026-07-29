@@ -152,9 +152,70 @@ Logs em tempo real: **[http://localhost:8081/logs](http://localhost:8081/logs)**
 
 | Estratégia | Descrição |
 |------------|-----------|
-| **Equal Weight** | Mantém pesos iguais (10%) em todos os ativos, rebalanceando a cada 63 dias úteis (~3 meses) |
-| **Min Variance** | Otimiza pesos via Markowitz para minimizar a volatilidade da carteira |
+| **Equal Weight** | Mantém pesos iguais (10%) em todos os ativos, rebalanceando periodicamente |
+| **Min Variance** | Otimiza pesos para minimizar a volatilidade da carteira (sem vendas a descoberto) |
 
+## Dashboard
+
+O dashboard possui duas abas principais:
+
+### 📊 Portfólio Multi-Ativo
+- **Cards de métricas**: Sharpe, Sortino, Retorno e Drawdown de cada estratégia
+- **Equity Curves**: evolução patrimonial comparativa de todas as 5 estratégias
+- **Drawdown Chart**: série de drawdown de cada estratégia
+- **Scatter Plot**: risco (volatilidade) × retorno, com Sharpe como indicador de cor
+- **Alocação**: gráficos de pizza com os pesos atuais (Equal Weight e Min Variance)
+- **Tabela comparativa**: todas as métricas lado a lado
+
+### 📈 Análise por Ativo
+- Gráfico de preço com SMA 50/200 e Bandas de Bollinger
+- RSI com bandas de sobrecompra (70) e sobrevenda (30)
+- MACD com histograma
+- Cards de resumo e estatísticas
+- Tabela dos últimos 20 pregões
+
+## Configuração (.env)
+
+| Variável            | Padrão                    | Descrição                     |
+|---------------------|---------------------------|-------------------------------|
+| `DATABASE_URL`      | `sqlite:///hedgefundlab.db` | Connection string do banco    |
+| `DEFAULT_TICKERS`   | `PETR4.SA,VALE3.SA,...`   | 10 ativos da B3               |
+| `START_DATE`        | `2016-01-01`              | Início do período histórico   |
+| `END_DATE`          | `2025-12-31`              | Fim do período histórico      |
+| `BATCH_SIZE`        | `1000`                    | Tamanho do batch de inserção  |
+| `CACHE_DIR`         | `data/raw`                | Diretório de cache CSV        |
+| `LOG_LEVEL`         | `INFO`                    | Nível de log                  |
+| `LOG_FILE`          | `data/logs/hedgefund.log` | Arquivo de log                |
+
+### Tickers monitorados
+
+| Ticker   | Empresa               | Setor              |
+|----------|-----------------------|--------------------|
+| PETR4.SA | Petrobras             | Petróleo & Gás     |
+| VALE3.SA | Vale                  | Mineração          |
+| ITUB4.SA | Itaú Unibanco         | Bancos             |
+| BBDC4.SA | Bradesco              | Bancos             |
+| BBAS3.SA | Banco do Brasil       | Bancos             |
+| ABEV3.SA | Ambev                 | Bebidas            |
+| WEGE3.SA | Weg                   | Bens Industriais   |
+| CMIG4.SA | Cemig                 | Energia Elétrica   |
+| RENT3.SA | Localiza              | Locação de Veículos|
+| SUZB3.SA | Suzano                | Papel & Celulose   |
+
+> **Nota:** PETR4.SA possui dados disponíveis no yfinance apenas a partir de
+> 2024 (devido a eventos corporativos). As demais 9 ações cobrem todo o
+> período desde 2016.
+
+## Indicadores calculados
+
+| Indicador          | Descrição                                |
+|--------------------|------------------------------------------|
+| SMA-50             | Média móvel simples de 50 períodos       |
+| SMA-200            | Média móvel simples de 200 períodos      |
+| Bollinger Bands    | Bandas de Bollinger (20,2)               |
+| RSI                | Relative Strength Index (14)             |
+| MACD               | Moving Average Convergence Divergence    |
+| MACD Sinal         | Linha de sinal do MACD                   |
 ---
 
 ## Qualidade de Código & Testes
