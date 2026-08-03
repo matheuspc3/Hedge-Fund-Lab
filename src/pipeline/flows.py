@@ -92,7 +92,7 @@ def load_task(
     ]
 
     loader.upsert_cotacoes(ticker, cotacoes_to_insert)
-    loader.upsert_indicadores(ticker, indicadores_to_insert)
+    loader.upsert_indicators(ticker, indicadores_to_insert)
     logger.info("Load OK: %s", ticker)
 
 
@@ -135,10 +135,8 @@ def pipeline_etl(
                 "[%d/%d] %s concluído — %d registros", i, len(tickers), ticker, len(df)
             )
             n_ok += 1
-        except Exception as exc:
-            logger.error(
-                "[%d/%d] %s FALHOU: %s", i, len(tickers), ticker, exc, exc_info=True
-            )
+        except Exception:
+            logger.exception("[%d/%d] %s FALHOU", i, len(tickers), ticker)
             n_fail += 1
 
     logger.info("=" * 50)

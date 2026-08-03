@@ -58,7 +58,7 @@ class DataLoader:
             return total
         except BaseException:
             session.rollback()
-            logger.error("batch_insert ROLLBACK: %s", ticker, exc_info=True)
+            logger.exception("batch_insert ROLLBACK: %s", ticker)
             raise
         finally:
             session.close()
@@ -69,8 +69,7 @@ class DataLoader:
     ) -> int:
         """Insere cotações com upsert (evita duplicatas por (ativo_id, data)).
 
-        Usa ``ON CONFLICT DO NOTHING`` no PostgreSQL ou ``INSERT OR IGNORE``
-        no SQLite. Requer unique constraint (ativo_id, data) na tabela.
+        Registros existentes são atualizados pela chave ``(ativo_id, data)``.
         """
         is_sqlite = settings.database_url.startswith("sqlite")
 
@@ -84,29 +83,21 @@ class DataLoader:
         try:
             ativo_id = self._get_or_create_ativo(session, ticker)
             rows = self._df_to_cotacao_rows(df, ativo_id)
-            total = 0
-
-            for i in range(0, len(rows), batch_size):
-                batch = rows[i : i + batch_size]
-                if is_sqlite:
-                    from sqlalchemy.dialects.sqlite import insert as sqlite_insert
-
-                    stmt = sqlite_insert(CotacaoDiaria).values(batch)
-                    stmt = stmt.on_conflict_do_nothing()
-                else:
-                    from sqlalchemy.dialects.postgresql import insert as pg_insert
-
-                    stmt = pg_insert(CotacaoDiaria).values(batch)
-                    stmt = stmt.on_conflict_do_nothing()
-                session.execute(stmt)
-                total += len(batch)
+            total = self._upsert_batches(
+                session,
+                rows,
+                CotacaoDiaria,
+                ["abertura", "maxima", "minima", "fechamento", "volume"],
+                batch_size,
+                is_sqlite,
+            )
 
             session.commit()
             logger.info("upsert_cotacoes OK: %s → %d cotações", ticker, total)
             return total
         except BaseException:
             session.rollback()
-            logger.error("upsert_cotacoes ROLLBACK: %s", ticker, exc_info=True)
+            logger.exception("upsert_cotacoes ROLLBACK: %s", ticker)
             raise
         finally:
             session.close()
@@ -114,10 +105,10 @@ class DataLoader:
 
     # ── Indicadores ──────────────────────────────────────────────────────
 
-    def batch_insert_indicators(
+    def upsert_indicators(
         self, ticker: str, df: pd.DataFrame, batch_size: int = 1000
     ) -> int:
-        """Insere indicadores técnicos em batches.
+        """Insere ou atualiza indicadores por ``(ativo_id, data)``.
 
         Args:
             ticker: Ticker do ativo.
@@ -128,22 +119,39 @@ class DataLoader:
         Returns:
             Número total de registros inseridos.
         """
-        logger.info("batch_insert_indicators: %s — %d registros", ticker, len(df))
+        is_sqlite = settings.database_url.startswith("sqlite")
+        logger.info("upsert_indicators: %s — %d registros", ticker, len(df))
         session = self.session_factory()
         try:
             ativo_id = self._get_or_create_ativo(session, ticker)
             rows = self._df_to_indicador_rows(df, ativo_id)
-            total = self._insert_batches(session, rows, IndicadorTecnico, batch_size)
+            total = self._upsert_batches(
+                session,
+                rows,
+                IndicadorTecnico,
+                [
+                    "sma_50",
+                    "sma_200",
+                    "bb_upper",
+                    "bb_middle",
+                    "bb_lower",
+                    "rsi",
+                    "macd",
+                    "macd_sinal",
+                ],
+                batch_size,
+                is_sqlite,
+            )
             session.commit()
-            logger.info("batch_insert_indicators OK: %s → %d indicadores", ticker, total)
+            logger.info("upsert_indicators OK: %s → %d indicadores", ticker, total)
             return total
         except BaseException:
             session.rollback()
-            logger.error("batch_insert_indicators ROLLBACK: %s", ticker, exc_info=True)
+            logger.exception("upsert_indicators ROLLBACK: %s", ticker)
             raise
         finally:
             session.close()
-            logger.debug("batch_insert_indicators: sessão encerrada — %s", ticker)
+            logger.debug("upsert_indicators: sessão encerrada — %s", ticker)
 
     def upsert_indicadores(
         self, ticker: str, df: pd.DataFrame, batch_size: int = 1000
@@ -182,7 +190,7 @@ class DataLoader:
             return total
         except BaseException:
             session.rollback()
-            logger.error("upsert_indicadores ROLLBACK: %s", ticker, exc_info=True)
+            logger.exception("upsert_indicadores ROLLBACK: %s", ticker)
             raise
         finally:
             session.close()
@@ -288,4 +296,32 @@ class DataLoader:
                 len(batch),
                 model_class.__name__,
             )
+        return total
+
+    @staticmethod
+    def _upsert_batches(
+        session: Session,
+        rows: list[dict],
+        model_class: type,
+        update_columns: list[str],
+        batch_size: int,
+        is_sqlite: bool,
+    ) -> int:
+        """Executa upsert portável entre SQLite e PostgreSQL."""
+        if is_sqlite:
+            from sqlalchemy.dialects.sqlite import insert
+        else:
+            from sqlalchemy.dialects.postgresql import insert
+
+        total = 0
+        for i in range(0, len(rows), batch_size):
+            stmt = insert(model_class).values(rows[i : i + batch_size])
+            stmt = stmt.on_conflict_do_update(
+                index_elements=["ativo_id", "data"],
+                set_={
+                    column: getattr(stmt.excluded, column) for column in update_columns
+                },
+            )
+            session.execute(stmt)
+            total += len(rows[i : i + batch_size])
         return total

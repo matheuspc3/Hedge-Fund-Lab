@@ -1,14 +1,12 @@
 """Modelos ORM para o Hedge-fund-lab.
 
-TrÃªs tabelas principais:
-- ``Ativo`` â€” ativos financeiros (PETR4, WEGE3, etc.)
 Três tabelas principais:
 - ``Ativo`` — ativos financeiros (PETR4, WEGE3, etc.)
 - ``CotacaoDiaria`` — cotações OHLCV diárias
 - ``IndicadorTecnico`` — indicadores técnicos calculados
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import (
     Column,
@@ -35,9 +33,7 @@ class Ativo(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     ticker = Column(String(20), unique=True, nullable=False, index=True)
     setor = Column(String(100), nullable=False)
-    created_at = Column(
-        DateTime, nullable=False, default=lambda: datetime.now(timezone.utc)
-    )
+    created_at = Column(DateTime, nullable=False, default=lambda: datetime.now(UTC))
 
     cotacoes = relationship(
         "CotacaoDiaria", back_populates="ativo", cascade="all, delete-orphan"
@@ -80,9 +76,12 @@ class CotacaoDiaria(Base):
 
 
 class IndicadorTecnico(Base):
-    """Indicadores tÃ©cnicos calculados para um ativo em uma data."""
+    """Indicadores técnicos calculados para um ativo em uma data."""
 
     __tablename__ = "indicadores_tecnicos"
+    __table_args__ = (
+        UniqueConstraint("ativo_id", "data", name="uq_indicador_ativo_data"),
+    )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     ativo_id = Column(

@@ -19,9 +19,10 @@ comparativo e scatter plot risco × retorno.
 - **Justfile** — automação de comandos cross-platform (PowerShell / Bash)
 - **yfinance** — download de cotações históricas
 - **SQLAlchemy 2.0** — ORM com suporte a upsert (`ON CONFLICT DO NOTHING`)
-- **PostgreSQL 16** — persistência principal em container Docker (porta `5435`)
+- **PostgreSQL 16** — persistência principal em container Docker (porta `5435`), com suporte a SQLite
 - **Prefect 2** — orquestração do pipeline ETL
 - **Ruff & Pyright** — linting, formatação e checagem estática de tipos
+- **LangGraph 1** — coordenação do fluxo multiagente
 - **Chart.js** — dashboard web interativo
 
 ---
@@ -63,7 +64,14 @@ just format        # Formata automaticamente o código conforme o Padrão Ouro
 │   │   ├── engine.py         # Motor de backtesting single-asset
 │   │   ├── portfolio.py      # Motor de backtesting multi-ativo
 │   │   ├── metrics.py        # Sharpe, Sortino, Max Drawdown, etc.
-│   │   └── cost_model.py     # Modelo de custos de transação
+│   │   └── costs.py          # Modelo de custos de transação
+│   ├── agents/
+│   │   ├── state.py          # Contratos Pydantic + estado compartilhado
+│   │   ├── llm_client.py     # Interface de LLM + mock determinístico
+│   │   ├── technical_analyst.py
+│   │   ├── risk_manager.py
+│   │   ├── portfolio_manager.py
+│   │   └── graph.py          # Analista → Risco → Portfólio
 │   └── strategies/
 │       ├── buy_and_hold.py   # Estratégia Buy & Hold
 │       ├── sma_cross.py      # Estratégia SMA Cross (50/200)
@@ -137,6 +145,103 @@ Acesse o dashboard em: **[http://localhost:8081](http://localhost:8081)**
 Logs em tempo real: **[http://localhost:8081/logs](http://localhost:8081/logs)**
 
 ---
+
+## Sistema multiagente
+
+A primeira versão do comitê usa um quorum configurável de **30 analistas técnicos**.
+Os pareceres são executados em paralelo e uma compra ou venda só avança quando
+ao menos 2/3 do coletivo (20 de 30) concorda. Sem supermaioria, ou se algum voto
+obrigatório for inválido, o sinal coletivo é `MANTER`. Para exigir unanimidade,
+configure `consensus_threshold=1.0`.
+
+As respostas são validadas por Pydantic e as regras duras de volatilidade,
+drawdown e concentração são avaliadas antes do parecer qualitativo de risco.
+O fluxo completo pode ser executado sem API externa usando o `MockLLMClient`.
+
+```python
+import asyncio
+
+from src.agents import (
+    AnalystEnsembleConfig,
+    FinalDecision,
+    MockLLMClient,
+    RiskVerdict,
+    TechnicalSignal,
+    build_graph,
+)
+
+llm = MockLLMClient({
+    TechnicalSignal: {
+        "signal": "COMPRA",
+        "justification": "SMA 50 acima da SMA 200",
+        "confidence": 0.7,
+    },
+    RiskVerdict: {
+        "verdict": "APROVADO",
+        "analysis": "Risco dentro dos limites",
+        "risk_metrics": {},
+    },
+    FinalDecision: {
+        "decision": "COMPRA",
+        "position_size": 0.2,
+        "reasoning": "Consenso do comitê",
+    },
+})
+
+graph = build_graph(
+    llm,
+    ensemble_config=AnalystEnsembleConfig(
+        analyst_count=30,
+        consensus_threshold=2 / 3,
+        require_all_votes=True,
+    ),
+)
+
+result = asyncio.run(graph.ainvoke({
+    "ticker": "WEGE3.SA",
+    "date": "2025-01-02",
+    "indicators": {"sma_50": 50.0, "sma_200": 45.0},
+    "cash": 100_000.0,
+    "position": 0.0,
+    "current_price": 55.0,
+    "equity": 100_000.0,
+    "recent_volatility": 0.20,
+    "current_drawdown": 0.05,
+    "payoff_ratio": 1.0,
+    "errors": [],
+}))
+```
+
+Para o experimento, `AgentBacktestEngine` percorre os pregões sequencialmente,
+observa os dados no fechamento de `t` e executa uma decisão aprovada somente na
+abertura de `t+1`. O motor aplica custos, atualiza caixa e posição e preserva o
+histórico completo do consenso, decisão, execução e erros.
+
+```python
+from src.backtesting import AgentBacktestEngine
+
+backtest = AgentBacktestEngine(graph, data, ticker="WEGE3.SA")
+result = backtest.run()
+result.save_audit("data/agent_runs/wege3.json")
+```
+
+Uma execução demonstrativa de 60 pregões, com respostas simuladas e auditoria
+completa, pode ser iniciada com:
+
+```bash
+python scripts/run_agent_backtest.py --ticker WEGE3.SA
+```
+
+`CachedLLMClient` e `RetryingLLMClient` podem envolver qualquer cliente real
+para reutilizar respostas e tratar falhas transitórias. O cache inclui prompt e
+schema na chave, evitando misturar respostas de agentes ou contratos diferentes.
+
+O SQLite legado pode ser reparado com o comando abaixo. Ele se recusa a executar
+se já existir um backup e sempre cria `hedgefundlab.db.bak` antes da limpeza:
+
+```bash
+python scripts/repair_sqlite_database.py hedgefundlab.db
+```
 
 ## Estratégias de Backtesting
 

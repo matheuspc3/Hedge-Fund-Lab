@@ -156,7 +156,7 @@ def run_pipeline_etl() -> None:
             ]
 
             loader.upsert_cotacoes(ticker, cotacoes_to_insert)
-            loader.batch_insert_indicators(ticker, indicadores_to_insert)
+            loader.upsert_indicators(ticker, indicadores_to_insert)
 
             elapsed = time.perf_counter() - t0
             logger.info(

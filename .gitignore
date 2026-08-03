@@ -24,6 +24,7 @@ Thumbs.db
 
 # Data cache
 data/raw/
+data/agent_runs/
 
 # Dashboard data (generated)
 dashboard/data.json

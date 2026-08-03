@@ -50,6 +50,10 @@ def setup_logger(
     root = logging.getLogger()
     root.setLevel(getattr(logging, level))
 
+    # Windows pode expor stdout como cp1252 mesmo em terminais UTF-8.
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
     # ── Console handler ───────────────────────────────────────────
     if not any(
         isinstance(h, logging.StreamHandler) and not isinstance(h, logging.FileHandler)

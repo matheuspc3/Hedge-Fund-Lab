@@ -29,6 +29,10 @@ class Settings(BaseSettings):
     cache_dir: str = "data/raw"
     log_level: str = "INFO"
     log_file: str = "data/logs/hedgefund.log"
+    llm_provider: str = "mock"
+    llm_model: str = ""
+    llm_api_key: str | None = None
+    llm_base_url: str | None = None
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8", "extra": "ignore"}
 

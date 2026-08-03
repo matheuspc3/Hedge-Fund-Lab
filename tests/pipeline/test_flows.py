@@ -156,7 +156,7 @@ class TestLoadTask:
     """Testes para load_task — executa a função diretamente."""
 
     def test_load_task_calls_loader(self, mock_dataframe):
-        """load_task usa DataLoader.upsert_cotacoes e batch_insert_indicators."""
+        """load_task usa upsert para cotações e indicadores."""
         from src.pipeline.flows import load_task
 
         with (
@@ -167,4 +167,4 @@ class TestLoadTask:
             load_task("PETR4.SA", mock_dataframe, mock_dataframe)
 
             assert instance.upsert_cotacoes.called
-            assert instance.upsert_indicadores.called
+            assert instance.upsert_indicators.called
