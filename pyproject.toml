@@ -39,6 +39,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+addopts = "--basetemp=./.pytest_cache/tmp"
 
 [tool.pyright]
 include = ["src", "tests", "scripts", "dashboard"]

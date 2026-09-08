@@ -5,7 +5,13 @@ from src.backtesting.agent_engine import (
     AgentBacktestResult,
     AgentDecisionRecord,
 )
+from src.backtesting.b3_calendar import B3Calendar
 from src.backtesting.costs import CostModel
+from src.backtesting.daily_agent import (
+    DailyAgentRunner,
+    DailyAgentState,
+    DailyRunOutcome,
+)
 from src.backtesting.engine import BacktestEngine, BacktestResult, Trade
 from src.backtesting.metrics import (
     annualized_volatility,
@@ -30,9 +36,13 @@ __all__ = [
     "AgentBacktestEngine",
     "AgentBacktestResult",
     "AgentDecisionRecord",
+    "B3Calendar",
     "BacktestEngine",
     "BacktestResult",
     "CostModel",
+    "DailyAgentRunner",
+    "DailyAgentState",
+    "DailyRunOutcome",
     "EqualWeightPortfolio",
     "MinVariancePortfolio",
     "PortfolioBacktestEngine",

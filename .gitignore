@@ -25,6 +25,13 @@ Thumbs.db
 # Data cache
 data/raw/
 data/agent_runs/
+data/agent_daily/
+data/cache/
 
 # Dashboard data (generated)
 dashboard/data.json
+
+# Testing artifacts
+.pytest_cache/
+.pytest_temp/
+.coverage

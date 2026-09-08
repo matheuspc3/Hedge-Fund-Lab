@@ -2,6 +2,7 @@
 
 from src.agents.graph import build_graph
 from src.agents.llm_client import (
+    AgentRouterLLMClient,
     CachedLLMClient,
     LLMClient,
     MockLLMClient,
@@ -18,6 +19,7 @@ from src.agents.state import (
 from src.agents.technical_analyst import AnalystEnsembleConfig
 
 __all__ = [
+    "AgentRouterLLMClient",
     "AgentState",
     "AnalystEnsembleConfig",
     "CachedLLMClient",

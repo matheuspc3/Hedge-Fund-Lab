@@ -36,11 +36,56 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     # ── API ───────────────────────────────────────────────────────
 
+    def do_POST(self):
+        if self.path == "/api/run":
+            content_length = int(self.headers.get('Content-Length', 0))
+            post_data = self.rfile.read(content_length)
+            
+            try:
+                params = json.loads(post_data)
+                ticker = params.get("ticker", "WEGE3.SA")
+                days = str(params.get("days", 30))
+                analysts = str(params.get("analysts", 30))
+                freq = str(params.get("decision_frequency", 5))
+                provider = params.get("provider", "omnirouter")
+
+                import subprocess
+                # Zera o arquivo de log para que o terminal web comece limpo
+                if LOG_FILE.exists():
+                    LOG_FILE.write_text("")
+                
+                # Roda o script em background
+                subprocess.Popen([
+                    sys.executable, "scripts/run_agent_backtest.py",
+                    "--ticker", ticker,
+                    "--days", days,
+                    "--analysts", analysts,
+                    "--decision-frequency", freq,
+                    "--provider", provider
+                ], cwd=str(PROJECT_ROOT), close_fds=True)
+                
+                response_body = json.dumps({"status": "running"}).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(response_body)))
+                self.end_headers()
+                self.wfile.write(response_body)
+            except Exception as e:
+                self.send_response(500)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode())
+        else:
+            self.send_response(404)
+            self.end_headers()
+
     def do_GET(self):
         if self.path == "/api/logs":
             return self._handle_logs_sse()
         if self.path in ("/logs", "/logs.html"):
             return self._serve_static("logs.html")
+        if self.path in ("/lab", "/lab.html"):
+            return self._serve_static("lab.html")
         return super().do_GET()
 
     def _serve_static(self, filename: str) -> None:
@@ -49,11 +94,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         if not path.exists():
             self.send_error(404, "Not found")
             return
+        
+        content = path.read_bytes()
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(content)))
         self.end_headers()
-        with open(path, "rb") as f:
-            self.wfile.write(f.read())
+        self.wfile.write(content)
 
     def _handle_logs_sse(self) -> None:
         """SSE endpoint: envia linhas do arquivo de log em tempo real."""
@@ -96,13 +143,26 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                     # Race condition: arquivo deletado entre stat() e open()
                     last_size = 0
 
+                # Ping SSE para detectar se o cliente (navegador) fechou a aba/deu refresh.
+                # Como SSE ignora linhas que começam com ":", serve como keep-alive invisível.
+                self.wfile.write(b": ping\n\n")
+                self.wfile.flush()
+
                 time.sleep(1)
         except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
             pass  # Cliente desconectou — normal
 
 
-class ReusableTCPServer(socketserver.TCPServer):
+class ReusableTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     allow_reuse_address = True
+
+    def handle_error(self, request, client_address):
+        """Ignora erros de socket inofensivos (como navegador cancelando requisição)."""
+        import sys
+        err = sys.exc_info()[1]
+        if isinstance(err, (ConnectionAbortedError, ConnectionResetError, BrokenPipeError)):
+            return
+        super().handle_error(request, client_address)
 
 
 def main():

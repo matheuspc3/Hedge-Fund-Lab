@@ -1,10 +1,18 @@
 import asyncio
+import io
+import json
+from urllib import error
 
 import pytest
 from pydantic import ValidationError
 
 from src.agents.graph import build_graph
-from src.agents.llm_client import CachedLLMClient, MockLLMClient, RetryingLLMClient
+from src.agents.llm_client import (
+    AgentRouterLLMClient,
+    CachedLLMClient,
+    MockLLMClient,
+    RetryingLLMClient,
+)
 from src.agents.portfolio_manager import (
     PortfolioConfig,
     calculate_kelly_size,
@@ -134,13 +142,161 @@ def test_cache_client_persists_structured_response(tmp_path):
     assert path.is_file()
 
 
+def test_agent_router_client_uses_openai_compatible_payload_and_parses_json():
+    captured = {}
+
+    class StubTransport:
+        def __call__(self, method, url, headers, body):
+            captured["method"] = method
+            captured["url"] = url
+            captured["headers"] = headers
+            captured["body"] = body
+            payload = {
+                "choices": [
+                    {
+                        "message": {
+                            "content": '{"signal":"COMPRA","justification":"ok","confidence":0.6}'
+                        }
+                    }
+                ]
+            }
+            return io.BytesIO(json.dumps(payload).encode("utf-8"))
+
+    client = AgentRouterLLMClient(
+        api_key="test-key",
+        base_url="https://example.test/api/v1",
+        model="openai/gpt-4o-mini",
+        transport=StubTransport(),
+        timeout=1.0,
+    )
+    response = run(
+        client.generate(
+            "system",
+            "user",
+            TechnicalSignal,
+            {"temperature": 0.2, "seed": 123, "analyst_id": 1},
+        )
+    )
+
+    assert isinstance(response, TechnicalSignal)
+    assert response.signal == "COMPRA"
+    assert captured["headers"]["Authorization"] == "Bearer test-key"
+    assert captured["body"]["model"] == "openai/gpt-4o-mini"
+    assert captured["body"]["temperature"] == 0.2
+    assert captured["body"]["messages"][0]["content"].startswith("system")
+    assert captured["body"]["messages"][1]["content"] == "user"
+
+
+def test_agent_router_client_missing_api_key_raises(monkeypatch):
+    monkeypatch.delenv("LLM_API_KEY", raising=False)
+    client = AgentRouterLLMClient(api_key="")
+    with pytest.raises(ConnectionError, match="LLM_API_KEY não configurada"):
+        run(client.generate("sys", "user"))
+
+
+def test_agent_router_client_branches_and_raw_types():
+    # Test base_url ending with /chat/completions and raw string response
+    client_str = AgentRouterLLMClient(
+        api_key="test-key",
+        base_url="https://example.test/api/v1/chat/completions",
+        transport=lambda method, url, headers, body: json.dumps(
+            {"choices": [{"message": {"content": "plain string"}}]}
+        ),
+    )
+    res_str = run(client_str.generate("sys", "user", response_schema=None))
+    assert res_str == "plain string"
+
+    # Test bytearray response and list message content
+    client_bytes = AgentRouterLLMClient(
+        api_key="test-key",
+        transport=lambda method, url, headers, body: bytearray(
+            json.dumps({"choices": [{"message": {"content": ["hello ", "world"]}}]}).encode()
+        ),
+    )
+    res_list = run(client_bytes.generate("sys", "user", response_schema=None))
+    assert res_list == "hello world"
+
+    # Test dict message content directly validating schema
+    client_dict = AgentRouterLLMClient(
+        api_key="test-key",
+        transport=lambda method, url, headers, body: json.dumps(
+            {
+                "choices": [
+                    {
+                        "message": {
+                            "content": {
+                                "signal": "VENDA",
+                                "justification": "test",
+                                "confidence": 0.8,
+                            }
+                        }
+                    }
+                ]
+            }
+        ).encode(),
+    )
+    res_dict = run(client_dict.generate("sys", "user", response_schema=TechnicalSignal))
+    assert res_dict.signal == "VENDA"
+
+
+def test_agent_router_client_invalid_json_raises():
+    client = AgentRouterLLMClient(
+        api_key="test-key",
+        transport=lambda method, url, headers, body: json.dumps(
+            {"choices": [{"message": {"content": "not json"}}]}
+        ).encode(),
+    )
+    with pytest.raises(ValueError, match="resposta não é JSON válido"):
+        run(client.generate("sys", "user", response_schema=TechnicalSignal))
+
+
+def test_agent_router_client_default_transport(monkeypatch):
+    # Test default transport HTTP success and HTTPError / URLError handling
+    class FakeResponse:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def read(self):
+            return json.dumps(
+                {"choices": [{"message": {"content": '{"signal":"MANTER","justification":"ok","confidence":0.5}'}}]}
+            ).encode()
+
+    def fake_urlopen(req, timeout):
+        return FakeResponse()
+
+    monkeypatch.setattr("urllib.request.urlopen", fake_urlopen)
+    client = AgentRouterLLMClient(api_key="test-key")
+    res = run(client.generate("sys", "user", TechnicalSignal))
+    assert res.signal == "MANTER"
+
+    # HTTPError
+    def fake_urlopen_http_err(req, timeout):
+        raise error.HTTPError(req.full_url, 401, "Unauthorized", {}, None)
+
+    monkeypatch.setattr("urllib.request.urlopen", fake_urlopen_http_err)
+    with pytest.raises(ConnectionError, match="HTTP 401: Unauthorized"):
+        run(client.generate("sys", "user", TechnicalSignal))
+
+    # URLError
+    def fake_urlopen_url_err(req, timeout):
+        raise error.URLError("Connection refused")
+
+    monkeypatch.setattr("urllib.request.urlopen", fake_urlopen_url_err)
+    with pytest.raises(ConnectionError, match="Connection refused"):
+        run(client.generate("sys", "user", TechnicalSignal))
+
+
+
 def test_technical_prompt_filters_extra_data_and_has_guardrails():
     parsed = parse_indicators_from_state(state())
     prompt = build_prompt(state())
     assert parsed == {"sma_50": 50.0, "sma_200": 45.0}
     assert "999" not in prompt
-    assert "COMPRA, VENDA ou MANTER" in prompt
-    assert "informação externa" in prompt
+    assert "COMPRA, VENDA, or MANTER" in prompt
+    assert "quantitative metrics" in prompt
 
 
 def test_technical_node_falls_back_when_data_or_response_is_invalid():

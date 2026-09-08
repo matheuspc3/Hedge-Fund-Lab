@@ -25,10 +25,9 @@ INDICATOR_KEYS = (
     "macd_sinal",
 )
 
-SYSTEM_PROMPT = """Você é o analista técnico do Hedge-fund-lab.
-Use exclusivamente o preço e os indicadores fornecidos. Ignore notícias,
-conhecimento externo e dados futuros. Responda com COMPRA, VENDA ou MANTER,
-uma justificativa curta baseada nos números e confiança entre 0 e 1."""
+SYSTEM_PROMPT = """You are the technical analyst for Hedge-fund-lab.
+Exclusively evaluate the provided bar close value and technical indicators. Ignore news, external knowledge, and future prices.
+Return JSON with signal (COMPRA, VENDA, or MANTER), a concise justification in Portuguese, and confidence between 0 and 1."""
 
 
 class AnalystEnsembleConfig(BaseModel):
@@ -63,11 +62,11 @@ def build_prompt(state: AgentState) -> str:
     indicators = parse_indicators_from_state(state)
     indicator_text = json.dumps(indicators, ensure_ascii=False, sort_keys=True)
     return (
-        f"Ticker: {state.get('ticker', 'desconhecido')}\n"
-        f"Data: {state.get('date', 'desconhecida')}\n"
-        f"Preço atual: {state.get('current_price')}\n"
-        f"Indicadores: {indicator_text if indicators else 'dados ausentes'}\n"
-        "Emita COMPRA, VENDA ou MANTER sem usar informação externa."
+        f"Ticker: {state.get('ticker', 'unknown')}\n"
+        f"Date: {state.get('date', 'unknown')}\n"
+        f"Close: {state.get('current_price')}\n"
+        f"Indicators: {indicator_text if indicators else 'none'}\n"
+        "Emit COMPRA, VENDA, or MANTER based solely on these quantitative metrics."
     )
 
 

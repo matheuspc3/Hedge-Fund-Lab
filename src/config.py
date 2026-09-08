@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     llm_model: str = ""
     llm_api_key: str | None = None
     llm_base_url: str | None = None
+    llm_timeout: float = 120.0
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8", "extra": "ignore"}
 

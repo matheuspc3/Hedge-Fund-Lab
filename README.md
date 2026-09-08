@@ -2,6 +2,16 @@
 
 Laboratório Quantitativo de Backtesting baseado em Sistemas Multiagentes.
 
+> **Estado do projeto:** protótipo técnico em evolução. O pipeline, cinco
+> benchmarks clássicos, dashboard e uma primeira estratégia LLM de três estágios
+> existem. A arena comparável entre clássicos e LLM ainda não existe, e os
+> resultados atuais não devem ser tratados como evidência científica.
+>
+> Comece pela [documentação](docs/README.md), especialmente o
+> [estado atual auditado](docs/ESTADO_ATUAL.md), a
+> [arquitetura](docs/ARQUITETURA.md) e o
+> [plano de evolução](docs/PLANO_EVOLUCAO.md).
+
 Pipeline ETL que baixa dados financeiros (via yfinance), calcula indicadores
 técnicos (SMA, Bollinger Bands, RSI, MACD) e carrega em PostgreSQL. Inclui
 um dashboard web com **5 estratégias de backtesting**, gráficos de drawdown
@@ -39,7 +49,7 @@ just db-down       # Encerra o container do banco de dados
 just run-pipeline  # Executa apenas o pipeline ETL (yfinance -> PostgreSQL)
 just generate-data # Roda os 5 backtests e gera o dashboard/data.json
 just dashboard     # Inicia o servidor web do dashboard (http://localhost:8081)
-just test          # Roda a suíte de 245 testes automatizados com Pytest
+just test          # Roda a suíte automatizada com Pytest
 just lint          # Verifica estilo e qualidade do código com Ruff
 just format        # Formata automaticamente o código conforme o Padrão Ouro
 ```
@@ -84,7 +94,7 @@ just format        # Formata automaticamente o código conforme o Padrão Ouro
 │   ├── app.js                # Lógica do dashboard
 │   ├── style.css             # Estilos
 │   └── logs.html             # Visualizador de logs em tempo real
-├── tests/                    # 245 Testes automatizados com Pytest
+├── tests/                    # Testes automatizados com Pytest
 ├── docker-compose.yml        # PostgreSQL 16 (Porta 5435)
 ├── justfile                  # Automação de comandos
 ├── pyproject.toml            # Especificação Poetry e regras do Ruff
@@ -150,9 +160,9 @@ Logs em tempo real: **[http://localhost:8081/logs](http://localhost:8081/logs)**
 
 A primeira versão do comitê usa um quorum configurável de **30 analistas técnicos**.
 Os pareceres são executados em paralelo e uma compra ou venda só avança quando
-ao menos 2/3 do coletivo (20 de 30) concorda. Sem supermaioria, ou se algum voto
-obrigatório for inválido, o sinal coletivo é `MANTER`. Para exigir unanimidade,
-configure `consensus_threshold=1.0`.
+a supermaioria de 25/30 concorda. Sem supermaioria, ou se algum voto obrigatório
+for inválido, o sinal coletivo é `MANTER`. Para exigir unanimidade, configure
+`consensus_threshold=1.0`.
 
 As respostas são validadas por Pydantic e as regras duras de volatilidade,
 drawdown e concentração são avaliadas antes do parecer qualitativo de risco.
@@ -192,7 +202,7 @@ graph = build_graph(
     llm,
     ensemble_config=AnalystEnsembleConfig(
         analyst_count=30,
-        consensus_threshold=2 / 3,
+        consensus_threshold=5 / 6,
         require_all_votes=True,
     ),
 )
@@ -215,7 +225,10 @@ result = asyncio.run(graph.ainvoke({
 Para o experimento, `AgentBacktestEngine` percorre os pregões sequencialmente,
 observa os dados no fechamento de `t` e executa uma decisão aprovada somente na
 abertura de `t+1`. O motor aplica custos, atualiza caixa e posição e preserva o
-histórico completo do consenso, decisão, execução e erros.
+histórico completo do consenso, decisão, execução e erros. A auditoria registra
+`as_of`, próxima sessão observada, status, data e preço de execução. A última
+previsão acionável permanece `PREDICTED` e não entra nas métricas antes de uma
+abertura futura.
 
 ```python
 from src.backtesting import AgentBacktestEngine
@@ -235,6 +248,20 @@ python scripts/run_agent_backtest.py --ticker WEGE3.SA
 `CachedLLMClient` e `RetryingLLMClient` podem envolver qualquer cliente real
 para reutilizar respostas e tratar falhas transitórias. O cache inclui prompt e
 schema na chave, evitando misturar respostas de agentes ou contratos diferentes.
+
+Para usar o cliente real do Agent Router/OpenRouter, configure `.env` com:
+
+```ini
+LLM_PROVIDER=omnirouter
+LLM_BASE_URL=https://openrouter.ai/api/v1
+LLM_API_KEY=<sua-chave>
+LLM_MODEL=openai/gpt-4o-mini
+```
+
+O cliente implementado usa o formato OpenAI-compatible de `/chat/completions`.
+No estado atual ele envia `temperature`, `top_p` e `max_tokens`; a `seed` do
+quorum é auditada, mas ainda não é encaminhada ao provedor. Consulte o
+[estado atual](docs/ESTADO_ATUAL.md) antes de executar chamadas pagas.
 
 O SQLite legado pode ser reparado com o comando abaixo. Ele se recusa a executar
 se já existir um backup e sempre cria `hedgefundlab.db.bak` antes da limpeza:
@@ -307,9 +334,10 @@ O dashboard possui duas abas principais:
 | RENT3.SA | Localiza              | Locação de Veículos|
 | SUZB3.SA | Suzano                | Papel & Celulose   |
 
-> **Nota:** PETR4.SA possui dados disponíveis no yfinance apenas a partir de
-> 2024 (devido a eventos corporativos). As demais 9 ações cobrem todo o
-> período desde 2016.
+> **Nota:** cobertura e qualidade devem ser verificadas no snapshot usado em cada
+> execução. O banco auditado cobre os dez tickers desde 2016, mas contém uma barra
+> final inválida por ticker; não assuma que o intervalo configurado é a cobertura
+> efetiva.
 
 ## Indicadores calculados
 
@@ -326,7 +354,7 @@ O dashboard possui duas abas principais:
 ## Qualidade de Código & Testes
 
 ```powershell
-# Executa os 245 testes unitários
+# Executa a suíte de testes
 just test
 
 # Executa a checagem estática de estilo (Linter)
