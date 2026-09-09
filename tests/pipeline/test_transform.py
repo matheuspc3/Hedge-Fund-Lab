@@ -1,43 +1,135 @@
 """Testes para o módulo de transformação (src/pipeline/transform.py)."""
 
 import math
+from typing import cast
 
 import numpy as np
 import pandas as pd
 import pytest
 from hypothesis import given, settings, strategies as st
 
-from src.pipeline.transform import DataTransformer
+from src.pipeline.transform import DataQualityError, DataTransformer, validate_ohlcv
 
 
 class TestDataTransformerClean:
-    def test_forward_fill(self, synthetic_data_with_nan):
-        """NaN no meio da série → forward-filled."""
-        df = DataTransformer.clean(synthetic_data_with_nan)
-        # Linha 10 tinha NaN em fechamento — deve ter sido forward-filled
-        assert df.iloc[10]["fechamento"] is not np.nan
+    def test_forward_fill_only_auxiliary_columns(self, synthetic_clean_data):
+        """NaN auxiliar pode ser preenchido sem mascarar OHLCV inválido."""
+        source = synthetic_clean_data.copy()
+        source["auxiliar"] = 1.0
+        source.iloc[10, source.columns.get_loc("auxiliar")] = np.nan
 
-    def test_drop_all_nan_row(self, synthetic_data_with_nan):
-        """Linhas totalmente NaN removidas."""
-        df = DataTransformer.clean(synthetic_data_with_nan)
-        # Linhas 5 e 6 eram totalmente NaN
-        assert 5 not in df.index or 6 not in df.index
+        result = DataTransformer.clean(source)
+
+        assert result.iloc[10]["auxiliar"] == 1.0
+
+    def test_reject_all_nan_row(self, synthetic_data_with_nan):
+        """Linha OHLCV ausente não é descartada ou preenchida silenciosamente."""
+        with pytest.raises(DataQualityError, match="OHLCV contém NaN"):
+            DataTransformer.clean(synthetic_data_with_nan)
 
     def test_empty_dataframe(self):
         """DataFrame vazio retorna vazio."""
         df = DataTransformer.clean(pd.DataFrame())
         assert df.empty
 
-    def test_sort_index(self, synthetic_data_with_nan):
-        """Índice fica ordenado após clean."""
-        df = DataTransformer.clean(synthetic_data_with_nan)
-        assert df.index.is_monotonic_increasing
+    def test_reject_out_of_order_index(self, synthetic_data_with_nan):
+        """Índice fora de ordem falha em vez de ser corrigido silenciosamente."""
+        source = synthetic_data_with_nan.dropna().iloc[::-1]
+        with pytest.raises(DataQualityError, match="fora de ordem crescente"):
+            DataTransformer.clean(source)
 
     def test_no_nan_unchanged(self, synthetic_clean_data):
         """DataFrame sem NaN fica inalterado (mesmo número de linhas)."""
         n = len(synthetic_clean_data)
         df = DataTransformer.clean(synthetic_clean_data)
         assert len(df) == n
+
+
+class TestOHLCVQuality:
+    @pytest.mark.parametrize("column", ["abertura", "maxima", "minima", "fechamento"])
+    @pytest.mark.parametrize("value", [0.0, -1.0])
+    def test_rejects_non_positive_ohlc(self, synthetic_clean_data, column, value):
+        source = synthetic_clean_data.copy()
+        source.iloc[0, source.columns.get_loc(column)] = value
+
+        with pytest.raises(DataQualityError, match="estritamente positivo"):
+            validate_ohlcv(source)
+
+    def test_rejects_inconsistent_high(self, synthetic_clean_data):
+        source = synthetic_clean_data.copy()
+        source.iloc[0, source.columns.get_loc("maxima")] = 99.0
+
+        with pytest.raises(DataQualityError, match="máxima inconsistente"):
+            validate_ohlcv(source)
+
+    def test_rejects_inconsistent_low(self, synthetic_clean_data):
+        source = synthetic_clean_data.copy()
+        source.iloc[0, source.columns.get_loc("minima")] = 101.0
+
+        with pytest.raises(DataQualityError, match="mínima inconsistente"):
+            validate_ohlcv(source)
+
+    def test_rejects_duplicate_dates(self, synthetic_clean_data):
+        source = pd.concat([synthetic_clean_data.iloc[:2], synthetic_clean_data.iloc[[1]]])
+
+        with pytest.raises(DataQualityError, match="datas duplicadas"):
+            validate_ohlcv(source)
+
+    def test_rejects_out_of_order_index(self, synthetic_clean_data):
+        source = synthetic_clean_data.iloc[:3].iloc[::-1]
+
+        with pytest.raises(DataQualityError, match="fora de ordem crescente"):
+            validate_ohlcv(source)
+
+    @pytest.mark.parametrize("value", [np.nan, np.inf, -np.inf])
+    def test_rejects_nan_and_infinity(self, synthetic_clean_data, value):
+        source = synthetic_clean_data.copy()
+        source.iloc[0, source.columns.get_loc("fechamento")] = value
+
+        expected = "NaN" if pd.isna(value) else "não finito"
+        with pytest.raises(DataQualityError, match=expected):
+            validate_ohlcv(source)
+
+    def test_rejects_non_numeric_financial_value(self, synthetic_clean_data):
+        source = synthetic_clean_data.copy()
+        source["abertura"] = source["abertura"].astype(object)
+        source.iloc[0, source.columns.get_loc("abertura")] = "inválido"
+
+        with pytest.raises(DataQualityError, match="não numéricas"):
+            validate_ohlcv(source)
+
+    def test_rejects_nan_volume(self, synthetic_clean_data):
+        source = synthetic_clean_data.copy()
+        source.iloc[0, source.columns.get_loc("volume")] = np.nan
+
+        with pytest.raises(DataQualityError, match="NaN em volume"):
+            validate_ohlcv(source)
+
+    def test_rejects_negative_volume(self, synthetic_clean_data):
+        source = synthetic_clean_data.copy()
+        source.iloc[0, source.columns.get_loc("volume")] = -1
+
+        with pytest.raises(DataQualityError, match="volume deve ser não negativo"):
+            validate_ohlcv(source)
+
+    def test_accepts_zero_volume(self, synthetic_clean_data):
+        source = synthetic_clean_data.copy()
+        source.iloc[0, source.columns.get_loc("volume")] = 0
+
+        validate_ohlcv(source)
+
+    def test_rejects_nat_index(self, synthetic_clean_data):
+        source = synthetic_clean_data.iloc[:2].copy()
+        source.index = pd.DatetimeIndex([source.index[0], pd.NaT])
+
+        with pytest.raises(DataQualityError, match="índice contém NaT"):
+            validate_ohlcv(source)
+
+    def test_rejects_non_temporal_index(self, synthetic_clean_data):
+        source = synthetic_clean_data.iloc[:2].reset_index(drop=True)
+
+        with pytest.raises(DataQualityError, match="índice temporal inválido"):
+            validate_ohlcv(source)
 
 
 class TestDataTransformerIndicators:
@@ -112,7 +204,7 @@ class TestDataTransformerIndicators:
         series = pd.Series(np.arange(1, 50, dtype=float))
         df = pd.DataFrame({"fechamento": series})
         result = DataTransformer().calculate_indicators(df)
-        assert result["sma_200"].isna().all()
+        assert bool(cast(pd.Series, result["sma_200"]).isna().all())
 
     def test_rsi_insufficient_data(self):
         """Menos de 14 pontos → RSI = 100 (fillna para série sem perdas)."""

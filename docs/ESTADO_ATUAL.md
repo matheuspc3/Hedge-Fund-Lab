@@ -26,7 +26,7 @@ uma abordagem venceu outra.
 
 | Área | Status | O que realmente faz |
 |---|---|---|
-| Dados | Implementado com lacunas | Baixa OHLCV diário pelo `yfinance`, mantém cache CSV por ticker, calcula indicadores e persiste em PostgreSQL ou SQLite via SQLAlchemy. |
+| Dados | Implementado com lacunas | Baixa OHLCV diário pelo `yfinance`, mantém cache CSV por ticker, valida estrutura, finitude e consistência OHLCV, calcula indicadores e persiste em PostgreSQL ou SQLite via SQLAlchemy. |
 | Persistência | Implementado | Tabelas de ativos, cotações e indicadores, com unicidade por ativo/data e atualização em conflito nos caminhos principais. |
 | Indicadores | Implementado | SMA 50/200, Bollinger 20/2, RSI 14 e MACD 12/26/9. |
 | Estratégias clássicas | Implementado | Buy & Hold, SMA Cross e Bollinger single-asset; Equal Weight e Mínima Variância multi-ativo. |
@@ -59,8 +59,9 @@ uma abordagem venceu outra.
 
 No estado auditado, o PostgreSQL local contém 10 ativos, 26.390 cotações e
 26.390 registros de indicadores, sem duplicatas de ativo/data, cobrindo
-04/01/2016 a 05/08/2026. Cada ticker tem uma barra final com algum OHLC igual a
-zero; a pipeline atual não a rejeita.
+04/01/2016 a 05/08/2026. Cada ticker tinha uma barra final com algum OHLC igual
+a zero. O gate atual rejeita essas barras em novas execuções, mas não repara
+automaticamente dados inválidos já persistidos antes desta validação.
 
 ### Backtest multiagente
 
@@ -113,11 +114,12 @@ seus resultados não são, por si só, conteúdo versionado no Git:
 
 | Verificação | Resultado |
 |---|---|
-| Coleta atual do Pytest (`poetry run pytest --collect-only -q`) | **312 testes coletados** em 08/09/2026 |
-| Última suíte completa documentada | **308 passaram** na auditoria anterior; não reexecutada nesta reorganização documental |
+| Suíte de pipeline com SQLite em memória (`poetry run pytest tests/pipeline -q`) | **94 passaram** em 08/09/2026 |
+| Suíte completa com SQLite em memória (`poetry run pytest -q`) | **341 passaram** em 08/09/2026 |
 | Cobertura (última medição, anterior a esta mudança) | **95%** |
 | Ruff | **14 violações preexistentes fora dos arquivos desta mudança** |
 | Ruff nos arquivos desta mudança | **verde** |
+| Pyright nos arquivos desta mudança | **verde** |
 | Pyright no escopo configurado (última medição) | **181 erros** |
 | Banco PostgreSQL local | 10 ativos; 26.390 datas únicas de cotação e indicadores |
 | Duplicatas ativo/data | 0 |
@@ -179,14 +181,20 @@ out-of-sample; nem análise estatística implementada.
 
 ### Dados
 
-- O cache usa apenas o ticker como chave. Ele verifica se alcança a data final,
-  mas não verifica a data inicial e retorna todo o arquivo sem recortar o
-  intervalo solicitado.
-- A atualização de rede baixa novamente o intervalo completo; “incremental” vale
-  para a carga idempotente no banco, não para a extração.
-- A limpeza apenas faz forward-fill, remove linhas totalmente nulas e ordena. Não
-  valida OHLC, zeros, volume, calendário, duplicatas antes da carga, moeda,
-  timezone, ajuste por proventos/splits ou proveniência da fonte.
+- O cache continua usando apenas o ticker como chave. Um hit exige cobertura dos
+  limites inicial e final inclusivos, e o retorno é recortado para o intervalo
+  pedido. O `end` enviado ao `yfinance` permanece exclusivo e recebe um dia a
+  mais que o limite público inclusivo.
+- Quando a cobertura é insuficiente, a extração baixa novamente o intervalo
+  completo solicitado, combina-o com o cache validado, mantém a resposta nova no
+  overlap, deduplica, ordena e persiste o CSV atualizado.
+- O gate fail-fast rejeita índice não temporal, `NaT`, duplicatas, desordem,
+  colunas ausentes ou não numéricas, `NaN`, infinitos, OHLC não positivo ou
+  inconsistente e volume negativo. Volume zero é aceito; `NaN` em volume é
+  rejeitado. O forward-fill ficou restrito a colunas auxiliares após a primeira
+  validação OHLCV.
+- Ainda não há validação de calendário ou de lacunas internas entre os limites,
+  moeda, timezone, ajuste por proventos/splits ou proveniência da fonte.
 - O flow captura falha por ticker e termina sem relançar uma falha global; uma
   automação pode interpretar uma carga parcial como sucesso.
 - `create_all()` não migra bancos existentes. Não há sistema de migrations.

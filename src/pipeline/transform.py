@@ -9,7 +9,9 @@ puras em ``src/indicators/``.
 
 import logging
 import math
+from typing import cast
 
+import numpy as np
 import pandas as pd
 
 from src.indicators.bollinger import bollinger_bands as _bollinger
@@ -18,6 +20,107 @@ from src.indicators.rsi import rsi as _rsi
 from src.indicators.sma import sma as _sma
 
 logger = logging.getLogger(__name__)
+
+OHLC_COLUMNS = ["abertura", "maxima", "minima", "fechamento"]
+OHLCV_COLUMNS = [*OHLC_COLUMNS, "volume"]
+
+
+class DataQualityError(ValueError):
+    """Dados OHLCV não atendem ao contrato mínimo de qualidade."""
+
+
+def _raise_for_rows(rule: str, invalid: pd.Series) -> None:
+    """Falha com contagem e um índice de exemplo quando há linhas inválidas."""
+    count = int(invalid.sum())
+    if count:
+        example = invalid.index[int(np.flatnonzero(invalid.to_numpy())[0])]
+        raise DataQualityError(
+            f"{rule}: {count} linha(s) afetada(s); exemplo de índice: {example}"
+        )
+
+
+def validate_ohlcv(df: pd.DataFrame) -> None:
+    """Valida barras OHLCV normalizadas sem corrigir dados silenciosamente."""
+    if not isinstance(df.index, pd.DatetimeIndex):
+        raise DataQualityError(
+            f"índice temporal inválido: esperado DatetimeIndex, recebido {type(df.index).__name__}"
+        )
+    if df.index.hasnans:
+        raise DataQualityError(
+            f"índice contém NaT: {int(df.index.isna().sum())} linha(s) afetada(s)"
+        )
+    if df.index.has_duplicates:
+        duplicated = df.index.duplicated(keep=False)
+        example = df.index[duplicated][0]
+        raise DataQualityError(
+            "índice contém datas duplicadas: "
+            f"{int(duplicated.sum())} linha(s) afetada(s); exemplo de índice: {example}"
+        )
+    if not df.index.is_monotonic_increasing:
+        positions = np.flatnonzero(df.index.asi8[1:] < df.index.asi8[:-1]) + 1
+        raise DataQualityError(
+            "índice fora de ordem crescente: "
+            f"{len(positions)} linha(s) afetada(s); exemplo de índice: {df.index[positions[0]]}"
+        )
+
+    missing = [column for column in OHLCV_COLUMNS if column not in df.columns]
+    if missing:
+        raise DataQualityError(f"colunas OHLCV ausentes: {', '.join(missing)}")
+    if df.columns.has_duplicates:
+        raise DataQualityError("colunas OHLCV duplicadas")
+
+    non_numeric = [
+        column
+        for column in OHLCV_COLUMNS
+        if not pd.api.types.is_numeric_dtype(df[column])
+        or pd.api.types.is_bool_dtype(df[column])
+    ]
+    if non_numeric:
+        raise DataQualityError(
+            f"colunas OHLCV não numéricas: {', '.join(non_numeric)}"
+        )
+
+    values = cast(pd.DataFrame, df[OHLCV_COLUMNS])
+    missing_values = values.isna()
+    if missing_values.to_numpy().any():
+        invalid = pd.Series(
+            missing_values.to_numpy().any(axis=1), index=df.index, dtype=bool
+        )
+        first_column = missing_values.columns[
+            int(np.argwhere(missing_values.to_numpy())[0, 1])
+        ]
+        _raise_for_rows(f"OHLCV contém NaN em {first_column}", invalid)
+
+    array = values.to_numpy(dtype=float)
+    finite = pd.Series(
+        np.isfinite(array).all(axis=1), index=df.index, dtype=bool
+    )
+    _raise_for_rows("OHLCV contém valor não finito", ~finite)
+
+    _raise_for_rows(
+        "OHLC deve ser estritamente positivo",
+        pd.Series((array[:, :4] <= 0).any(axis=1), index=df.index, dtype=bool),
+    )
+    _raise_for_rows(
+        "volume deve ser não negativo",
+        pd.Series(array[:, 4] < 0, index=df.index, dtype=bool),
+    )
+    _raise_for_rows(
+        "máxima inconsistente com abertura, fechamento ou mínima",
+        pd.Series(
+            (array[:, 1, None] < array[:, [0, 3, 2]]).any(axis=1),
+            index=df.index,
+            dtype=bool,
+        ),
+    )
+    _raise_for_rows(
+        "mínima inconsistente com abertura ou fechamento",
+        pd.Series(
+            (array[:, 2, None] > array[:, [0, 3]]).any(axis=1),
+            index=df.index,
+            dtype=bool,
+        ),
+    )
 
 
 class DataTransformer:
@@ -34,7 +137,7 @@ class DataTransformer:
 
     @staticmethod
     def clean(df: pd.DataFrame) -> pd.DataFrame:
-        """Limpeza básica: forward-fill NaN, remover linhas totalmente NaN, ordenar.
+        """Valida OHLCV e preenche apenas ausências em colunas auxiliares.
 
         Args:
             df: DataFrame bruto com DatetimeIndex.
@@ -45,19 +148,10 @@ class DataTransformer:
         if df.empty:
             logger.debug("clean: DataFrame vazio — retornando vazio")
             return df
-        before = len(df)
-        df = df.ffill().dropna(how="all")
-        df = df.sort_index()
-        dropped = before - len(df)
-        if dropped:
-            logger.debug(
-                "clean: %d → %d linhas (%d totalmente NaN removidas)",
-                before,
-                len(df),
-                dropped,
-            )
-        else:
-            logger.debug("clean: %d linhas (sem alterações)", before)
+        validate_ohlcv(df)
+        df = df.ffill()
+        validate_ohlcv(df)
+        logger.debug("clean: %d linhas validadas", len(df))
         return df
 
     # ── Indicadores ──────────────────────────────────────────────
@@ -112,7 +206,7 @@ class DataTransformer:
             raise KeyError("DataFrame must contain 'fechamento' column")
 
         logger.info("Calculando indicadores para %d registros", len(df))
-        close = df["fechamento"]
+        close = cast(pd.Series, df["fechamento"])
 
         df = df.copy()
         df["sma_50"] = self._calc_sma(close, 50)
@@ -124,7 +218,7 @@ class DataTransformer:
         df["macd_sinal"] = signal_line
 
         # Estatísticas resumidas
-        sma_200_nan = df["sma_200"].isna().sum()
+        sma_200_nan = int(cast(pd.Series, df["sma_200"]).isna().sum())
         if sma_200_nan > 0:
             pct = sma_200_nan / len(df) * 100
             logger.debug(
@@ -133,11 +227,12 @@ class DataTransformer:
                 sma_200_nan,
                 len(df),
             )
-        if "rsi" in df.columns and df["rsi"].notna().any():
+        rsi_values = cast(pd.Series, df["rsi"])
+        if "rsi" in df.columns and bool(rsi_values.notna().any()):
             logger.debug(
                 "RSI range: [%.1f, %.1f]",
-                df["rsi"].min(),
-                df["rsi"].max(),
+                rsi_values.min(),
+                rsi_values.max(),
             )
 
         return df

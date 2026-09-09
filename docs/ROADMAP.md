@@ -61,10 +61,11 @@ custos e métricas antes de construir a arena.
 
 ### Dados
 
-- [ ] Corrigir a verificação da cobertura inicial e final do cache.
-- [ ] Recortar exatamente o intervalo solicitado.
-- [ ] Criar gate de qualidade OHLC, unicidade, volume, ordenação e calendário.
-- [ ] Rejeitar barras inválidas, inclusive OHLC não positivo ou inconsistente.
+- [x] Corrigir a verificação da cobertura inicial e final do cache.
+- [x] Recortar exatamente o intervalo solicitado.
+- [x] Criar gate de qualidade OHLC, unicidade, volume e ordenação.
+- [ ] Integrar e validar o calendário no gate de qualidade.
+- [x] Rejeitar barras inválidas, inclusive OHLC não positivo ou inconsistente.
 - [ ] Criar snapshot com versão, fonte, horário, parâmetros, hash e cobertura.
 - [ ] Tornar carga parcial observável e consumível por automação.
 - [ ] Adotar migrations antes que o schema passe a evoluir.
