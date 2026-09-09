@@ -1,9 +1,11 @@
 # Estado atual do Hedge-Fund-Lab
 
-Baseline auditada em **08/09/2026**, considerando o diretório de trabalho local,
-inclusive mudanças ainda não commitadas. O objetivo deste documento é responder
-até onde o projeto chega hoje e evitar que planos antigos sejam confundidos com
-implementação.
+Baseline auditada em **08/09/2026** sobre o estado versionado da branch
+`#1-Update`. O objetivo deste documento é responder até onde o projeto chega hoje
+e evitar que planos antigos sejam confundidos com implementação. Capacidades e
+limitações descritas como parte do sistema são evidência do repositório;
+contagens de banco, execuções e medições identificadas como locais são evidência
+observada no ambiente da auditoria e não conteúdo versionado no Git.
 
 ## Conclusão executiva
 
@@ -106,7 +108,8 @@ não 30 especialistas ou 30 modelos independentes.
 
 ## Evidência de validação
 
-Verificações executadas nesta auditoria:
+As verificações abaixo foram observadas no ambiente local durante a auditoria;
+seus resultados não são, por si só, conteúdo versionado no Git:
 
 | Verificação | Resultado |
 |---|---|
@@ -165,11 +168,12 @@ opera apenas um ticker. Essas unidades experimentais não são equivalentes.
 - `periodo` dos ativos no JSON vem da configuração, não das datas efetivamente
   observadas.
 
-### 5. Ausência de protocolo experimental
+### 5. Protocolo experimental ainda não congelado nem implementado
 
-Os splits 2016–2019, 2020–2021 e 2022–2025 aparecem no plano, mas não existem no
-código. Não há congelamento de prompts, parâmetros e universo; run manifest;
-walk-forward; teste out-of-sample; sementes da execução; nem teste estatístico.
+Existe um protocolo documental em `docs/EXPERIMENT_PROTOCOL.md`, marcado como
+**DRAFT — NÃO CONGELADO**. Ainda não existem splits, prompts, parâmetros ou
+universo congelados; `ExperimentSpec`; run manifest; walk-forward; teste
+out-of-sample; nem análise estatística implementada.
 
 ## Riscos técnicos relevantes
 
@@ -221,8 +225,10 @@ walk-forward; teste out-of-sample; sementes da execução; nem teste estatístic
   podem interferir uma na outra.
 - Linhas de log, inclusive texto produzido pelo LLM, são inseridas no HTML sem
   escape na tela do laboratório.
-- A configuração completa do banco, incluindo senha, é escrita no log; esse log
-  está versionado no estado atual.
+- A aplicação ainda pode escrever informações sensíveis de configuração,
+  incluindo senha do banco, no log. O diretório `data/logs/` não é mais
+  versionado, mas a exposição local continua sendo um risco e o conteúdo logado
+  deve ser sanitizado.
 - `dashboard/data.json` gerado tem cerca de 16 MB e é carregado integralmente pelo
   navegador.
 

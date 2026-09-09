@@ -8,12 +8,13 @@
 
 ## 1. Research question
 
-Sob os mesmos dados, relógio, capital, custos e motor de execução, o participante
-multiagente baseado em LLM acrescenta desempenho líquido ajustado ao risco em
-relação aos participantes quantitativos clássicos?
+Sob os mesmos dados, informação disponível, relógio, capital, custos e modelo de
+execução, qual é o efeito da utilização de um sistema multiagente baseado em LLM
+sobre o desempenho líquido ajustado ao risco em comparação com abordagens
+quantitativas clássicas?
 
-**STATUS: PENDENTE DE CONGELAMENTO.** A redação final e o critério operacional de
-“acrescenta desempenho” devem ser aprovados antes do TEST.
+**STATUS: PENDENTE DE CONGELAMENTO.** A redação final e a definição operacional
+de desempenho líquido ajustado ao risco devem ser aprovadas antes do TEST.
 
 ## 2. Hypotheses
 
