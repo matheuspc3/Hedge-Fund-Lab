@@ -85,11 +85,20 @@ custos e métricas antes de construir a arena.
 
 ### Métricas
 
-- [ ] Consolidar uma implementação canônica de Sharpe, Sortino, Max Drawdown,
-  retorno, volatilidade, Turnover, custos e exposição.
-- [ ] Definir unidades e anualização de modo inequívoco.
-- [ ] Corrigir agregações temporais e estimativas ad hoc do dashboard.
-- [ ] Calcular todas as métricas a partir da mesma curva líquida.
+- [x] Consolidar retorno periódico, retorno total, CAGR técnico, volatilidade,
+  Sharpe, Sortino, Max Drawdown e duração de drawdown em uma implementação
+  canônica.
+- [x] Calcular o custo total pela soma dos custos dos trades executados.
+- [~] Consolidar Turnover e exposição; a mudança de pesos existente inclui
+  drift de mercado e os motores ainda não expõem histórico comum de caixa e
+  posições.
+- [~] Definir unidades e anualização de modo inequívoco; a implementação usa
+  frações, `252` sessões/ano, risk-free zero e MAR zero como defaults técnicos
+  configuráveis, ainda pendentes de congelamento científico.
+- [x] Corrigir a agregação temporal, o período observado e as estimativas ad hoc
+  do dashboard.
+- [x] Calcular as métricas principais dos benchmarks clássicos atuais a partir
+  da mesma curva líquida validada.
 
 **Critério de saída:** benchmarks executam com dados validados, relógio `t ->
 t+1`, custos corretos e métricas canônicas, deixando manifest reproduzível.

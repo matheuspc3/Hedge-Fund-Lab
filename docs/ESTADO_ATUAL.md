@@ -30,7 +30,7 @@ uma abordagem venceu outra.
 | Persistência | Implementado | Tabelas de ativos, cotações e indicadores, com unicidade por ativo/data e atualização em conflito nos caminhos principais. |
 | Indicadores | Implementado | SMA 50/200, Bollinger 20/2, RSI 14 e MACD 12/26/9. |
 | Estratégias clássicas | Implementado | Buy & Hold, SMA Cross e Bollinger single-asset; Equal Weight e Mínima Variância multi-ativo. |
-| Backtest clássico | Bloqueado para ciência | Single e multi-asset decidem com dados até o fechamento de `t`, executam na abertura observada de `t+1`, calculam custos sobre o notional e preservam caixa não negativo. O dashboard ainda usa custo zero e não há motor comum. |
+| Backtest clássico | Bloqueado para ciência | Single e multi-asset decidem com dados até o fechamento de `t`, executam na abertura observada de `t+1`, calculam custos sobre o notional e preservam caixa não negativo. Retorno, risco, drawdown e custo total agora vêm do módulo canônico, mas o dashboard ainda usa custo zero e não há motor comum. |
 | Sistema de agentes | Parcial | Quorum técnico -> risco -> portfólio em LangGraph, com contratos Pydantic e regras duras. Opera um ticker por execução. |
 | Quorum de 30 | Implementado com ressalvas | Faz 30 chamadas concorrentes do mesmo papel e cliente, variando prompt, temperatura e seed registrado. Exige 25/30 por padrão e todos os votos válidos. |
 | Cliente LLM real | Parcial | Cliente HTTP OpenAI-compatible, retry, cache e telemetria básica. A integração específica chamada de OmniRouter/Agent Router não está isolada nem comprovada no repositório. |
@@ -166,15 +166,20 @@ opera apenas um ticker. Essas unidades experimentais não são equivalentes.
 
 ### 4. Métricas e agregação
 
-- A “curva média” single-asset é construída por `DataFrame.mean`, que aceita a
-  união de datas e ignora ausências, embora o comentário diga interseção. A
-  composição pode mudar ao longo da série.
-- A volatilidade do scatter das carteiras é estimada dividindo retorno acumulado
-  por Sharpe; isso não recupera a volatilidade anualizada correta.
-- O dashboard não calcula nem publica turnover, custo total, benchmark de mercado
-  ou incerteza estatística.
-- `periodo` dos ativos no JSON vem da configuração, não das datas efetivamente
-  observadas.
+- `src/backtesting/metrics.py` valida que a equity curve seja temporal, ordenada,
+  única e finita, e concentra retornos, retorno total, CAGR técnico,
+  volatilidade, Sharpe, Sortino, drawdown e duração de drawdown.
+- A curva média single-asset usa explicitamente apenas a interseção das datas
+  observadas por todos os tickers; sua composição não varia silenciosamente.
+- O scatter consome retorno, volatilidade anualizada e Sharpe calculados
+  diretamente da mesma equity curve; não reconstrói volatilidade por divisão.
+- O período publicado vem do primeiro e último ponto efetivamente observado, e
+  o custo total é a soma de `trade.cost` dos trades executados.
+- O dashboard ainda não publica turnover, exposição, benchmark de mercado ou
+  incerteza estatística. A definição legada de mudança média de pesos inclui
+  drift e não foi promovida a turnover científico.
+- `252` sessões/ano, taxa livre de risco zero e MAR zero são defaults técnicos
+  configuráveis, não parâmetros experimentais congelados.
 
 ### 5. Protocolo experimental ainda não congelado nem implementado
 

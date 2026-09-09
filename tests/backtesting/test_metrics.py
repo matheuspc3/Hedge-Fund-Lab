@@ -1,19 +1,33 @@
 """Testes para métricas de desempenho."""
 
+from types import SimpleNamespace
+
 import numpy as np
 import pandas as pd
 import pytest
 
 from src.backtesting.metrics import (
+    annualized_return,
     annualized_volatility,
     calmar_ratio,
     cumulative_return,
     max_drawdown,
     max_drawdown_duration,
+    performance_metrics,
+    periodic_returns,
     sharpe_ratio,
     sortino_ratio,
+    total_return,
+    total_transaction_cost,
     turnover,
+    validate_equity_curve,
 )
+
+
+def equity_curve(values) -> pd.Series:
+    return pd.Series(
+        list(values), index=pd.bdate_range("2024-01-02", periods=len(values))
+    )
 
 
 class TestSharpeRatio:
@@ -63,13 +77,14 @@ class TestSortinoRatio:
         sr = sortino_ratio(returns, rf=0.0, mar=0.0, freq=252)
         assert sr == 0.0
 
-    def test_sortino_menor_que_sharpe(self):
-        """Retornos com downside assimétrico → Sortino < Sharpe."""
-        # Média positiva, mas com cauda negativa maior
-        returns = pd.Series([0.02] * 40 + [-0.03] * 10)
-        sharpe = sharpe_ratio(returns, rf=0.0, freq=252)
-        sortino = sortino_ratio(returns, rf=0.0, mar=0.0, freq=252)
-        assert sortino < sharpe
+    def test_ganhos_e_perdas_conhecidos(self):
+        returns = pd.Series([0.02, -0.01, 0.01, -0.02])
+
+        result = sortino_ratio(returns, rf=0.0, mar=0.0, freq=4)
+
+        downside = np.minimum(returns, 0.0)
+        expected = returns.mean() / np.sqrt(np.mean(downside**2)) * np.sqrt(4)
+        assert result == pytest.approx(expected)
 
     def test_serie_vazia_raise(self):
         """Série vazia → ValueError."""
@@ -82,25 +97,25 @@ class TestMaxDrawdown:
 
     def test_monotonico_crescente(self):
         """Série crescente → drawdown = 0."""
-        equity = pd.Series([100, 110, 120, 130, 140])
+        equity = equity_curve([100, 110, 120, 130, 140])
         assert max_drawdown(equity) == 0.0
 
     def test_max_drawdown_20pct(self):
         """Série [100, 90, 80, 110] → max_drawdown = -20%."""
-        equity = pd.Series([100.0, 90.0, 80.0, 110.0])
+        equity = equity_curve([100.0, 90.0, 80.0, 110.0])
         # Pico = 100, vale = 80 → drawdown = (80-100)/100 = -0.20
         assert abs(max_drawdown(equity) - (-0.20)) < 1e-10
 
     def test_drawdown_apos_Novo_pico(self):
         """Série [100, 120, 110, 130] → max_drawdown = -8.33% do pico 120."""
-        equity = pd.Series([100.0, 120.0, 110.0, 130.0])
+        equity = equity_curve([100.0, 120.0, 110.0, 130.0])
         # Pico = 120, vale = 110 → (110-120)/120 = -0.0833
         dd = max_drawdown(equity)
         assert abs(dd - (-0.0833333333)) < 1e-6
 
     def test_constante(self):
         """Série constante → drawdown = 0."""
-        equity = pd.Series([100.0] * 10)
+        equity = equity_curve([100.0] * 10)
         assert max_drawdown(equity) == 0.0
 
     def test_serie_vazia_raise(self):
@@ -110,13 +125,17 @@ class TestMaxDrawdown:
 
     def test_serie_um_elemento(self):
         """1 elemento → drawdown = 0."""
-        equity = pd.Series([100.0])
+        equity = equity_curve([100.0])
         assert max_drawdown(equity) == 0.0
 
     def test_queda_continua(self):
         """Queda contínua [100, 90, 80, 70] → max_drawdown = -30%."""
-        equity = pd.Series([100.0, 90.0, 80.0, 70.0])
+        equity = equity_curve([100.0, 90.0, 80.0, 70.0])
         assert abs(max_drawdown(equity) - (-0.30)) < 1e-10
+
+    def test_queda_de_120_para_90(self):
+        equity = equity_curve([100.0, 120.0, 90.0, 110.0])
+        assert max_drawdown(equity) == pytest.approx(-0.25)
 
 
 class TestMaxDrawdownDuration:
@@ -124,12 +143,12 @@ class TestMaxDrawdownDuration:
 
     def test_monotonico_crescente(self):
         """Série crescente → duração = 0."""
-        equity = pd.Series([100, 110, 120])
+        equity = equity_curve([100, 110, 120])
         assert max_drawdown_duration(equity) == 0
 
     def test_queda_e_recuperacao(self):
         """Série com queda e recuperação → duração em dias."""
-        equity = pd.Series([100.0, 95.0, 90.0, 95.0, 100.0])
+        equity = equity_curve([100.0, 95.0, 90.0, 95.0, 100.0])
         duracao = max_drawdown_duration(equity)
         # Drawdown do pico (índice 0) até recuperar (índice 4) = 3 períodos em drawdown
         assert duracao == 3
@@ -138,6 +157,10 @@ class TestMaxDrawdownDuration:
         """Série vazia → ValueError."""
         with pytest.raises(ValueError):
             max_drawdown_duration(pd.Series([], dtype=float))
+
+    def test_pico_periodo_abaixo_e_recuperacao(self):
+        equity = equity_curve([100.0, 120.0, 90.0, 110.0, 120.0])
+        assert max_drawdown_duration(equity) == 2
 
 
 class TestTurnover:
@@ -169,18 +192,28 @@ class TestCumulativeReturn:
 
     def test_constante(self):
         """Equity constante → retorno = 0."""
-        equity = pd.Series([100.0] * 5)
+        equity = equity_curve([100.0] * 5)
         assert cumulative_return(equity) == 0.0
 
     def test_valor_conhecido(self):
         """100 → 150 → retorno = 50%."""
-        equity = pd.Series([100.0, 150.0])
+        equity = equity_curve([100.0, 150.0])
         assert abs(cumulative_return(equity) - 0.50) < 1e-10
 
     def test_100_para_80(self):
         """100 → 80 → retorno = -20%."""
-        equity = pd.Series([100.0, 80.0])
+        equity = equity_curve([100.0, 80.0])
         assert abs(cumulative_return(equity) - (-0.20)) < 1e-10
+
+    def test_100_para_110(self):
+        assert total_return(equity_curve([100.0, 110.0])) == pytest.approx(0.10)
+
+
+class TestPeriodicReturns:
+    def test_retornos_manuais(self):
+        equity = equity_curve([100.0, 110.0, 99.0])
+        expected = pd.Series([0.10, -0.10], index=equity.index[1:])
+        pd.testing.assert_series_equal(periodic_returns(equity), expected)
 
 
 class TestAnnualizedVolatility:
@@ -213,7 +246,7 @@ class TestCalmarRatio:
         """Retorno positivo, drawdown pequeno → Calmar > 0."""
         # Cria série com drawdown, mas retorno líquido positivo
         returns = pd.Series([0.005] * 200 + [-0.02] + [0.01] * 51)
-        equity = pd.Series(100.0 * np.exp(returns.cumsum()))
+        equity = equity_curve(100.0 * np.exp(returns.cumsum()))
         dd = max_drawdown(equity)
         cr = calmar_ratio(returns, dd, freq=252)
         assert cr > 0
@@ -223,3 +256,43 @@ class TestCalmarRatio:
         returns = pd.Series([0.001] * 10)
         cr = calmar_ratio(returns, 0.0, freq=252)
         assert cr == 0.0
+
+
+class TestCanonicalMetrics:
+    def test_contract_rejects_non_temporal_duplicate_unsorted_or_non_finite(self):
+        with pytest.raises(ValueError, match="DatetimeIndex"):
+            validate_equity_curve(pd.Series([100.0, 101.0]))
+        with pytest.raises(ValueError, match="duplicates"):
+            validate_equity_curve(
+                pd.Series([100.0, 101.0], index=pd.to_datetime(["2024-01-02"] * 2))
+            )
+        with pytest.raises(ValueError, match="sorted"):
+            validate_equity_curve(
+                pd.Series(
+                    [100.0, 101.0],
+                    index=pd.to_datetime(["2024-01-03", "2024-01-02"]),
+                )
+            )
+        with pytest.raises(ValueError, match="finite"):
+            validate_equity_curve(equity_curve([100.0, np.inf]))
+
+    def test_performance_metrics_derive_from_one_curve(self):
+        equity = equity_curve([100.0, 110.0, 99.0])
+        returns = periodic_returns(equity)
+
+        result = performance_metrics(equity, freq=2)
+
+        assert result["total_return"] == pytest.approx(-0.01)
+        assert result["annualized_return"] == pytest.approx(-0.01)
+        assert result["annualized_volatility"] == pytest.approx(
+            returns.std(ddof=1) * np.sqrt(2)
+        )
+
+    def test_annualized_return_uses_observation_count(self):
+        assert annualized_return(equity_curve([100.0, 110.0]), freq=1) == pytest.approx(
+            0.10
+        )
+
+    def test_total_transaction_cost_sums_executed_trades(self):
+        trades = [SimpleNamespace(cost=1.25), SimpleNamespace(cost=2.75)]
+        assert total_transaction_cost(trades) == pytest.approx(4.0)
