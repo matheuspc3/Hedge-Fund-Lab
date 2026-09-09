@@ -780,9 +780,7 @@ def main():
             result = ticker_to_json(ticker, df)
             if result is not None:
                 assets_json.append(result)
-                df_dedup = df[["fechamento"]].copy()
-                df_dedup = df_dedup[~df_dedup.index.duplicated(keep="last")]
-                all_data[ticker] = df_dedup
+                all_data[ticker] = df
                 tickers_ok.append(ticker)
 
     if not tickers_ok:

@@ -29,8 +29,9 @@ São dois produtos paralelos:
 1. um comparador clássico que gera um arquivo estático para o dashboard;
 2. um backtest LLM single-asset com auditoria própria.
 
-Eles compartilham dados e algumas estruturas de custo/trade, mas não compartilham
-o motor, o relógio, a unidade experimental ou o formato de resultado.
+Eles compartilham dados, estruturas de custo/trade e o relógio conceitual
+fechamento de `t` -> abertura de `t+1`, mas não compartilham o motor, a unidade
+experimental ou o formato de resultado.
 
 ## Componentes atuais
 
@@ -54,9 +55,10 @@ o motor, o relógio, a unidade experimental ou o formato de resultado.
 - `src/strategies/`: interface de sinais e cinco classes. As classes
   `EqualWeight` e `MinVariance` desse diretório são versões single-asset
   conceituais e não alimentam o dashboard multi-ativo.
-- `src/backtesting/engine.py`: execução single-asset.
+- `src/backtesting/engine.py`: execução single-asset na abertura seguinte ao sinal.
 - `src/backtesting/portfolio.py`: contém outra interface de estratégia, as
-  implementações multi-ativo realmente usadas e seu motor.
+  implementações multi-ativo realmente usadas e seu motor; pesos calculados no
+  fechamento são executados na abertura seguinte.
 - `src/backtesting/metrics.py` e `costs.py`: funções compartilhadas.
 
 Há duplicação de conceitos: duas interfaces de estratégia, duas famílias de

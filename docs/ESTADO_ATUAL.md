@@ -15,10 +15,10 @@ possui dashboard e contém um fluxo LLM auditável de três estágios cujo prime
 estágio é um quorum configurável de 30 chamadas.
 
 Ele ainda **não é a arena científica descrita como objetivo**. As estratégias
-clássicas e o sistema LLM usam motores e relógios de execução diferentes; o LLM
-não aparece na comparação principal; não existe orquestrador de experimento,
-divisão train/validation/test ou walk-forward; e os resultados clássicos atuais
-possuem vieses e custos inconsistentes. Portanto, os números exibidos no
+clássicas e o sistema LLM continuam em motores diferentes, embora agora adotem o
+mesmo relógio fechamento de `t` -> abertura de `t+1`; o LLM não aparece na
+comparação principal; e não existe orquestrador de experimento, divisão
+train/validation/test ou walk-forward. Portanto, os números exibidos no
 dashboard e os JSONs de agentes são demonstrações técnicas, não evidência de que
 uma abordagem venceu outra.
 
@@ -30,7 +30,7 @@ uma abordagem venceu outra.
 | Persistência | Implementado | Tabelas de ativos, cotações e indicadores, com unicidade por ativo/data e atualização em conflito nos caminhos principais. |
 | Indicadores | Implementado | SMA 50/200, Bollinger 20/2, RSI 14 e MACD 12/26/9. |
 | Estratégias clássicas | Implementado | Buy & Hold, SMA Cross e Bollinger single-asset; Equal Weight e Mínima Variância multi-ativo. |
-| Backtest clássico | Bloqueado para ciência | Executa sinais, posições, custos opcionais, métricas e curvas, mas negocia na mesma barra usada para decidir e o dashboard usa custo zero. |
+| Backtest clássico | Bloqueado para ciência | Single e multi-asset decidem com dados até o fechamento de `t`, executam na abertura observada de `t+1`, calculam custos sobre o notional e preservam caixa não negativo. O dashboard ainda usa custo zero e não há motor comum. |
 | Sistema de agentes | Parcial | Quorum técnico -> risco -> portfólio em LangGraph, com contratos Pydantic e regras duras. Opera um ticker por execução. |
 | Quorum de 30 | Implementado com ressalvas | Faz 30 chamadas concorrentes do mesmo papel e cliente, variando prompt, temperatura e seed registrado. Exige 25/30 por padrão e todos os votos válidos. |
 | Cliente LLM real | Parcial | Cliente HTTP OpenAI-compatible, retry, cache e telemetria básica. A integração específica chamada de OmniRouter/Agent Router não está isolada nem comprovada no repositório. |
@@ -130,27 +130,33 @@ preservada como `PREDICTED`, sem `execution_date` ou `execution_price`, e não
 entra em trades ou desempenho até ser reconciliada por uma abertura futura.
 
 A cobertura alta comprova que muito código foi exercitado, mas não valida o
-desenho experimental. Alguns testes hoje reforçam o comportamento enviesado; por
-exemplo, o teste chamado “sem look-ahead” espera compra pelo fechamento da própria
-barra do sinal.
+desenho experimental. O antigo teste “sem look-ahead”, que esperava compra pelo
+fechamento da própria barra do sinal, foi substituído por casos explícitos que
+distinguem `close(t)` de `open(t+1)` e rejeitam trade na última decisão.
 
 ## Problemas que invalidam a comparação atual
 
-### 1. Relógios diferentes
+### 1. Motores separados
 
-O motor LLM observa o fechamento de `t` e executa na abertura de `t+1`. O motor
-single-asset clássico calcula o sinal com o fechamento de `t` e negocia pelo
-mesmo fechamento. O motor de portfólio calcula pesos com dados disponíveis até o
-fechamento atual e rebalanceia no próprio fechamento. Não há competição justa
-enquanto todos não usarem o mesmo relógio e modelo de execução.
+Os motores LLM, clássico single-asset e clássico multi-asset agora compartilham
+a semântica observação até o fechamento de `t` e execução na abertura de `t+1`.
+Eles ainda são implementações separadas, sem ordem canônica, arena ou modelo de
+execução único; portanto, o relógio equivalente ainda não basta para produzir
+uma competição científica comum.
 
 ### 2. Custos não comparáveis
 
 O dashboard instancia todos os motores com `CostModel()` padrão, isto é, custo
-zero. No motor clássico single-asset, o custo da compra e do short é calculado
-sobre o preço unitário em vez do valor financeiro total, e a quantidade comprada
-não reserva caixa para custos. A monografia, ao contrário, promete resultados
-líquidos e análise de turnover.
+zero. Os motores agora calculam custos percentuais sobre
+`abs(quantity * execution_price)`, reservam esses custos antes da compra e não
+deixam o caixa negativo. Os valores científicos de corretagem, spread, slippage,
+taxas e lotes continuam `TBD`; logo, os resultados do dashboard ainda não são uma
+comparação líquida congelada.
+
+O `allow_short=True` legado do single-asset agora é rejeitado explicitamente, e o
+motor multi-asset rejeita pesos negativos. Isso evita ampliar um suporte que era
+incompleto; política de margem, fechamento da posição e demais regras de short
+continuam pendentes de decisão metodológica.
 
 ### 3. Participantes diferentes
 

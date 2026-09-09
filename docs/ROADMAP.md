@@ -72,12 +72,13 @@ custos e métricas antes de construir a arena.
 
 ### Execução
 
-- [ ] Aplicar decisão em `t` e execução em `t+1` a **todos** os participantes.
+- [x] Aplicar decisão em `t` e execução em `t+1` a todos os participantes
+  clássicos atuais.
 - [ ] Definir ordem canônica: ativo, direção, quantidade/peso alvo, instante da
   decisão e primeira sessão elegível.
-- [ ] Calcular custos sobre o valor financeiro total de cada ordem.
-- [ ] Reservar custos ao dimensionar quantidade.
-- [ ] Proibir caixa negativo.
+- [x] Calcular custos sobre o valor financeiro total de cada ordem.
+- [x] Reservar custos ao dimensionar quantidade.
+- [x] Proibir caixa negativo.
 - [ ] Aplicar a mesma política de lote, slippage, spread, corretagem e
   emolumentos.
 - [ ] Definir política de short: suporte completo ou rejeição explícita.
