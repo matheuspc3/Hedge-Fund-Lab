@@ -1,6 +1,6 @@
 # Estado atual do Hedge-Fund-Lab
 
-Baseline auditada em **25/08/2026**, considerando o diretório de trabalho local,
+Baseline auditada em **08/09/2026**, considerando o diretório de trabalho local,
 inclusive mudanças ainda não commitadas. O objetivo deste documento é responder
 até onde o projeto chega hoje e evitar que planos antigos sejam confundidos com
 implementação.
@@ -33,10 +33,12 @@ uma abordagem venceu outra.
 | Quorum de 30 | Implementado com ressalvas | Faz 30 chamadas concorrentes do mesmo papel e cliente, variando prompt, temperatura e seed registrado. Exige 25/30 por padrão e todos os votos válidos. |
 | Cliente LLM real | Parcial | Cliente HTTP OpenAI-compatible, retry, cache e telemetria básica. A integração específica chamada de OmniRouter/Agent Router não está isolada nem comprovada no repositório. |
 | Backtest LLM | Implementado com lacunas | Decide no fechamento de `t`, executa na próxima abertura observada e registra ciclo, votos, trades e curva em JSON. A última previsão fica pendente. |
+| Runner diário | Parcial | `DailyAgentRunner` persiste estado, reconcilia a previsão pendente na abertura esperada e avança uma sessão por execução. Ainda não integra a arena nem um manifest canônico. |
+| Calendário B3 | Parcial | `B3Calendar` resolve fins de semana, feriados recorrentes e exceções explícitas sem dependência externa; ainda precisa de validação/versionamento contra calendário oficial. |
 | Arena clássicos x LLM | Planejado | Não existe participante comum, motor comum nem resultado consolidado. |
 | Dashboard | Parcial | Compara as cinco estratégias clássicas e exibe indicadores. Uma tela separada dispara backtest LLM, mas não incorpora o resultado à arena. |
 | Avaliação científica | Planejado | Não existem `src/evaluation`, splits temporais, walk-forward, testes de hipótese, análise de sensibilidade ou exportação científica. |
-| Operação em tempo real/MT5/BRAPI | Planejado | Aparece apenas no roadmap antigo. |
+| Operação em tempo real/MT5/BRAPI | Planejado | O runner diário é simulação persistente; integrações de mercado e execução automática não existem. |
 
 ## Fluxos executáveis
 
@@ -80,8 +82,22 @@ No replay histórico, `target_session` é a próxima data realmente observada no
 existe. A última decisão acionável permanece `PREDICTED`, sem trade nem impacto
 nas métricas. Uma decisão executada vira `EXECUTED`; `MANTER` vira `NO_ACTION`;
 veto ou ordem impossível vira `REJECTED`. Como o replay não deve inventar dados,
-a última previsão ainda fica com `target_session=null`. Resolver a próxima
-sessão da B3 no modo diário continua planejado.
+a última previsão ainda fica com `target_session=null`.
+
+### Runner diário
+
+`scripts/run_agent_daily.py` usa `DailyAgentRunner` para avançar exatamente uma
+sessão por execução. O runner persiste caixa, posição, custos, curva, trades,
+decisões e última sessão em JSON; mantém no máximo uma previsão `PREDICTED`;
+reconcilia essa previsão na abertura da sessão-alvo; e só então gera a previsão
+seguinte. O estado é gravado por substituição atômica e protegido por lock local
+contra dois processos no mesmo host.
+
+`B3Calendar` já resolve a próxima sessão por fins de semana, feriados recorrentes
+e conjuntos explícitos de fechamentos/aberturas excepcionais. É uma aproximação
+local, não um feed oficial: exceções futuras ainda precisam ser conferidas e
+versionadas para uso científico. O runner também continua single-asset e separado
+da arena clássica.
 
 O chamado “gestor de portfólio” ainda dimensiona uma posição de **um único
 ativo**. Ele não recebe o universo de ativos, correlações, pesos correntes da
@@ -94,7 +110,8 @@ Verificações executadas nesta auditoria:
 
 | Verificação | Resultado |
 |---|---|
-| Pytest completo (`poetry run`) | **308 passaram** |
+| Coleta atual do Pytest (`poetry run pytest --collect-only -q`) | **312 testes coletados** em 08/09/2026 |
+| Última suíte completa documentada | **308 passaram** na auditoria anterior; não reexecutada nesta reorganização documental |
 | Cobertura (última medição, anterior a esta mudança) | **95%** |
 | Ruff | **14 violações preexistentes fora dos arquivos desta mudança** |
 | Ruff nos arquivos desta mudança | **verde** |
@@ -219,14 +236,13 @@ com um modelo real e comportamento fail-safe em alguns caminhos, não desempenho
 
 ## Documentação defasada ou contraditória
 
-- `PLAN_HEDGEFUND.md` descreve a intenção original e as fases 5–7, que não foram
-  implementadas. A tabela de resultados é exemplo, não resultado observado.
-- `ROADMAP_IDEIAS.md` ainda marca todo o sistema multiagente como pendente, embora
-  uma primeira versão exista.
-- `HANDOFF_OUTRO_PC.md` diz que Prefect foi atualizado para 3.x; o ambiente e o
-  lock atuais usam Prefect 2.20.25.
-- O README fala em 245 testes; a suíte atual coleta 305.
-- O README afirma suporte a seed no runtime real, mas a seed não é enviada.
+- `archive/PLAN_HEDGEFUND.md` descreve a intenção original e as fases 5–7, que
+  não foram implementadas. A tabela de resultados é exemplo, não resultado
+  observado.
+- `archive/ROADMAP_IDEIAS.md` marca todo o sistema multiagente como pendente,
+  embora uma primeira versão exista; esse roadmap foi substituído.
+- `archive/HANDOFF_OUTRO_PC.md` diz que Prefect foi atualizado para 3.x; o
+  `pyproject.toml` e o lock atuais usam Prefect 2.20.25.
 - A monografia descreve um grafo cíclico capaz de pedir reavaliação; o grafo atual
   é linear e não possui retorno do risco ao analista.
 - A monografia alterna escopo de dois ativos e universo de dez ativos, promete

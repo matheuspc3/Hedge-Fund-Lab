@@ -1,5 +1,9 @@
 # 🗺️ Roadmap de Ideias & Backlog do Projeto (Hedge-Fund-Lab)
 
+> **HISTÓRICO — ROADMAP SUBSTITUÍDO.** A única fonte ativa de planejamento é
+> [`../ROADMAP.md`](../ROADMAP.md). O conteúdo abaixo foi preservado para
+> rastreabilidade.
+
 Este documento registra o planejamento das próximas fases, novas ideias de funcionalidades e a visão arquitetural do projeto para a defesa do TCC.
 
 ---

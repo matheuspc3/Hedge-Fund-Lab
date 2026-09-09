@@ -1,5 +1,9 @@
 # Plano de Desenvolvimento: Hedge-fund-lab
 
+> **HISTÓRICO — NÃO USAR COMO PLANEJAMENTO ATIVO OU ESTADO ATUAL.** Este plano
+> inicial foi substituído por [`../ROADMAP.md`](../ROADMAP.md). O conteúdo abaixo
+> foi preservado para rastreabilidade.
+
 ## Contexto
 
 O **Hedge-fund-lab** é um laboratório quantitativo de backtesting baseado em sistemas multiagentes, proposto no TCC de Lucas Pereira da Silva e Matheus Pereira de Carvalho (orientação: Eduardo S. Ogasawara). O repositório atual contém apenas o texto do TCC em LaTeX — **nenhuma linha de código foi escrita ainda**. Este plano organiza a implementação completa do artefato computacional descrito no Capítulo 4 do `main.tex`.

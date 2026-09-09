@@ -35,3 +35,4 @@ dashboard/data.json
 .pytest_cache/
 .pytest_temp/
 .coverage
+data/logs/

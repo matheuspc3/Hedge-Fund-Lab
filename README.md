@@ -4,13 +4,15 @@ Laboratório Quantitativo de Backtesting baseado em Sistemas Multiagentes.
 
 > **Estado do projeto:** protótipo técnico em evolução. O pipeline, cinco
 > benchmarks clássicos, dashboard e uma primeira estratégia LLM de três estágios
-> existem. A arena comparável entre clássicos e LLM ainda não existe, e os
-> resultados atuais não devem ser tratados como evidência científica.
+> existem. Um runner diário persistente e um calendário B3 local também já
+> existem, mas a arena comparável entre clássicos e LLM ainda não; os resultados
+> atuais não devem ser tratados como evidência científica.
 >
 > Comece pela [documentação](docs/README.md), especialmente o
 > [estado atual auditado](docs/ESTADO_ATUAL.md), a
-> [arquitetura](docs/ARQUITETURA.md) e o
-> [plano de evolução](docs/PLANO_EVOLUCAO.md).
+> [arquitetura](docs/ARQUITETURA.md), o
+> [roadmap canônico](docs/ROADMAP.md) e o
+> [protocolo experimental](docs/EXPERIMENT_PROTOCOL.md).
 
 Pipeline ETL que baixa dados financeiros (via yfinance), calcula indicadores
 técnicos (SMA, Bollinger Bands, RSI, MACD) e carrega em PostgreSQL. Inclui
@@ -249,7 +251,7 @@ python scripts/run_agent_backtest.py --ticker WEGE3.SA
 para reutilizar respostas e tratar falhas transitórias. O cache inclui prompt e
 schema na chave, evitando misturar respostas de agentes ou contratos diferentes.
 
-Para usar o cliente real do Agent Router/OpenRouter, configure `.env` com:
+Para usar o cliente HTTP OpenAI-compatible configurável, configure `.env` com:
 
 ```ini
 LLM_PROVIDER=omnirouter
@@ -258,7 +260,8 @@ LLM_API_KEY=<sua-chave>
 LLM_MODEL=openai/gpt-4o-mini
 ```
 
-O cliente implementado usa o formato OpenAI-compatible de `/chat/completions`.
+O cliente implementado usa o formato OpenAI-compatible de `/chat/completions`;
+isso, por si só, não comprova compatibilidade oficial com um provedor específico.
 No estado atual ele envia `temperature`, `top_p` e `max_tokens`; a `seed` do
 quorum é auditada, mas ainda não é encaminhada ao provedor. Consulte o
 [estado atual](docs/ESTADO_ATUAL.md) antes de executar chamadas pagas.
@@ -352,6 +355,10 @@ O dashboard possui duas abas principais:
 ---
 
 ## Qualidade de Código & Testes
+
+Em 08/09/2026, a coleta leve da suíte encontrou **312 testes**. Esse número é
+uma fotografia do repositório, não uma garantia de que todos foram executados
+nesta reorganização documental.
 
 ```powershell
 # Executa a suíte de testes

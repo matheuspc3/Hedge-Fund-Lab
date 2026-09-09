@@ -1,5 +1,10 @@
 # Hedge-fund-lab — Handoff para continuar em outro computador
 
+> **HISTÓRICO — NÃO USAR COMO ESTADO ATUAL.** Este handoff registra uma etapa
+> intermediária e pode conter instruções e afirmações desatualizadas. Consulte
+> [`../ESTADO_ATUAL.md`](../ESTADO_ATUAL.md) e
+> [`../ROADMAP.md`](../ROADMAP.md).
+
 Este documento contém o contexto necessário para outro Codex continuar o projeto.
 
 > **Importante:** o trabalho descrito abaixo está local e pode ainda não ter sido

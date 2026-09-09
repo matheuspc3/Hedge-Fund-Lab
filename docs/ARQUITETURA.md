@@ -71,6 +71,10 @@ Equal Weight/Mínima Variância e dois motores com semânticas diferentes.
 - `graph.py`: grafo linear.
 - `llm_client.py`: mock, retry, cache e cliente HTTP real.
 - `src/backtesting/agent_engine.py`: relógio fechamento -> próxima abertura.
+- `src/backtesting/daily_agent.py`: estado persistente, reconciliação da previsão
+  pendente e avanço de uma sessão por execução.
+- `src/backtesting/b3_calendar.py`: calendário local de sessões por regras
+  recorrentes e exceções explícitas.
 
 O grafo atual é:
 
@@ -169,8 +173,10 @@ incorpora a barra observada e produz a próxima previsão. “Amanhã” signifi
 
 No replay histórico já implementado, a sessão-alvo é a próxima barra observada,
 o que resolve naturalmente sexta-feira para segunda-feira. Na última barra ela
-fica nula, pois não há futuro conhecido. O modo diário ainda precisará de um
-calendário da B3 para preencher a próxima sessão antes que sua barra exista.
+fica nula, pois não há futuro conhecido. No modo diário, `B3Calendar` já preenche
+a próxima sessão antes que sua barra exista. Como ele usa regras locais e
+exceções explícitas, o uso científico ainda exige validação e versionamento
+contra o calendário oficial aplicável ao período.
 
 ### Dois modos, a mesma semântica
 
@@ -182,8 +188,9 @@ calendário da B3 para preencher a próxima sessão antes que sua barra exista.
    próximo pregão começar.
 
 O backtest não apaga a previsão da última barra, porque ela representa o uso
-diário real, nem a conta como trade, retorno ou acerto. O ciclo mínimo atualmente
-implementado é:
+diário real, nem a conta como trade, retorno ou acerto. O `DailyAgentRunner` já
+persiste essa previsão entre processos, reconcilia sua sessão-alvo e impede mais
+de uma previsão pendente. O ciclo mínimo atualmente implementado é:
 
 ```text
 PREDICTED -> EXECUTED
@@ -192,8 +199,8 @@ MANTER    -> NO_ACTION
 ```
 
 Estados mais ricos como `SCHEDULED`, `RECONCILED`, `CANCELLED` e `EXPIRED`
-continuam sendo arquitetura-alvo para o runner diário; não são necessários para
-o replay atual.
+continuam sendo arquitetura-alvo; o runner atual usa os estados mínimos acima e
+permanece separado da arena comum.
 
 ### Arena incremental
 
