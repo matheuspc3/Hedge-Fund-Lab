@@ -64,10 +64,12 @@ custos e métricas antes de construir a arena.
 - [x] Corrigir a verificação da cobertura inicial e final do cache.
 - [x] Recortar exatamente o intervalo solicitado.
 - [x] Criar gate de qualidade OHLC, unicidade, volume e ordenação.
-- [ ] Integrar e validar o calendário no gate de qualidade.
+- [~] Integrar calendário local configurável ao gate de cobertura do snapshot;
+  validação contra fonte oficial/versionada permanece pendente.
 - [x] Rejeitar barras inválidas, inclusive OHLC não positivo ou inconsistente.
-- [ ] Criar snapshot com versão, fonte, horário, parâmetros, hash e cobertura.
-- [ ] Tornar carga parcial observável e consumível por automação.
+- [x] Criar snapshot imutável com versão, fonte, horário, parâmetros, hashes,
+  cobertura por sessão e relatório de qualidade.
+- [x] Tornar carga parcial observável e consumível por automação.
 - [ ] Adotar migrations antes que o schema passe a evoluir.
 
 ### Execução

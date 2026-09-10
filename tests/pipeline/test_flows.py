@@ -40,9 +40,36 @@ class TestPipelineFlow:
             patch("src.pipeline.flows.transform_task", return_value=mock_dataframe),
             patch("src.pipeline.flows.load_task") as mock_load,
         ):
-            pipeline_etl(tickers=["TEST4.SA"], start="2024-01-01", end="2024-01-31")
+            result = pipeline_etl(
+                tickers=["TEST4.SA"], start="2024-01-01", end="2024-01-31"
+            )
 
         assert mock_load.called
+        assert result.complete
+        assert result.success_tickers == ("TEST4.SA",)
+        assert result.failed_tickers == ()
+
+    def test_partial_flow_returns_explicit_failure_summary(self, mock_dataframe):
+        from src.pipeline.flows import pipeline_etl
+
+        with (
+            patch(
+                "src.pipeline.flows.extract_task",
+                side_effect=[mock_dataframe, RuntimeError("fonte indisponível")],
+            ),
+            patch("src.pipeline.flows.transform_task", return_value=mock_dataframe),
+            patch("src.pipeline.flows.load_task"),
+        ):
+            result = pipeline_etl(
+                tickers=["OK4.SA", "FAIL4.SA"],
+                start="2024-01-01",
+                end="2024-01-31",
+            )
+
+        assert not result.complete
+        assert result.success_tickers == ("OK4.SA",)
+        assert result.failed_tickers == ("FAIL4.SA",)
+        assert result.errors == {"FAIL4.SA": "RuntimeError: fonte indisponível"}
 
     def test_extract_retry_on_failure(self, mock_dataframe):
         """Extract falha e depois sucede -> flow completa."""

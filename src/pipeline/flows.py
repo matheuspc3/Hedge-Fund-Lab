@@ -5,19 +5,21 @@ Fornece:
 """
 
 import logging
+from dataclasses import dataclass
+from typing import cast
 
 import pandas as pd
 from prefect import flow, task
 
 from src.config import settings
 from src.db.connection import engine, get_session
-from src.logger import setup_logger
+from src.logger import LogLevel, setup_logger
 from src.pipeline.extract import DataExtractor
 from src.pipeline.load import DataLoader
 from src.pipeline.transform import DataTransformer
 
 # Configura o logger raiz (console + arquivo) antes de qualquer log
-setup_logger(level=settings.log_level, log_file=settings.log_file)
+setup_logger(level=cast(LogLevel, settings.log_level), log_file=settings.log_file)
 
 logger = logging.getLogger(__name__)
 logger.info(
@@ -30,6 +32,19 @@ logger.info(
     settings.cache_dir,
     settings.log_file,
 )
+
+
+@dataclass(frozen=True)
+class PipelineResult:
+    """Resumo consumível de sucesso e falha por ticker."""
+
+    success_tickers: tuple[str, ...]
+    failed_tickers: tuple[str, ...]
+    errors: dict[str, str]
+
+    @property
+    def complete(self) -> bool:
+        return not self.failed_tickers
 
 
 def init_db() -> None:
@@ -84,12 +99,14 @@ def load_task(
         "macd_sinal",
     ]
 
-    cotacoes_to_insert = cotacoes_df[
-        [c for c in cotacoes_cols if c in cotacoes_df.columns]
-    ]
-    indicadores_to_insert = indicadores_df[
-        [c for c in indicadores_cols if c in indicadores_df.columns]
-    ]
+    cotacoes_to_insert = cast(
+        pd.DataFrame,
+        cotacoes_df[[c for c in cotacoes_cols if c in cotacoes_df.columns]],
+    )
+    indicadores_to_insert = cast(
+        pd.DataFrame,
+        indicadores_df[[c for c in indicadores_cols if c in indicadores_df.columns]],
+    )
 
     loader.upsert_cotacoes(ticker, cotacoes_to_insert)
     loader.upsert_indicators(ticker, indicadores_to_insert)
@@ -105,7 +122,7 @@ def pipeline_etl(
     tickers: list[str] | None = None,
     start: str | None = None,
     end: str | None = None,
-) -> None:
+) -> PipelineResult:
     """Flow Prefect principal do pipeline de dados.
 
     Args:
@@ -125,6 +142,9 @@ def pipeline_etl(
 
     n_ok = 0
     n_fail = 0
+    success_tickers: list[str] = []
+    failed_tickers: list[str] = []
+    errors: dict[str, str] = {}
     for i, ticker in enumerate(tickers, 1):
         logger.info("[%d/%d] Processando %s...", i, len(tickers), ticker)
         try:
@@ -135,9 +155,12 @@ def pipeline_etl(
                 "[%d/%d] %s concluído — %d registros", i, len(tickers), ticker, len(df)
             )
             n_ok += 1
-        except Exception:
+            success_tickers.append(ticker)
+        except Exception as exc:
             logger.exception("[%d/%d] %s FALHOU", i, len(tickers), ticker)
             n_fail += 1
+            failed_tickers.append(ticker)
+            errors[ticker] = f"{type(exc).__name__}: {exc}"
 
     logger.info("=" * 50)
     if n_fail:
@@ -149,6 +172,11 @@ def pipeline_etl(
             "Pipeline ETL finalizado com sucesso. %d ticker(s) processados.", n_ok
         )
     logger.info("=" * 50)
+    return PipelineResult(
+        success_tickers=tuple(success_tickers),
+        failed_tickers=tuple(failed_tickers),
+        errors=errors,
+    )
 
 
 if __name__ == "__main__":

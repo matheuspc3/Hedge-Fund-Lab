@@ -7,8 +7,11 @@ experimental central.
 ## Arquitetura atual
 
 ```text
-yfinance ──> cache CSV ──> limpeza/indicadores ──> PostgreSQL
-                                                   │
+yfinance ──> cache CSV mutável ──> OHLCV validado ──> limpeza/indicadores ──> PostgreSQL
+                                      │                                      │
+                                      └──> DatasetSnapshot imutável          │
+                                           + manifest + SHA-256               │
+                                                                              │
                          ┌─────────────────────────┴──────────────────────┐
                          │                                                │
               gerador do dashboard                           runner de agentes
@@ -44,11 +47,19 @@ experimental ou o formato de resultado.
 
 ### Dados
 
-- `src/pipeline/extract.py`: `yfinance`, retry e cache CSV.
+- `src/pipeline/extract.py`: `yfinance`, retry e cache CSV mutável.
+- `src/pipeline/snapshot.py`: cobertura por sessões locais e materialização
+  imutável de CSVs com manifest, proveniência, qualidade e SHA-256. Lacunas ou
+  datas inesperadas produzem `scientific_ready=false` sem fabricar barras.
 - `src/pipeline/transform.py` e `src/indicators/`: limpeza e features.
 - `src/pipeline/load.py`: batch e upsert.
 - `src/db/`: conexão e três modelos ORM.
-- `src/pipeline/flows.py`: orquestração Prefect por ticker.
+- `src/pipeline/flows.py`: orquestração Prefect por ticker e `PipelineResult`
+  explícito para sucesso total ou carga parcial.
+
+O snapshot registra que `B3Calendar` usa regras locais e exceções explícitas;
+ele não o apresenta como calendário histórico oficial. A validação contra uma
+fonte oficial/versionada permanece requisito da arquitetura científica.
 
 ### Estratégias e execução clássica
 

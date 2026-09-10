@@ -1,6 +1,6 @@
 # Estado atual do Hedge-Fund-Lab
 
-Baseline auditada em **08/09/2026** sobre o estado versionado da branch
+Baseline auditada em **10/09/2026** sobre o estado versionado da branch
 `#1-Update`. O objetivo deste documento é responder até onde o projeto chega hoje
 e evitar que planos antigos sejam confundidos com implementação. Capacidades e
 limitações descritas como parte do sistema são evidência do repositório;
@@ -26,7 +26,7 @@ uma abordagem venceu outra.
 
 | Área | Status | O que realmente faz |
 |---|---|---|
-| Dados | Implementado com lacunas | Baixa OHLCV diário pelo `yfinance`, mantém cache CSV por ticker, valida estrutura, finitude e consistência OHLCV, calcula indicadores e persiste em PostgreSQL ou SQLite via SQLAlchemy. |
+| Dados | Implementado com lacunas | Baixa OHLCV diário pelo `yfinance`, mantém cache CSV mutável por ticker, valida estrutura, finitude e consistência OHLCV e pode materializar `DatasetSnapshot` imutável com hashes, proveniência e cobertura pelo calendário local. |
 | Persistência | Implementado | Tabelas de ativos, cotações e indicadores, com unicidade por ativo/data e atualização em conflito nos caminhos principais. |
 | Indicadores | Implementado | SMA 50/200, Bollinger 20/2, RSI 14 e MACD 12/26/9. |
 | Estratégias clássicas | Implementado | Buy & Hold, SMA Cross e Bollinger single-asset; Equal Weight e Mínima Variância multi-ativo. |
@@ -62,6 +62,29 @@ No estado auditado, o PostgreSQL local contém 10 ativos, 26.390 cotações e
 04/01/2016 a 05/08/2026. Cada ticker tinha uma barra final com algum OHLC igual
 a zero. O gate atual rejeita essas barras em novas execuções, mas não repara
 automaticamente dados inválidos já persistidos antes desta validação.
+
+### Snapshot de dataset
+
+`src.pipeline.snapshot.create_dataset_snapshot()` reutiliza o `DataExtractor` e
+o gate `validate_ohlcv`, analisa cada ticker contra as sessões esperadas do
+`B3Calendar` e materializa uma cópia independente em
+`data/snapshots/<snapshot_id>/data/`. O cache permanece uma otimização mutável;
+alterações posteriores nele não reescrevem snapshots existentes.
+
+Cada diretório possui `manifest.json` serializado com chaves ordenadas e um CSV
+por ticker. O manifest registra intervalo solicitado e efetivo, contagens,
+lacunas e datas inesperadas, SHA-256 e tamanho dos arquivos, fonte e versão do
+`yfinance`, política de ajuste observável, versão do Python/pipeline, commit e
+estado dirty do Git, além das regras e exceções do calendário. O ID combina
+timestamp UTC com digest do conteúdo e da especificação; um ID existente nunca
+é sobrescrito silenciosamente.
+
+Cobertura completa exige todas as sessões locais esperadas e nenhuma barra em
+data não esperada. Lacunas não recebem `ffill` nem preço inventado: o artefato é
+preservado para auditoria como `attention_required`, com
+`scientific_ready=false`. Intervalos sem nenhuma sessão são marcados
+`no_expected_sessions`. OHLCV inválido ou falha de qualquer ticker obrigatório
+interrompe a criação antes da publicação do diretório final.
 
 ### Backtest multiagente
 
@@ -114,8 +137,8 @@ seus resultados não são, por si só, conteúdo versionado no Git:
 
 | Verificação | Resultado |
 |---|---|
-| Suíte de pipeline com SQLite em memória (`poetry run pytest tests/pipeline -q`) | **94 passaram** em 08/09/2026 |
-| Suíte completa com SQLite em memória (`poetry run pytest -q`) | **341 passaram** em 08/09/2026 |
+| Suíte de pipeline com SQLite em memória (`poetry run pytest tests/pipeline -q`) | **108 passaram** em 10/09/2026 |
+| Suíte completa com SQLite em memória (`poetry run pytest -q`) | **382 passaram** em 10/09/2026 |
 | Cobertura (última medição, anterior a esta mudança) | **95%** |
 | Ruff | **14 violações preexistentes fora dos arquivos desta mudança** |
 | Ruff nos arquivos desta mudança | **verde** |
@@ -204,10 +227,14 @@ out-of-sample; nem análise estatística implementada.
   inconsistente e volume negativo. Volume zero é aceito; `NaN` em volume é
   rejeitado. O forward-fill ficou restrito a colunas auxiliares após a primeira
   validação OHLCV.
-- Ainda não há validação de calendário ou de lacunas internas entre os limites,
-  moeda, timezone, ajuste por proventos/splits ou proveniência da fonte.
-- O flow captura falha por ticker e termina sem relançar uma falha global; uma
-  automação pode interpretar uma carga parcial como sucesso.
+- O snapshot detecta limites e lacunas internas pelo `B3Calendar`, mas esse
+  calendário continua sendo aproximação local não validada contra fonte oficial
+  versionada. Moeda, timezone e política científica de proventos/splits seguem
+  pendentes; o extractor ainda usa o default de ajuste do provedor e o registra
+  como tal no manifest.
+- O flow continua processando os demais tickers após uma falha, porém agora
+  retorna `PipelineResult` com tickers bem-sucedidos, falhos, erros e
+  `complete=false`, tornando a carga parcial observável por automação.
 - `create_all()` não migra bancos existentes. Não há sistema de migrations.
 
 ### Agentes e LLM

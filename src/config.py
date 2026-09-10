@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     end_date: str = "2025-12-31"
     batch_size: int = 1000
     cache_dir: str = "data/raw"
+    snapshot_dir: str = "data/snapshots"
     log_level: str = "INFO"
     log_file: str = "data/logs/hedgefund.log"
     llm_provider: str = "mock"

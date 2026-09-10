@@ -66,3 +66,28 @@ class B3Calendar:
                 return candidate
             candidate += timedelta(days=1)
         raise RuntimeError(f"no B3 session found after {value}")
+
+    def sessions_between(self, start: date, end: date) -> tuple[date, ...]:
+        """Lista sessões locais esperadas no intervalo inclusivo.
+
+        Este calendário é uma aproximação por regras, não uma fonte histórica
+        oficial da B3. ``extra_closures`` e ``extra_openings`` permitem fixar
+        exceções conhecidas para um snapshot específico.
+        """
+        if start > end:
+            raise ValueError("start must be on or before end")
+        return tuple(
+            start + timedelta(days=offset)
+            for offset in range((end - start).days + 1)
+            if self.is_session(start + timedelta(days=offset))
+        )
+
+    def first_session_on_or_after(self, start: date, end: date) -> date | None:
+        """Retorna a primeira sessão no intervalo, ou ``None`` se não houver."""
+        sessions = self.sessions_between(start, end)
+        return sessions[0] if sessions else None
+
+    def last_session_on_or_before(self, start: date, end: date) -> date | None:
+        """Retorna a última sessão no intervalo, ou ``None`` se não houver."""
+        sessions = self.sessions_between(start, end)
+        return sessions[-1] if sessions else None

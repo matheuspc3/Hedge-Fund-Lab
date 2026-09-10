@@ -52,6 +52,14 @@ mínimo:
 Fonte definitiva, formato, localização, política de ajustes e schema do manifest:
 `TBD`.
 
+Implementação técnica atual, ainda sem congelar essas decisões: o
+`DatasetSnapshot` materializa CSVs em diretório próprio, calcula SHA-256 por
+arquivo e registra proveniência e cobertura por sessões do `B3Calendar` local.
+Lacunas, datas inesperadas ou intervalo sem sessões resultam em
+`scientific_ready=false`; não há preenchimento de barras. O calendário é
+explicitamente identificado como aproximação local com exceções configuráveis e
+ainda requer validação contra fonte oficial/versionada.
+
 ## 5. Train / Validation / Test
 
 - TRAIN: datas definitivas `TBD`.
