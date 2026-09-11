@@ -7,6 +7,7 @@ lista de trades e métricas de desempenho.
 import logging
 from dataclasses import dataclass, field
 from datetime import date as Date
+from typing import cast
 
 import pandas as pd
 
@@ -64,10 +65,11 @@ class BacktestEngine:
 
     Attributes:
         strategy: Estratégia que gera sinais {-1, 0, 1}.
-        data: DataFrame com dados históricos (coluna 'fechamento').
+        data: DataFrame com dados históricos (colunas 'abertura' e 'fechamento').
         initial_capital: Capital inicial em R$.
         cost_model: Modelo de custos de transação.
-        allow_short: Se True, permite venda a descoberto.
+        allow_short: Parâmetro legado. ``True`` é rejeitado enquanto a política
+            de short permanecer indefinida.
     """
 
     def __init__(
@@ -80,10 +82,13 @@ class BacktestEngine:
     ):
         if data.empty:
             raise ValueError("data cannot be empty")
+        missing = {"abertura", "fechamento"} - set(data.columns)
+        if missing:
+            raise ValueError(f"data missing columns: {', '.join(sorted(missing))}")
         if initial_capital <= 0:
-            raise ValueError(
-                f"initial_capital must be > 0, got {initial_capital}"
-            )
+            raise ValueError(f"initial_capital must be > 0, got {initial_capital}")
+        if allow_short:
+            raise ValueError("allow_short is not supported until a short policy is defined")
 
         self.strategy = strategy
         self.data = data
@@ -97,8 +102,8 @@ class BacktestEngine:
         """Executa o backtest.
 
         Pré-computa todos os sinais da estratégia de uma vez (a estratégia
-        é responsável por não usar dados futuros), depois itera dia a dia
-        executando trades conforme os sinais e registrando a curva de equity.
+        é responsável por não usar dados futuros). Uma intenção produzida com
+        dados até o fechamento de ``t`` é executada na abertura de ``t+1``.
 
         Returns:
             BacktestResult com equity curve, trades e métricas.
@@ -107,7 +112,8 @@ class BacktestEngine:
         position = 0  # número de ações
         trades: list[Trade] = []
         equity_curve: list[float] = []
-        prices = self.data["fechamento"]
+        open_prices = self.data["abertura"]
+        close_prices = self.data["fechamento"]
 
         # Pré-computa todos os sinais de uma vez
         all_signals = self.strategy.generate_signals(self.data)
@@ -129,70 +135,79 @@ class BacktestEngine:
             self.strategy.get_name() if hasattr(self.strategy, "get_name") else "?",
         )
 
-        for t in range(len(self.data)):
-            current_price = float(prices.iloc[t])
-            current_signal = int(all_signals.iloc[t])
+        pending_signal: int | None = None
 
-            # Executa trade se o sinal mudou
-            if current_signal != last_signal:
-                if current_signal == 1 and position == 0:
+        for t in range(len(self.data)):
+            current_open = float(open_prices.iloc[t])
+            current_close = float(close_prices.iloc[t])
+            current_signal = int(all_signals.iloc[t])
+            execution_date = cast(pd.Timestamp, self.data.index[t])
+
+            # Executa na abertura a intenção produzida no fechamento anterior.
+            if pending_signal is not None:
+                if pending_signal == 1 and position == 0:
                     # COMPRA: converte todo cash em ações
-                    trade_cost = self.cost_model.apply_buy(current_price)
-                    quantity = int(cash / current_price)
+                    quantity = self.cost_model.max_affordable_quantity(
+                        cash, current_open
+                    )
                     if quantity > 0:
-                        cash -= quantity * current_price + trade_cost
+                        trade_value = quantity * current_open
+                        trade_cost = self.cost_model.apply_buy(trade_value)
+                        cash -= trade_value + trade_cost
                         position += quantity
-                        trades.append(Trade(
-                            date=self.data.index[t],
-                            type="BUY",
-                            price=current_price,
-                            quantity=quantity,
-                            cost=trade_cost,
-                        ))
+                        trades.append(
+                            Trade(
+                                date=execution_date,
+                                type="BUY",
+                                price=current_open,
+                                quantity=quantity,
+                                cost=trade_cost,
+                            )
+                        )
                         logger.debug(
                             "BUY %d x %.2f = %.2f (custo=%.2f) cash=%.2f",
-                            quantity, current_price, quantity * current_price,
-                            trade_cost, cash,
+                            quantity,
+                            current_open,
+                            trade_value,
+                            trade_cost,
+                            cash,
                         )
 
-                elif current_signal == -1 and position > 0:
+                elif pending_signal == -1 and position > 0:
                     # VENDA: vende todas as ações
-                    trade_value = position * current_price
+                    trade_value = position * current_open
                     trade_cost = self.cost_model.apply_sell(trade_value)
-                    cash += trade_value - trade_cost
-                    trades.append(Trade(
-                        date=self.data.index[t],
-                        type="SELL",
-                        price=current_price,
-                        quantity=position,
-                        cost=trade_cost,
-                    ))
-                    logger.debug(
-                        "SELL %d x %.2f = %.2f (custo=%.2f) cash=%.2f",
-                        position, current_price, trade_value,
-                        trade_cost, cash,
-                    )
-                    position = 0
+                    cash_after_trade = cash + trade_value - trade_cost
+                    if cash_after_trade >= 0:
+                        cash = cash_after_trade
+                        trades.append(
+                            Trade(
+                                date=execution_date,
+                                type="SELL",
+                                price=current_open,
+                                quantity=position,
+                                cost=trade_cost,
+                            )
+                        )
+                        logger.debug(
+                            "SELL %d x %.2f = %.2f (custo=%.2f) cash=%.2f",
+                            position,
+                            current_open,
+                            trade_value,
+                            trade_cost,
+                            cash,
+                        )
+                        position = 0
 
-                elif current_signal == -1 and position == 0 and self.allow_short:
-                    # Venda a descoberto (se permitido)
-                    quantity = int(cash / current_price)
-                    if quantity > 0:
-                        trade_cost = self.cost_model.apply_sell(current_price)
-                        cash += quantity * current_price - trade_cost
-                        position -= quantity
-                        trades.append(Trade(
-                            date=self.data.index[t],
-                            type="SELL",
-                            price=current_price,
-                            quantity=quantity,
-                            cost=trade_cost,
-                        ))
+                pending_signal = None
 
+            # A decisão da última barra não possui abertura elegível.
+            if t < len(self.data) - 1 and current_signal != last_signal:
+                pending_signal = current_signal
                 last_signal = current_signal
 
             # Registra equity (patrimônio líquido atual)
-            equity = cash + position * current_price
+            equity = cash + position * current_close
             equity_curve.append(equity)
 
         # Constrói equity_curve como pd.Series

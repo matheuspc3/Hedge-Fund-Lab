@@ -3,8 +3,7 @@
 import numpy as np
 import pandas as pd
 import pytest
-from hypothesis import given, settings
-from hypothesis import strategies as st
+from hypothesis import given, settings, strategies as st
 
 from src.indicators.bollinger import bollinger_bands
 
@@ -52,7 +51,7 @@ class TestBollingerBands:
         series = pd.Series([100.0] * 30 + [150.0] + [100.0] * 19)
         upper, middle, lower = bollinger_bands(series, window=20, k=2.0)
         # No índice 30, o preço (150) deve estar acima de upper
-        assert pd.isna(upper.iloc[30]) == False  # noqa: E711
+        assert not pd.isna(upper.iloc[30])
         if not pd.isna(upper.iloc[30]):
             assert 150.0 > upper.iloc[30]
 
@@ -72,7 +71,11 @@ class TestBollingerBands:
     # ── Property-based ─────────────────────────────────────────
 
     @given(
-        values=st.lists(st.floats(min_value=1, max_value=1000, allow_nan=False), min_size=25, max_size=100),
+        values=st.lists(
+            st.floats(min_value=1, max_value=1000, allow_nan=False),
+            min_size=25,
+            max_size=100,
+        ),
         k=st.floats(min_value=0.5, max_value=5.0),
     )
     @settings(max_examples=50)

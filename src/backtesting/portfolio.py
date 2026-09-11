@@ -41,8 +41,7 @@ class PortfolioStrategy(ABC):
         """Retorna pesos {ticker: weight} para rebalanceamento.
 
         Args:
-            data: Histórico completo de cada ticker
-                  (DataFrame com coluna ``fechamento``).
+            data: Histórico observável de cada ticker até ``current_date``.
             current_date: Data atual do rebalanceamento.
 
         Returns:
@@ -51,8 +50,7 @@ class PortfolioStrategy(ABC):
         ...
 
     @abstractmethod
-    def get_name(self) -> str:
-        ...
+    def get_name(self) -> str: ...
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -70,9 +68,7 @@ class EqualWeightPortfolio(PortfolioStrategy):
 
     def __init__(self, rebalance_freq: int = 63):
         self.rebalance_freq = rebalance_freq
-        logger.info(
-            "EqualWeightPortfolio criada: rebalance_freq=%d", rebalance_freq
-        )
+        logger.info("EqualWeightPortfolio criada: rebalance_freq=%d", rebalance_freq)
 
     def get_weights(
         self,
@@ -86,7 +82,9 @@ class EqualWeightPortfolio(PortfolioStrategy):
         result = {ticker: w for ticker in data}
         logger.debug(
             "EqualWeight em %s: %d ativos, peso=%.4f cada",
-            current_date.date(), n, w,
+            current_date.date(),
+            n,
+            w,
         )
         return result
 
@@ -113,7 +111,8 @@ class MinVariancePortfolio(PortfolioStrategy):
         self.allow_short = allow_short
         logger.info(
             "MinVariancePortfolio criada: window=%d allow_short=%s",
-            window, allow_short,
+            window,
+            allow_short,
         )
 
     def get_weights(
@@ -137,7 +136,9 @@ class MinVariancePortfolio(PortfolioStrategy):
             if len(close) < self.window + 1:
                 logger.debug(
                     "MinVariance: %s possui apenas %d dias (< window=%d) — pulando",
-                    t, len(close), self.window,
+                    t,
+                    len(close),
+                    self.window,
                 )
                 continue
             ret = close.pct_change().dropna()
@@ -155,7 +156,7 @@ class MinVariancePortfolio(PortfolioStrategy):
         returns_df = pd.concat(returns_list, axis=1, keys=valid_tickers).dropna()
 
         # Últimos N dias úteis
-        recent = returns_df.iloc[-min(self.window, len(returns_df)):]
+        recent = returns_df.iloc[-min(self.window, len(returns_df)) :]
         cov = recent.cov().values
         m = cov.shape[0]
 
@@ -169,14 +170,18 @@ class MinVariancePortfolio(PortfolioStrategy):
         initial = np.array([1.0 / m] * m)
 
         result = minimize(
-            portfolio_var, initial, method="SLSQP",
-            bounds=bounds, constraints=constraints,
+            portfolio_var,
+            initial,
+            method="SLSQP",
+            bounds=bounds,
+            constraints=constraints,
         )
 
         if not result.success:
             logger.warning(
                 "MinVariance: otimização não convergiu em %s — %s",
-                current_date.date(), result.message,
+                current_date.date(),
+                result.message,
             )
             return {t: 1.0 / n for t in tickers}
 
@@ -214,9 +219,9 @@ class PortfolioBacktestResult:
 
     Attributes:
         equity_curve: Série temporal do patrimônio líquido total.
-        weights_history: DataFrame (dates × tickers) com os pesos
+        weights_history: DataFrame (dates x tickers) com os pesos
             efetivos *após* cada rebalanceamento.
-        allocation_history: DataFrame (dates × tickers) com o valor
+        allocation_history: DataFrame (dates x tickers) com o valor
             financeiro alocado em cada ativo.
         trades: Lista de trades executados.
         initial_capital: Capital inicial (R$).
@@ -270,7 +275,7 @@ class PortfolioBacktestEngine:
 
     Attributes:
         strategy: Estratégia de portfólio (define pesos alvo).
-        data: dict[ticker -> DataFrame com coluna ``fechamento``].
+        data: dict[ticker -> DataFrame com ``abertura`` e ``fechamento``].
         initial_capital: Capital inicial em R$.
         rebalance_freq: Dias úteis entre rebalanceamentos (default 63).
         cost_model: Modelo de custos de transação.
@@ -286,10 +291,14 @@ class PortfolioBacktestEngine:
     ):
         if not data:
             raise ValueError("data dict cannot be empty")
+        for ticker, frame in data.items():
+            missing = {"abertura", "fechamento"} - set(frame.columns)
+            if missing:
+                raise ValueError(
+                    f"data for {ticker} missing columns: {', '.join(sorted(missing))}"
+                )
         if initial_capital <= 0:
-            raise ValueError(
-                f"initial_capital must be > 0, got {initial_capital}"
-            )
+            raise ValueError(f"initial_capital must be > 0, got {initial_capital}")
 
         self.strategy = strategy
         self.data = data
@@ -300,7 +309,10 @@ class PortfolioBacktestEngine:
         logger.info(
             "PortfolioBacktestEngine criada: estrategia=%s, %d ativos, "
             "capital=%.2f, rebalance=%d dias",
-            strategy.get_name(), len(data), initial_capital, rebalance_freq,
+            strategy.get_name(),
+            len(data),
+            initial_capital,
+            rebalance_freq,
         )
 
     # ── API pública ──────────────────────────────────────────────
@@ -310,8 +322,8 @@ class PortfolioBacktestEngine:
 
         1. Alinha as datas de todos os tickers (interseção).
         2. Itera dia a dia.
-        3. Nas datas de rebalanceamento, consulta a estratégia e
-           ajusta posições.
+        3. Calcula pesos com dados até o fechamento de ``t`` e ajusta posições
+           na abertura de ``t+1``.
         4. Entre rebalanceamentos, o portfólio deriva naturalmente.
 
         Returns:
@@ -323,7 +335,9 @@ class PortfolioBacktestEngine:
         common_dates = self._align_dates(tickers)
         logger.info(
             "PortfolioBacktest iniciado: %d ativos, %d datas comuns, %s",
-            len(tickers), len(common_dates), self.strategy.get_name(),
+            len(tickers),
+            len(common_dates),
+            self.strategy.get_name(),
         )
 
         # Estado inicial
@@ -336,91 +350,95 @@ class PortfolioBacktestEngine:
         trades: list[PortfolioTrade] = []
 
         last_rebalance_idx = -self.rebalance_freq
+        pending_weights: dict[str, float] | None = None
 
         for i, date in enumerate(common_dates):
-            prices = {}
-            for t in tickers:
-                prices[t] = float(self.data[t].loc[date, "fechamento"])
+            open_prices = {
+                t: float(self.data[t].loc[date, "abertura"]) for t in tickers
+            }
+            close_prices = {
+                t: float(self.data[t].loc[date, "fechamento"]) for t in tickers
+            }
 
-            # Valor atual do portfólio
-            positions_value = sum(positions[t] * prices[t] for t in tickers)
-            total_value = cash + positions_value
-
-            # Rebalanceamento?
-            should_rebalance = (i - last_rebalance_idx >= self.rebalance_freq)
-
-            if should_rebalance:
-                target_weights = self.strategy.get_weights(self.data, date)
-
-                # Calcula valor alvo para cada ativo e executa trades
+            if pending_weights is not None:
+                total_at_open = cash + sum(
+                    positions[t] * open_prices[t] for t in tickers
+                )
+                target_positions = {}
                 for t in tickers:
-                    target_value = total_value * target_weights.get(t, 0.0)
-                    current_value = positions[t] * prices[t]
-                    diff = target_value - current_value
+                    weight = float(pending_weights.get(t, 0.0))
+                    if not np.isfinite(weight) or weight < 0:
+                        raise ValueError(
+                            "negative or non-finite portfolio weights are not supported"
+                        )
+                    target_positions[t] = int(total_at_open * weight / open_prices[t])
 
-                    if abs(diff) < 1.0:
-                        continue  # diferença irrelevante
+                # Vendas primeiro liberam o caixa usado pelas compras seguintes.
+                for t in tickers:
+                    shares = max(0, positions[t] - target_positions[t])
+                    if shares == 0:
+                        continue
+                    trade_value = shares * open_prices[t]
+                    trade_cost = self.cost_model.apply_sell(trade_value)
+                    if cash + trade_value - trade_cost < 0:
+                        continue
+                    cash += trade_value - trade_cost
+                    positions[t] -= shares
+                    trades.append(
+                        PortfolioTrade(
+                            date=date,
+                            ticker=t,
+                            type="SELL",
+                            price=open_prices[t],
+                            quantity=shares,
+                            cost=trade_cost,
+                        )
+                    )
 
-                    if diff > 0:
-                        # Compra
-                        shares = int(diff / prices[t])
-                        if shares > 0:
-                            trade_value = shares * prices[t]
-                            trade_cost = self.cost_model.apply_buy(trade_value)
-                            cash -= trade_value + trade_cost
-                            positions[t] += shares
-                            trades.append(PortfolioTrade(
-                                date=date,
-                                ticker=t,
-                                type="BUY",
-                                price=prices[t],
-                                quantity=shares,
-                                cost=trade_cost,
-                            ))
-                            logger.debug(
-                                "BUY %s %d x %.2f (custo=%.2f)",
-                                t, shares, prices[t], trade_cost,
-                            )
+                for t in tickers:
+                    requested = max(0, target_positions[t] - positions[t])
+                    shares = min(
+                        requested,
+                        self.cost_model.max_affordable_quantity(cash, open_prices[t]),
+                    )
+                    if shares == 0:
+                        continue
+                    trade_value = shares * open_prices[t]
+                    trade_cost = self.cost_model.apply_buy(trade_value)
+                    cash -= trade_value + trade_cost
+                    positions[t] += shares
+                    trades.append(
+                        PortfolioTrade(
+                            date=date,
+                            ticker=t,
+                            type="BUY",
+                            price=open_prices[t],
+                            quantity=shares,
+                            cost=trade_cost,
+                        )
+                    )
 
-                    else:
-                        # Venda
-                        shares = min(positions[t], int(-diff / prices[t]))
-                        if shares > 0:
-                            trade_value = shares * prices[t]
-                            trade_cost = self.cost_model.apply_sell(trade_value)
-                            cash += trade_value - trade_cost
-                            positions[t] -= shares
-                            trades.append(PortfolioTrade(
-                                date=date,
-                                ticker=t,
-                                type="SELL",
-                                price=prices[t],
-                                quantity=shares,
-                                cost=trade_cost,
-                            ))
-                            logger.debug(
-                                "SELL %s %d x %.2f (custo=%.2f)",
-                                t, shares, prices[t], trade_cost,
-                            )
+                pending_weights = None
 
+            # Pesos decididos no fechamento atual só valem na próxima abertura.
+            if i - last_rebalance_idx >= self.rebalance_freq:
+                observable_data = {t: self.data[t].loc[:date] for t in tickers}
+                pending_weights = self.strategy.get_weights(observable_data, date)
                 last_rebalance_idx = i
 
             # Recalcula valor do portfólio e pesos efetivos
-            positions_value = sum(positions[t] * prices[t] for t in tickers)
+            positions_value = sum(positions[t] * close_prices[t] for t in tickers)
             total_value = cash + positions_value
             equity_curve.append(total_value)
 
             # Registra alocação e pesos
-            alloc_row = {
-                t: positions[t] * prices[t] for t in tickers
-            }
+            alloc_row = {t: positions[t] * close_prices[t] for t in tickers}
             alloc_row["cash"] = cash
             allocation_records.append(alloc_row)
 
             total_for_weight = total_value if total_value > 0 else 1.0
             weight_row = {
-                t: (positions[t] * prices[t]) / total_for_weight
-                for t in tickers
+                t: (positions[t] * close_prices[t]) / total_for_weight for t in tickers
             }
             weights_records.append(weight_row)
 

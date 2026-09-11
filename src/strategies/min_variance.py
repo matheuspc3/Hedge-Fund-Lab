@@ -42,7 +42,9 @@ class MinVariance(Strategy):
         self.allow_short = allow_short
         logger.info(
             "MinVariance criada: window=%d rebalance_freq=%d allow_short=%s",
-            window, rebalance_freq, allow_short,
+            window,
+            rebalance_freq,
+            allow_short,
         )
 
     def generate_signals(self, data: pd.DataFrame) -> pd.Series:
@@ -57,7 +59,8 @@ class MinVariance(Strategy):
         signals.iloc[0] = 1
         logger.info(
             "MinVariance: entrada em %s a R$ %.2f",
-            data.index[0], data["fechamento"].iloc[0],
+            data.index[0],
+            data["fechamento"].iloc[0],
         )
 
         # Rebalanceamento periódico
@@ -71,13 +74,18 @@ class MinVariance(Strategy):
             n_rebal += 1
             logger.debug(
                 "MinVariance: rebalanceamento %d em %s (preço=%.2f)",
-                n_rebal, data.index[i], data["fechamento"].iloc[i],
+                n_rebal,
+                data.index[i],
+                data["fechamento"].iloc[i],
             )
 
         logger.info(
             "MinVariance: 1 entrada + %d rebalanceamento(s) + %d pulado(s) "
             "(window=%d) em %d dias",
-            n_rebal, n_skipped, self.window, len(signals),
+            n_rebal,
+            n_skipped,
+            self.window,
+            len(signals),
         )
 
         return signals
@@ -97,7 +105,7 @@ class MinVariance(Strategy):
         """
         cov = returns.cov().values
         n = cov.shape[0]
-        bounds = [(-1.0, 1.0)] * n if False else [(0.0, 1.0)] * n  # noqa: F841
+        bounds = [(-1.0, 1.0)] * n if False else [(0.0, 1.0)] * n
 
         def portfolio_var(weights: np.ndarray) -> float:
             return weights.T @ cov @ weights
@@ -106,8 +114,9 @@ class MinVariance(Strategy):
         bounds = [(None, None)] * n  # Sem restrição de short
 
         initial = np.array([1.0 / n] * n)
-        result = minimize(portfolio_var, initial, method="SLSQP",
-                          bounds=bounds, constraints=constraints)
+        result = minimize(
+            portfolio_var, initial, method="SLSQP", bounds=bounds, constraints=constraints
+        )
         if not result.success:
             logger.warning("Otimalização não convergiu: %s", result.message)
             return initial

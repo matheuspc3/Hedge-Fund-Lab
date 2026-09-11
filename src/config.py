@@ -12,15 +12,29 @@ class Settings(BaseSettings):
 
     database_url: str = "sqlite:///hedgefundlab.db"
     default_tickers: list[str] = [
-        "PETR4.SA", "VALE3.SA", "ITUB4.SA", "BBDC4.SA", "BBAS3.SA",
-        "ABEV3.SA", "WEGE3.SA", "CMIG4.SA", "RENT3.SA", "SUZB3.SA",
+        "PETR4.SA",
+        "VALE3.SA",
+        "ITUB4.SA",
+        "BBDC4.SA",
+        "BBAS3.SA",
+        "ABEV3.SA",
+        "WEGE3.SA",
+        "CMIG4.SA",
+        "RENT3.SA",
+        "SUZB3.SA",
     ]
     start_date: str = "2016-01-01"
     end_date: str = "2025-12-31"
     batch_size: int = 1000
     cache_dir: str = "data/raw"
+    snapshot_dir: str = "data/snapshots"
     log_level: str = "INFO"
     log_file: str = "data/logs/hedgefund.log"
+    llm_provider: str = "mock"
+    llm_model: str = ""
+    llm_api_key: str | None = None
+    llm_base_url: str | None = None
+    llm_timeout: float = 120.0
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8", "extra": "ignore"}
 
