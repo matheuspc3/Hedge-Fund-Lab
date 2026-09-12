@@ -102,6 +102,14 @@ na abertura da próxima sessão válida `t+1`.
 
 As mesmas regras serão aplicadas a todos os participantes.
 
+Implementação técnica preliminar, sem congelar as escolhas acima:
+`OrderIntent` registra ticker, direção, peso alvo long-only, instante da decisão
+e primeira sessão observada elegível. `ExecutionEngine` executa Buy & Hold na
+abertura seguinte com quantidade inteira e o `CostModel` existente. Esse recorte
+serve para validar a arquitetura; lote B3, slippage, spread científico,
+liquidez, execução parcial, margem e política definitiva de short continuam
+`TBD`.
+
 ## 9. Capital
 
 - Capital inicial: `TBD`.

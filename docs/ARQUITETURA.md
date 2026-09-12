@@ -34,7 +34,8 @@ São dois produtos paralelos:
 
 Eles compartilham dados, estruturas de custo/trade e o relógio conceitual
 fechamento de `t` -> abertura de `t+1`, mas não compartilham o motor, a unidade
-experimental ou o formato de resultado.
+experimental ou o formato de resultado. Em paralelo, a primeira fatia da arena
+já executa somente Buy & Hold pelo contrato comum descrito abaixo.
 
 ## Componentes atuais
 
@@ -74,6 +75,41 @@ fonte oficial/versionada permanece requisito da arquitetura científica.
 
 Há duplicação de conceitos: duas interfaces de estratégia, duas famílias de
 Equal Weight/Mínima Variância e dois motores com semânticas diferentes.
+
+### Arena incremental
+
+`src/backtesting/arena.py` contém o contrato técnico mínimo e o executor comum;
+`BuyAndHoldParticipant`, em `src/strategies/buy_and_hold.py`, é o único adaptador
+migrado nesta etapa:
+
+```text
+histórico copiado e truncado até close(t)
+                  │
+                  v
+        MarketObservation
+                  │
+                  v
+          Participant.decide
+                  │
+                  v
+ OrderIntent(ticker, side, target_weight,
+             decision_time, eligible_execution_time)
+                  │
+                  v
+ ExecutionEngine na abertura observada de t+1
+                  │
+                  v
+       Trade + equity no fechamento
+```
+
+`OrderIntent` representa decisão, não execução. Preço, quantidade inteira,
+custo e caixa resultante pertencem ao executor e aparecem apenas no `Trade`.
+O executor reutiliza `CostModel`, rejeita short/alavancagem e não lê arquivos de
+dados ou snapshots. Ele recebe os dados já preparados, suporta um ticker nesta
+prova e devolve o `BacktestResult` mínimo já existente. Os três motores legados
+permanecem disponíveis e compatíveis como caminhos operacionais.
+O guard de `DatasetSnapshot.scientific_ready` pertence ao futuro runner de
+experimentos, pois esta camada recebe DataFrames já entregues ao executor.
 
 ### Sistema multiagente
 

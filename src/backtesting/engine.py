@@ -26,6 +26,7 @@ class Trade:
         price: Preço unitário do ativo.
         quantity: Quantidade de ações negociada.
         cost: Custo total da transação (R$).
+        ticker: Ativo negociado, quando conhecido pelo caminho de execução.
     """
 
     date: Date | pd.Timestamp
@@ -33,6 +34,7 @@ class Trade:
     price: float
     quantity: int
     cost: float = 0.0
+    ticker: str | None = None
 
 
 @dataclass

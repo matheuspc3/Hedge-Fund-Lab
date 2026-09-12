@@ -4,6 +4,7 @@ import logging
 
 import pandas as pd
 
+from src.backtesting.arena import MarketObservation, OrderIntent
 from src.strategies.base import Strategy
 
 logger = logging.getLogger(__name__)
@@ -34,3 +35,28 @@ class BuyAndHold(Strategy):
 
     def get_name(self) -> str:
         return "Buy and Hold"
+
+
+class BuyAndHoldParticipant:
+    """Adapter Buy & Hold causal para o contrato incremental da arena."""
+
+    def __init__(self, ticker: str) -> None:
+        if not ticker.strip():
+            raise ValueError("ticker cannot be empty")
+        self.ticker = ticker.strip()
+
+    def decide(self, observation: MarketObservation) -> list[OrderIntent]:
+        history = observation.history.get(self.ticker)
+        if history is None:
+            raise ValueError(f"observation missing ticker: {self.ticker}")
+        if len(history) != 1:
+            return []
+        return [
+            OrderIntent(
+                ticker=self.ticker,
+                side="BUY",
+                target_weight=1.0,
+                decision_time=observation.session,
+                eligible_execution_time=observation.next_session,
+            )
+        ]

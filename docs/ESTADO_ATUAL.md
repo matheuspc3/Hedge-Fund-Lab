@@ -14,10 +14,11 @@ coleta e persiste dados, calcula indicadores, executa cinco benchmarks clássico
 possui dashboard e contém um fluxo LLM auditável de três estágios cujo primeiro
 estágio é um quorum configurável de 30 chamadas.
 
-Ele ainda **não é a arena científica descrita como objetivo**. As estratégias
-clássicas e o sistema LLM continuam em motores diferentes, embora agora adotem o
-mesmo relógio fechamento de `t` -> abertura de `t+1`; o LLM não aparece na
-comparação principal; e não existe orquestrador de experimento, divisão
+Ele ainda **não é a arena científica descrita como objetivo**. Um caminho comum
+preliminar já recebe `MarketObservation`, chama `Participant`, normaliza a
+decisão como `OrderIntent` e executa Buy & Hold, mas as demais estratégias e o
+sistema LLM continuam em motores diferentes. O LLM não aparece na comparação
+principal; e não existe orquestrador de experimento, divisão
 train/validation/test ou walk-forward. Portanto, os números exibidos no
 dashboard e os JSONs de agentes são demonstrações técnicas, não evidência de que
 uma abordagem venceu outra.
@@ -37,7 +38,7 @@ uma abordagem venceu outra.
 | Backtest LLM | Implementado com lacunas | Decide no fechamento de `t`, executa na próxima abertura observada e registra ciclo, votos, trades e curva em JSON. A última previsão fica pendente. |
 | Runner diário | Parcial | `DailyAgentRunner` persiste estado, reconcilia a previsão pendente na abertura esperada e avança uma sessão por execução. Ainda não integra a arena nem um manifest canônico. |
 | Calendário B3 | Parcial | `B3Calendar` resolve fins de semana, feriados recorrentes e exceções explícitas sem dependência externa; ainda precisa de validação/versionamento contra calendário oficial. |
-| Arena clássicos x LLM | Planejado | Não existe participante comum, motor comum nem resultado consolidado. |
+| Arena clássicos x LLM | Parcial | Existem contrato mínimo de participante e intenção e execução comum long-only para Buy & Hold single-asset. Os demais clássicos e o LLM ainda usam motores separados; não há `ExperimentSpec` nem resultado consolidado. |
 | Dashboard | Parcial | Compara as cinco estratégias clássicas e exibe indicadores. Uma tela separada dispara backtest LLM, mas não incorpora o resultado à arena. |
 | Avaliação científica | Planejado | Não existem `src/evaluation`, splits temporais, walk-forward, testes de hipótese, análise de sensibilidade ou exportação científica. |
 | Operação em tempo real/MT5/BRAPI | Planejado | O runner diário é simulação persistente; integrações de mercado e execução automática não existem. |
@@ -130,6 +131,33 @@ ativo**. Ele não recebe o universo de ativos, correlações, pesos correntes da
 carteira ou restrições globais. O quorum é um ensemble estocástico de um papel,
 não 30 especialistas ou 30 modelos independentes.
 
+### Arena incremental — Buy & Hold
+
+`src/backtesting/arena.py` introduz a primeira fatia comum sem substituir os
+motores anteriores:
+
+```text
+MarketObservation até close(t)
+        -> Participant.decide(...)
+        -> OrderIntent de peso alvo
+        -> ExecutionEngine em open(t+1)
+        -> Trade + equity em close(t+1)
+```
+
+`BuyAndHoldParticipant` produz uma única intenção na primeira sessão observável.
+O executor usa `CostModel`, quantidade inteira, caixa não negativo e posição
+long-only. Um intent na única/última sessão permanece uma decisão sem abertura
+observada e não gera trade. A observação contém cópias dos históricos truncadas
+em `t`, portanto o participante não recebe preços futuros por esse contrato.
+
+Esta implementação é deliberadamente single-asset e técnica: peso alvo entre
+zero e um foi escolhido como semântica extensível, sem congelar lote B3,
+slippage, liquidez, margem ou política científica definitiva. `BacktestEngine`,
+`PortfolioBacktestEngine` e `AgentBacktestEngine` continuam ativos em paralelo.
+Como o executor não consome `DatasetSnapshot`, o guard de `scientific_ready`
+permanece responsabilidade da futura camada de `ExperimentSpec`; não foi criada
+uma integração artificial nesta etapa.
+
 ## Evidência de validação
 
 As verificações abaixo foram observadas no ambiente local durante a auditoria;
@@ -163,9 +191,9 @@ distinguem `close(t)` de `open(t+1)` e rejeitam trade na última decisão.
 
 Os motores LLM, clássico single-asset e clássico multi-asset agora compartilham
 a semântica observação até o fechamento de `t` e execução na abertura de `t+1`.
-Eles ainda são implementações separadas, sem ordem canônica, arena ou modelo de
-execução único; portanto, o relógio equivalente ainda não basta para produzir
-uma competição científica comum.
+Buy & Hold também possui um caminho comum preliminar com ordem normalizada, mas
+os demais participantes ainda são implementações separadas; portanto, essa
+primeira migração ainda não produz uma competição científica comum.
 
 ### 2. Custos não comparáveis
 

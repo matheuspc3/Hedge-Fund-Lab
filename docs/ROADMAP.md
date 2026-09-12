@@ -76,14 +76,17 @@ custos e métricas antes de construir a arena.
 
 - [x] Aplicar decisão em `t` e execução em `t+1` a todos os participantes
   clássicos atuais.
-- [ ] Definir ordem canônica: ativo, direção, quantidade/peso alvo, instante da
-  decisão e primeira sessão elegível.
+- [~] Definir ordem canônica: o contrato técnico preliminar `OrderIntent` já
+  registra ativo, direção, peso alvo, instante da decisão e primeira sessão
+  elegível; políticas científicas definitivas ainda não foram congeladas.
 - [x] Calcular custos sobre o valor financeiro total de cada ordem.
 - [x] Reservar custos ao dimensionar quantidade.
 - [x] Proibir caixa negativo.
 - [ ] Aplicar a mesma política de lote, slippage, spread, corretagem e
   emolumentos.
-- [ ] Definir política de short: suporte completo ou rejeição explícita.
+- [~] Definir política de short: o caminho preliminar da arena rejeita peso
+  negativo e alavancagem explicitamente; a política científica continua
+  pendente.
 
 ### Métricas
 
@@ -131,12 +134,21 @@ mesmos dados
 → resultados comparáveis
 ```
 
-- [ ] Definir o contrato mínimo de `Participant`.
+- [x] Definir o contrato mínimo de `Participant`.
+- [x] Criar `MarketObservation` causal e `OrderIntent` técnico preliminar.
+- [x] Criar caminho comum de execução long-only para a migração incremental.
+- [x] Adaptar Buy & Hold como primeiro participante.
+- [ ] Adaptar SMA Cross.
+- [ ] Adaptar Bollinger Bands.
+- [ ] Adaptar Equal Weight.
+- [ ] Adaptar Mínima Variância.
+- [ ] Adaptar o participante LLM.
 - [ ] Criar `ExperimentSpec` com snapshot, universo, split, capital, frequência,
   custos, benchmark, calendário, seeds e participante.
 - [ ] Criar `RunResult` e manifest canônicos.
 - [ ] Identificar e persistir cada execução por `run_id`.
-- [ ] Adaptar os cinco benchmarks e o participante LLM ao contrato comum.
+- [~] Adaptar os cinco benchmarks e o participante LLM ao contrato comum; Buy &
+  Hold já usa o novo caminho e os demais continuam nos motores legados.
 - [ ] Executar replay histórico e avanço diário com a mesma semântica.
 - [x] Implementar `DailyAgentRunner` para avançar um pregão por execução.
 - [x] Persistir estado diário e previsão pendente entre processos.
