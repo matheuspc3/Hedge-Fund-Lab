@@ -46,6 +46,7 @@ class BuyAndHoldParticipant:
         self.ticker = ticker.strip()
 
     def decide(self, observation: MarketObservation) -> list[OrderIntent]:
+        """Compra na primeira observação; não consulta sessão futura."""
         history = observation.history.get(self.ticker)
         if history is None:
             raise ValueError(f"observation missing ticker: {self.ticker}")
@@ -57,6 +58,5 @@ class BuyAndHoldParticipant:
                 side="BUY",
                 target_weight=1.0,
                 decision_time=observation.session,
-                eligible_execution_time=observation.next_session,
             )
         ]

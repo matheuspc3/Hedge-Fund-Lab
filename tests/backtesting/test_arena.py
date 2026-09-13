@@ -1,5 +1,7 @@
 """Provas do contrato incremental da arena e da migração do Buy & Hold."""
 
+from collections.abc import Mapping
+from dataclasses import fields
 from types import MappingProxyType
 from typing import cast
 
@@ -24,27 +26,62 @@ def market_data() -> pd.DataFrame:
     )
 
 
-def observation(
-    data: pd.DataFrame, *, next_session: pd.Timestamp | None
-) -> MarketObservation:
+def extended_market_data() -> pd.DataFrame:
+    """``market_data`` com uma terceira sessão, para variar o horizonte."""
+    dates = pd.DatetimeIndex(["2023-01-02", "2023-01-03", "2023-01-04"])
+    return pd.DataFrame(
+        {"abertura": [90.0, 130.0, 150.0], "fechamento": [100.0, 140.0, 160.0]},
+        index=dates,
+    )
+
+
+def standalone_observation(data: pd.DataFrame) -> MarketObservation:
     return MarketObservation(
         session=cast(pd.Timestamp, data.index[-1]),
         history=MappingProxyType({"PETR4": data.copy()}),
         positions=MappingProxyType({"PETR4": 0}),
         cash=1_000.0,
         equity=1_000.0,
-        next_session=next_session,
     )
+
+
+def normalize(value: object) -> object:
+    if isinstance(value, pd.DataFrame):
+        return (value.index.tolist(), value.to_dict("list"))
+    if isinstance(value, Mapping):
+        return {key: normalize(item) for key, item in value.items()}
+    return value
+
+
+def observation_snapshot(observation: MarketObservation) -> dict[str, object]:
+    """Captura todo o contrato entregue ao participante, campo a campo."""
+    return {
+        field.name: normalize(getattr(observation, field.name))
+        for field in fields(MarketObservation)
+    }
+
+
+class SpyParticipant:
+    """Registra tudo o que o contrato entrega e ainda opera como Buy & Hold."""
+
+    def __init__(self) -> None:
+        self.delegate = BuyAndHoldParticipant("PETR4")
+        self.snapshots: list[dict[str, object]] = []
+        self.intents: list[list[OrderIntent]] = []
+
+    def decide(self, observation: MarketObservation) -> list[OrderIntent]:
+        self.snapshots.append(observation_snapshot(observation))
+        intents = self.delegate.decide(observation)
+        self.intents.append(intents)
+        return intents
 
 
 def test_buy_and_hold_emite_intent_apenas_na_primeira_observacao() -> None:
     data = market_data()
     participant = BuyAndHoldParticipant("PETR4")
 
-    first = participant.decide(
-        observation(data.iloc[:1], next_session=cast(pd.Timestamp, data.index[1]))
-    )
-    second = participant.decide(observation(data, next_session=None))
+    first = participant.decide(standalone_observation(data.iloc[:1]))
+    second = participant.decide(standalone_observation(data))
 
     assert first == [
         OrderIntent(
@@ -52,17 +89,51 @@ def test_buy_and_hold_emite_intent_apenas_na_primeira_observacao() -> None:
             side="BUY",
             target_weight=1.0,
             decision_time=cast(pd.Timestamp, data.index[0]),
-            eligible_execution_time=cast(pd.Timestamp, data.index[1]),
         )
     ]
     assert second == []
+
+
+def test_observacao_expoe_somente_campos_de_t() -> None:
+    assert {field.name for field in fields(MarketObservation)} == {
+        "session",
+        "history",
+        "positions",
+        "cash",
+        "equity",
+    }
+
+
+def test_intent_nao_declara_sessao_futura() -> None:
+    assert {field.name for field in fields(OrderIntent)} == {
+        "ticker",
+        "side",
+        "target_weight",
+        "decision_time",
+    }
+
+
+def test_observacao_nao_revela_o_fim_do_recorte() -> None:
+    """A última barra de um recorte é indistinguível da mesma barra no meio."""
+    data = extended_market_data()
+
+    short_horizon = SpyParticipant()
+    ExecutionEngine(short_horizon, {"PETR4": data.iloc[:2]}, 1_000.0).run()
+    long_horizon = SpyParticipant()
+    ExecutionEngine(long_horizon, {"PETR4": data}, 1_000.0).run()
+
+    assert len(short_horizon.snapshots) == 2
+    assert len(long_horizon.snapshots) == 3
+    # A sessão 2023-01-03 encerra o recorte curto e é intermediária no longo;
+    # se algum campo denunciasse o horizonte, os contratos divergiriam aqui.
+    assert short_horizon.snapshots == long_horizon.snapshots[:2]
 
 
 def test_participant_recebe_somente_historico_observavel() -> None:
     data = market_data()
     data.loc[data.index[1], "fechamento"] = 999_999.0
 
-    class SpyParticipant:
+    class ClosesSpy:
         def __init__(self) -> None:
             self.observed_closes: list[list[float]] = []
 
@@ -72,7 +143,7 @@ def test_participant_recebe_somente_historico_observavel() -> None:
             )
             return []
 
-    participant = SpyParticipant()
+    participant = ClosesSpy()
     ExecutionEngine(participant, {"PETR4": data}, 1_000.0).run()
 
     assert participant.observed_closes == [[100.0], [100.0, 999_999.0]]
@@ -98,20 +169,14 @@ def test_intent_executa_na_proxima_abertura_e_trade_guarda_ticker() -> None:
 def test_intent_na_ultima_sessao_existe_mas_nao_gera_trade() -> None:
     data = market_data().iloc[:1]
 
-    class RecordingParticipant:
-        def __init__(self) -> None:
-            self.delegate = BuyAndHoldParticipant("PETR4")
-            self.intents: list[OrderIntent] = []
-
-        def decide(self, observation: MarketObservation) -> list[OrderIntent]:
-            self.intents = self.delegate.decide(observation)
-            return self.intents
-
-    participant = RecordingParticipant()
+    participant = SpyParticipant()
     result = ExecutionEngine(participant, {"PETR4": data}, 1_000.0).run()
 
+    # O participante decide normalmente; quem descobre que não existe abertura
+    # seguinte é o executor.
     assert len(participant.intents) == 1
-    assert participant.intents[0].eligible_execution_time is None
+    assert len(participant.intents[0]) == 1
+    assert participant.intents[0][0].decision_time == data.index[0]
     assert result.trades == []
     assert result.final_equity == 1_000.0
 
@@ -144,7 +209,6 @@ def test_short_e_alavancagem_sao_rejeitados_explicitamente(
             side="SELL",
             target_weight=target_weight,
             decision_time=cast(pd.Timestamp, pd.Timestamp("2023-01-02")),
-            eligible_execution_time=cast(pd.Timestamp, pd.Timestamp("2023-01-03")),
         )
 
 

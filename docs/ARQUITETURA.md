@@ -93,7 +93,7 @@ histórico copiado e truncado até close(t)
                   │
                   v
  OrderIntent(ticker, side, target_weight,
-             decision_time, eligible_execution_time)
+             decision_time)
                   │
                   v
  ExecutionEngine na abertura observada de t+1
@@ -104,6 +104,11 @@ histórico copiado e truncado até close(t)
 
 `OrderIntent` representa decisão, não execução. Preço, quantidade inteira,
 custo e caixa resultante pertencem ao executor e aparecem apenas no `Trade`.
+`MarketObservation` carrega somente informação de `t`: o participante não
+conhece o horizonte do dataset e não consegue identificar a última sessão do
+recorte. A elegibilidade de execução pertence ao executor, que associa cada
+intenção à próxima abertura observada — e a descarta sem trade quando ela não
+existe.
 O executor reutiliza `CostModel`, rejeita short/alavancagem e não lê arquivos de
 dados ou snapshots. Ele recebe os dados já preparados, suporta um ticker nesta
 prova e devolve o `BacktestResult` mínimo já existente. Os três motores legados

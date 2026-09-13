@@ -77,8 +77,9 @@ custos e métricas antes de construir a arena.
 - [x] Aplicar decisão em `t` e execução em `t+1` a todos os participantes
   clássicos atuais.
 - [~] Definir ordem canônica: o contrato técnico preliminar `OrderIntent` já
-  registra ativo, direção, peso alvo, instante da decisão e primeira sessão
-  elegível; políticas científicas definitivas ainda não foram congeladas.
+  registra ativo, direção, peso alvo e instante da decisão, enquanto a
+  elegibilidade de execução pertence ao executor; políticas científicas
+  definitivas ainda não foram congeladas.
 - [x] Calcular custos sobre o valor financeiro total de cada ordem.
 - [x] Reservar custos ao dimensionar quantidade.
 - [x] Proibir caixa negativo.

@@ -20,22 +20,21 @@ OrderSide = Literal["BUY", "SELL"]
 
 @dataclass(frozen=True)
 class OrderIntent:
-    """Decisão do participante, anterior a preço, custos e arredondamento."""
+    """Decisão do participante, anterior a preço, custos e arredondamento.
+
+    O intent descreve apenas o que o participante quer fazer em ``close(t)``.
+    A elegibilidade de execução pertence ao executor, que associa a intenção à
+    próxima abertura observada — se ela existir.
+    """
 
     ticker: str
     side: OrderSide
     target_weight: float
     decision_time: pd.Timestamp
-    eligible_execution_time: pd.Timestamp | None
 
     def __post_init__(self) -> None:
         ticker = self.ticker.strip()
         decision_time = pd.Timestamp(self.decision_time)
-        eligible = (
-            pd.Timestamp(self.eligible_execution_time)
-            if self.eligible_execution_time is not None
-            else None
-        )
         if not ticker:
             raise ValueError("ticker cannot be empty")
         if self.side not in ("BUY", "SELL"):
@@ -49,23 +48,24 @@ class OrderIntent:
             raise ValueError("BUY target_weight must be > 0")
         if pd.isna(decision_time):
             raise ValueError("decision_time cannot be NaT")
-        if eligible is not None and eligible <= decision_time:
-            raise ValueError("eligible_execution_time must be after decision_time")
         object.__setattr__(self, "ticker", ticker)
         object.__setattr__(self, "decision_time", decision_time)
-        object.__setattr__(self, "eligible_execution_time", eligible)
 
 
 @dataclass(frozen=True)
 class MarketObservation:
-    """Informação observável no fechamento de uma sessão."""
+    """Informação observável no fechamento de uma sessão.
+
+    Contém somente o que existe em ``t``. O participante não sabe se ainda há
+    barra futura no recorte, portanto não consegue identificar o fim da amostra
+    experimental por este contrato.
+    """
 
     session: pd.Timestamp
     history: Mapping[str, pd.DataFrame]
     positions: Mapping[str, int]
     cash: float
     equity: float
-    next_session: pd.Timestamp | None
 
 
 class Participant(Protocol):
@@ -185,7 +185,7 @@ class ExecutionEngine:
         trades: list[Trade] = []
         equity_values: list[float] = []
 
-        for index, raw_session in enumerate(sessions):
+        for raw_session in sessions:
             session = cast(pd.Timestamp, raw_session)
             open_price = float(frame.loc[session, "abertura"])
             for intent in sorted(pending, key=lambda item: item.ticker):
@@ -199,11 +199,6 @@ class ExecutionEngine:
             close_price = float(frame.loc[session, "fechamento"])
             equity = cash + position * close_price
             equity_values.append(equity)
-            next_session = (
-                cast(pd.Timestamp, sessions[index + 1])
-                if index + 1 < len(sessions)
-                else None
-            )
             observation = MarketObservation(
                 session=session,
                 history=MappingProxyType(
@@ -212,7 +207,6 @@ class ExecutionEngine:
                 positions=MappingProxyType({self.ticker: position}),
                 cash=cash,
                 equity=equity,
-                next_session=next_session,
             )
             intents = list(self.participant.decide(observation))
             if not all(isinstance(intent, OrderIntent) for intent in intents):
@@ -222,12 +216,9 @@ class ExecutionEngine:
             for intent in intents:
                 if intent.decision_time != session:
                     raise ValueError("intent decision_time must match observation session")
-                if intent.eligible_execution_time != next_session:
-                    raise ValueError(
-                        "intent eligible_execution_time must be the next observed session"
-                    )
-            if next_session is not None:
-                pending = intents
+            # Intents da última sessão ficam pendentes e morrem sem execução:
+            # não existe abertura observada para eles.
+            pending = intents
 
         equity_curve = pd.Series(equity_values, index=frame.index, dtype=float)
         return BacktestResult(

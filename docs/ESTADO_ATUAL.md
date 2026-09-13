@@ -147,8 +147,10 @@ MarketObservation até close(t)
 `BuyAndHoldParticipant` produz uma única intenção na primeira sessão observável.
 O executor usa `CostModel`, quantidade inteira, caixa não negativo e posição
 long-only. Um intent na única/última sessão permanece uma decisão sem abertura
-observada e não gera trade. A observação contém cópias dos históricos truncadas
-em `t`, portanto o participante não recebe preços futuros por esse contrato.
+observada e não gera trade — o participante decide igual e não é informado de
+que aquela era a última sessão. A observação contém cópias dos históricos
+truncadas em `t` e nenhum campo sobre a sessão seguinte, portanto o participante
+não recebe preços futuros nem o horizonte da amostra por esse contrato.
 
 Esta implementação é deliberadamente single-asset e técnica: peso alvo entre
 zero e um foi escolhido como semântica extensível, sem congelar lote B3,
