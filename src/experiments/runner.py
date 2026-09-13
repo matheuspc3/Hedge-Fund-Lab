@@ -20,10 +20,16 @@ from uuid import uuid4
 import pandas as pd
 
 from src.artifacts import RunArtifact, RunArtifactProvider
-from src.backtesting.arena import ExecutionEngine
+from src.backtesting.arena import (
+    EvaluationWindow,
+    ExecutionEngine,
+    common_sessions,
+    resolve_evaluation_window,
+)
 from src.backtesting.engine import BacktestResult
 from src.backtesting.metrics import performance_metrics, total_transaction_cost
 from src.config import settings
+from src.experiments.context import RunContext
 from src.experiments.participants import build_participant, required_tickers
 from src.experiments.spec import ExperimentSpec
 from src.pipeline.snapshot import (
@@ -43,13 +49,29 @@ logger = logging.getLogger(__name__)
 # manifest registra a identidade verificável do artefato consumido.
 # Schema 3: o manifest publica ``participant_artifacts`` — caminho, versão de
 # schema e SHA-256 da evidência que o participante produziu durante o run.
-RUN_MANIFEST_SCHEMA_VERSION = 3
+# Schema 4: o manifest separa três coisas que antes se confundiam numa só —
+# a janela *pedida* (dentro da spec e do ``spec_hash``), o contexto
+# metodológico do run (``phase``/``case_id``, fora do hash) e a janela
+# *realizada* (``evaluation_evidence``), derivada do calendário efetivamente
+# executado. No mesmo schema, ``sessions`` virou ``equity_points``: ao lado de
+# ``evaluated_sessions`` o nome antigo passou a descrever outra coisa do que
+# sugeria — a curva publicada inclui a ``settlement_session``.
+RUN_MANIFEST_SCHEMA_VERSION = 4
 EQUITY_FILE = "equity.csv"
 TRADES_FILE = "trades.csv"
 MANIFEST_FILE = "manifest.json"
 #: Nomes que o runner escreve por conta própria; um artefato de participante
 #: não pode reivindicá-los.
 RESERVED_FILES = frozenset({EQUITY_FILE, TRADES_FILE, MANIFEST_FILE})
+
+
+class MissingRunContextError(Exception):
+    """Um run científico foi iniciado sem declarar a fase do protocolo.
+
+    A fase precisa existir *antes* da execução: anexá-la depois permitiria
+    escolher o rótulo após observar o resultado, que é exatamente o risco que
+    declarar a fase existe para conter.
+    """
 
 
 class DirtyRepositoryError(Exception):
@@ -103,6 +125,13 @@ class RunResult:
     # foi executado.
     snapshot: SnapshotEvidence
     universe: tuple[str, ...]
+    # Janela efetivamente executada, resolvida contra o calendário comum antes
+    # de o participante existir. É evidência do run, não a configuração pedida:
+    # esta última continua na ``ExperimentSpec``.
+    evaluation: EvaluationWindow
+    # Papel metodológico declarado antes da execução. ``None`` só no modo
+    # técnico legado, em que nenhuma fase científica foi reivindicada.
+    context: RunContext | None
     backtest: BacktestResult
     metrics: Mapping[str, float | int]
     total_transaction_cost: float
@@ -148,12 +177,23 @@ class ExperimentRunner:
         self,
         spec: ExperimentSpec,
         *,
+        context: RunContext | None = None,
         snapshot_dir: str | Path | None = None,
         runs_dir: str | Path | None = None,
         repository_dir: str | Path | None = None,
         allow_dirty: bool = False,
     ) -> None:
+        # O contexto é congelado aqui, antes de qualquer execução: ``run()`` e
+        # ``persist()`` apenas o leem. Não existe caminho que declare a fase
+        # depois de conhecer o resultado.
+        if spec.evaluation is not None and context is None:
+            raise MissingRunContextError(
+                "a spec that declares an evaluation window is a scientific "
+                "run and must declare its protocol phase before executing; "
+                "pass context=RunContext(phase=...) to ExperimentRunner"
+            )
         self.spec = spec
+        self.context = context
         self.snapshot_dir = Path(snapshot_dir or settings.snapshot_dir)
         self.runs_dir = Path(runs_dir or settings.runs_dir)
         self.repository_dir = Path(repository_dir or Path.cwd())
@@ -176,14 +216,26 @@ class ExperimentRunner:
         universe = self._resolve_universe(snapshot)
         frames = load_snapshot_frames(snapshot, universe)
 
+        # Gate da janela **antes** de construir o participante: uma janela sem
+        # settlement, fora do calendário ou com warm-up insuficiente não pode
+        # custar uma única chamada paga ao provedor. Mesmo motivo pelo qual o
+        # guard de proveniência roda antes de carregar dados.
+        evaluation = self._resolve_evaluation(frames)
+
         # Instância nova a cada run: participantes clássicos carregam estado
         # entre sessões e não podem atravessar execuções.
         participant = build_participant(self.spec.participant)
+        window = self.spec.evaluation
         engine = ExecutionEngine(
             participant,
             frames,
             self.spec.initial_capital,
             self.spec.costs.build(),
+            decision_start=None if window is None else window.decision_start,
+            decision_end=None if window is None else window.decision_end,
+            minimum_history_sessions=(
+                None if window is None else window.minimum_history_sessions
+            ),
         )
         backtest = engine.run()
         # Mesmo princípio do ``SnapshotEvidence``: a evidência é congelada no
@@ -199,11 +251,17 @@ class ExperimentRunner:
         created = datetime.now(timezone.utc)
         run_id = f"{created.strftime('%Y%m%dT%H%M%S%fZ')}-{uuid4().hex[:12]}"
         logger.info(
-            "Run %s | spec_hash=%s | participante=%s | universo=%s",
+            "Run %s | spec_hash=%s | participante=%s | universo=%s | "
+            "fase=%s | janela=%s..%s (%d sessões avaliadas, warm-up %d sessões)",
             run_id,
             self.spec.spec_hash,
             self.spec.participant.kind,
             ",".join(universe),
+            None if self.context is None else self.context.phase,
+            evaluation.decision_start.date(),
+            evaluation.decision_end.date(),
+            evaluation.evaluated_sessions,
+            evaluation.warmup_sessions,
         )
         return RunResult(
             run_id=run_id,
@@ -212,6 +270,8 @@ class ExperimentRunner:
             created_at=_isoformat(created),
             snapshot=evidence,
             universe=universe,
+            evaluation=evaluation,
+            context=self.context,
             backtest=backtest,
             metrics=metrics,
             total_transaction_cost=total_transaction_cost(backtest.trades),
@@ -270,6 +330,24 @@ class ExperimentRunner:
         verify_snapshot_integrity(snapshot)
         return snapshot
 
+    def _resolve_evaluation(self, frames: Mapping[str, pd.DataFrame]) -> EvaluationWindow:
+        """Resolve a janela sobre o calendário comum, ou falha antes do run.
+
+        Usa exatamente a mesma função que o ``ExecutionEngine`` usará sobre os
+        mesmos quadros, de modo que o gate pré-run e a execução não podem
+        discordar sobre qual sessão existe, onde a janela começa ou se há
+        settlement.
+        """
+        window = self.spec.evaluation
+        return resolve_evaluation_window(
+            common_sessions(frames),
+            decision_start=None if window is None else window.decision_start,
+            decision_end=None if window is None else window.decision_end,
+            minimum_history_sessions=(
+                None if window is None else window.minimum_history_sessions
+            ),
+        )
+
     def _resolve_universe(self, snapshot: DatasetSnapshot) -> tuple[str, ...]:
         """Universo efetivo, derivado da spec sem seleção dinâmica."""
         requested = required_tickers(self.spec.participant)
@@ -301,8 +379,7 @@ class ExperimentRunner:
                 (staging / artifact.filename).write_bytes(artifact.content)
             manifest = self._manifest(result)
             (staging / MANIFEST_FILE).write_text(
-                json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True)
-                + "\n",
+                json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
                 encoding="utf-8",
                 newline="\n",
             )
@@ -340,6 +417,17 @@ class ExperimentRunner:
                 "quality": snapshot["quality"],
             },
             "universe": list(result.universe),
+            # Contexto metodológico declarado antes da execução, deliberadamente
+            # fora do ``spec_hash``: ele não altera o que foi computado.
+            "run_context": (
+                {"phase": None, "case_id": None}
+                if result.context is None
+                else result.context.to_dict()
+            ),
+            # Evidência realizada da janela, derivada do calendário executado —
+            # nunca copiada da configuração pedida, que já está em
+            # ``experiment_spec.evaluation``.
+            "evaluation_evidence": result.evaluation.to_dict(),
             "cost_model": result.spec.costs.to_dict(),
             "metric_configuration": result.spec.metrics.to_dict(),
             "initial_capital": result.initial_capital,
@@ -347,7 +435,11 @@ class ExperimentRunner:
             "metrics": dict(result.metrics),
             "trade_count": len(result.trades),
             "total_transaction_cost": result.total_transaction_cost,
-            "sessions": len(result.equity_curve),
+            # Pontos da curva publicada, não sessões avaliadas nem decisões:
+            # com janela declarada a curva inclui a ``settlement_session``, e
+            # ``sessions`` — o nome anterior — era lido como as três coisas.
+            # A contagem da janela vive em ``evaluation_evidence``.
+            "equity_points": len(result.equity_curve),
             "code": {
                 "git_commit": result.git_commit,
                 "git_dirty": result.git_dirty,
@@ -384,9 +476,7 @@ def _participant_artifacts(participant: object) -> tuple[RunArtifact, ...]:
         if artifact.name in names:
             raise ValueError(f"duplicate participant artifact name: {artifact.name}")
         if artifact.filename in filenames:
-            raise ValueError(
-                f"duplicate participant artifact file: {artifact.filename}"
-            )
+            raise ValueError(f"duplicate participant artifact file: {artifact.filename}")
         if artifact.filename in RESERVED_FILES:
             raise ValueError(
                 f"participant artifact cannot overwrite {artifact.filename}, "

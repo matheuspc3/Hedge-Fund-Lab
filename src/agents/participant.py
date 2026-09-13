@@ -345,8 +345,15 @@ class LLMParticipant:
 
     Recebe apenas ``MarketObservation``: histórico truncado em ``close(t)``,
     posições, caixa e patrimônio. Não conhece o dataset, o snapshot, a próxima
-    sessão nem o tamanho do recorte, então não consegue identificar o fim da
-    amostra experimental.
+    sessão, o tamanho do recorte, a janela avaliada nem a fase do protocolo,
+    então não consegue identificar o fim da amostra experimental.
+
+    **Estado ancorado na janela avaliada, não no snapshot.** ``_peak_equity`` e
+    o contador de ``decision_frequency`` nascem na primeira chamada a
+    ``decide()``, que a arena emite em ``decision_start``. O warm-up anterior
+    chega como histórico dentro de ``observation.history`` e não move nenhum
+    dos dois: aumentar o warm-up não desloca a grade de decisão nem o
+    drawdown observado.
 
     **Decisão qualitativa, sizing determinístico.** O grafo termina em
     :class:`~src.agents.state.PortfolioAction` — direção e justificativa, sem
@@ -392,13 +399,21 @@ class LLMParticipant:
 
     **Frequência de decisão.** ``decision_frequency`` migra a mesma opção do
     ``AgentBacktestEngine``: só as sessões cujo índice é múltiplo dela chamam o
-    grafo. O contador é interno, começa em zero a cada instância e é reiniciado
-    quando a observação mostra a primeira sessão do recorte; ele nunca deriva
-    do tamanho do dataset, da próxima sessão nem da distância até o fim. Uma
-    diferença em relação ao motor legado é declarada: lá a última barra era
+    grafo. O contador é interno, começa em zero na primeira chamada a
+    ``decide()`` — que a arena emite em ``decision_start`` — e nunca deriva do
+    tamanho do dataset, da próxima sessão nem da distância até o fim. Logo
+    ``decision_start`` é sempre elegível e a grade é
+    ``decision_start + k * decision_frequency``, imune ao tamanho do warm-up.
+
+    Uma diferença em relação ao motor legado é declarada: lá a última barra era
     sempre elegível (``is_last_day``), o que exige saber que o recorte acabou —
     informação que o contrato da arena não entrega e que o participante não
-    pode ter.
+    pode ter. **Consequência assumida:** quando ``decision_end`` não cai na
+    grade, ele é consultado e não emite intent, e a ``settlement_session``
+    liquida o pendente da última decisão *efetivamente emitida* — ou nada, se
+    não houver pendente. ``decision_end`` delimita a janela; não força decisão
+    extraordinária, porque forçá-la exigiria exatamente o ``is_last_day`` que
+    a causalidade da arena retirou.
 
     **Falha não vira HOLD.** Timeout, erro de provedor, JSON inválido, schema
     inválido e quorum incompletado por falhas são registrados no limite do
@@ -495,6 +510,9 @@ class LLMParticipant:
         self.decisions: list[LLMDecisionRecord] = []
         self._peak_equity: float | None = None
         self._session_index = 0
+        # Relógio da execução: ``None`` até a primeira decisão, que a arena
+        # emite em ``decision_start``. Nunca retrocede.
+        self._last_session: pd.Timestamp | None = None
 
     # ── Construção do cliente ────────────────────────────────────
 
@@ -526,6 +544,24 @@ class LLMParticipant:
 
     # ── Contrato da arena ────────────────────────────────────────
 
+    def _require_forward_session(self, session: pd.Timestamp) -> None:
+        """Avança o relógio interno da execução, e recusa andar para trás.
+
+        Reaproveitar a instância entre runs traria pico e contador da execução
+        anterior; sem o antigo ``len(history) == 1`` nada perceberia isso. Como
+        a arena só avança no tempo, uma sessão que não é estritamente posterior
+        à última significa instância reutilizada ou observação fora de ordem —
+        as duas contaminariam o run em silêncio.
+        """
+        last = self._last_session
+        if last is not None and session <= last:
+            raise LLMDecisionError(
+                f"session {session.date()} does not advance past the previously "
+                f"observed {last.date()}; a participant instance belongs to a "
+                "single run and its state cannot be reused across runs"
+            )
+        self._last_session = session
+
     def decide(self, observation: MarketObservation) -> list[OrderIntent]:
         history = observation.history.get(self.ticker)
         if history is None:
@@ -541,14 +577,19 @@ class LLMParticipant:
         equity = float(observation.equity)
         if not math.isfinite(equity) or equity <= 0:
             raise LLMDecisionError("observation equity must be finite and > 0")
-        # Primeira sessão do recorte: reinicia pico e contador como o motor
-        # legado, que partia do capital inicial — sem posição, patrimônio é o
-        # capital — e do índice zero.
-        if len(history) == 1:
-            self._peak_equity = None
-            self._session_index = 0
-        # O pico acompanha *todas* as sessões, elegíveis ou não: o drawdown é
-        # estado de portfólio, não subproduto da frequência de decisão.
+        # Ciclo de vida explícito: o estado de execução nasce na **primeira
+        # chamada a** ``decide()`` desta instância, que é sempre
+        # ``decision_start`` — a arena não chama o participante durante o
+        # warm-up. Instância nova por run é garantida por ``build_participant``.
+        #
+        # O tamanho do histórico deixou de ser o detector: com janela avaliada
+        # existe warm-up antes da primeira decisão, e ``len(history) == 1``
+        # nunca mais seria verdade em ``decision_start``. Usá-lo manteria o
+        # pico e o contador ancorados no início do snapshot, não da janela.
+        self._require_forward_session(observation.session)
+        # O pico acompanha *todas* as sessões avaliadas, elegíveis ou não: o
+        # drawdown é estado de portfólio, não subproduto da frequência de
+        # decisão. Ele começa em ``decision_start``, com o patrimônio inicial.
         self._peak_equity = (
             equity if self._peak_equity is None else max(self._peak_equity, equity)
         )

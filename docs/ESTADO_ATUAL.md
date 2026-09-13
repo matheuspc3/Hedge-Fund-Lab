@@ -1,11 +1,20 @@
 # Estado atual do Hedge-Fund-Lab
 
-Baseline auditada em **10/09/2026** sobre o estado versionado da branch
-`#1-Update`. O objetivo deste documento é responder até onde o projeto chega hoje
-e evitar que planos antigos sejam confundidos com implementação. Capacidades e
-limitações descritas como parte do sistema são evidência do repositório;
-contagens de banco, execuções e medições identificadas como locais são evidência
-observada no ambiente da auditoria e não conteúdo versionado no Git.
+Documento vivo, descrito sobre o estado versionado da branch `#1-Update` no
+commit `d9be5b9` (13/09/2026). A baseline original foi auditada em **10/09/2026**
+e desde então o documento incorpora os fatos introduzidos pelos commits
+seguintes — motor experimental comum para o participante LLM, trace/replay
+auditável, desacoplamento entre decisão do LLM e sizing científico e a
+formalização do protocolo de calibração retrospectiva. Portanto **nem todo o
+conteúdo abaixo corresponde à auditoria de 10/09**: o texto descreve o HEAD
+atual, e medições antigas continuam identificadas com a data em que foram
+observadas.
+
+O objetivo é responder até onde o projeto chega hoje e evitar que planos antigos
+sejam confundidos com implementação. Capacidades e limitações descritas como
+parte do sistema são evidência do repositório; contagens de banco, execuções e
+medições identificadas como locais são evidência observada no ambiente daquela
+auditoria e não conteúdo versionado no Git.
 
 ## Conclusão executiva
 
@@ -37,7 +46,7 @@ técnicas, não evidência de que uma abordagem venceu outra.
 | Persistência | Implementado | Tabelas de ativos, cotações e indicadores, com unicidade por ativo/data e atualização em conflito nos caminhos principais. |
 | Indicadores | Implementado | SMA 50/200, Bollinger 20/2, RSI 14 e MACD 12/26/9. |
 | Estratégias clássicas | Implementado | Buy & Hold, SMA Cross e Bollinger single-asset; Equal Weight e Mínima Variância multi-ativo. |
-| Backtest clássico | Bloqueado para ciência | Single e multi-asset decidem com dados até o fechamento de `t`, executam na abertura observada de `t+1`, calculam custos sobre o notional e preservam caixa não negativo. Retorno, risco, drawdown e custo total agora vêm do módulo canônico, mas o dashboard ainda usa custo zero e não há motor comum. |
+| Backtest clássico | Bloqueado para ciência | Single e multi-asset decidem com dados até o fechamento de `t`, executam na abertura observada de `t+1`, calculam custos sobre o notional e preservam caixa não negativo. Retorno, risco, drawdown e custo total agora vêm do módulo canônico. O motor comum existe na **camada experimental** (`ExperimentRunner`/`ExecutionEngine`), mas o **dashboard e os demais caminhos legados** ainda instanciam engines próprios com custo zero e não passam por ele. |
 | Sistema de agentes | Parcial | Quorum técnico -> risco -> portfólio em LangGraph, com contratos Pydantic e regras duras. Opera um ticker por execução. |
 | Quorum de 30 | Implementado com ressalvas | Faz 30 chamadas concorrentes do mesmo papel e cliente, variando prompt, temperatura e seed registrado. Exige 25/30 por padrão e todos os votos válidos. |
 | Cliente LLM real | Parcial | Cliente HTTP OpenAI-compatible, retry, cache e telemetria básica. A integração específica chamada de OmniRouter/Agent Router não está isolada nem comprovada no repositório. |
@@ -47,10 +56,32 @@ técnicas, não evidência de que uma abordagem venceu outra.
 | Arena clássicos x LLM | Parcial | Contrato mínimo de participante e intenção, com execução comum long-only single e multi-ativo para os cinco benchmarks clássicos e para o participante LLM single-asset. Todos executam pelo mesmo `ExecutionEngine`, pelo mesmo `ExperimentRunner` e produzem o mesmo `RunResult`. Falta o participante LLM multi-ativo e falta o protocolo científico. |
 | Participante LLM na arena | Implementado (single-asset) | `LLMParticipant` recebe apenas `MarketObservation`, monta o `AgentState` a partir de `close(t)`, delega ao grafo existente e termina em peso alvo. Não executa trade, não mexe em caixa, não aplica custo. Falha de provedor derruba o run em vez de virar `MANTER`. Registrado no registry como `llm_agent`. |
 | Dashboard | Parcial | Compara as cinco estratégias clássicas e exibe indicadores. Uma tela separada dispara backtest LLM, mas não incorpora o resultado à arena. |
-| Orquestração experimental | Implementado com lacunas | `src/experiments/` executa os cinco clássicos **e o `llm_agent`** a partir de um snapshot validado, com `spec_hash` estável, `run_id`, participante novo por run, evidência do snapshot capturada no `run()` e manifest atômico em `data/runs/<run_id>/`. A `ExperimentSpec` não declara período: o intervalo executado é a cobertura efetiva do snapshot. Não cobre seleção de janelas experimentais nem análise estatística. |
+| Orquestração experimental | Implementado com lacunas | `src/experiments/` executa os cinco clássicos **e o `llm_agent`** a partir de um snapshot validado, com `spec_hash` estável, `run_id`, participante novo por run, evidência do snapshot capturada no `run()` e manifest atômico em `data/runs/<run_id>/`. A `ExperimentSpec` declara a janela avaliada (`EvaluationSpec`: `decision_start`, `decision_end`, `minimum_history_sessions`), que entra no `spec_hash`; o warm-up anterior é histórico e não produz decisão, trade nem performance. Não cobre a **escolha** das janelas nem análise estatística. |
 | Avaliação científica | Planejado | O protocolo pseudo-live está documentado, mas não existem janelas experimentais selecionadas, walk-forward, testes de hipótese, análise de sensibilidade ou exportação científica. |
 | Operação em tempo real/MT5/BRAPI | Planejado | O runner diário é simulação persistente; integrações de mercado e execução automática não existem. O estágio Live/Shadow do protocolo ainda não foi executado. |
 | Historical Memory | Planejado | Não existe. Sem corpus, proveniência temporal de documentos, retriever, embeddings ou vector store. Registrada no protocolo como extensão planejada e hipótese experimental separável. |
+
+### Duas camadas distintas, e só uma tem motor comum
+
+A frase "não há motor comum" já não descreve o repositório. Ela precisa ser lida
+por camada:
+
+```text
+CAMADA EXPERIMENTAL  (src/experiments/, src/backtesting/arena.py)
+    motor comum JÁ EXISTE
+    ExperimentSpec -> ExperimentRunner -> Participant
+        -> ExecutionEngine -> RunResult -> manifest
+    usado pelos cinco benchmarks clássicos E pelo llm_agent
+
+DASHBOARD / CAMINHOS LEGADOS  (scripts/generate_dashboard_data.py,
+                               AgentBacktestEngine, DailyAgentRunner)
+    ainda usam engines e fluxos próprios
+    custo zero, sem spec_hash, sem run manifest, fora do RunResult
+```
+
+Nenhuma limitação registrada neste documento nega o motor comum da camada
+experimental; as que permanecem são sobre protocolo, janelas, cobertura
+multi-ativo do LLM e migração dos caminhos legados.
 
 ## Fluxos executáveis
 
@@ -370,14 +401,38 @@ distinguem `close(t)` de `open(t+1)` e rejeitam trade na última decisão.
 
 ## Problemas que invalidam a comparação atual
 
-### 1. Motores separados
+### 1. Unidade experimental ainda não é comum — apesar do motor já ser
 
-Os motores LLM, clássico single-asset e clássico multi-asset compartilham a
-semântica observação até o fechamento de `t` e execução na abertura de `t+1`. Os
-cinco benchmarks clássicos já possuem caminho pelo contrato comum com ordem
-normalizada, mas o participante LLM continua em implementação separada e não há
-`ExperimentSpec` nem resultado consolidado; portanto, a migração ainda não
-produz uma competição científica comum.
+O motor comum **não** é mais a limitação. Os cinco benchmarks clássicos e o
+`llm_agent` passam pelo mesmo caminho experimental:
+
+```text
+ExperimentSpec(kind=...) -> ExperimentRunner -> Participant
+    -> ExecutionEngine -> RunResult -> manifest
+```
+
+com o mesmo `spec_hash`, os mesmos guards de snapshot e de proveniência Git, e o
+mesmo `RunResult` consolidado. Todos compartilham a semântica de observação até
+o fechamento de `t` e execução na abertura de `t+1`.
+
+O que ainda impede tratar as execuções como uma competição científica:
+
+- **Protocolo ainda não congelado.** Hipóteses, prompts, modelo/provider,
+  parâmetros dos agentes, sizing, custos, métrica primária e plano estatístico
+  continuam `DRAFT` em `docs/EXPERIMENT_PROTOCOL.md`.
+- **Janelas experimentais existem, mas nenhuma foi escolhida.** O mecanismo
+  está implementado — `EvaluationSpec`, gate de warm-up, settlement explícito,
+  `phase`/`case_id` no manifest — e nenhuma data de calibração, validação ou
+  teste foi selecionada. Ter como representar a janela não é ter escolhido
+  qual janela.
+- **LLM ainda single-asset.** `LLMParticipant` recusa universo com mais de um
+  ativo; a stack de agentes descreve um ticker por execução.
+- **Participantes single-asset e multi-ativo ainda não formam necessariamente a
+  mesma unidade experimental** — ver "3. Participantes diferentes" abaixo.
+- **Dashboard continua usando caminhos legados**, com engines e fluxos próprios
+  e custo zero; ele não consome `ExperimentRunner`/`RunResult`.
+- **Custos científicos finais ainda `TBD`.**
+- **Análise estatística ainda não executada.**
 
 ### 2. Custos não comparáveis
 
@@ -448,7 +503,7 @@ Estado factual de cada item:
 |---|---|
 | Desenho pseudo-live (decisão em `close(t)`, execução em `open(t+1)`, relógio avançando uma sessão por vez) | Documentado; o mecanismo de execução já existe na arena e no `AgentBacktestEngine` |
 | Calibração retrospectiva do sistema como etapa declarada | Documentada; nunca executada como fase formal |
-| Janela base de mercado `>= 2 anos` | Aprovada conceitualmente; **sem** implementação. A arena entrega janela expansiva (`snapshot[:t]`) e não existe parâmetro de janela mínima nem gate de warm-up |
+| Janela base de mercado `>= 2 anos` | Aprovada conceitualmente; **mecanismo implementado, valor `TBD`**. `minimum_history_sessions` é campo obrigatório da `EvaluationSpec` e o gate falha antes de construir o participante; o número científico não foi escolhido. A janela continua expansiva (`snapshot[:t]`), agora por decisão registrada |
 | Historical Memory | Não implementada. Nenhum corpus, retriever, embedding ou vector store |
 | Calibration Cases, Validation, Final Test | `TBD`. Nenhuma data selecionada |
 | Métrica primária, universo final, provider/model, custos | `TBD` |

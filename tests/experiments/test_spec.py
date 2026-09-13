@@ -97,6 +97,7 @@ def test_spec_hash_nao_depende_de_horario_nem_de_caminho_local() -> None:
         "initial_capital",
         "costs",
         "metrics",
+        "evaluation",
     }
 
 
@@ -116,6 +117,7 @@ def test_spec_nao_aceita_instancia_de_participante() -> None:
         "initial_capital",
         "costs",
         "metrics",
+        "evaluation",
     }
     with pytest.raises(ValueError, match="must be a JSON scalar"):
         ParticipantSpec("sma_cross", {"ticker": object()})

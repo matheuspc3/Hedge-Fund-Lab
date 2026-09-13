@@ -12,13 +12,19 @@ cientificamente e por isso são registrados explicitamente no manifest.
 import hashlib
 import math
 from dataclasses import dataclass, field
+from datetime import date as Date
 from types import MappingProxyType
 from typing import Any, Mapping
+
+import pandas as pd
 
 from src.artifacts import canonical_json
 from src.backtesting.costs import CostModel
 
-SPEC_SCHEMA_VERSION = 1
+# Schema 2: a spec passa a declarar a janela avaliada. O período deixou de ser
+# consequência da cobertura do snapshot e virou configuração material, dentro
+# do ``spec_hash``.
+SPEC_SCHEMA_VERSION = 2
 
 # ``canonical_json`` vive em :mod:`src.artifacts` para que a spec e o trace de
 # LLM usem literalmente a mesma serialização estável; continua reexportado
@@ -26,6 +32,7 @@ SPEC_SCHEMA_VERSION = 1
 __all__ = [
     "SPEC_SCHEMA_VERSION",
     "CostSpec",
+    "EvaluationSpec",
     "ExperimentSpec",
     "MetricSpec",
     "ParticipantSpec",
@@ -73,6 +80,122 @@ class ParticipantSpec:
     def to_dict(self) -> dict[str, Any]:
         """``dict`` novo e JSON-serializável; mutá-lo não atinge a spec."""
         return {"kind": self.kind, "params": dict(self.params)}
+
+
+def _require_session_date(name: str, value: Any) -> str:
+    """Normaliza uma âncora para ``YYYY-MM-DD``, ou recusa a configuração.
+
+    A spec é identidade: ``"2024-01-02"``, ``Timestamp("2024-01-02 00:00")`` e
+    ``date(2024, 1, 2)`` descrevem o mesmo pregão e precisam produzir o mesmo
+    ``spec_hash``. Guardar o objeto original deixaria a identidade depender de
+    como o chamador escreveu a data.
+
+    Horário é recusado em vez de truncado: o contrato da arena é de sessão
+    diária, e aceitar ``09:30`` silenciosamente sugeriria uma precisão
+    intradiária que o motor não tem.
+    """
+    if not isinstance(value, (str, Date, pd.Timestamp)):
+        raise ValueError(
+            f"{name} must be a date or ISO date string, got {type(value).__name__}"
+        )
+    try:
+        stamp = pd.Timestamp(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{name} is not a valid date: {value!r}") from exc
+    if pd.isna(stamp):
+        raise ValueError(f"{name} cannot be NaT")
+    if (stamp.hour, stamp.minute, stamp.second, stamp.microsecond) != (0, 0, 0, 0):
+        raise ValueError(
+            f"{name} must be a calendar date without time-of-day, got {value!r}; "
+            "the arena decides once per session"
+        )
+    if stamp.tzinfo is not None:
+        raise ValueError(
+            f"{name} must be timezone-naive, got {value!r}; a session date is "
+            "not an instant"
+        )
+    return stamp.date().isoformat()
+
+
+#: Formas aceitas para uma âncora de sessão. Todas colapsam para ``str`` na
+#: construção, de modo que a identidade não dependa de como a data foi escrita.
+SessionDate = str | Date | pd.Timestamp
+
+
+@dataclass(frozen=True)
+class EvaluationSpec:
+    """Janela em que as decisões contam para o experimento.
+
+    Separa **dados disponíveis** de **período avaliado**. O snapshot continua
+    descrevendo a cobertura inteira; esta spec declara onde, dentro dela, as
+    decisões passam a valer::
+
+        data_start ..... decision_start ..... decision_end . settlement
+                   warm-up                avaliado
+
+    As sessões anteriores a ``decision_start`` existem como histórico causal e
+    nada mais: não decidem, não negociam e não entram na curva publicada.
+
+    ``minimum_history_sessions`` é **obrigatório e sem default**. Um default
+    técnico aqui viraria decisão científica silenciosa: quem executa precisa
+    declarar quanto histórico exige antes da primeira decisão. O valor
+    científico do protocolo v1 continua ``TBD`` — a spec exige que exista um
+    número declarado, não qual número é.
+
+    A semântica contada é a de
+    :attr:`~src.backtesting.arena.EvaluationWindow.available_history_sessions`:
+    as sessões **comuns** estritamente anteriores a ``decision_start``, mais a
+    própria barra de ``decision_start``. O gate é
+    ``available_history_sessions >= minimum_history_sessions``, de modo que
+    ``available == minimum`` passa e ``available == minimum - 1`` falha.
+
+    ``history_mode`` não é campo: o v1 é sempre expansivo — a decisão em ``t``
+    enxerga todo o histórico causal disponível até ``t``. Rolling é ablation
+    futura e não existe como parâmetro, para não criar hiperparâmetro morto.
+    """
+
+    #: Aceito como texto ISO, ``date`` ou ``Timestamp`` e **normalizado para
+    #: ``YYYY-MM-DD``** na construção: depois de criada, a spec guarda sempre a
+    #: forma textual, que é o que entra no ``spec_hash``.
+    decision_start: SessionDate
+    decision_end: SessionDate
+    minimum_history_sessions: int
+
+    def __post_init__(self) -> None:
+        start = _require_session_date("decision_start", self.decision_start)
+        end = _require_session_date("decision_end", self.decision_end)
+        if start > end:
+            raise ValueError(
+                f"decision_start {start} must not be after decision_end {end}"
+            )
+        minimum = self.minimum_history_sessions
+        # ``bool`` é subclasse de ``int``: ``True`` viraria 1 sessão de
+        # histórico exigida, uma configuração inválida entrando no hash.
+        if isinstance(minimum, bool) or not isinstance(minimum, int):
+            raise ValueError(
+                "minimum_history_sessions must be an integer, got "
+                f"{type(minimum).__name__}: {minimum!r}"
+            )
+        if minimum < 1:
+            raise ValueError(
+                "minimum_history_sessions must be >= 1; the first evaluated "
+                "decision always observes at least its own session"
+            )
+        object.__setattr__(self, "decision_start", start)
+        object.__setattr__(self, "decision_end", end)
+        object.__setattr__(self, "minimum_history_sessions", minimum)
+
+    @property
+    def single_anchor(self) -> bool:
+        """Calibration Anchor: uma única decisão avaliada."""
+        return self.decision_start == self.decision_end
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "decision_start": self.decision_start,
+            "decision_end": self.decision_end,
+            "minimum_history_sessions": self.minimum_history_sessions,
+        }
 
 
 @dataclass(frozen=True)
@@ -147,6 +270,11 @@ class ExperimentSpec:
     single-asset declaram ``ticker`` nos parâmetros e recebem apenas ele;
     participantes de carteira recebem todos os tickers do snapshot. O universo
     efetivo é registrado no manifest de cada run.
+
+    ``evaluation`` declara o período avaliado e entra no ``spec_hash``, porque
+    muda as decisões, os trades e as métricas. ``phase`` e ``case_id`` **não**
+    entram: são contexto metodológico do run, não configuração computacional —
+    dois runs que só diferem na fase produzem exatamente os mesmos números.
     """
 
     snapshot_id: str
@@ -154,6 +282,11 @@ class ExperimentSpec:
     initial_capital: float
     costs: CostSpec = field(default_factory=CostSpec)
     metrics: MetricSpec = field(default_factory=MetricSpec)
+    #: Janela avaliada. ``None`` é o **modo técnico legado**: toda a cobertura
+    #: efetiva do snapshot é decidida, como antes da janela existir. O caminho
+    #: científico declara a janela, e o runner recusa executar uma fase
+    #: científica sem ela.
+    evaluation: EvaluationSpec | None = None
 
     def __post_init__(self) -> None:
         snapshot_id = self.snapshot_id.strip()
@@ -174,6 +307,11 @@ class ExperimentSpec:
             "initial_capital": self.initial_capital,
             "costs": self.costs.to_dict(),
             "metrics": self.metrics.to_dict(),
+            # Sempre presente na forma canônica, inclusive como ``null``: a
+            # ausência de janela é uma configuração, não um campo que sumiu.
+            "evaluation": (
+                None if self.evaluation is None else self.evaluation.to_dict()
+            ),
         }
 
     @property

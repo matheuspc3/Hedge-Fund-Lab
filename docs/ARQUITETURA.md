@@ -628,35 +628,109 @@ carteira completa.
 - `dashboard/lab.html`: formulário e terminal do runner LLM.
 - `dashboard/server.py`: arquivos estáticos, SSE e disparo de subprocessos.
 
-## Contrato experimental que falta
+## Contrato experimental comum
 
-O objetivo do projeto requer uma única cadeia capaz de receber qualquer
-participante e executar todos sob as mesmas condições:
+### Implementado
+
+A cadeia única capaz de receber qualquer participante e executar todos sob as
+mesmas condições **já existe e está em uso**:
 
 ```text
-DatasetSnapshot imutável
+DatasetSnapshot imutável                        [IMPLEMENTADO]
+  descreve cobertura de dados, nunca período avaliado
         │
         v
-features disponíveis até t
+EvaluationSpec na ExperimentSpec                [IMPLEMENTADO]
+  decision_start / decision_end / minimum_history_sessions
+  dentro do spec_hash
         │
         v
-Participant.decide(state_t)
+features disponíveis até t                      [IMPLEMENTADO]
+  MarketObservation.history = snapshot[:t], incluindo o warm-up
         │
         v
-ordens normalizadas
+Participant.decide(observation_t)               [IMPLEMENTADO]
         │
         v
-ExecutionEngine na abertura de t+1
+ordens normalizadas (OrderIntent)               [IMPLEMENTADO]
         │
         v
-custos, caixa e posições
+ExecutionEngine na abertura de t+1              [IMPLEMENTADO]
         │
         v
-RunResult + auditoria + métricas canônicas
+custos, caixa e posições                        [IMPLEMENTADO]
+        │
+        v
+RunResult + auditoria + métricas canônicas      [IMPLEMENTADO]
+  spec_hash, run_id, manifest, participant_artifacts
 ```
 
 `Participant` pode ser Buy & Hold, SMA, Bollinger, Equal Weight, Mínima
-Variância ou o grafo LLM. O adaptador muda; dados, execução, custos e métricas não.
+Variância ou o grafo LLM (`llm_agent`, single-asset). O adaptador muda; dados,
+execução, custos e métricas não. Os seis participantes são orquestrados pela
+mesma `ExperimentSpec` e pelo mesmo `ExperimentRunner`.
+
+### Warm-up e janela avaliada
+
+O motor percorre apenas `[decision_start, settlement_session]`. As sessões
+anteriores continuam existindo nos quadros e chegam ao participante dentro de
+`observation.history` — é esse o papel delas, e só ele:
+
+```text
+warm-up          histórico causal; nenhuma decisão, nenhum trade,
+                 nenhuma chamada ao provedor, nenhum ponto de curva
+decision_start   carteira nasce zerada, com o capital inicial em caixa
+decision_end     última sessão avaliada; limite da janela, não obrigação
+                 de decidir
+settlement       liquida o pendente de decision_end — se houver — e marca
+                 o resultado; não decide
+```
+
+Contagens, todas sobre o calendário comum (a interseção em que a arena decide
+e executa):
+
+```text
+warmup_sessions            = sessões antes de decision_start
+available_history_sessions = warmup_sessions + 1   <- o que o gate compara
+evaluated_sessions         = sessões de [decision_start, decision_end]
+                             (sessões CONSULTADAS, não intents emitidos)
+len(equity_curve)          = evaluated_sessions + 1  <- inclui o settlement
+```
+
+No manifest, `equity_points` conta a curva e `evaluated_sessions` conta a
+janela: os dois diferem por uma sessão, e o nome anterior do primeiro
+(`sessions`) escondia essa diferença. Ausência de intent em `decision_end` —
+`MANTER`, veto de risco ou sessão fora da grade de `decision_frequency` — é run
+válido sem trade; ausência de sessão *após* `decision_end` é recusada antes de
+o participante existir.
+
+Nenhum participante pode deduzir a janela pelo `MarketObservation`: o contrato
+entrega apenas sessão, histórico, posições, caixa e patrimônio. Ele não sabe
+que está na última decisão avaliada, nem em que fase do protocolo está.
+
+Consequência de projeto que vale registrar: **"primeira sessão" passou a ser
+medida por relógio de sessões, nunca por `len(history)`**. Com warm-up o
+histórico já chega grande na primeira decisão, e as heurísticas antigas de
+tamanho de histórico deixariam o Buy & Hold sem comprar e o pico de patrimônio
+ancorado no início do snapshot. `PortfolioParticipant` já usava esse relógio; os
+demais participantes passaram a usá-lo também.
+
+### Lacunas / arquitetura alvo
+
+O que **ainda não existe** no contrato, comprovado no repositório:
+
+| Lacuna | Estado no código |
+|---|---|
+| Escolha das janelas e âncoras experimentais | **A representação existe** (`EvaluationSpec`, `phase`, `case_id`, gate de warm-up, settlement). O que falta é metodológico: nenhuma data, âncora ou `minimum_history_sessions` científico foi escolhido |
+| Participante LLM multi-ativo | `LLMParticipant.decide` recusa universo com mais de um ticker; `AgentState` descreve um ativo |
+| Integração do modo diário à Arena | `DailyAgentRunner` continua em caminho próprio, sem `ExperimentRunner` nem manifest canônico |
+| Freeze científico | Mecanismo de proveniência existe (`git commit`, `spec_hash`, `snapshot_id`, manifest, trace); o ato metodológico de congelar não aconteceu |
+| Historical Memory | Não existe: sem corpus, proveniência temporal, retriever, embeddings ou vector store |
+| Migração dos caminhos legados do dashboard | `scripts/generate_dashboard_data.py` e `AgentBacktestEngine` seguem fora do contrato comum |
+
+Nenhum item da lista "Implementado" acima pertence a esta tabela: o contrato
+comum não precisa ser criado, precisa ser **estendido** com janelas, cobertura
+multi-ativo e o freeze metodológico.
 
 ### Contexto base de mercado e Historical Memory
 
@@ -765,33 +839,68 @@ a mesma abertura seguinte. A arena acumula, pregão após pregão:
 - divergência entre os 30 votos do quorum;
 - métricas acumuladas, sem recalcular ou reescrever decisões passadas.
 
-O backtest serve para acelerar esse relógio sobre dez anos de histórico. O modo
-diário avança exatamente um passo do mesmo motor.
+O backtest serve para acelerar esse relógio sobre o histórico disponível.
+
+**Semântica compartilhada, implementação ainda não.** A semântica desejada é a
+mesma nos dois modos — `close(t) -> decisão -> open(t+1) -> execução` —, e é
+nesse sentido que o modo diário é "um passo" do backtest. Mas hoje isso é uma
+equivalência conceitual, não um motor único:
+
+```text
+SEMÂNTICA DESEJADA / COMPARTILHADA
+    close(t) -> open(t+1)   (vale nos dois caminhos)
+
+IMPLEMENTAÇÃO ATUAL
+    histórico   ExperimentRunner + ExecutionEngine (arena)
+                -> caminho científico comum, com spec_hash e manifest
+    diário      DailyAgentRunner
+                -> caminho operacional separado, estado próprio,
+                   sem ExperimentSpec e sem manifest canônico
+```
+
+Unificar os dois é lacuna declarada, não capacidade entregue: enquanto
+`DailyAgentRunner` não passar pelo `ExecutionEngine` da arena, "o mesmo motor"
+descreve o alvo e não o repositório.
 
 ## Arquitetura alvo
 
+O diagrama abaixo é o destino. Boa parte dele **já existe**: `ExperimentSpec`,
+`ExperimentRunner`, o contrato `Participant`, o `ExecutionEngine` e o
+`RunResult` estão implementados e em uso pelos seis participantes. Ele não
+descreve conceitos a criar do zero — apenas os pontos marcados `[ALVO]` e
+`[PARCIAL]` continuam pendentes.
+
 ```text
-                         ExperimentSpec
-       (snapshot, universo, janela, capital, custos, calendário, seeds)
+                         ExperimentSpec                      [EXISTE]
+       (snapshot, universo, capital, custos, métricas, participante)
+       + janela/âncora experimental e fase                   [ALVO]
+       + calendário e seeds materiais                        [ALVO]
                                 │
                                 v
-                    Unified Experiment Runner
+                    ExperimentRunner                         [EXISTE]
                                 │
           ┌─────────────────────┼─────────────────────┐
           v                     v                     v
   Classic Participant   Allocation Participant   LLM Participant
+      [EXISTE]                [EXISTE]         [PARCIAL: single-asset]
           └─────────────────────┼─────────────────────┘
                                 v
-                     Unified Execution Engine
+                     ExecutionEngine                         [EXISTE]
                      decisão t / execução t+1
                                 │
                                 v
-                RunResult + Event/Audit Records
+                RunResult + manifest + participant_artifacts [EXISTE]
+                + event/audit records unificados             [ALVO]
                                 │
                  ┌──────────────┴──────────────┐
                  v                             v
           Canonical Metrics              Dashboard/Exports
+             [EXISTE]                 [PARCIAL: dashboard ainda
+                                       usa caminhos legados]
 ```
+
+Legenda: `[EXISTE]` está implementado e exercitado por testes; `[PARCIAL]` existe
+com limitação declarada; `[ALVO]` ainda não tem código.
 
 Dentro de `LLM Participant`:
 

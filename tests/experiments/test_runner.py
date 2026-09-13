@@ -15,6 +15,7 @@ import pytest
 
 import src.experiments.runner as runner_module
 import src.pipeline.snapshot as snapshot_module
+from src.backtesting.arena import EvaluationWindow, resolve_evaluation_window
 from src.backtesting.engine import BacktestResult
 from src.experiments.participants import build_participant
 from src.experiments.runner import (
@@ -695,6 +696,12 @@ def test_commit_desconhecido_com_tree_limpa_nao_conta_como_reproduzivel(
     assert manifest["reproducibility"] == {"clean_source": False, "allow_dirty": True}
 
 
+def _legacy_window() -> EvaluationWindow:
+    """Janela do modo técnico legado: cobertura inteira, sem settlement."""
+    sessions = pd.DatetimeIndex(pd.to_datetime(["2020-01-02", "2020-01-03"]))
+    return resolve_evaluation_window(sessions)
+
+
 @pytest.mark.parametrize(
     ("commit", "dirty", "verified"),
     [
@@ -730,6 +737,8 @@ def test_guard_e_clean_source_usam_a_mesma_regra(
             manifest_json='{"snapshot_id":"s"}',
         ),
         universe=("PETR4.SA",),
+        evaluation=_legacy_window(),
+        context=None,
         backtest=BacktestResult(equity_curve=pd.Series(dtype=float)),
         metrics={},
         total_transaction_cost=0.0,

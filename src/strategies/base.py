@@ -60,6 +60,7 @@ class SignalParticipant(ABC):
             raise ValueError("ticker cannot be empty")
         self.ticker = ticker.strip()
         self._target_weight = 0.0
+        self._last_session: pd.Timestamp | None = None
 
     @abstractmethod
     def _signal(self, close: pd.Series) -> int:
@@ -70,7 +71,13 @@ class SignalParticipant(ABC):
         history = observation.history.get(self.ticker)
         if history is None:
             raise ValueError(f"observation missing ticker: {self.ticker}")
-        if len(history) == 1:
+        # Início de execução pelo relógio de sessões, não por ``len(history)``:
+        # com janela avaliada a primeira decisão já observa o warm-up inteiro,
+        # e o tamanho do histórico deixaria a carteira-alvo herdada de um run
+        # anterior. A posição nasce zerada em ``decision_start``.
+        previous = self._last_session
+        self._last_session = observation.session
+        if previous is None or observation.session <= previous:
             self._target_weight = 0.0
 
         signal = self._signal(cast(pd.Series, history["fechamento"]))

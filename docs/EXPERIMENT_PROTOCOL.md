@@ -60,7 +60,8 @@ simulação avança para `t+1` (seção 5). Não há, no experimento principal v
 estimação de pesos do LLM sobre período algum.
 
 A redação final e a definição operacional de desempenho líquido ajustado ao
-risco devem ser aprovadas antes do FINAL TEST. Nenhuma redação está congelada.
+risco devem ser aprovadas **no FREEZE, antes da PSEUDO-LIVE VALIDATION** — e não
+apenas antes do FINAL TEST. Nenhuma redação está congelada.
 
 ## 2. Hypotheses
 
@@ -289,8 +290,13 @@ FINAL TEST
 ### 5.7 Freeze
 
 Ao encerrar a calibração deve existir uma configuração **identificável e
-reproduzível**. O freeze abrange, no mínimo, os parâmetros científicos materiais
-então existentes:
+reproduzível**. O freeze acontece **antes da PSEUDO-LIVE VALIDATION**, não antes
+do FINAL TEST: se um elemento material ainda puder mudar quando a validação
+começar, a validação não é out-of-sample. Todo item listado abaixo está
+congelado a partir daquele ponto.
+
+O freeze abrange, no mínimo, os parâmetros científicos materiais então
+existentes:
 
 - prompts;
 - papéis dos agentes;
@@ -320,6 +326,10 @@ LLM trace
 
 Freeze é um ato metodológico registrado sobre esse mecanismo. Possuir o
 mecanismo não equivale a ter congelado (seção 21).
+
+A regra de reversão continua valendo em toda a fase seguinte: **alteração
+decidida depois de observar a VALIDATION devolve aquela janela para
+development/calibration** (seção 5.8), e uma janela nova precisa ser reservada.
 
 ### 5.8 Pseudo-live Validation
 
@@ -368,6 +378,170 @@ e não como confirmação da hipótese original (seção 22).
 
 Estágio posterior ao experimento histórico, detalhado na seção 24. Ele não
 substitui o teste histórico; aproxima o laboratório do objetivo operacional.
+
+### 5.11 Janela avaliada, warm-up e modo de histórico
+
+Cobertura de dados e período avaliado deixaram de ser a mesma coisa. A
+`ExperimentSpec` declara a janela; o snapshot continua descrevendo apenas o que
+existe:
+
+```text
+data_start ...... decision_start ...... decision_end .. settlement_session
+|___ warm-up ___|___ decisões avaliadas ____________|__ executa a última __|
+```
+
+Sessões anteriores a `decision_start` são **informação, nunca resultado**: não
+chamam o participante, não consomem chamada ao provedor, não geram intent nem
+trade, não deslocam a grade de `decision_frequency` e não entram na curva
+publicada. A carteira em `decision_start` é sempre capital inicial em caixa e
+posição zero.
+
+`settlement_session` é a consequência direta de `close(t) -> open(t+1)`: a
+decisão tomada em `decision_end` só vira trade na abertura seguinte. Por isso a
+sessão posterior a `decision_end` precisa existir, é processada para liquidar e
+marcar o resultado, e **não** recebe decisão nova. Uma janela sem settlement é
+recusada antes de o participante ser construído — fail-closed antes de qualquer
+chamada paga.
+
+#### Modo de histórico: `expanding` no v1
+
+A decisão em `t` enxerga todo o histórico causal disponível até `t`, nunca
+informação posterior. Rolling — usar apenas os últimos `N` períodos — **não**
+está implementado e fica como ablation futura. Motivos:
+
+1. corresponde ao comportamento causal já existente na arena (`snapshot[:t]`);
+2. satisfaz "pelo menos aproximadamente 2 anos" por construção, porque nunca
+   descarta histórico;
+3. evita introduzir um novo hiperparâmetro de janela (`N`) que precisaria ser
+   congelado e justificado, aumentando os graus de liberdade do pesquisador —
+   exatamente o risco que o protocolo existe para conter;
+4. preserva todo o histórico causal disponível **e o estado de indicadores
+   recursivos**. Este ponto é material e não decorativo: o MACD é calculado com
+   `ewm(..., adjust=False)`, cuja saída em `t` depende recursivamente de toda a
+   série anterior. Truncar o início da janela mudaria o valor do indicador em
+   `t`, e não apenas a quantidade de contexto disponível;
+5. rolling continua possível depois, como ablation declarada, sem alterar o
+   desenho principal.
+
+> Correção de um registro anterior: chegou a ser afirmado que uma janela rolling
+> com `N >= 200` produziria os mesmos indicadores da expansiva, por `sma_200`
+> ser a maior janela. A afirmação é forte demais e está retirada — ela vale para
+> indicadores de janela finita (SMA, Bollinger, RSI), mas **não** para os
+> recursivos por EMA, como o MACD.
+
+#### Histórico mínimo antes da primeira decisão
+
+`minimum_history_sessions` é campo **obrigatório e sem default** da
+`EvaluationSpec`. Um default técnico viraria decisão científica silenciosa: quem
+executa precisa declarar quanto histórico exige.
+
+Definição canônica única, contada sobre o **calendário comum** do run — a
+interseção das sessões de todos os tickers, que é o calendário em que a arena
+decide e executa:
+
+```text
+warmup_sessions            = sessões comuns estritamente ANTERIORES a decision_start
+available_history_sessions = sessões comuns até e INCLUINDO decision_start
+                           = warmup_sessions + 1
+
+gate: available_history_sessions >= minimum_history_sessions
+      available == minimum      -> passa
+      available == minimum - 1  -> falha
+```
+
+O `+ 1` é a própria barra de `decision_start`, já observável no fechamento em
+que a primeira decisão é tomada. Por isso o piso da spec é `1`: a primeira
+decisão avaliada sempre observa pelo menos a própria sessão.
+
+`available_history_sessions` **não** é `len(observation.history[ticker])`. O
+histórico entregue ao participante é o quadro daquele ticker recortado em `t`, e
+um ticker que negocie em data fora do calendário comum chega com mais barras. A
+contagem comum é deliberada: é o único número igual para todos os tickers do
+run e é limite inferior do histórico que qualquer um deles recebe. Em run
+single-asset — todo o caminho `llm_agent` hoje — os dois números coincidem.
+
+O valor científico continua **`TBD`**. Nada aqui congela 504 sessões, 730 dias
+ou "exatamente 2 anos". O manifest publica as duas medidas realizadas —
+`warmup_sessions` e `warmup_calendar_days` — para que a conformidade com o
+requisito aprovado seja auditável depois, sem reler o snapshot.
+
+#### Duas formas de usar a mesma janela
+
+```text
+Calibration Anchor      decision_start == decision_end == t
+                        uma decisão em close(t), execução em open(t+1)
+                        diagnóstico do sistema
+
+Sequential Evaluation   decision_start < decision_end
+                        carteira contínua ao longo da janela
+                        Validation e Final Test
+```
+
+#### Fronteira da curva publicada
+
+```text
+primeiro ponto = decision_start      (capital inicial em caixa, posição zero)
+último ponto   = settlement_session  (a última decisão já liquidada)
+len(curva)     = evaluated_sessions + 1
+```
+
+Warm-up não entra. O `+ 1` é a `settlement_session`, e é por isso que o tamanho
+da curva **não** é o número de sessões avaliadas nem o número de decisões. O
+manifest publica os dois separadamente: `equity_points` conta a curva,
+`evaluation_evidence.evaluated_sessions` conta as sessões da janela.
+
+`evaluated_sessions` são as sessões em que o participante foi **consultado** —
+não os intents emitidos. Consultado e sem emitir intent é resultado legítimo:
+`MANTER`, veto de risco ou sessão fora da grade de `decision_frequency`. Pela
+mesma razão, `first_decision_session` e `last_decision_session` na evidência são
+os limites da janela — a arena não conhece a grade do participante e não
+publicaria um número que não observa. Quais sessões produziram decisão efetiva
+se lê na evidência do participante (o trace de LLM) e nos trades publicados.
+
+#### `decision_frequency` no fim da janela
+
+`decision_frequency` continua governando a elegibilidade, contada a partir de
+`decision_start` (índice zero, sempre elegível). `decision_end` é **limite da
+janela, não obrigação de decidir**: quando ele não cai na grade, o participante
+é consultado, não emite intent, e a `settlement_session` liquida o pendente da
+última decisão *efetivamente emitida* — ou nada, se não houver pendente. O run
+continua válido.
+
+Forçar uma decisão extraordinária em `decision_end` exigiria que o participante
+soubesse que aquela é a última sessão avaliada — exatamente o `is_last_day` do
+motor legado, que a causalidade da arena retirou de propósito (seção 12).
+Ausência legítima de trade não é falha de settlement.
+
+Distinção que o gate preserva:
+
+```text
+há próxima sessão comum, mas nenhum intent pendente  -> run válido, sem trade
+não existe sessão comum após decision_end            -> recusado antes de
+                                                        construir o participante
+```
+
+Sharpe, Sortino, CAGR e MaxDD só fazem sentido sobre a forma sequencial. **Uma
+âncora única não produz evidência de desempenho de carteira** e não deve ser
+lida como tal; agregação entre múltiplos Calibration Cases não existe e não foi
+decidida.
+
+Um snapshot amplo serve várias janelas: Calibration Cases, Validation e Final
+Test compartilham o mesmo `snapshot_id` e o mesmo `identity_digest`, e diferem
+no `spec_hash` porque a janela difere. Não se cria snapshot por caso.
+
+#### Fase e `case_id`
+
+`phase` (`CALIBRATION`, `VALIDATION`, `FINAL_TEST`, `LIVE_SHADOW`) é
+**obrigatória** para todo run que declara janela, e é declarada na construção do
+runner — antes de executar, antes de qualquer chamada ao provedor. Não existe
+caminho que anexe a fase durante a publicação do run.
+
+`phase` e `case_id` **não entram no `spec_hash`**, porque não alteram nada do
+que é computado: dois runs que só diferem na fase produzem exatamente os mesmos
+números, e separá-los no hash quebraria o significado de "mesma configuração,
+mesmo resultado". O controle contra reclassificação é a declaração prévia, não o
+hash. Diretório nunca é identidade metodológica.
+
 
 ## 6. Walk-Forward
 
@@ -634,8 +808,8 @@ Candidatos atuais:
 - Mínima Variância;
 - benchmark de mercado: `TBD`.
 
-Parâmetros e frequência de cada benchmark: `TBD`. Todos serão congelados antes
-do TEST e executados pelo contrato comum.
+Parâmetros e frequência de cada benchmark: `TBD`. Todos serão congelados no
+FREEZE, **antes da PSEUDO-LIVE VALIDATION**, e executados pelo contrato comum.
 
 ## 13. Multi-agent variants
 
@@ -704,9 +878,10 @@ AgentBacktestEngine (classe/API) default = 1   <- adotado pelo LLMParticipant
 scripts/run_agent_backtest.py       default = 5   <- escolha operacional de demo
 ```
 
-Nenhum dos dois foi aprovado como parâmetro científico. A frequência definitiva
-do experimento deve ser decidida junto com as janelas experimentais e o
-orçamento de chamadas, antes do FINAL TEST.
+Nenhum dos dois foi aprovado como parâmetro científico. `decision_frequency` é
+item do freeze (seção 5.7): a frequência definitiva deve ser decidida junto com
+as janelas experimentais e o orçamento de chamadas e congelada **antes da
+PSEUDO-LIVE VALIDATION**, não apenas antes do FINAL TEST.
 
 Descrição correta do primeiro estágio: **ensemble/quorum de múltiplas amostras
 do mesmo papel, do mesmo prompt e do mesmo modelo**, variando temperatura e
@@ -818,8 +993,10 @@ Cada prompt científico terá identificador de versão, conteúdo ou hash, papel
 agente, schema esperado e parâmetros de geração. O procedimento de revisão e a
 versão final são `TBD`.
 
-Prompts serão congelados antes do TEST. Alterações posteriores criam nova versão
-e não sobrescrevem resultados existentes.
+Prompts serão congelados no FREEZE, **antes da PSEUDO-LIVE VALIDATION** — não
+apenas antes do FINAL TEST. Alterações posteriores criam nova versão e não
+sobrescrevem resultados existentes; alterar prompt depois de observar a
+VALIDATION devolve aquela janela para development/calibration (seção 5.8).
 
 **Onde os prompts vivem hoje, e o que isso garante.** Eles continuam sendo
 constantes de módulo em `src/agents/technical_analyst.py`,
@@ -985,10 +1162,58 @@ configuração; `run_id` identifica a execução. A coerência
 artefato. O bloco `snapshot` registra `schema_version` e `identity_digest` do
 snapshot, o que permite responder "qual snapshot verificável foi usado neste
 run?" sem reler o diretório — a proveniência é capturada no `run()` e `persist()`
-não a redescobre. Janelas experimentais, seeds, prompts, modelos e benchmark
-ainda não fazem parte da spec porque dependem de decisões `TBD`. Em particular, a
-spec não declara período: o recorte executado é a cobertura efetiva do snapshot,
-e é por ela que uma janela experimental é hoje materializada.
+não a redescobre.
+
+O que hoje **já** entra na spec, e o que **ainda não** entra, precisa ser lido
+com precisão — a lista abaixo foi conferida contra `ParticipantSpec` e a
+assinatura de `LLMParticipant.__init__`:
+
+| Elemento | Na spec/`spec_hash`? | Onde vive |
+|---|---|---|
+| Snapshot consumido | Sim | `snapshot_id` |
+| Capital inicial, custos, configuração de métrica | Sim | `ExperimentSpec` |
+| Ativo do participante single-asset | Sim | `ParticipantSpec.params.ticker` |
+| Provedor e modelo requisitado | Sim | `provider`, `model` |
+| Política de retry | Sim | `retry_attempts`, `retry_base_delay` |
+| Quorum técnico e consenso | Sim | `analyst_count`, `consensus_threshold`, `require_all_votes` |
+| Faixa de temperatura do ensemble | Sim | `temperature_min`, `temperature_max` |
+| Base de seeds **configurada** | Sim | `seed_base` |
+| Limites duros de risco | Sim | `risk_max_volatility`, `risk_max_drawdown`, `risk_max_concentration` |
+| Alvo determinístico de exposição long | Sim | `long_target_weight` |
+| Janela de volatilidade | Sim | `volatility_window` |
+| Frequência de decisão | Sim | `decision_frequency` |
+| Credencial do provedor | **Não, por desenho** | ambiente; nunca em spec, manifest, log ou artefato |
+| Texto dos prompts | Não | código-fonte, identificado no trace por SHA-256 |
+| Janela experimental (período avaliado) | **Sim** | `evaluation.decision_start` / `decision_end` |
+| Histórico mínimo exigido antes da primeira decisão | **Sim** | `evaluation.minimum_history_sessions` (valor científico `TBD`) |
+| Fase do protocolo e `case_id` | **Não, por desenho** | manifest (`run_context`), declarados antes do run |
+| Benchmark de mercado de referência | Não | `TBD` |
+
+Distinção que o protocolo exige manter, porque as duas coisas costumam ser
+confundidas:
+
+```text
+CONFIGURAÇÃO PEDIDA / SPEC        EVIDÊNCIA OBSERVADA DURANTE O RUN
+-------------------------        ---------------------------------
+seed_base configurado            -> sim, spec
+seed efetivamente enviada        -> NÃO existe hoje: `seed` é opção
+                                    solicitada e não está em
+                                    `AgentRouterLLMClient.TRANSMITTED_OPTION_KEYS`
+requested options                -> trace (`llm_calls.jsonl`)
+transport options                -> trace (`llm_calls.jsonl`)
+modelo requisitado               -> spec
+prompts efetivamente enviados    -> trace, por digest
+```
+
+Ou seja: `seed` aparece no ensemble e no trace como intenção, mas o cliente
+real transmite somente `temperature`, `top_p` e `max_tokens`. Declarar
+determinismo por `seed` seria falso.
+
+A **janela experimental deixou de estar fora da spec**. `ExperimentSpec.evaluation`
+é uma `EvaluationSpec` com `decision_start`, `decision_end` e
+`minimum_history_sessions`, os três dentro do `spec_hash`. O benchmark de
+mercado continua fora, e as **datas** continuam `TBD`: existe como declarar a
+janela, não qual janela declarar.
 
 Runs reproduzíveis exigem proveniência Git verificável e working tree limpa. O
 `ExperimentRunner` já impõe isso por padrão, de forma fail-closed estrita:
@@ -1000,9 +1225,12 @@ Nenhum diff do working tree é persistido — a reprodução depende do commit, 
 de um patch anexado.
 
 Para o `llm_agent`, o bloco `participant` do manifest carrega a configuração
-material do LLM: provedor, modelo requisitado, política de retry, quorum,
-limites de risco e de portfólio, janela de volatilidade e payoff. Credencial
-não entra em spec, manifest, log nem artefato de auditoria.
+material do LLM: provedor, modelo requisitado, política de retry, quorum e
+consenso, faixa de temperatura, `seed_base`, limites duros de risco,
+`long_target_weight`, janela de volatilidade e frequência de decisão. Não há
+`payoff_ratio`, `kelly_fraction` nem `max_position_size` nessa spec: eles
+pertencem ao caminho de sizing legado, que o participante científico nunca
+executa. Credencial não entra em spec, manifest, log nem artefato de auditoria.
 
 A partir do schema 3, o manifest também publica `participant_artifacts`, e um
 run `llm_agent` acompanha o arquivo `llm_calls.jsonl`:

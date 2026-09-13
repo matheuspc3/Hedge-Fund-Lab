@@ -21,6 +21,13 @@ fica em [`ESTADO_ATUAL.md`](ESTADO_ATUAL.md), a estrutura técnica em
 
 As escolhas abaixo são recomendações de trabalho, não aprovações implícitas.
 
+O status desta tabela é **metodológico**, não de implementação: "pendente de
+congelamento" significa que a escolha científica ainda não foi aprovada, e não
+que o mecanismo técnico esteja ausente. `ExperimentSpec`, `ExperimentRunner`,
+`ExecutionEngine` e `RunResult` já existem e são usados pelos seis participantes
+— possuir o mecanismo não equivale a ter congelado. O estado de implementação
+está em [`ESTADO_ATUAL.md`](ESTADO_ATUAL.md).
+
 | Tema | Direção atual | Status |
 |---|---|---|
 | Unidade experimental | Carteira multi-ativo comum a todos os participantes | **STATUS: proposta / pendente de congelamento** |
@@ -28,7 +35,8 @@ As escolhas abaixo são recomendações de trabalho, não aprovações implícit
 | Análises secundárias | PETR4 e WEGE3, sem substituir a comparação principal | **STATUS: proposta / pendente de congelamento** |
 | Informação e execução | Features disponíveis no fechamento de `t`; execução na abertura de `t+1` | **STATUS: proposta / pendente de congelamento** |
 | Desenho experimental | Calibração retrospectiva do sistema -> freeze -> validação pseudo-live -> teste final -> live/shadow, em vez de TRAIN/TEST clássico | **STATUS: decisão metodológica aprovada** (datas e períodos continuam `TBD`) |
-| Janela base de mercado | O sistema decide em `t` com pelo menos ~2 anos de histórico causalmente disponível | **STATUS: decisão metodológica aprovada** (parametrização exata continua `TBD`) |
+| Janela base de mercado | O sistema decide em `t` com pelo menos ~2 anos de histórico causalmente disponível | **STATUS: decisão metodológica aprovada**; gate implementado como `minimum_history_sessions` (valor `TBD`) |
+| Modo de histórico | `expanding`: a decisão em `t` enxerga todo o histórico causal até `t` | **STATUS: decisão metodológica aprovada para o v1**; rolling fica como ablation futura |
 | Historical Memory | Recuperação seletiva de episódios antigos, sob `available_at <= decision_time` | **STATUS: extensão planejada, não implementada** |
 | Custos | Uma especificação versionada e idêntica para todos | **STATUS: proposta / pendente de congelamento** |
 | Resultado | `RunResult` e manifest canônicos, identificados por `run_id` | **STATUS: proposta / pendente de congelamento** |
@@ -173,15 +181,17 @@ mesmos dados
   serializável com os parâmetros materiais do participante, universo derivado
   deterministicamente, capital, custos e parâmetros de métrica.
 
-  Ainda falta: representação explícita do período/janela experimental. Hoje o
-  período **deriva da cobertura efetiva do snapshot**, e não existe campo de
-  janela na spec. Benchmark de mercado também não é campo da spec, e os valores
-  científicos de frequência, seeds e demais parâmetros continuam dependendo do
-  congelamento.
-- [ ] Decidir como o período/janela experimental será representado —
-  campo de janela na `ExperimentSpec`, snapshots separados por período ou outro
-  mecanismo explícito. `TBD — EXPERIMENT PROTOCOL v1`; nenhuma implementação
-  está assumida.
+  A janela avaliada entrou na spec: `EvaluationSpec` com `decision_start`,
+  `decision_end` e `minimum_history_sessions`, dentro do `spec_hash`.
+
+  Ainda falta: benchmark de mercado como campo da spec, e os valores
+  científicos de janela, frequência, seeds e demais parâmetros continuam
+  dependendo do congelamento.
+- [x] Decidir como o período/janela experimental será representado — escolhida a
+  janela dentro da `ExperimentSpec`, sobre um snapshot amplo, em vez de um
+  snapshot por Calibration Case.
+- [ ] Escolher as janelas concretas de calibração, validação e teste final.
+  `TBD — EXPERIMENT PROTOCOL v1`; o mecanismo não escolhe datas.
 - [x] Garantir participante novo por execução, sem estado compartilhado entre runs.
 - [x] Exigir `scientific_ready` e verificar identidade do manifest e hashes dos
   arquivos do snapshot antes de executar.
