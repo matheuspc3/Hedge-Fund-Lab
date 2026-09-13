@@ -86,7 +86,6 @@ def test_buy_and_hold_emite_intent_apenas_na_primeira_observacao() -> None:
     assert first == [
         OrderIntent(
             ticker="PETR4",
-            side="BUY",
             target_weight=1.0,
             decision_time=cast(pd.Timestamp, data.index[0]),
         )
@@ -107,7 +106,6 @@ def test_observacao_expoe_somente_campos_de_t() -> None:
 def test_intent_nao_declara_sessao_futura() -> None:
     assert {field.name for field in fields(OrderIntent)} == {
         "ticker",
-        "side",
         "target_weight",
         "decision_time",
     }
@@ -206,7 +204,6 @@ def test_short_e_alavancagem_sao_rejeitados_explicitamente(
     with pytest.raises(ValueError, match="shorting and leverage are not supported"):
         OrderIntent(
             ticker="PETR4",
-            side="SELL",
             target_weight=target_weight,
             decision_time=cast(pd.Timestamp, pd.Timestamp("2023-01-02")),
         )
@@ -243,3 +240,86 @@ def test_buy_and_hold_novo_tem_paridade_com_motor_legado() -> None:
     assert arena_trade.quantity == legacy_trade.quantity
     assert arena_trade.cost == legacy_trade.cost
     assert arena.final_equity == legacy.final_equity
+
+
+# ── A direção pertence à execução, não ao participante ───────────
+
+
+class ScriptedTargets:
+    """Participante que só sabe declarar onde quer estar em cada sessão."""
+
+    def __init__(self, targets: list[float]) -> None:
+        self.targets = targets
+        self.observed_weights: list[float] = []
+
+    def decide(self, observation: MarketObservation) -> list[OrderIntent]:
+        index = len(self.observed_weights)
+        close = float(observation.history["PETR4"]["fechamento"].iloc[-1])
+        self.observed_weights.append(
+            observation.positions["PETR4"] * close / observation.equity
+        )
+        if index >= len(self.targets):
+            return []
+        return [
+            OrderIntent(
+                ticker="PETR4",
+                target_weight=self.targets[index],
+                decision_time=observation.session,
+            )
+        ]
+
+
+def gap_data(third_open: float) -> pd.DataFrame:
+    """Duas sessões estáveis e uma terceira que abre com gap configurável."""
+    return pd.DataFrame(
+        {
+            "abertura": [10.0, 10.0, third_open],
+            "fechamento": [10.0, 10.0, third_open],
+        },
+        index=pd.DatetimeIndex(["2023-01-02", "2023-01-03", "2023-01-04"]),
+    )
+
+
+@pytest.mark.parametrize(
+    ("third_open", "expected_type", "expected_quantity"),
+    [(10.0, "BUY", 10), (30.0, "SELL", 10)],
+    ids=["sem-gap", "gap-de-alta"],
+)
+def test_gap_overnight_inverte_a_operacao_sem_mudar_a_intencao(
+    third_open: float, expected_type: str, expected_quantity: int
+) -> None:
+    """A mesma intenção vira compra ou venda conforme a abertura de ``t+1``.
+
+    Em ambos os cenários o participante emite exatamente os mesmos alvos: 0,5
+    na primeira sessão e 0,6 na segunda. Em ``close(t)`` o alvo de 0,6 está
+    acima do peso observado de 0,5, ou seja, implicaria aumentar a posição. Com
+    a abertura estável, é isso que acontece. Com o gap de alta, as 50 ações
+    passam a valer 75% do patrimônio na abertura e chegar a 0,6 exige vender.
+    O participante não decidiu nada diferente — a direção é derivada do delta
+    entre posição e quantidade alvo, no momento da execução.
+    """
+    data = gap_data(third_open)
+    participant = ScriptedTargets([0.5, 0.6])
+
+    result = ExecutionEngine(participant, {"PETR4": data}, 1_000.0).run()
+
+    # Premissa: em close(t) o alvo apontava para aumento de posição.
+    assert participant.observed_weights[1] == 0.5
+
+    assert len(result.trades) == 2
+    entry, adjustment = result.trades
+    assert (entry.type, entry.quantity, entry.price) == ("BUY", 50, 10.0)
+    assert adjustment.date == data.index[2]
+    assert adjustment.price == third_open
+    assert adjustment.type == expected_type
+    assert adjustment.quantity == expected_quantity
+
+
+def test_intencao_ja_no_alvo_na_abertura_nao_gera_trade() -> None:
+    """Alvo repetido sem variação de preço não produz operação nenhuma."""
+    data = gap_data(10.0)
+    result = ExecutionEngine(
+        ScriptedTargets([0.5, 0.5]), {"PETR4": data}, 1_000.0
+    ).run()
+
+    assert [(trade.type, trade.quantity) for trade in result.trades] == [("BUY", 50)]

@@ -55,7 +55,6 @@ class BuyAndHoldParticipant:
         return [
             OrderIntent(
                 ticker=self.ticker,
-                side="BUY",
                 target_weight=1.0,
                 decision_time=observation.session,
             )

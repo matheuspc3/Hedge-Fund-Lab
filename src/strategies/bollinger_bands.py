@@ -5,10 +5,11 @@ Vende quando o preço cruza abaixo da banda superior (sobrecomprado).
 """
 
 import logging
+from typing import cast
 
 import pandas as pd
 
-from src.strategies.base import Strategy
+from src.strategies.base import SignalParticipant, Strategy
 
 logger = logging.getLogger(__name__)
 
@@ -89,3 +90,41 @@ class BollingerBandsStrategy(Strategy):
 
     def get_name(self) -> str:
         return f"Bollinger Bands ({self.window},{self.k})"
+
+
+class BollingerParticipant(SignalParticipant):
+    """Adapter causal das Bandas de Bollinger para o contrato comum da arena.
+
+    Compra quando o fechamento rompe a banda inferior e sai quando rompe a
+    superior, sempre com bandas estimadas apenas até ``t``.
+
+    ponytail: mesma janela recalculada por sessão que o ``SMACrossParticipant``;
+    o teto é O(n) por passo.
+    """
+
+    def __init__(self, ticker: str, window: int = 20, k: float = 2.0):
+        super().__init__(ticker)
+        self.window = window
+        self.k = k
+
+    def _signal(self, close: pd.Series) -> int:
+        if len(close) < 2:
+            return 0
+
+        middle = cast(pd.Series, close.rolling(window=self.window).mean())
+        std = cast(pd.Series, close.rolling(window=self.window).std())
+        upper = cast(pd.Series, middle + self.k * std)
+        lower = cast(pd.Series, middle - self.k * std)
+        if pd.isna(upper.iloc[-1]) or pd.isna(lower.iloc[-1]):
+            return 0
+
+        previous, current = close.iloc[-2], close.iloc[-1]
+        if pd.isna(previous) or pd.isna(current):
+            return 0
+        # Comparações com banda NaN em t-1 são falsas, como no motor legado:
+        # a primeira banda válida não produz rompimento.
+        if previous <= upper.iloc[-2] and current > upper.iloc[-1]:
+            return -1
+        if previous >= lower.iloc[-2] and current < lower.iloc[-1]:
+            return 1
+        return 0

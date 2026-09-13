@@ -6,6 +6,7 @@ registrando a evolução patrimonial, alocação histórica e trades.
 """
 
 import logging
+import math
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import date as Date
@@ -14,6 +15,12 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
 
+from src.backtesting.arena import (
+    WEIGHT_TOLERANCE,
+    MarketObservation,
+    OrderIntent,
+    weights_to_intents,
+)
 from src.backtesting.costs import CostModel
 
 logger = logging.getLogger(__name__)
@@ -479,3 +486,86 @@ class PortfolioBacktestEngine:
             else:
                 common &= dates
         return sorted(common) if common else []
+
+
+# ═══════════════════════════════════════════════════════════════════
+# Adapters multi-ativo para o contrato comum da arena
+# ═══════════════════════════════════════════════════════════════════
+
+
+class PortfolioParticipant:
+    """Expõe uma :class:`PortfolioStrategy` como participante da arena.
+
+    O rebalanceamento segue a mesma cadência do ``PortfolioBacktestEngine``:
+    a sessão de índice ``0`` e depois cada múltiplo de ``rebalance_freq``,
+    contado sobre o calendário comum que a própria arena entrega. O índice vem
+    das observações já recebidas, nunca do tamanho do recorte — o participante
+    continua sem saber quantas sessões ainda existem.
+
+    Uma instância acompanha uma execução; o contador é reiniciado quando a
+    sessão observada não avança em relação à anterior.
+    """
+
+    def __init__(self, strategy: PortfolioStrategy, rebalance_freq: int = 63):
+        if rebalance_freq <= 0:
+            raise ValueError(f"rebalance_freq must be > 0, got {rebalance_freq}")
+        self.strategy = strategy
+        self.rebalance_freq = rebalance_freq
+        self._session_index = 0
+        self._last_session: pd.Timestamp | None = None
+
+    def _next_index(self, session: pd.Timestamp) -> int:
+        if self._last_session is None or session <= self._last_session:
+            self._session_index = 0
+        else:
+            self._session_index += 1
+        self._last_session = session
+        return self._session_index
+
+    @staticmethod
+    def _sanitize(weights: dict[str, float]) -> dict[str, float]:
+        """Rejeita pesos inválidos e zera apenas resíduo numérico negativo."""
+        clean: dict[str, float] = {}
+        for ticker, raw in weights.items():
+            weight = float(raw)
+            if not math.isfinite(weight):
+                raise ValueError(f"target weight for {ticker} must be finite")
+            if weight < 0:
+                if weight < -WEIGHT_TOLERANCE:
+                    raise ValueError(
+                        f"negative target weight for {ticker}; "
+                        "shorting is not supported"
+                    )
+                weight = 0.0
+            clean[ticker] = weight
+        if sum(clean.values()) > 1 + WEIGHT_TOLERANCE:
+            raise ValueError(
+                "target weights must sum to at most 1; leverage is not supported"
+            )
+        return clean
+
+    def decide(self, observation: MarketObservation) -> list[OrderIntent]:
+        if self._next_index(observation.session) % self.rebalance_freq:
+            return []
+        weights = self.strategy.get_weights(
+            dict(observation.history), observation.session
+        )
+        return weights_to_intents(observation, self._sanitize(weights))
+
+
+class EqualWeightParticipant(PortfolioParticipant):
+    """Equal Weight causal: ``1/N`` sobre os ativos observados no rebalance."""
+
+    def __init__(self, rebalance_freq: int = 63):
+        super().__init__(EqualWeightPortfolio(rebalance_freq), rebalance_freq)
+
+
+class MinVarianceParticipant(PortfolioParticipant):
+    """Mínima Variância causal: covariância estimada apenas com dados até ``t``.
+
+    Reutiliza :class:`MinVariancePortfolio`, que já recebe histórico truncado e
+    portanto nunca observa retorno posterior à decisão.
+    """
+
+    def __init__(self, window: int = 252, rebalance_freq: int = 63):
+        super().__init__(MinVariancePortfolio(window=window), rebalance_freq)

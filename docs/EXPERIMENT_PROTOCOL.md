@@ -103,13 +103,22 @@ na abertura da próxima sessão válida `t+1`.
 As mesmas regras serão aplicadas a todos os participantes.
 
 Implementação técnica preliminar, sem congelar as escolhas acima:
-`OrderIntent` registra ticker, direção, peso alvo long-only e instante da
-decisão. A elegibilidade de execução não pertence ao participante: o
-`ExecutionEngine` é quem determina se existe próxima abertura observada e
-executa Buy & Hold nela com quantidade inteira e o `CostModel` existente. Esse recorte
-serve para validar a arquitetura; lote B3, slippage, spread científico,
-liquidez, execução parcial, margem e política definitiva de short continuam
-`TBD`.
+`OrderIntent` registra ticker, peso alvo long-only e instante da decisão —
+direção não é declarada pelo participante. Nem a direção nem a elegibilidade de
+execução pertencem a ele: o `ExecutionEngine` é quem determina se existe próxima
+abertura observada, deriva compra ou venda do delta entre posição e quantidade
+alvo naquela abertura, e executa com quantidade inteira e o `CostModel`
+existente. Os cinco
+benchmarks clássicos já usam esse caminho, single e multi-ativo.
+
+Para carteiras, a implementação atual usa a interseção dos calendários como
+calendário comum, executa vendas antes de compras e, quando o caixa não cobre
+todos os alvos, escalona as compras pelo mesmo fator antes de truncar para
+quantidade inteira. Isso é um mecanismo técnico determinístico, escolhido para
+remover dependência da ordem dos tickers — não uma política científica de
+rateio. Lote B3, slippage, spread científico, liquidez, execução parcial,
+margem, política de suspensão/falta de barra, destino do caixa residual e
+política definitiva de short continuam `TBD`.
 
 ## 9. Capital
 

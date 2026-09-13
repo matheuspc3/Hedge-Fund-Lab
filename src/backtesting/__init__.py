@@ -6,10 +6,12 @@ from src.backtesting.agent_engine import (
     AgentDecisionRecord,
 )
 from src.backtesting.arena import (
+    WEIGHT_TOLERANCE,
     ExecutionEngine,
     MarketObservation,
     OrderIntent,
     Participant,
+    weights_to_intents,
 )
 from src.backtesting.b3_calendar import B3Calendar
 from src.backtesting.costs import CostModel
@@ -37,10 +39,13 @@ from src.backtesting.metrics import (
     validate_equity_curve,
 )
 from src.backtesting.portfolio import (
+    EqualWeightParticipant,
     EqualWeightPortfolio,
+    MinVarianceParticipant,
     MinVariancePortfolio,
     PortfolioBacktestEngine,
     PortfolioBacktestResult,
+    PortfolioParticipant,
     PortfolioStrategy,
     PortfolioTrade,
 )
@@ -56,14 +61,18 @@ __all__ = [
     "DailyAgentRunner",
     "DailyAgentState",
     "DailyRunOutcome",
+    "WEIGHT_TOLERANCE",
     "ExecutionEngine",
+    "EqualWeightParticipant",
     "EqualWeightPortfolio",
+    "MinVarianceParticipant",
     "MinVariancePortfolio",
     "MarketObservation",
     "OrderIntent",
     "Participant",
     "PortfolioBacktestEngine",
     "PortfolioBacktestResult",
+    "PortfolioParticipant",
     "PortfolioStrategy",
     "PortfolioTrade",
     "Trade",
@@ -82,4 +91,5 @@ __all__ = [
     "total_transaction_cost",
     "turnover",
     "validate_equity_curve",
+    "weights_to_intents",
 ]

@@ -34,8 +34,9 @@ São dois produtos paralelos:
 
 Eles compartilham dados, estruturas de custo/trade e o relógio conceitual
 fechamento de `t` -> abertura de `t+1`, mas não compartilham o motor, a unidade
-experimental ou o formato de resultado. Em paralelo, a primeira fatia da arena
-já executa somente Buy & Hold pelo contrato comum descrito abaixo.
+experimental ou o formato de resultado. Em paralelo, a arena já executa os cinco
+benchmarks clássicos pelo contrato comum descrito abaixo; o dashboard e o
+participante LLM continuam nos motores legados.
 
 ## Componentes atuais
 
@@ -69,8 +70,9 @@ fonte oficial/versionada permanece requisito da arquitetura científica.
   conceituais e não alimentam o dashboard multi-ativo.
 - `src/backtesting/engine.py`: execução single-asset na abertura seguinte ao sinal.
 - `src/backtesting/portfolio.py`: contém outra interface de estratégia, as
-  implementações multi-ativo realmente usadas e seu motor; pesos calculados no
-  fechamento são executados na abertura seguinte.
+  implementações multi-ativo realmente usadas, seu motor legado e os adaptadores
+  que expõem essas mesmas estratégias como participantes da arena; pesos
+  calculados no fechamento são executados na abertura seguinte.
 - `src/backtesting/metrics.py` e `costs.py`: funções compartilhadas.
 
 Há duplicação de conceitos: duas interfaces de estratégia, duas famílias de
@@ -78,12 +80,15 @@ Equal Weight/Mínima Variância e dois motores com semânticas diferentes.
 
 ### Arena incremental
 
-`src/backtesting/arena.py` contém o contrato técnico mínimo e o executor comum;
-`BuyAndHoldParticipant`, em `src/strategies/buy_and_hold.py`, é o único adaptador
-migrado nesta etapa:
+`src/backtesting/arena.py` contém o contrato técnico mínimo e o executor comum.
+Os cinco adaptadores clássicos vivem ao lado das estratégias que reutilizam:
+`BuyAndHoldParticipant`, `SMACrossParticipant` e `BollingerParticipant` em
+`src/strategies/`; `EqualWeightParticipant` e `MinVarianceParticipant` em
+`src/backtesting/portfolio.py`.
 
 ```text
 histórico copiado e truncado até close(t)
+   (um DataFrame por ticker)
                   │
                   v
         MarketObservation
@@ -92,14 +97,15 @@ histórico copiado e truncado até close(t)
           Participant.decide
                   │
                   v
- OrderIntent(ticker, side, target_weight,
-             decision_time)
+ OrderIntent(ticker, target_weight,
+             decision_time)      — uma ou zero por ticker
                   │
                   v
  ExecutionEngine na abertura observada de t+1
+   deltas -> vendas -> orçamento -> compras escalonadas
                   │
                   v
-       Trade + equity no fechamento
+       Trade(s) + equity de carteira no fechamento
 ```
 
 `OrderIntent` representa decisão, não execução. Preço, quantidade inteira,
@@ -109,10 +115,32 @@ conhece o horizonte do dataset e não consegue identificar a última sessão do
 recorte. A elegibilidade de execução pertence ao executor, que associa cada
 intenção à próxima abertura observada — e a descarta sem trade quando ela não
 existe.
-O executor reutiliza `CostModel`, rejeita short/alavancagem e não lê arquivos de
-dados ou snapshots. Ele recebe os dados já preparados, suporta um ticker nesta
-prova e devolve o `BacktestResult` mínimo já existente. Os três motores legados
-permanecem disponíveis e compatíveis como caminhos operacionais.
+O executor reutiliza `CostModel` e o `Trade` já existente, rejeita
+short/alavancagem e não lê arquivos de dados ou snapshots. Ele recebe os dados
+já preparados, aceita `Mapping[ticker, DataFrame]` e devolve o `BacktestResult`
+mínimo — `RunResult` continua sendo trabalho futuro e não foi antecipado. Os
+três motores legados permanecem disponíveis e compatíveis como caminhos
+operacionais.
+
+No caminho multi-ativo o executor:
+
+- ordena os tickers deterministicamente e usa a interseção dos calendários como
+  calendário comum, sem forward-fill nem barra fabricada;
+- calcula o patrimônio na abertura, converte pesos alvo em quantidades inteiras
+  e deriva os deltas por ticker;
+- executa as vendas antes das compras, para que o rebalance financie a si mesmo;
+- quando o caixa não cobre todos os déficits, escalona todos os alvos de compra
+  pelo mesmo fator e trunca — política técnica, determinística e independente da
+  ordem dos tickers, obtida por busca binária sobre o custo reportado pelo
+  `CostModel`;
+- rejeita peso negativo, não finito ou soma acima de um, e mantém o caixa não
+  negativo.
+
+`OrderIntent` não declara direção. O participante expressa apenas a posição
+alvo; comprar, vender ou não fazer nada é derivado na abertura de `t+1`, a
+partir do delta entre a posição corrente e a quantidade alvo. Um gap overnight
+pode inverter a operação sem que a intenção mude, e `Trade.type` registra o que
+foi de fato executado.
 O guard de `DatasetSnapshot.scientific_ready` pertence ao futuro runner de
 experimentos, pois esta camada recebe DataFrames já entregues ao executor.
 

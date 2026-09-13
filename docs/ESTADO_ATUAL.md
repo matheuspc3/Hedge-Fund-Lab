@@ -16,10 +16,10 @@ estágio é um quorum configurável de 30 chamadas.
 
 Ele ainda **não é a arena científica descrita como objetivo**. Um caminho comum
 preliminar já recebe `MarketObservation`, chama `Participant`, normaliza a
-decisão como `OrderIntent` e executa Buy & Hold, mas as demais estratégias e o
-sistema LLM continuam em motores diferentes. O LLM não aparece na comparação
-principal; e não existe orquestrador de experimento, divisão
-train/validation/test ou walk-forward. Portanto, os números exibidos no
+decisão como `OrderIntent` e executa os cinco benchmarks clássicos — single e
+multi-ativo — pelo mesmo `ExecutionEngine`. O sistema LLM continua em motor
+próprio e não aparece na comparação principal; e não existe orquestrador de
+experimento, divisão train/validation/test ou walk-forward. Portanto, os números exibidos no
 dashboard e os JSONs de agentes são demonstrações técnicas, não evidência de que
 uma abordagem venceu outra.
 
@@ -38,7 +38,7 @@ uma abordagem venceu outra.
 | Backtest LLM | Implementado com lacunas | Decide no fechamento de `t`, executa na próxima abertura observada e registra ciclo, votos, trades e curva em JSON. A última previsão fica pendente. |
 | Runner diário | Parcial | `DailyAgentRunner` persiste estado, reconcilia a previsão pendente na abertura esperada e avança uma sessão por execução. Ainda não integra a arena nem um manifest canônico. |
 | Calendário B3 | Parcial | `B3Calendar` resolve fins de semana, feriados recorrentes e exceções explícitas sem dependência externa; ainda precisa de validação/versionamento contra calendário oficial. |
-| Arena clássicos x LLM | Parcial | Existem contrato mínimo de participante e intenção e execução comum long-only para Buy & Hold single-asset. Os demais clássicos e o LLM ainda usam motores separados; não há `ExperimentSpec` nem resultado consolidado. |
+| Arena clássicos x LLM | Parcial | Contrato mínimo de participante e intenção, com execução comum long-only single e multi-ativo para os cinco benchmarks clássicos. O participante LLM ainda usa motor separado; não há `ExperimentSpec` nem resultado consolidado. |
 | Dashboard | Parcial | Compara as cinco estratégias clássicas e exibe indicadores. Uma tela separada dispara backtest LLM, mas não incorpora o resultado à arena. |
 | Avaliação científica | Planejado | Não existem `src/evaluation`, splits temporais, walk-forward, testes de hipótese, análise de sensibilidade ou exportação científica. |
 | Operação em tempo real/MT5/BRAPI | Planejado | O runner diário é simulação persistente; integrações de mercado e execução automática não existem. |
@@ -131,10 +131,10 @@ ativo**. Ele não recebe o universo de ativos, correlações, pesos correntes da
 carteira ou restrições globais. O quorum é um ensemble estocástico de um papel,
 não 30 especialistas ou 30 modelos independentes.
 
-### Arena incremental — Buy & Hold
+### Arena incremental — cinco benchmarks clássicos
 
-`src/backtesting/arena.py` introduz a primeira fatia comum sem substituir os
-motores anteriores:
+`src/backtesting/arena.py` concentra a fatia comum sem substituir os motores
+anteriores:
 
 ```text
 MarketObservation até close(t)
@@ -144,21 +144,64 @@ MarketObservation até close(t)
         -> Trade + equity em close(t+1)
 ```
 
-`BuyAndHoldParticipant` produz uma única intenção na primeira sessão observável.
-O executor usa `CostModel`, quantidade inteira, caixa não negativo e posição
-long-only. Um intent na única/última sessão permanece uma decisão sem abertura
+Cinco adaptadores usam esse caminho:
+
+| Participante | Onde está | Como decide |
+|---|---|---|
+| `BuyAndHoldParticipant` | `src/strategies/buy_and_hold.py` | Uma intenção na primeira sessão observável. |
+| `SMACrossParticipant` | `src/strategies/sma_cross.py` | Médias rápida e lenta recalculadas sobre o histórico truncado em `t`. |
+| `BollingerParticipant` | `src/strategies/bollinger_bands.py` | Bandas estimadas só com dados até `t`. |
+| `EqualWeightParticipant` | `src/backtesting/portfolio.py` | `1/N` sobre os ativos observados, na cadência de rebalance do motor legado. |
+| `MinVarianceParticipant` | `src/backtesting/portfolio.py` | Reutiliza `MinVariancePortfolio`, que já recebe histórico truncado. |
+
+Nenhum participante decide direção de negociação: `OrderIntent` carrega apenas
+`ticker`, `target_weight` e `decision_time`. Os dois single-asset alternam entre
+100% investido e caixa e só emitem intenção quando o peso alvo muda, portanto
+uma posição mantida não gera trade repetido. Os dois multi-ativo emitem o peso
+alvo de cada ticker do universo a cada rebalance.
+
+Na abertura de `t+1`, o executor converte cada peso alvo em quantidade alvo
+sobre o patrimônio observado e compara com a posição corrente: déficit vira
+`BUY`, excesso vira `SELL`, posição já no alvo não gera trade. Como o preço de
+abertura pode ter aberto em gap, uma intenção que no fechamento anterior
+implicaria aumento pode ser executada como venda — `Trade.type` reflete a
+operação realmente executada. O executor usa `CostModel`, quantidade inteira,
+caixa não negativo e posição long-only. Um intent na única/última sessão permanece uma decisão sem abertura
 observada e não gera trade — o participante decide igual e não é informado de
 que aquela era a última sessão. A observação contém cópias dos históricos
 truncadas em `t` e nenhum campo sobre a sessão seguinte, portanto o participante
 não recebe preços futuros nem o horizonte da amostra por esse contrato.
 
-Esta implementação é deliberadamente single-asset e técnica: peso alvo entre
-zero e um foi escolhido como semântica extensível, sem congelar lote B3,
-slippage, liquidez, margem ou política científica definitiva. `BacktestEngine`,
-`PortfolioBacktestEngine` e `AgentBacktestEngine` continuam ativos em paralelo.
-Como o executor não consome `DatasetSnapshot`, o guard de `scientific_ready`
-permanece responsabilidade da futura camada de `ExperimentSpec`; não foi criada
-uma integração artificial nesta etapa.
+No caminho multi-ativo, o calendário é a interseção explícita dos índices, sem
+forward-fill nem barra fabricada; os tickers são percorridos em ordem
+determinística; e a alocação segue uma política puramente técnica: alvos e
+deltas calculados sobre o patrimônio na abertura, vendas antes das compras e,
+quando o caixa não cobre todos os déficits, escalonamento de todos os alvos pelo
+mesmo fator seguido de truncamento. O fator vem de busca binária sobre o custo
+reportado pelo `CostModel`, então o resultado não depende da ordem dos tickers e
+não assume a fórmula de custo. O resíduo de caixa não é redistribuído.
+
+Esta implementação continua técnica: peso alvo entre zero e um foi escolhido
+como semântica extensível, sem congelar lote B3, slippage, liquidez, margem,
+política de suspensão ou rateio científico definitivo. `BacktestEngine`,
+`PortfolioBacktestEngine` e `AgentBacktestEngine` continuam ativos em paralelo e
+o dashboard segue usando os motores legados. Como o executor não consome
+`DatasetSnapshot`, o guard de `scientific_ready` permanece responsabilidade da
+futura camada de `ExperimentSpec`; não foi criada uma integração artificial
+nesta etapa.
+
+#### Divergência intencional com o motor multi-ativo legado
+
+`PortfolioBacktestEngine` dimensiona as compras em laço por ticker ordenado,
+comprando o máximo possível de cada um antes de passar ao seguinte. Quando há
+custos positivos e os pesos somam 1,0, o caixa liberado pelas vendas não cobre
+todos os alvos e o último ticker da ordem alfabética recebe o que sobrou — em
+cenário extremo, nada. A arena não replica esse viés: escalona os alvos em
+conjunto. Os testes de paridade cobrem cenários sem disputa por caixa (custo
+zero, ou pesos com folga suficiente para os custos), onde os dois motores
+coincidem trade a trade; a divergência tem teste próprio, junto com a prova de
+que permutar a ordem dos tickers não altera curva, trades, custos nem posições
+na arena.
 
 ## Evidência de validação
 
@@ -168,7 +211,8 @@ seus resultados não são, por si só, conteúdo versionado no Git:
 | Verificação | Resultado |
 |---|---|
 | Suíte de pipeline com SQLite em memória (`poetry run pytest tests/pipeline -q`) | **108 passaram** em 10/09/2026 |
-| Suíte completa com SQLite em memória (`poetry run pytest -q`) | **382 passaram** em 10/09/2026 |
+| Suíte de backtesting (`poetry run pytest tests/backtesting -q`) | **188 passaram** em 12/09/2026 |
+| Suíte completa com SQLite em memória (`poetry run pytest -q`) | **442 passaram** em 12/09/2026 |
 | Cobertura (última medição, anterior a esta mudança) | **95%** |
 | Ruff | **14 violações preexistentes fora dos arquivos desta mudança** |
 | Ruff nos arquivos desta mudança | **verde** |
@@ -191,11 +235,12 @@ distinguem `close(t)` de `open(t+1)` e rejeitam trade na última decisão.
 
 ### 1. Motores separados
 
-Os motores LLM, clássico single-asset e clássico multi-asset agora compartilham
-a semântica observação até o fechamento de `t` e execução na abertura de `t+1`.
-Buy & Hold também possui um caminho comum preliminar com ordem normalizada, mas
-os demais participantes ainda são implementações separadas; portanto, essa
-primeira migração ainda não produz uma competição científica comum.
+Os motores LLM, clássico single-asset e clássico multi-asset compartilham a
+semântica observação até o fechamento de `t` e execução na abertura de `t+1`. Os
+cinco benchmarks clássicos já possuem caminho pelo contrato comum com ordem
+normalizada, mas o participante LLM continua em implementação separada e não há
+`ExperimentSpec` nem resultado consolidado; portanto, a migração ainda não
+produz uma competição científica comum.
 
 ### 2. Custos não comparáveis
 

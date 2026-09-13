@@ -41,9 +41,10 @@ TEST. Uma recomendação deste roadmap não substitui esse congelamento.
 
 - Pipeline de extração, transformação e carga de OHLCV diário via `yfinance`.
 - Indicadores SMA, Bollinger, RSI e MACD.
-- Cinco benchmarks clássicos: três single-asset e dois multi-ativo.
-- Motores de backtesting clássicos e um motor LLM single-asset, ainda não
-  comparáveis entre si.
+- Cinco benchmarks clássicos: três single-asset e dois multi-ativo, todos com
+  caminho pelo contrato comum da arena.
+- Motores de backtesting clássicos legados e um motor LLM single-asset, este
+  ainda fora do contrato comum.
 - Sistema multiagente linear: ensemble técnico, risco e portfólio.
 - `AgentRouterLLMClient` HTTP OpenAI-compatible com configuração por ambiente.
 - Retry, cache e telemetria básica de tokens, latência e modelo.
@@ -77,9 +78,13 @@ custos e métricas antes de construir a arena.
 - [x] Aplicar decisão em `t` e execução em `t+1` a todos os participantes
   clássicos atuais.
 - [~] Definir ordem canônica: o contrato técnico preliminar `OrderIntent` já
-  registra ativo, direção, peso alvo e instante da decisão, enquanto a
-  elegibilidade de execução pertence ao executor; políticas científicas
+  registra ativo, peso alvo e instante da decisão, enquanto direção e
+  elegibilidade de execução pertencem ao executor; políticas científicas
   definitivas ainda não foram congeladas.
+- [~] Definir alocação multi-ativo: o executor comum já vende antes de comprar e
+  escalona as compras pelo mesmo fator quando o caixa não cobre todos os alvos,
+  o que remove a dependência da ordem dos tickers; lote, resíduo de caixa e
+  política definitiva de rateio continuam pendentes de congelamento.
 - [x] Calcular custos sobre o valor financeiro total de cada ordem.
 - [x] Reservar custos ao dimensionar quantidade.
 - [x] Proibir caixa negativo.
@@ -139,17 +144,19 @@ mesmos dados
 - [x] Criar `MarketObservation` causal e `OrderIntent` técnico preliminar.
 - [x] Criar caminho comum de execução long-only para a migração incremental.
 - [x] Adaptar Buy & Hold como primeiro participante.
-- [ ] Adaptar SMA Cross.
-- [ ] Adaptar Bollinger Bands.
-- [ ] Adaptar Equal Weight.
-- [ ] Adaptar Mínima Variância.
+- [x] Adaptar SMA Cross.
+- [x] Adaptar Bollinger Bands.
+- [x] Estender o caminho comum para carteira multi-ativo.
+- [x] Adaptar Equal Weight.
+- [x] Adaptar Mínima Variância.
 - [ ] Adaptar o participante LLM.
 - [ ] Criar `ExperimentSpec` com snapshot, universo, split, capital, frequência,
   custos, benchmark, calendário, seeds e participante.
 - [ ] Criar `RunResult` e manifest canônicos.
 - [ ] Identificar e persistir cada execução por `run_id`.
-- [~] Adaptar os cinco benchmarks e o participante LLM ao contrato comum; Buy &
-  Hold já usa o novo caminho e os demais continuam nos motores legados.
+- [~] Adaptar os cinco benchmarks e o participante LLM ao contrato comum; os
+  cinco clássicos já executam pelo `ExecutionEngine` comum e o participante LLM
+  continua no motor próprio.
 - [ ] Executar replay histórico e avanço diário com a mesma semântica.
 - [x] Implementar `DailyAgentRunner` para avançar um pregão por execução.
 - [x] Persistir estado diário e previsão pendente entre processos.

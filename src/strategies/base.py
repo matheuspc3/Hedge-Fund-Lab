@@ -1,8 +1,11 @@
-"""Interface abstrata para estratégias de investimento."""
+"""Interfaces abstratas de estratégias e de participantes single-asset."""
 
 from abc import ABC, abstractmethod
+from typing import cast
 
 import pandas as pd
+
+from src.backtesting.arena import MarketObservation, OrderIntent
 
 
 class Strategy(ABC):
@@ -38,3 +41,47 @@ class Strategy(ABC):
     def get_name(self) -> str:
         """Retorna o nome legível da estratégia."""
         ...
+
+
+class SignalParticipant(ABC):
+    """Participante single-asset que alterna entre 100% investido e caixa.
+
+    O sinal é recalculado a cada observação usando apenas o histórico já
+    truncado em ``t``; a arena nunca entrega o DataFrame completo. O peso alvo
+    só vira intenção quando muda, portanto uma posição mantida não gera trade
+    repetido. Long-only: não existe peso negativo nem alavancagem.
+
+    Uma instância acompanha uma execução: o peso alvo é reiniciado quando a
+    observação mostra a primeira sessão do recorte.
+    """
+
+    def __init__(self, ticker: str) -> None:
+        if not ticker.strip():
+            raise ValueError("ticker cannot be empty")
+        self.ticker = ticker.strip()
+        self._target_weight = 0.0
+
+    @abstractmethod
+    def _signal(self, close: pd.Series) -> int:
+        """Retorna 1 (entrar), -1 (sair) ou 0 (manter) a partir de ``close`` até ``t``."""
+        ...
+
+    def decide(self, observation: MarketObservation) -> list[OrderIntent]:
+        history = observation.history.get(self.ticker)
+        if history is None:
+            raise ValueError(f"observation missing ticker: {self.ticker}")
+        if len(history) == 1:
+            self._target_weight = 0.0
+
+        signal = self._signal(cast(pd.Series, history["fechamento"]))
+        target = {1: 1.0, -1: 0.0}.get(signal, self._target_weight)
+        if target == self._target_weight:
+            return []
+        self._target_weight = target
+        return [
+            OrderIntent(
+                ticker=self.ticker,
+                target_weight=target,
+                decision_time=observation.session,
+            )
+        ]
