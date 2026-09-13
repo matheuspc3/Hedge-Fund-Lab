@@ -188,12 +188,44 @@ do TEST e executados pelo contrato comum.
 
 ## 13. Multi-agent variants
 
-Pendência arquitetural registrada aqui para não ser esquecida na migração: um
-participante LLM multi-ativo precisará de semântica explícita para tickers
-omitidos numa decisão. Hoje o `ExecutionEngine` trata ticker sem intenção como
-"manter posição", o que é correto para os cinco clássicos. A preferência
-arquitetural futura é exigir do participante um target portfolio completo. Essa
-mudança não foi feita e não altera os benchmarks atuais.
+Pendência arquitetural anterior, agora resolvida no nível do contrato: um
+participante LLM multi-ativo precisa de semântica explícita para tickers
+omitidos numa decisão. A regra adotada é **target portfolio completo**.
+
+```text
+uma decisão de carteira declara um peso para CADA ativo do universo observado
+
+ticker omitido   -> DECISÃO INVÁLIDA
+ticker extra     -> DECISÃO INVÁLIDA
+ticker duplicado -> DECISÃO INVÁLIDA
+peso NaN/Inf     -> DECISÃO INVÁLIDA
+peso < 0 ou > 1  -> DECISÃO INVÁLIDA
+soma > 1 + tol   -> DECISÃO INVÁLIDA
+
+cash_weight = 1 - Σ target_weights
+```
+
+Ticker omitido não significa manter posição, não significa peso zero e não
+autoriza o executor a inferir nada. Isso vale para uma *decisão de carteira*;
+não confundir com a ausência de decisão do participante single-asset migrado,
+cujo `MANTER` devolve nenhuma intenção — que é como o motor legado não emitia
+ordem — e não uma carteira parcial. Peso zero é decisão explícita e precisa ser
+escrita. Nada é normalizado silenciosamente. A regra está implementada e
+testada em `target_portfolio_to_intents`
+(`src/agents/participant.py`).
+
+Isso não altera os cinco clássicos: o `ExecutionEngine` continua tratando
+ticker sem intenção como "manter posição", que é a semântica correta para eles.
+A ausência de qualquer intenção também continua significando "nenhuma decisão
+nova" — coisa distinta de uma decisão de carteira parcial, que é inválida.
+
+**Capacidade técnica atual (não é congelamento).** O participante LLM já
+executa pelo mesmo `ExperimentSpec` -> `ExperimentRunner` -> `ExecutionEngine`
+-> `RunResult` -> manifest dos clássicos, sob o `kind` `llm_agent`, na versão
+**single-asset**. A stack de agentes é single-asset por construção e não possui
+etapa de alocação entre ativos; o participante recusa universo com mais de um
+ativo em vez de fabricar um laço por ticker. A variante multi-ativo continua
+`TBD`.
 
 Variantes candidatas:
 
@@ -206,7 +238,44 @@ Variantes candidatas:
 
 Número de analistas, quorum, regra para votos inválidos, papéis e thresholds:
 `TBD`. A configuração atual de 30 analistas e 25/30 é baseline técnica, não
-parâmetro científico automaticamente congelado.
+parâmetro científico automaticamente congelado. Ela é configurável na
+`ParticipantSpec` (`analyst_count`, `consensus_threshold`,
+`require_all_votes`, `temperature_min`, `temperature_max`, `seed_base`) e entra
+no `spec_hash` e no manifest — registrar não é congelar.
+
+Frequência de decisão: `TBD`. `decision_frequency` é configuração material do
+participante e entra no `spec_hash` e no manifest, mas registrar não é
+congelar. Os dois defaults herdados do código legado são diferentes e ficam
+declarados:
+
+```text
+AgentBacktestEngine (classe/API) default = 1   <- adotado pelo LLMParticipant
+scripts/run_agent_backtest.py       default = 5   <- escolha operacional de demo
+```
+
+Nenhum dos dois foi aprovado como parâmetro científico. A frequência definitiva
+do experimento deve ser decidida junto com splits e orçamento de chamadas,
+antes do TEST.
+
+Descrição correta do primeiro estágio: **ensemble/quorum de múltiplas amostras
+do mesmo papel, do mesmo prompt e do mesmo modelo**, variando temperatura e
+seed registrado. Não são 30 especialistas independentes; papéis e modelos
+distintos não estão implementados.
+
+Distinção adotada entre falha e decisão, no caminho da arena:
+
+```text
+timeout / erro de provedor / JSON inválido /
+schema inválido / quorum incompletado por falha
+        -> LLMDecisionError -> run falha
+
+quorum sem supermaioria, com todos os votos válidos
+        -> MANTER (regra de agregação da metodologia atual)
+```
+
+Falha de infraestrutura não vira decisão de investimento. O retry legitimamente
+configurado hoje (`RetryingLLMClient`) continua valendo: só falha **não
+recuperada** derruba o run.
 
 ## 14. Models/providers
 
@@ -220,6 +289,24 @@ parâmetro científico automaticamente congelado.
 Compatibilidade será declarada apenas após validação documental e técnica. Cache
 hits e respostas mock serão identificados e não serão confundidos com chamadas
 reais.
+
+**Proveniência registrável hoje, sem congelar escolha.** A `ParticipantSpec` do
+`llm_agent` grava `provider` e `model` no `spec_hash` e no manifest, e o
+provedor real exige `model` explícito — sem modelo declarado o run não começa.
+`provider="mock"` também é registrado, de modo que um run mock nunca se confunde
+com um run científico.
+
+O que isso identifica é **o que foi tecnicamente solicitado**:
+
+```text
+requested_model = "<id enviado ao provedor>"      -> registrado
+exact_model_weights / versão interna do modelo    -> NÃO identificável
+```
+
+O provedor não expõe versionamento de pesos, então o manifest não afirma
+identificá-lo. `base_url`, timeout e credencial continuam sendo ambiente de
+execução: a credencial nunca é serializada; o endpoint ainda não entra na spec,
+e isso é uma lacuna conhecida de proveniência.
 
 ## 15. Seeds and stochasticity
 
@@ -239,6 +326,21 @@ versão final são `TBD`.
 
 Prompts serão congelados antes do TEST. Alterações posteriores criam nova versão
 e não sobrescrevem resultados existentes.
+
+**Onde os prompts vivem hoje, e o que isso garante.** Eles são constantes de
+módulo em `src/agents/technical_analyst.py`, `src/agents/risk_manager.py` e
+`src/agents/portfolio_manager.py`. Não existe prompt registry, nem campo de
+versão, nem hash de prompt.
+
+```text
+prompt provenance currently derives from git_commit;
+explicit prompt versioning remains hardening futuro.
+```
+
+O vínculo é indireto mas real: o `ExperimentRunner` recusa working tree suja, e
+o manifest grava o commit, então o texto exato dos prompts executados é
+recuperável a partir do commit registrado. Nenhum `prompt_version` é inventado
+enquanto não existir mecanismo que o sustente.
 
 ## 17. Metrics
 
@@ -326,6 +428,14 @@ abortam a execução antes de qualquer trabalho. Existe um escape explícito de 
 `reproducibility.clean_source=false` no manifest; ele não altera o `spec_hash`.
 Nenhum diff do working tree é persistido — a reprodução depende do commit, não
 de um patch anexado.
+
+Para o `llm_agent`, o bloco `participant` do manifest carrega a configuração
+material do LLM: provedor, modelo requisitado, política de retry, quorum,
+limites de risco e de portfólio, janela de volatilidade e payoff. Credencial
+não entra em spec, manifest, log nem artefato de auditoria. Dois itens da lista
+acima continuam **não** registrados no manifest e são hardening seguinte:
+eventos de telemetria por decisão (tokens, latência, retry) e versionamento de
+prompt — hoje eles ficam, respectivamente, no cliente LLM e no `git_commit`.
 
 ## 21. Freeze procedure
 

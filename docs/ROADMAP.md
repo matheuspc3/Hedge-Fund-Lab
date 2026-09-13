@@ -43,8 +43,11 @@ TEST. Uma recomendação deste roadmap não substitui esse congelamento.
 - Indicadores SMA, Bollinger, RSI e MACD.
 - Cinco benchmarks clássicos: três single-asset e dois multi-ativo, todos com
   caminho pelo contrato comum da arena.
-- Motores de backtesting clássicos legados e um motor LLM single-asset, este
-  ainda fora do contrato comum.
+- Participante LLM single-asset (`llm_agent`) também pelo contrato comum, com
+  decisão do grafo existente e execução exclusivamente pela arena.
+- Motores de backtesting clássicos legados e o motor LLM legado
+  (`AgentBacktestEngine`), preservados como caminhos operacionais fora do
+  contrato comum.
 - Sistema multiagente linear: ensemble técnico, risco e portfólio.
 - `AgentRouterLLMClient` HTTP OpenAI-compatible com configuração por ambiente.
 - Retry, cache e telemetria básica de tokens, latência e modelo.
@@ -130,8 +133,11 @@ Participant
 ├── BollingerParticipant
 ├── EqualWeightParticipant
 ├── MinVarianceParticipant
-└── LLMAgentParticipant
+└── LLMParticipant          # registry: kind="llm_agent"
 ```
+
+Os seis já existem. `LLMParticipant` é single-asset: ele recusa universo com
+mais de um ativo em vez de inventar alocação entre ativos.
 
 O invariante é:
 
@@ -153,7 +159,10 @@ mesmos dados
 - [x] Estender o caminho comum para carteira multi-ativo.
 - [x] Adaptar Equal Weight.
 - [x] Adaptar Mínima Variância.
-- [ ] Adaptar o participante LLM.
+- [x] Adaptar o participante LLM single-asset ao contrato comum.
+- [ ] Evoluir o participante LLM para carteira-alvo multi-ativo; o contrato de
+  carteira completa já existe e é validado, falta a etapa de alocação entre
+  ativos na stack de agentes.
 - [~] Criar `ExperimentSpec` com snapshot, universo, split, capital, frequência,
   custos, benchmark, calendário, seeds e participante; a spec atual cobre
   snapshot, participante serializável, capital, custos e parâmetros de métrica.
@@ -169,9 +178,9 @@ mesmos dados
   explícito de desenvolvimento registrado no manifest.
 - [x] Criar `RunResult` e manifest canônicos.
 - [x] Identificar e persistir cada execução por `run_id` e `spec_hash`.
-- [~] Adaptar os cinco benchmarks e o participante LLM ao contrato comum; os
-  cinco clássicos já executam pelo `ExecutionEngine` comum e o participante LLM
-  continua no motor próprio.
+- [x] Adaptar os cinco benchmarks e o participante LLM ao contrato comum: os
+  cinco clássicos e o `llm_agent` single-asset executam pelo mesmo
+  `ExecutionEngine` e pelo mesmo `ExperimentRunner`.
 - [ ] Executar replay histórico e avanço diário com a mesma semântica.
 - [x] Implementar `DailyAgentRunner` para avançar um pregão por execução.
 - [x] Persistir estado diário e previsão pendente entre processos.
@@ -206,14 +215,22 @@ compatibilidade oficial com um provedor específico.
 
 - [ ] Registrar custo real ou estimado.
 - [ ] Vincular telemetria a run, agente, data e hash/versionamento de prompt.
+  Hoje a proveniência de prompt deriva apenas do `git_commit` do manifest;
+  `LLMDecisionRecord` e `LLMTelemetry` ainda não entram no `RunResult`.
 - [ ] Usar structured output nativo quando o endpoint suportar.
 - [ ] Verificar documentalmente o suporte real a `seed`.
 - [ ] Enviar `seed` somente quando suportada.
 - [ ] Tornar o cache seguro sob concorrência.
 - [ ] Remover estado mutável compartilhado de retry/telemetria.
-- [ ] Garantir fail-closed completo após o quorum, inclusive risco e portfólio.
+- [~] Garantir fail-closed completo após o quorum, inclusive risco e portfólio.
+  No caminho da arena, falha não recuperada do provedor — timeout, erro HTTP,
+  JSON inválido, schema inválido, quorum incompletado por falha — levanta
+  `LLMDecisionError` e derruba o run em vez de virar `MANTER`. Os motores
+  legados continuam com o fail-soft anterior, e o fail-soft de "decisão inverteu
+  o sinal técnico" no `portfolio_manager` segue intacto.
 - [ ] Calibrar confiança ou retirar Kelly probabilístico do primeiro experimento.
-- [ ] Evoluir o participante LLM para carteira multi-ativo.
+- [ ] Evoluir o participante LLM para carteira multi-ativo (contrato de
+  carteira-alvo completa já implementado e testado).
 - [ ] Corrigir o dry-run para separar chamadas lógicas, externas e cache hits.
 
 **Critério de saída:** uma execução pequena pode ser reproduzida pelo manifest,

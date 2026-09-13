@@ -17,13 +17,14 @@ estágio é um quorum configurável de 30 chamadas.
 Ele ainda **não é a arena científica descrita como objetivo**. Um caminho comum
 preliminar já recebe `MarketObservation`, chama `Participant`, normaliza a
 decisão como `OrderIntent` e executa os cinco benchmarks clássicos — single e
-multi-ativo — pelo mesmo `ExecutionEngine`. O sistema LLM continua em motor
-próprio e não aparece na comparação principal. Já existe um orquestrador
-experimental (`ExperimentSpec` -> `ExperimentRunner` -> `RunResult` ->
-manifest), mas ainda não existem divisão train/validation/test, walk-forward,
-análise estatística nem protocolo congelado. Portanto, os números exibidos no
-dashboard e os JSONs de agentes são demonstrações técnicas, não evidência de que
-uma abordagem venceu outra.
+multi-ativo — pelo mesmo `ExecutionEngine`. **O participante LLM entrou nesse
+mesmo caminho**, na versão single-asset: `ExperimentSpec(kind="llm_agent")` ->
+`ExperimentRunner` -> `LLMParticipant` -> `ExecutionEngine` -> `RunResult` ->
+manifest, com os mesmos guards de snapshot e de proveniência Git. Ainda não
+existem divisão train/validation/test, walk-forward, análise estatística nem
+protocolo congelado, e o hardening do cliente LLM continua pendente. Portanto,
+os números exibidos no dashboard e os JSONs de agentes são demonstrações
+técnicas, não evidência de que uma abordagem venceu outra.
 
 ## O que existe hoje
 
@@ -37,12 +38,13 @@ uma abordagem venceu outra.
 | Sistema de agentes | Parcial | Quorum técnico -> risco -> portfólio em LangGraph, com contratos Pydantic e regras duras. Opera um ticker por execução. |
 | Quorum de 30 | Implementado com ressalvas | Faz 30 chamadas concorrentes do mesmo papel e cliente, variando prompt, temperatura e seed registrado. Exige 25/30 por padrão e todos os votos válidos. |
 | Cliente LLM real | Parcial | Cliente HTTP OpenAI-compatible, retry, cache e telemetria básica. A integração específica chamada de OmniRouter/Agent Router não está isolada nem comprovada no repositório. |
-| Backtest LLM | Implementado com lacunas | Decide no fechamento de `t`, executa na próxima abertura observada e registra ciclo, votos, trades e curva em JSON. A última previsão fica pendente. |
+| Backtest LLM legado | Implementado com lacunas | `AgentBacktestEngine` decide no fechamento de `t`, executa na próxima abertura observada e registra ciclo, votos, trades e curva em JSON. A última previsão fica pendente. Continua disponível como caminho operacional; a parte de execução financeira dele **não** foi reutilizada pela arena. |
 | Runner diário | Parcial | `DailyAgentRunner` persiste estado, reconcilia a previsão pendente na abertura esperada e avança uma sessão por execução. Ainda não integra a arena nem um manifest canônico. |
 | Calendário B3 | Parcial | `B3Calendar` resolve fins de semana, feriados recorrentes e exceções explícitas sem dependência externa; ainda precisa de validação/versionamento contra calendário oficial. |
-| Arena clássicos x LLM | Parcial | Contrato mínimo de participante e intenção, com execução comum long-only single e multi-ativo para os cinco benchmarks clássicos. O participante LLM ainda usa motor separado; não há `ExperimentSpec` nem resultado consolidado. |
+| Arena clássicos x LLM | Parcial | Contrato mínimo de participante e intenção, com execução comum long-only single e multi-ativo para os cinco benchmarks clássicos e para o participante LLM single-asset. Todos executam pelo mesmo `ExecutionEngine`, pelo mesmo `ExperimentRunner` e produzem o mesmo `RunResult`. Falta o participante LLM multi-ativo e falta o protocolo científico. |
+| Participante LLM na arena | Implementado (single-asset) | `LLMParticipant` recebe apenas `MarketObservation`, monta o `AgentState` a partir de `close(t)`, delega ao grafo existente e termina em peso alvo. Não executa trade, não mexe em caixa, não aplica custo. Falha de provedor derruba o run em vez de virar `MANTER`. Registrado no registry como `llm_agent`. |
 | Dashboard | Parcial | Compara as cinco estratégias clássicas e exibe indicadores. Uma tela separada dispara backtest LLM, mas não incorpora o resultado à arena. |
-| Orquestração experimental | Implementado com lacunas | `src/experiments/` executa os cinco clássicos a partir de um snapshot validado, com `spec_hash` estável, `run_id`, participante novo por run, evidência do snapshot capturada no `run()` e manifest atômico em `data/runs/<run_id>/`. Não cobre o participante LLM nem splits temporais. |
+| Orquestração experimental | Implementado com lacunas | `src/experiments/` executa os cinco clássicos **e o `llm_agent`** a partir de um snapshot validado, com `spec_hash` estável, `run_id`, participante novo por run, evidência do snapshot capturada no `run()` e manifest atômico em `data/runs/<run_id>/`. Não cobre splits temporais nem análise estatística. |
 | Avaliação científica | Planejado | Não existem splits temporais, walk-forward, testes de hipótese, análise de sensibilidade ou exportação científica. |
 | Operação em tempo real/MT5/BRAPI | Planejado | O runner diário é simulação persistente; integrações de mercado e execução automática não existem. |
 
@@ -447,9 +449,98 @@ protocolo aprovado.
   `analistas + 2` como número fixo, embora veto e `MANTER` evitem chamadas e cache
   evite chamadas externas. Hoje ele não é uma estimativa confiável de gasto.
 
+### Participante LLM na arena — o que ficou dentro e o que ficou fora
+
+Entregue nesta fase:
+
+- `src/agents/participant.py` com `LLMParticipant`, `LLMDecisionError`,
+  `LLMDecisionRecord`, `FailureRecordingClient` e `target_portfolio_to_intents`.
+- `llm_agent` no registry, construído só por `kind` mais parâmetros escalares.
+- Configuração material do LLM na `ParticipantSpec`, portanto dentro do
+  `spec_hash` e do manifest: `provider`, `model`, `retry_attempts`,
+  `retry_base_delay`, `analyst_count`, `consensus_threshold`,
+  `require_all_votes`, `temperature_min`, `temperature_max`, `seed_base`,
+  limites de risco e de portfólio, `volatility_window`, `payoff_ratio` e
+  `decision_frequency`.
+- Credencial fora de tudo isso: continua vindo do ambiente, como antes.
+- `provider="agent_router"` exige `model` explícito — sem modelo declarado não
+  há proveniência e o run não começa.
+
+**Frequência de decisão migrada, não inventada.** `decision_frequency` existia
+no motor legado e não tinha equivalente na primeira versão do participante, o
+que transformaria silenciosamente a estratégia em decisão a cada pregão. Agora
+existe, é do participante e entra na spec. Os dois defaults do código legado são
+diferentes e ficam registrados como são:
+
+```text
+AgentBacktestEngine (classe/API) default = 1
+scripts/run_agent_backtest.py       default = 5
+```
+
+`LLMParticipant` adota `1`, o default da classe. Nenhum dos dois é parâmetro
+científico congelado: `5` é escolha operacional do script de demonstração, feita
+para reduzir chamadas, e continua não aprovada como metodologia.
+
+Uma divergência com o legado é deliberada: lá a última barra era sempre
+elegível (`is_last_day`), o que exige saber que o recorte terminou. O contrato
+da arena não entrega essa informação, então a elegibilidade aqui depende apenas
+do índice já percorrido.
+
+**`MANTER` continua significando nenhuma ordem.** O participante single-asset
+não converte `MANTER` em `target_weight` igual ao peso do fechamento: isso
+viraria um rebalance na abertura seguinte depois de um gap, que não é "não
+fazer nada". A regra vale para este participante migrado e não altera a decisão
+de carteira-alvo completa obrigatória para o futuro LLM multi-ativo.
+
+**Paridade de dimensionamento com o legado, e onde ela termina.** Sem gap
+(`open(t+1) == close(t)`) e sem custos, a tradução reproduz exatamente a
+quantidade do motor legado na compra. Na venda ela coincide quando
+`posição * size` é inteiro; quando não é, divergem em uma ação, porque o legado
+trunca a *quantidade vendida* e a arena trunca a *posição alvo* remanescente.
+Isso é política de lote e arredondamento da arena, que continua `TBD`, e está
+preso por teste em vez de escondido. Com gap ou com custos não existe paridade
+esperada, por construção: a direção nasce na abertura e os custos são do
+executor.
+
+**Multi-ativo: NÃO implementado nesta fase.** A stack de agentes é single-asset
+por construção e não possui etapa de alocação entre ativos. Transformar isso em
+um laço por ticker com normalização de pesos criaria uma estratégia nova, sem
+raciocínio cross-asset, que nunca foi aprovada. O `LLMParticipant` recusa
+explicitamente universo com mais de um ativo. O contrato de carteira-alvo
+completa já está implementado e testado, então a evolução multi-ativo só
+precisa substituir a origem dos pesos.
+
+**Sizing ainda não é científico.** A tradução de `position_size` para peso alvo
+preserva exatamente o que o `portfolio_manager` já calculava — inclusive o
+fractional Kelly sobre a confiança textual. Isso é migração de comportamento,
+não aprovação metodológica: a confiança textual continua não calibrada e o
+Kelly probabilístico continua em aberto.
+
+**Proveniência de prompt.** Os prompts vivem em
+`src/agents/technical_analyst.py`, `risk_manager.py` e `portfolio_manager.py`,
+como constantes de módulo. Não existe registry nem versionamento explícito de
+prompt; hoje a proveniência do prompt deriva do `git_commit` registrado no
+manifest, e o guard fail-closed de working tree limpa é o que garante esse
+vínculo. Versionamento explícito de prompt continua hardening futuro.
+
+**Fail-soft remanescente, herdado e não alterado.** O `portfolio_manager`
+converte em `MANTER` uma decisão que inverte o sinal técnico, e o
+`risk_manager` veta por métrica ausente no aquecimento do recorte. Nenhum dos
+dois é falha de infraestrutura e ambos foram preservados como estão, para não
+substituir silenciosamente o comportamento científico atual. Ambos aparecem em
+`LLMDecisionRecord.errors`.
+
+**Telemetria não integrada.** `LLMTelemetry` (tokens, latência, retry, modelo)
+continua acumulando no cliente e `LLMDecisionRecord` vive na instância do
+participante. Nada disso entra no `RunResult` nem no manifest: integrar exigiria
+mudança de schema e ficou como próximo hardening. O requisito mínimo desta fase
+— reconstruir a decisão executada em teste e ver a configuração na
+spec/manifest — está atendido.
+
 ### Dashboard e operação
 
-- A arena principal não contém a estratégia LLM.
+- O dashboard e a tela `/lab` continuam consumindo os motores legados; eles não
+  leem `data/runs/` nem exibem resultados do `llm_agent` na arena.
 - `/lab` dispara processos sem fila, identificador, cancelamento ou endpoint de
   status; a conclusão é inferida por texto no log.
 - A tela seleciona o provedor real por padrão e o servidor escuta em todas as

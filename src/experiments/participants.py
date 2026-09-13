@@ -1,15 +1,20 @@
-"""Registry explícito dos participantes clássicos suportados pelo runner.
+"""Registry explícito dos participantes suportados pelo runner.
 
 O registry existe para que uma spec serializada nunca precise carregar um
 import path arbitrário. Cada chamada a :func:`build_participant` devolve uma
-instância nova: participantes clássicos guardam estado entre sessões
-(``_target_weight``, ``_session_index``) e reutilizar a mesma instância entre
-runs contaminaria a segunda execução.
+instância nova: participantes guardam estado entre sessões (``_target_weight``,
+``_session_index``, o pico de patrimônio do ``llm_agent``) e reutilizar a mesma
+instância entre runs contaminaria a segunda execução.
+
+``llm_agent`` entra pelo mesmo caminho dos clássicos: a spec descreve provedor,
+modelo, quorum e limites como escalares JSON, e a credencial continua vindo do
+ambiente — segredo não entra em spec, manifest nem log.
 """
 
 import inspect
 from typing import Any, Callable, Mapping
 
+from src.agents.participant import LLMParticipant
 from src.backtesting.arena import Participant
 from src.backtesting.portfolio import EqualWeightParticipant, MinVarianceParticipant
 from src.experiments.spec import ParticipantSpec
@@ -21,6 +26,7 @@ PARTICIPANT_REGISTRY: Mapping[str, Callable[..., Participant]] = {
     "bollinger": BollingerParticipant,
     "buy_and_hold": BuyAndHoldParticipant,
     "equal_weight": EqualWeightParticipant,
+    "llm_agent": LLMParticipant,
     "min_variance": MinVarianceParticipant,
     "sma_cross": SMACrossParticipant,
 }

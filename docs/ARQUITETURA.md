@@ -35,8 +35,10 @@ São dois produtos paralelos:
 Eles compartilham dados, estruturas de custo/trade e o relógio conceitual
 fechamento de `t` -> abertura de `t+1`, mas não compartilham o motor, a unidade
 experimental ou o formato de resultado. Em paralelo, a arena já executa os cinco
-benchmarks clássicos pelo contrato comum descrito abaixo; o dashboard e o
-participante LLM continuam nos motores legados.
+benchmarks clássicos **e o participante LLM single-asset** pelo contrato comum
+descrito abaixo; o dashboard e os dois runners LLM legados
+(`AgentBacktestEngine` e `DailyAgentRunner`) continuam nos motores próprios e
+permanecem disponíveis como caminhos operacionais.
 
 ## Componentes atuais
 
@@ -224,8 +226,13 @@ data/runs/<run_id>/{manifest.json, equity.csv, trades.csv}   publicação atômi
   `participant.params[...]` altera a spec, de modo que uma `ExperimentSpec`
   criada tem identidade estável por toda a sua vida. `to_dict()` continua
   devolvendo um `dict` novo e JSON-serializável.
-- `participants.py`: registry explícito dos cinco clássicos e `build_participant`.
-  Não existe import path arbitrário vindo de fora.
+- `participants.py`: registry explícito dos cinco clássicos, do `llm_agent` e
+  `build_participant`. Não existe import path arbitrário vindo de fora. A
+  `ParticipantSpec` do `llm_agent` descreve provedor, modelo requisitado,
+  retry, quorum, frequência de decisão e limites de risco e de portfólio como
+  escalares JSON — tudo entra no `spec_hash` e no manifest. Credencial não entra: chave de API,
+  token e header de autorização continuam sendo ambiente de execução e nunca
+  são serializados em spec, manifest, log ou artefato de auditoria.
 - `runner.py`: `ExperimentRunner` e `RunResult`.
 
 `ExperimentSpec` carrega `snapshot_id`, não caminho: o diretório onde o snapshot
@@ -273,6 +280,7 @@ efetivamente entregue ao `ExecutionEngine`.
 ### Sistema multiagente
 
 - `src/agents/state.py`: contratos Pydantic e estado LangGraph.
+- `src/agents/participant.py`: adaptador do grafo para o contrato da arena.
 - `technical_analyst.py`: chamada individual legada e ensemble concorrente.
 - `risk_manager.py`: regras determinísticas e parecer LLM.
 - `portfolio_manager.py`: Kelly/limites e decisão LLM.
@@ -305,7 +313,136 @@ gestor de risco
 ```
 
 O primeiro estágio é um quorum interno, então a descrição mais precisa é
-**três estágios decisórios, sendo o primeiro um ensemble de 30 amostras**.
+**três estágios decisórios, sendo o primeiro um ensemble de 30 amostras**. São
+30 amostras do mesmo papel, do mesmo prompt e do mesmo modelo, variando
+temperatura e seed registrado — não 30 especialistas independentes.
+
+### Participante LLM na arena
+
+`src/agents/participant.py` liga esse grafo à arena. Ele é um adaptador: não
+reimplementa schema, cliente, prompt, nó nem grafo, e não reutiliza nada do
+lado de execução do `AgentBacktestEngine`.
+
+```text
+DatasetSnapshot
+        v
+ExperimentRunner  (spec kind="llm_agent")
+        v
+LLMParticipant.decide(MarketObservation)   <- só informação de close(t)
+        v
+AgentState  -> quorum técnico -> risco -> portfólio
+        v
+FinalDecision (COMPRA/VENDA/MANTER + position_size)
+        v
+carteira-alvo completa sobre o universo observado
+        v
+OrderIntent(target_weight)
+        v
+ExecutionEngine na abertura de t+1  -> Trade
+        v
+RunResult + manifest
+```
+
+A separação é a regra: **a stack de agentes decide, a arena executa.** O
+participante termina em peso alvo; quantidade inteira, direção, preço de
+execução, custo, caixa e `Trade` continuam sendo exclusividade do
+`ExecutionEngine`.
+
+Três decisões desta camada merecem registro:
+
+1. **Indicadores recalculados sobre histórico truncado.** O snapshot guarda
+   OHLCV puro, e o `AgentState` precisa dos oito indicadores que o motor legado
+   lia de colunas pré-calculadas. O participante chama a mesma
+   `DataTransformer.calculate_indicators` do pipeline sobre `history` até `t`.
+   Como `rolling` e `ewm(adjust=False)` são varreduras para frente, o valor em
+   `t` é idêntico ao da série inteira — a diferença é que não existe barra
+   futura para observar.
+
+2. **Tradução explícita de ordem para peso.** O pipeline produz
+   `position_size` como fração *da operação* — caixa disponível na compra,
+   posição corrente na venda — e não como peso de carteira. O participante
+   aplica a identidade aritmética "em que estado de carteira esta ordem quer
+   chegar", avaliada no fechamento de `t`:
+
+   ```text
+   COMPRA(s) -> (posição * close + s * caixa) / patrimônio
+   VENDA(s)  -> (posição * close * (1 - s))   / patrimônio
+   MANTER    -> nenhuma intenção
+   ```
+
+   Isso preserva o dimensionamento que o `portfolio_manager` já calcula sem
+   copiar a regra de Kelly para a arena e sem declará-la como sizing científico
+   final. Duas diferenças são declaradas: o peso alcançado difere do alvo
+   porque a execução acontece na abertura seguinte, a outro preço, e a tradução
+   não desconta custos, que pertencem ao executor.
+
+3. **Frequência de decisão preservada.** `decision_frequency` migra a opção de
+   mesmo nome do `AgentBacktestEngine`: só as sessões cujo índice é múltiplo
+   dela chamam o grafo; as demais não tocam o provedor e não emitem intenção. A
+   regra é do participante, não do runner nem do executor — o motor financeiro
+   continua ignorante da frequência. O contador é interno, começa em zero a
+   cada instância e é reiniciado quando a observação mostra a primeira sessão
+   do recorte; ele nunca deriva do tamanho do dataset, da próxima sessão ou da
+   distância até o fim.
+
+   Uma divergência em relação ao motor legado é deliberada e declarada: lá a
+   última barra era sempre elegível (`is_last_day`), o que exige saber que o
+   recorte acabou. Essa informação não existe no contrato da arena e o
+   participante não pode reconstruí-la.
+
+4. **`MANTER` é ausência de ordem, não alvo igual ao peso corrente.** Reemitir
+   o peso observado em `close(t)` faria o executor recalcular a quantidade alvo
+   sobre o patrimônio da abertura seguinte; depois de um gap, isso exigiria
+   comprar ou vender. "Não fazer nada" precisa ser a ausência de ordem, como no
+   motor legado. Essa regra é do participante single-asset migrado e **não**
+   enfraquece o contrato de carteira-alvo completa do futuro LLM multi-ativo:
+   uma decisão de carteira continua obrigada a declarar todos os tickers.
+
+5. **Falha não vira `MANTER`.** Uma casca `FailureRecordingClient` observa o
+   limite do provedor por fora do retry. Timeout, erro de provedor, JSON
+   inválido, schema inválido e quorum incompletado por falhas levantam
+   `LLMDecisionError` e derrubam o run. Quorum sem supermaioria com todos os
+   votos válidos continua sendo `MANTER`: ali não houve falha nenhuma, é a
+   regra de agregação da metodologia atual.
+
+#### Contrato de carteira-alvo completa
+
+Para o caminho multi-ativo, a regra já está implementada e testada em
+`target_portfolio_to_intents`: **uma decisão de carteira declara um peso para
+cada ativo do universo observado.**
+
+```text
+ticker omitido   -> DECISÃO INVÁLIDA
+ticker extra     -> DECISÃO INVÁLIDA
+ticker duplicado -> DECISÃO INVÁLIDA
+peso NaN/Inf     -> DECISÃO INVÁLIDA
+peso < 0 ou > 1  -> DECISÃO INVÁLIDA
+soma > 1 + tol   -> DECISÃO INVÁLIDA
+```
+
+Omitir um ativo não significa manter posição, não significa peso zero e não
+autoriza o executor a inferir nada. Peso zero é decisão explícita e precisa ser
+escrita. Nada é normalizado silenciosamente; o caixa é implícito em
+`1 - Σ pesos`.
+
+Ausência de intenção é coisa diferente de decisão parcial: `MANTER`, veto de
+risco e ausência de decisão final devolvem lista vazia, ou seja, *nenhuma
+decisão nova*, e o executor mantém a posição. É a mesma semântica que os cinco
+participantes clássicos já usam e que o motor legado aplicava.
+
+#### Limitação declarada: single-asset
+
+A stack de agentes atual é single-asset por construção — `AgentState` descreve
+um ticker, um preço e uma posição escalar, e não existe etapa de construção de
+carteira entre ativos. O `LLMParticipant` **recusa explicitamente** um universo
+com mais de um ativo em vez de rodar um laço independente por ticker e
+normalizar pesos: isso seria outra estratégia, sem raciocínio cross-asset e sem
+sustentação no código ou na metodologia atual.
+
+A evolução multi-ativo já tem o contrato pronto e só precisa substituir a
+origem dos pesos, porque a decisão single-asset já passa pelo mesmo
+`target_portfolio_to_intents` — o universo de um ativo é o caso degenerado da
+carteira completa.
 
 ### Apresentação
 

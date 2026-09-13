@@ -8,6 +8,13 @@ from src.agents.llm_client import (
     MockLLMClient,
     RetryingLLMClient,
 )
+from src.agents.participant import (
+    SUPPORTED_PROVIDERS,
+    LLMDecisionError,
+    LLMDecisionRecord,
+    LLMParticipant,
+    target_portfolio_to_intents,
+)
 from src.agents.state import (
     AgentState,
     FinalDecision,
@@ -19,12 +26,16 @@ from src.agents.state import (
 from src.agents.technical_analyst import AnalystEnsembleConfig
 
 __all__ = [
+    "SUPPORTED_PROVIDERS",
     "AgentRouterLLMClient",
     "AgentState",
     "AnalystEnsembleConfig",
     "CachedLLMClient",
     "FinalDecision",
     "LLMClient",
+    "LLMDecisionError",
+    "LLMDecisionRecord",
+    "LLMParticipant",
     "MockLLMClient",
     "RetryingLLMClient",
     "RiskVerdict",
@@ -32,4 +43,5 @@ __all__ = [
     "TechnicalSignal",
     "TechnicalVote",
     "build_graph",
+    "target_portfolio_to_intents",
 ]

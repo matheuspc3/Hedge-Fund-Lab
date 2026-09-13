@@ -146,11 +146,12 @@ def test_metric_spec_expoe_os_defaults_tecnicos_sem_congelar() -> None:
 # ── Registry ─────────────────────────────────────────────────────
 
 
-def test_registry_cobre_os_cinco_classicos() -> None:
+def test_registry_cobre_os_cinco_classicos_e_o_participante_llm() -> None:
     assert set(PARTICIPANT_REGISTRY) == {
         "bollinger",
         "buy_and_hold",
         "equal_weight",
+        "llm_agent",
         "min_variance",
         "sma_cross",
     }
@@ -158,7 +159,7 @@ def test_registry_cobre_os_cinco_classicos() -> None:
 
 def test_kind_desconhecido_falha_listando_os_suportados() -> None:
     with pytest.raises(ValueError, match="unsupported participant kind"):
-        build_participant(ParticipantSpec("llm_agent", {"ticker": "PETR4.SA"}))
+        build_participant(ParticipantSpec("random_walk", {"ticker": "PETR4.SA"}))
 
 
 def test_parametro_invalido_do_participante_falha_cedo() -> None:
