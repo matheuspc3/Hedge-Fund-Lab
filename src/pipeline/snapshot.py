@@ -26,6 +26,14 @@ MANIFEST_SCHEMA_VERSION = 1
 MISSING_SESSION_SAMPLE_LIMIT = 50
 
 
+class SnapshotIntegrityError(Exception):
+    """Um arquivo do snapshot não confere com o hash/tamanho do manifest."""
+
+
+class SnapshotNotReadyError(Exception):
+    """O snapshot não passou pelo gate científico de cobertura."""
+
+
 @dataclass(frozen=True)
 class DatasetSnapshot:
     """Descrição do artefato materializado em ``data/snapshots``."""
@@ -49,6 +57,89 @@ class DatasetSnapshot:
     @property
     def scientific_ready(self) -> bool:
         return bool(self.quality["scientific_ready"])
+
+
+def load_dataset_snapshot(path: str | Path) -> DatasetSnapshot:
+    """Reconstrói um ``DatasetSnapshot`` já materializado a partir do manifest.
+
+    Consumidores científicos entram por aqui: nenhum download, nenhum cache
+    mutável, nenhuma reconstrução de dados — apenas leitura do artefato.
+    """
+    root = Path(path)
+    manifest_path = root / "manifest.json"
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:
+        raise FileNotFoundError(f"snapshot manifest not found: {manifest_path}") from exc
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"snapshot manifest is not valid JSON: {manifest_path}") from exc
+
+    schema_version = manifest.get("schema_version")
+    if schema_version != MANIFEST_SCHEMA_VERSION:
+        raise ValueError(
+            f"unsupported snapshot manifest schema_version: {schema_version!r}; "
+            f"expected {MANIFEST_SCHEMA_VERSION}"
+        )
+
+    return DatasetSnapshot(
+        snapshot_id=manifest["snapshot_id"],
+        path=root,
+        created_at=manifest["created_at"],
+        requested_start=manifest["requested_start"],
+        requested_end=manifest["requested_end"],
+        effective_start=manifest["effective_start"],
+        effective_end=manifest["effective_end"],
+        tickers=tuple(manifest["tickers"]),
+        files=tuple(manifest["files"]),
+        coverage=tuple(manifest["coverage"]),
+        quality=manifest["quality"],
+    )
+
+
+def verify_snapshot_integrity(snapshot: DatasetSnapshot) -> None:
+    """Rejeita snapshot adulterado depois da materialização.
+
+    Compara tamanho e SHA-256 de cada arquivo com o que o manifest registrou.
+    """
+    for record in snapshot.files:
+        target = snapshot.path / record["path"]
+        if not target.is_file():
+            raise SnapshotIntegrityError(
+                f"snapshot file is missing: {record['path']} ({snapshot.snapshot_id})"
+            )
+        size = target.stat().st_size
+        if size != record["size"]:
+            raise SnapshotIntegrityError(
+                f"snapshot file size mismatch for {record['path']}: "
+                f"manifest {record['size']}, found {size}"
+            )
+        digest = _sha256(target)
+        if digest != record["sha256"]:
+            raise SnapshotIntegrityError(
+                f"snapshot file hash mismatch for {record['path']}: "
+                f"manifest {record['sha256']}, found {digest}"
+            )
+
+
+def load_snapshot_frames(
+    snapshot: DatasetSnapshot, tickers: tuple[str, ...] | None = None
+) -> dict[str, pd.DataFrame]:
+    """Carrega os CSVs imutáveis do snapshot como DataFrames indexados por data."""
+    by_ticker = {record["ticker"]: record for record in snapshot.files}
+    wanted = tickers if tickers is not None else snapshot.tickers
+    frames: dict[str, pd.DataFrame] = {}
+    for ticker in wanted:
+        record = by_ticker.get(ticker)
+        if record is None:
+            raise KeyError(
+                f"ticker {ticker!r} is not in snapshot {snapshot.snapshot_id}"
+            )
+        frame = pd.read_csv(
+            snapshot.path / record["path"], index_col="date", parse_dates=["date"]
+        )
+        frame.index = pd.DatetimeIndex(frame.index)
+        frames[ticker] = frame
+    return frames
 
 
 def analyze_session_coverage(

@@ -150,10 +150,16 @@ mesmos dados
 - [x] Adaptar Equal Weight.
 - [x] Adaptar Mínima Variância.
 - [ ] Adaptar o participante LLM.
-- [ ] Criar `ExperimentSpec` com snapshot, universo, split, capital, frequência,
-  custos, benchmark, calendário, seeds e participante.
-- [ ] Criar `RunResult` e manifest canônicos.
-- [ ] Identificar e persistir cada execução por `run_id`.
+- [~] Criar `ExperimentSpec` com snapshot, universo, split, capital, frequência,
+  custos, benchmark, calendário, seeds e participante; a spec atual cobre
+  snapshot, participante serializável, capital, custos e parâmetros de métrica.
+  Split, frequência, benchmark e seeds dependem de decisões ainda não congeladas.
+- [x] Garantir participante novo por execução, sem estado compartilhado entre runs.
+- [x] Exigir `scientific_ready` e verificar hashes do snapshot antes de executar.
+- [x] Exigir proveniência Git verificável e working tree limpa, com escape
+  explícito de desenvolvimento registrado no manifest.
+- [x] Criar `RunResult` e manifest canônicos.
+- [x] Identificar e persistir cada execução por `run_id` e `spec_hash`.
 - [~] Adaptar os cinco benchmarks e o participante LLM ao contrato comum; os
   cinco clássicos já executam pelo `ExecutionEngine` comum e o participante LLM
   continua no motor próprio.

@@ -18,8 +18,10 @@ Ele ainda **não é a arena científica descrita como objetivo**. Um caminho com
 preliminar já recebe `MarketObservation`, chama `Participant`, normaliza a
 decisão como `OrderIntent` e executa os cinco benchmarks clássicos — single e
 multi-ativo — pelo mesmo `ExecutionEngine`. O sistema LLM continua em motor
-próprio e não aparece na comparação principal; e não existe orquestrador de
-experimento, divisão train/validation/test ou walk-forward. Portanto, os números exibidos no
+próprio e não aparece na comparação principal. Já existe um orquestrador
+experimental (`ExperimentSpec` -> `ExperimentRunner` -> `RunResult` ->
+manifest), mas ainda não existem divisão train/validation/test, walk-forward,
+análise estatística nem protocolo congelado. Portanto, os números exibidos no
 dashboard e os JSONs de agentes são demonstrações técnicas, não evidência de que
 uma abordagem venceu outra.
 
@@ -40,7 +42,8 @@ uma abordagem venceu outra.
 | Calendário B3 | Parcial | `B3Calendar` resolve fins de semana, feriados recorrentes e exceções explícitas sem dependência externa; ainda precisa de validação/versionamento contra calendário oficial. |
 | Arena clássicos x LLM | Parcial | Contrato mínimo de participante e intenção, com execução comum long-only single e multi-ativo para os cinco benchmarks clássicos. O participante LLM ainda usa motor separado; não há `ExperimentSpec` nem resultado consolidado. |
 | Dashboard | Parcial | Compara as cinco estratégias clássicas e exibe indicadores. Uma tela separada dispara backtest LLM, mas não incorpora o resultado à arena. |
-| Avaliação científica | Planejado | Não existem `src/evaluation`, splits temporais, walk-forward, testes de hipótese, análise de sensibilidade ou exportação científica. |
+| Orquestração experimental | Implementado com lacunas | `src/experiments/` executa os cinco clássicos a partir de um snapshot validado, com `spec_hash`, `run_id`, participante novo por run e manifest atômico em `data/runs/<run_id>/`. Não cobre o participante LLM nem splits temporais. |
+| Avaliação científica | Planejado | Não existem splits temporais, walk-forward, testes de hipótese, análise de sensibilidade ou exportação científica. |
 | Operação em tempo real/MT5/BRAPI | Planejado | O runner diário é simulação persistente; integrações de mercado e execução automática não existem. |
 
 ## Fluxos executáveis
@@ -203,6 +206,68 @@ coincidem trade a trade; a divergência tem teste próprio, junto com a prova de
 que permutar a ordem dos tickers não altera curva, trades, custos nem posições
 na arena.
 
+### Camada experimental — spec, runner e manifest
+
+`src/experiments/` fecha o caminho entre snapshot e resultado auditável:
+
+```text
+DatasetSnapshot -> ExperimentSpec -> ExperimentRunner -> RunResult -> manifest.json
+```
+
+O que já está garantido por teste:
+
+- **Snapshot é a única fonte de OHLCV.** O runner lê `data/snapshots/<id>`; não
+  chama `yfinance` nem o cache mutável. Um teste monkeypatcha o download para
+  falhar e o run passa mesmo assim.
+- **Gate científico fail-closed.** `scientific_ready=false` levanta
+  `SnapshotNotReadyError` antes de a arena rodar. Não existe "rodar mesmo assim".
+- **Integridade verificada.** Tamanho e SHA-256 de cada CSV são conferidos contra
+  o manifest do snapshot; arquivo adulterado ou ausente levanta
+  `SnapshotIntegrityError` e nenhum run é publicado.
+- **Participante novo por run.** O registry constrói uma instância a cada
+  execução. Os clássicos guardam estado entre sessões (`_target_weight`,
+  `_session_index`), então reutilizar a instância contaminaria a segunda
+  execução.
+- **`spec_hash` determinístico.** SHA-256 do JSON canônico da spec; independe da
+  ordem dos dicionários e não contém horário, `run_id` nem caminho local.
+- **`run_id` por execução.** Duas execuções da mesma spec produzem resultados
+  idênticos, o mesmo `spec_hash` e `run_id` distintos.
+- **Proveniência limpa exigida por padrão.** O guard exige commit conhecido e
+  `git_dirty=false`: working tree suja, commit indeterminado e proveniência Git
+  não verificável levantam `DirtyRepositoryError` antes de carregar dados ou
+  construir o participante. `allow_dirty=True` libera explicitamente os dois casos para
+  desenvolvimento e o resultado continua identificável como não-limpo. Não é
+  parâmetro da spec e não altera o `spec_hash`.
+- **Publicação atômica.** Artefatos são escritos num diretório temporário e só
+  então renomeados; falha no meio não deixa run parcial aparentando validade.
+
+O universo efetivo é derivado sem seleção dinâmica: single-asset recebe o
+`ticker` declarado na spec (ausência no snapshot é falha, não remoção
+silenciosa) e carteira recebe todos os tickers do snapshot. Universo entregue e
+universo do snapshot ficam ambos registrados.
+
+Os defaults de métrica (`freq=252`, `rf=0`, `mar=0`) e de custo entram pelo spec
+e são gravados no manifest como valores efetivamente usados — registro, não
+congelamento. `MetricSpec` e `CostSpec` existem justamente para que nenhum
+default científico fique implícito.
+
+Artefatos ficam em `data/runs/<run_id>/` com `manifest.json`, `equity.csv` e
+`trades.csv`, fora do versionamento Git. O manifest sempre registra
+`code.git_commit` e `code.git_dirty`, mais `reproducibility.clean_source` e
+`reproducibility.allow_dirty`. `clean_source` só é verdadeiro quando o Git
+confirma um commit conhecido sem alterações pendentes — a mesma regra do
+guard, em função única, para que os dois não divirjam. Quando o commit não pode
+ser determinado, `git_commit` permanece nulo e `clean_source` é falso: nenhum
+SHA é inventado.
+
+Nenhum diff ou patch do working tree é persistido. A regra é simples: run
+científico reproduzível equivale a commit conhecido mais tree limpa.
+
+Limitações desta camada: não há participante LLM, `ExperimentSpec` não descreve
+splits nem walk-forward, não há catálogo/consulta de runs, o dashboard continua
+gerando seus números pelos motores legados e o snapshot ainda depende do
+`B3Calendar` local não validado contra fonte oficial.
+
 ## Evidência de validação
 
 As verificações abaixo foram observadas no ambiente local durante a auditoria;
@@ -211,8 +276,9 @@ seus resultados não são, por si só, conteúdo versionado no Git:
 | Verificação | Resultado |
 |---|---|
 | Suíte de pipeline com SQLite em memória (`poetry run pytest tests/pipeline -q`) | **108 passaram** em 10/09/2026 |
-| Suíte de backtesting (`poetry run pytest tests/backtesting -q`) | **188 passaram** em 12/09/2026 |
-| Suíte completa com SQLite em memória (`poetry run pytest -q`) | **442 passaram** em 12/09/2026 |
+| Suíte de backtesting (`poetry run pytest tests/backtesting -q`) | **191 passaram** em 12/09/2026 |
+| Suíte experimental (`poetry run pytest tests/experiments -q`) | **64 passaram** em 13/09/2026 |
+| Suíte completa com SQLite em memória (`poetry run pytest -q`) | **509 passaram** em 13/09/2026 |
 | Cobertura (última medição, anterior a esta mudança) | **95%** |
 | Ruff | **14 violações preexistentes fora dos arquivos desta mudança** |
 | Ruff nos arquivos desta mudança | **verde** |
@@ -279,12 +345,14 @@ opera apenas um ticker. Essas unidades experimentais não são equivalentes.
 - `252` sessões/ano, taxa livre de risco zero e MAR zero são defaults técnicos
   configuráveis, não parâmetros experimentais congelados.
 
-### 5. Protocolo experimental ainda não congelado nem implementado
+### 5. Protocolo experimental ainda não congelado
 
 Existe um protocolo documental em `docs/EXPERIMENT_PROTOCOL.md`, marcado como
-**DRAFT — NÃO CONGELADO**. Ainda não existem splits, prompts, parâmetros ou
-universo congelados; `ExperimentSpec`; run manifest; walk-forward; teste
-out-of-sample; nem análise estatística implementada.
+**DRAFT — NÃO CONGELADO**. `ExperimentSpec`, `RunResult` e run manifest já
+existem como mecanismo técnico, mas ainda não existem splits, prompts,
+parâmetros ou universo congelados; walk-forward; teste out-of-sample; nem
+análise estatística implementada. Ter um manifest reproduzível não torna o
+protocolo aprovado.
 
 ## Riscos técnicos relevantes
 

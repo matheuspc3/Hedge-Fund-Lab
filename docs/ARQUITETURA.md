@@ -53,6 +53,9 @@ participante LLM continuam nos motores legados.
 - `src/pipeline/snapshot.py`: cobertura por sessões locais e materialização
   imutável de CSVs com manifest, proveniência, qualidade e SHA-256. Lacunas ou
   datas inesperadas produzem `scientific_ready=false` sem fabricar barras.
+  `load_dataset_snapshot`, `verify_snapshot_integrity` e `load_snapshot_frames`
+  são a porta de entrada dos consumidores científicos: leem o artefato, conferem
+  os hashes e não tocam em rede nem no cache mutável.
 - `src/pipeline/transform.py` e `src/indicators/`: limpeza e features.
 - `src/pipeline/load.py`: batch e upsert.
 - `src/db/`: conexão e três modelos ORM.
@@ -141,8 +144,74 @@ alvo; comprar, vender ou não fazer nada é derivado na abertura de `t+1`, a
 partir do delta entre a posição corrente e a quantidade alvo. Um gap overnight
 pode inverter a operação sem que a intenção mude, e `Trade.type` registra o que
 foi de fato executado.
-O guard de `DatasetSnapshot.scientific_ready` pertence ao futuro runner de
-experimentos, pois esta camada recebe DataFrames já entregues ao executor.
+O guard de `DatasetSnapshot.scientific_ready` pertence ao `ExperimentRunner`,
+não ao executor: esta camada recebe DataFrames já preparados.
+
+### Camada experimental
+
+`src/experiments/` transforma a arena numa execução identificável. O runner não
+contém regra de estratégia nem regra financeira: ele resolve o snapshot, monta
+os objetos a partir da spec e delega tudo ao `ExecutionEngine`.
+
+```text
+DatasetSnapshot imutável (data/snapshots/<snapshot_id>)
+        │  scientific_ready + SHA-256 por arquivo
+        v
+ExperimentSpec  (snapshot_id, ParticipantSpec, capital, CostSpec, MetricSpec)
+        │  spec_hash = SHA-256(canonical_json(spec))
+        v
+ExperimentRunner
+        ├── exige proveniência Git limpa ..... senão DirtyRepositoryError
+        ├── carrega o manifest do snapshot
+        ├── exige scientific_ready ........... senão SnapshotNotReadyError
+        ├── confere tamanho e hash dos CSVs .. senão SnapshotIntegrityError
+        ├── resolve o universo efetivo
+        ├── participant factory (registry) ... instância NOVA por run
+        ├── CostSpec.build() -> CostModel
+        └── ExecutionEngine(...).run()
+        │
+        v
+RunResult (run_id, spec_hash, BacktestResult, métricas canônicas, custo total)
+        │
+        v
+data/runs/<run_id>/{manifest.json, equity.csv, trades.csv}   publicação atômica
+```
+
+- `spec.py`: `ParticipantSpec`, `CostSpec`, `MetricSpec`, `ExperimentSpec`,
+  `canonical_json` e `spec_hash`. Nenhum objeto vivo, nenhum caminho local.
+- `participants.py`: registry explícito dos cinco clássicos e `build_participant`.
+  Não existe import path arbitrário vindo de fora.
+- `runner.py`: `ExperimentRunner` e `RunResult`.
+
+`ExperimentSpec` carrega `snapshot_id`, não caminho: o diretório onde o snapshot
+está é ambiente de execução e não pode alterar a identidade da spec. Por isso
+`snapshot_dir`, `runs_dir` e `repository_dir` são argumentos do runner.
+
+O universo efetivo é derivado deterministicamente, sem seleção dinâmica:
+participantes single-asset declaram `ticker` nos parâmetros e recebem apenas
+ele; participantes de carteira recebem todos os tickers do snapshot. Um ticker
+pedido que não exista no snapshot é falha, não remoção silenciosa. O universo
+entregue e a lista completa do snapshot ficam ambos no manifest.
+
+Runs reproduzíveis exigem proveniência Git verificável e working tree limpa. O
+guard é fail-closed estrito: exige commit conhecido **e** `git_dirty=false`.
+Working tree suja, commit indeterminado e proveniência não verificável (sem Git
+utilizável no diretório) são rejeitados igualmente, porque nenhum dos três
+permite reproduzir o run a partir de um commit; a mensagem de erro distingue os
+casos. A mesma regra decide `reproducibility.clean_source`, então guard e
+manifest não podem divergir.
+
+`allow_dirty=True` é o escape explícito de desenvolvimento e cobre ambos —
+libera a execução, grava `reproducibility.clean_source=false` no manifest e não
+entra na `ExperimentSpec` nem altera o `spec_hash`, porque é política
+operacional e não parâmetro experimental. Commit desconhecido continua `null`:
+nada é inventado. A proveniência é conferida no início do `run()`, antes de
+carregar dados ou construir participante, e o valor conferido é o que vai para
+o manifest.
+
+`spec_hash` responde "estes dois runs usaram a mesma configuração?"; `run_id`
+identifica a execução concreta. Dois runs da mesma spec têm o mesmo `spec_hash`
+e `run_id` diferentes.
 
 ### Sistema multiagente
 

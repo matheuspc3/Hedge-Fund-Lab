@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     batch_size: int = 1000
     cache_dir: str = "data/raw"
     snapshot_dir: str = "data/snapshots"
+    runs_dir: str = "data/runs"
     log_level: str = "INFO"
     log_file: str = "data/logs/hedgefund.log"
     llm_provider: str = "mock"
