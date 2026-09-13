@@ -3,7 +3,7 @@
 import json
 from datetime import date
 from pathlib import Path
-from typing import cast
+from typing import Any, Callable, cast
 
 import numpy as np
 import pandas as pd
@@ -50,7 +50,15 @@ def build_snapshot(
     repository_dir: Path,
     *,
     tickers: tuple[str, ...] = TICKERS,
+    drop_sessions: int = 0,
 ) -> DatasetSnapshot:
+    """Materializa um snapshot real.
+
+    ``drop_sessions`` remove pregões do meio do recorte e produz um artefato
+    legitimamente incompleto: ``scientific_ready=false`` obtido pelo próprio
+    pipeline, com identidade válida. É a única forma honesta de exercitar o
+    gate científico agora que editar o manifest quebra a identidade.
+    """
     calendar = B3Calendar()
     sessions = pd.DatetimeIndex(
         calendar.sessions_between(
@@ -62,6 +70,11 @@ def build_snapshot(
         ticker: price_series(sessions, 20.0 + index * 30.0, 1.0 - index * 0.4)
         for index, ticker in enumerate(tickers)
     }
+    if drop_sessions:
+        frames = {
+            ticker: frame.drop(frame.index[10 : 10 + drop_sessions])
+            for ticker, frame in frames.items()
+        }
     return create_dataset_snapshot(
         list(tickers),
         START,
@@ -108,14 +121,22 @@ def snapshot(snapshot_dir: Path, tmp_path: Path) -> DatasetSnapshot:
 
 
 @pytest.fixture
+def incomplete_snapshot(snapshot_dir: Path, tmp_path: Path) -> DatasetSnapshot:
+    """Snapshot com lacuna real de pregões: reprovado no gate, identidade válida."""
+    built = build_snapshot(snapshot_dir, tmp_path, drop_sessions=3)
+    assert not built.scientific_ready, "fixture precisa reprovar no gate científico"
+    return built
+
+
+@pytest.fixture
 def make_snapshot():
     """Materializa outro snapshot com exatamente os mesmos dados."""
     return build_snapshot
 
 
 @pytest.fixture
-def break_scientific_ready():
-    return _break_scientific_ready
+def tamper_manifest():
+    return _tamper_manifest
 
 
 @pytest.fixture
@@ -123,11 +144,12 @@ def tamper_csv():
     return _tamper_csv
 
 
-def _break_scientific_ready(snapshot: DatasetSnapshot) -> None:
-    """Marca o snapshot como reprovado no gate, preservando os hashes."""
+def _tamper_manifest(
+    snapshot: DatasetSnapshot, mutate: Callable[[dict[str, Any]], None]
+) -> None:
+    """Edita o manifest publicado sem recalcular a identidade do snapshot."""
     manifest = json.loads(snapshot.manifest_path.read_text(encoding="utf-8"))
-    manifest["quality"]["scientific_ready"] = False
-    manifest["quality"]["status"] = "attention_required"
+    mutate(manifest)
     snapshot.manifest_path.write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",

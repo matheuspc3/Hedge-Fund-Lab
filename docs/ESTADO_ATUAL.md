@@ -29,7 +29,7 @@ uma abordagem venceu outra.
 
 | Área | Status | O que realmente faz |
 |---|---|---|
-| Dados | Implementado com lacunas | Baixa OHLCV diário pelo `yfinance`, mantém cache CSV mutável por ticker, valida estrutura, finitude e consistência OHLCV e pode materializar `DatasetSnapshot` imutável com hashes, proveniência e cobertura pelo calendário local. |
+| Dados | Implementado com lacunas | Baixa OHLCV diário pelo `yfinance`, mantém cache CSV mutável por ticker, valida estrutura, finitude e consistência OHLCV e pode materializar `DatasetSnapshot` imutável com identidade verificável do manifest, hashes por arquivo, proveniência e cobertura pelo calendário local. |
 | Persistência | Implementado | Tabelas de ativos, cotações e indicadores, com unicidade por ativo/data e atualização em conflito nos caminhos principais. |
 | Indicadores | Implementado | SMA 50/200, Bollinger 20/2, RSI 14 e MACD 12/26/9. |
 | Estratégias clássicas | Implementado | Buy & Hold, SMA Cross e Bollinger single-asset; Equal Weight e Mínima Variância multi-ativo. |
@@ -42,7 +42,7 @@ uma abordagem venceu outra.
 | Calendário B3 | Parcial | `B3Calendar` resolve fins de semana, feriados recorrentes e exceções explícitas sem dependência externa; ainda precisa de validação/versionamento contra calendário oficial. |
 | Arena clássicos x LLM | Parcial | Contrato mínimo de participante e intenção, com execução comum long-only single e multi-ativo para os cinco benchmarks clássicos. O participante LLM ainda usa motor separado; não há `ExperimentSpec` nem resultado consolidado. |
 | Dashboard | Parcial | Compara as cinco estratégias clássicas e exibe indicadores. Uma tela separada dispara backtest LLM, mas não incorpora o resultado à arena. |
-| Orquestração experimental | Implementado com lacunas | `src/experiments/` executa os cinco clássicos a partir de um snapshot validado, com `spec_hash`, `run_id`, participante novo por run e manifest atômico em `data/runs/<run_id>/`. Não cobre o participante LLM nem splits temporais. |
+| Orquestração experimental | Implementado com lacunas | `src/experiments/` executa os cinco clássicos a partir de um snapshot validado, com `spec_hash` estável, `run_id`, participante novo por run, evidência do snapshot capturada no `run()` e manifest atômico em `data/runs/<run_id>/`. Não cobre o participante LLM nem splits temporais. |
 | Avaliação científica | Planejado | Não existem splits temporais, walk-forward, testes de hipótese, análise de sensibilidade ou exportação científica. |
 | Operação em tempo real/MT5/BRAPI | Planejado | O runner diário é simulação persistente; integrações de mercado e execução automática não existem. |
 
@@ -79,9 +79,35 @@ Cada diretório possui `manifest.json` serializado com chaves ordenadas e um CSV
 por ticker. O manifest registra intervalo solicitado e efetivo, contagens,
 lacunas e datas inesperadas, SHA-256 e tamanho dos arquivos, fonte e versão do
 `yfinance`, política de ajuste observável, versão do Python/pipeline, commit e
-estado dirty do Git, além das regras e exceções do calendário. O ID combina
-timestamp UTC com digest do conteúdo e da especificação; um ID existente nunca
-é sobrescrito silenciosamente.
+estado dirty do Git, além das regras e exceções do calendário. Um ID existente
+nunca é sobrescrito silenciosamente.
+
+#### Identidade verificável do manifest (schema 2)
+
+O `snapshot_id` é `timestamp UTC + digest`, e o digest é o SHA-256 do JSON
+canônico do manifest inteiro **menos o próprio `snapshot_id`** — sem
+circularidade e sem deixar campo científico de fora. `quality` (inclusive
+`scientific_ready`), `coverage`, a lista de `files` com seus SHA-256 declarados,
+`tickers`, intervalos, `source`, `calendar`, `pipeline` e `code` fazem todos
+parte da identidade.
+
+No carregamento, `load_dataset_snapshot()` valida em ordem fail-closed: JSON,
+schema, formato do ID, digest recalculado, coerência entre o prefixo temporal do
+ID e `created_at`, e nome do diretório igual ao `snapshot_id`. Qualquer
+divergência levanta `SnapshotIdentityError`. Isso fecha o buraco em que
+`"scientific_ready": false` podia virar `true` na mão sem tocar em nenhum CSV.
+
+São duas garantias separadas e ambas mantidas: identidade do manifest (o que o
+artefato afirma) e integridade dos arquivos (os bytes dos CSVs, conferidos por
+`verify_snapshot_integrity`). A primeira não substitui a segunda.
+
+É tamper-evidence dentro do modelo do projeto — detecta adulteração e
+incoerência do artefato —, não assinatura criptográfica: quem recomputa o ID
+depois de editar o conteúdo não é barrado por este mecanismo.
+
+Snapshots do schema 1 não possuem essa garantia. São reconhecidos, nomeados e
+recusados com pedido de regeneração; não existe migração automática que copie um
+manifest antigo e o declare confiável.
 
 Cobertura completa exige todas as sessões locais esperadas e nenhuma barra em
 data não esperada. Lacunas não recebem `ffill` nem preço inventado: o artefato é
@@ -221,6 +247,11 @@ O que já está garantido por teste:
   falhar e o run passa mesmo assim.
 - **Gate científico fail-closed.** `scientific_ready=false` levanta
   `SnapshotNotReadyError` antes de a arena rodar. Não existe "rodar mesmo assim".
+- **Identidade do snapshot verificada.** O manifest do snapshot é conferido
+  contra o digest embutido no `snapshot_id` e contra o nome do diretório;
+  manifest adulterado levanta `SnapshotIdentityError` antes do gate científico.
+  Promover um snapshot reprovado editando `quality.scientific_ready` não
+  funciona.
 - **Integridade verificada.** Tamanho e SHA-256 de cada CSV são conferidos contra
   o manifest do snapshot; arquivo adulterado ou ausente levanta
   `SnapshotIntegrityError` e nenhum run é publicado.
@@ -228,8 +259,21 @@ O que já está garantido por teste:
   execução. Os clássicos guardam estado entre sessões (`_target_weight`,
   `_session_index`), então reutilizar a instância contaminaria a segunda
   execução.
-- **`spec_hash` determinístico.** SHA-256 do JSON canônico da spec; independe da
-  ordem dos dicionários e não contém horário, `run_id` nem caminho local.
+- **`spec_hash` determinístico e estável.** SHA-256 do JSON canônico da spec;
+  independe da ordem dos dicionários e não contém horário, `run_id` nem caminho
+  local. `ParticipantSpec.params` é copiado na construção e guardado como
+  `MappingProxyType`: mutar o dicionário original do chamador ou tentar escrever
+  em `participant.params[...]` não altera a spec — a identidade de uma
+  `ExperimentSpec` criada é estável por toda a sua vida.
+- **Coerência presa ao artefato.** No manifest publicado,
+  `spec_hash == SHA-256(canonical_json(manifest["experiment_spec"]))`. Quem lê o
+  run não precisa confiar no runner que o escreveu.
+- **Proveniência do snapshot capturada no run.** `RunResult` carrega um
+  `SnapshotEvidence` congelado no momento em que o snapshot passou pelos guards
+  e antes da execução: `snapshot_id`, `schema_version`, `identity_digest` e o
+  manifest verificado em JSON canônico. `persist()` não relê o diretório, então
+  adulterar (ou apagar) o snapshot entre `run()` e `persist()` não reescreve
+  retroativamente a descrição histórica do que foi executado.
 - **`run_id` por execução.** Duas execuções da mesma spec produzem resultados
   idênticos, o mesmo `spec_hash` e `run_id` distintos.
 - **Proveniência limpa exigida por padrão.** O guard exige commit conhecido e

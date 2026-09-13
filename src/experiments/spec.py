@@ -13,6 +13,7 @@ import hashlib
 import json
 import math
 from dataclasses import dataclass, field
+from types import MappingProxyType
 from typing import Any, Mapping
 
 from src.backtesting.costs import CostModel
@@ -33,6 +34,10 @@ class ParticipantSpec:
 
     ``kind`` é resolvido pelo registry explícito em
     :mod:`src.experiments.participants`; não existe import path arbitrário.
+
+    ``params`` é copiado na construção e guardado como mapeamento read-only:
+    ``frozen=True`` congela o *campo*, não o dicionário que ele aponta, e uma
+    spec cujo conteúdo ainda pode mudar não tem identidade estável.
     """
 
     kind: str
@@ -56,9 +61,12 @@ class ParticipantSpec:
             if isinstance(value, float) and not math.isfinite(value):
                 raise ValueError(f"participant param {name!r} must be finite")
         object.__setattr__(self, "kind", kind)
-        object.__setattr__(self, "params", params)
+        # Cópia defensiva + view read-only: nem o dicionário do chamador nem
+        # ``participant.params[...]`` podem alterar a spec depois de criada.
+        object.__setattr__(self, "params", MappingProxyType(params))
 
     def to_dict(self) -> dict[str, Any]:
+        """``dict`` novo e JSON-serializável; mutá-lo não atinge a spec."""
         return {"kind": self.kind, "params": dict(self.params)}
 
 

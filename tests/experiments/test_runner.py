@@ -5,6 +5,7 @@ Estes testes exercitam a camada de orquestração. A correção financeira
 suíte da arena e não é duplicada aqui.
 """
 
+import hashlib
 import json
 from dataclasses import fields
 from pathlib import Path
@@ -26,9 +27,12 @@ from src.experiments.spec import (
     ExperimentSpec,
     MetricSpec,
     ParticipantSpec,
+    canonical_json,
 )
 from src.pipeline.snapshot import (
     DatasetSnapshot,
+    SnapshotEvidence,
+    SnapshotIdentityError,
     SnapshotIntegrityError,
     SnapshotNotReadyError,
 )
@@ -97,16 +101,37 @@ def signature(result: RunResult) -> list[tuple]:
 
 
 def test_snapshot_nao_scientific_ready_bloqueia_antes_da_arena(
-    snapshot: DatasetSnapshot,
+    incomplete_snapshot: DatasetSnapshot,
     snapshot_dir: Path,
     runs_dir: Path,
     tmp_path: Path,
-    break_scientific_ready,
 ) -> None:
-    break_scientific_ready(snapshot)
-    runner = runner_for(snapshot, SMA, snapshot_dir, runs_dir, tmp_path)
+    """Lacuna real de pregões, identidade íntegra: o gate científico barra."""
+    runner = runner_for(incomplete_snapshot, SMA, snapshot_dir, runs_dir, tmp_path)
 
     with pytest.raises(SnapshotNotReadyError, match="scientific coverage gate"):
+        runner.run_and_persist()
+
+    assert published_runs(runs_dir) == []
+
+
+def test_manifest_adulterado_bloqueia_antes_do_gate_cientifico(
+    incomplete_snapshot: DatasetSnapshot,
+    snapshot_dir: Path,
+    runs_dir: Path,
+    tmp_path: Path,
+    tamper_manifest,
+) -> None:
+    """Promover um snapshot reprovado editando o manifest não funciona."""
+
+    def approve(manifest: dict) -> None:
+        manifest["quality"]["scientific_ready"] = True
+        manifest["quality"]["status"] = "ready"
+
+    tamper_manifest(incomplete_snapshot, approve)
+    runner = runner_for(incomplete_snapshot, SMA, snapshot_dir, runs_dir, tmp_path)
+
+    with pytest.raises(SnapshotIdentityError, match="identity mismatch"):
         runner.run_and_persist()
 
     assert published_runs(runs_dir) == []
@@ -377,12 +402,14 @@ def test_manifest_registra_identidade_proveniencia_e_configuracao(
     ).run_and_persist()
     manifest = json.loads((path / "manifest.json").read_text(encoding="utf-8"))
 
-    assert manifest["schema_version"] == 1
+    assert manifest["schema_version"] == 2
     assert manifest["run_id"] == result.run_id
     assert manifest["spec_hash"] == result.spec_hash
     assert manifest["experiment_spec"] == result.spec.to_dict()
     assert manifest["participant"]["kind"] == "sma_cross"
     assert manifest["snapshot"]["snapshot_id"] == snapshot.snapshot_id
+    assert manifest["snapshot"]["schema_version"] == 2
+    assert manifest["snapshot"]["identity_digest"] == snapshot.identity_digest
     assert manifest["snapshot"]["files"][0]["sha256"] == snapshot.files[0]["sha256"]
     assert manifest["universe"] == ["PETR4.SA"]
     assert manifest["snapshot"]["tickers"] == list(snapshot.tickers)
@@ -686,7 +713,13 @@ def test_guard_e_clean_source_usam_a_mesma_regra(
             initial_capital=1.0,
         ),
         created_at="2020-01-01T00:00:00.000000Z",
-        snapshot_id="s",
+        snapshot=SnapshotEvidence(
+            snapshot_id="s",
+            schema_version=2,
+            identity_digest="0" * 64,
+            path="data/snapshots/s",
+            manifest_json='{"snapshot_id":"s"}',
+        ),
         universe=("PETR4.SA",),
         backtest=BacktestResult(equity_curve=pd.Series(dtype=float)),
         metrics={},
@@ -712,3 +745,139 @@ def test_git_metadata_real_nunca_reporta_tree_limpa_sem_commit(
     assert not runner_module._is_verified_provenance(
         metadata["git_commit"], metadata["git_dirty"]
     )
+
+
+# ── Provenance do snapshot capturada no run ──────────────────────
+
+
+def test_run_captura_a_evidencia_do_snapshot_executado(
+    snapshot: DatasetSnapshot, snapshot_dir: Path, runs_dir: Path, tmp_path: Path
+) -> None:
+    """A evidência descreve o artefato verificado, não uma releitura posterior."""
+    result = runner_for(snapshot, SMA, snapshot_dir, runs_dir, tmp_path).run()
+    evidence = result.snapshot
+
+    assert evidence.snapshot_id == snapshot.snapshot_id
+    assert result.snapshot_id == snapshot.snapshot_id
+    assert evidence.schema_version == 2
+    assert evidence.identity_digest == snapshot.identity_digest
+    assert evidence.manifest == json.loads(
+        snapshot.manifest_path.read_text(encoding="utf-8")
+    )
+    # Cada leitura devolve uma cópia nova: mutar o retorno não reescreve nada.
+    mutated = evidence.manifest
+    mutated["quality"]["scientific_ready"] = "adulterado"
+    assert evidence.manifest["quality"]["scientific_ready"] is True
+
+
+def test_persist_nao_rele_o_snapshot(
+    snapshot: DatasetSnapshot,
+    snapshot_dir: Path,
+    runs_dir: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Publicar não pode depender do diretório do snapshot ainda estar lá."""
+    runner = runner_for(snapshot, SMA, snapshot_dir, runs_dir, tmp_path)
+    result = runner.run()
+
+    def explode(*args, **kwargs):
+        raise AssertionError("persist não deve reler o snapshot")
+
+    monkeypatch.setattr(runner_module, "load_dataset_snapshot", explode)
+    path = runner.persist(result)
+
+    assert (path / "manifest.json").is_file()
+
+
+def test_manifest_descreve_o_snapshot_executado_e_nao_o_adulterado_depois(
+    snapshot: DatasetSnapshot,
+    snapshot_dir: Path,
+    runs_dir: Path,
+    tmp_path: Path,
+    tamper_manifest,
+) -> None:
+    """Janela run/persist: o passado não é reescrito pelo estado atual do disco.
+
+    Entre executar e publicar, o manifest do snapshot é adulterado. O manifest
+    do run deve continuar descrevendo o artefato que passou pelos guards e foi
+    entregue ao ``ExecutionEngine``.
+    """
+    runner = runner_for(snapshot, SMA, snapshot_dir, runs_dir, tmp_path)
+    result = runner.run()
+    executed = json.loads(snapshot.manifest_path.read_text(encoding="utf-8"))
+
+    def rewrite_history(manifest: dict) -> None:
+        manifest["tickers"] = ["ITUB4.SA"]
+        manifest["quality"]["scientific_ready"] = False
+        manifest["files"][0]["sha256"] = "0" * 64
+        manifest["effective_end"] = "1999-12-31"
+
+    tamper_manifest(snapshot, rewrite_history)
+    path = runner.persist(result)
+    published = json.loads((path / "manifest.json").read_text(encoding="utf-8"))
+
+    assert published["snapshot"]["tickers"] == executed["tickers"]
+    assert published["snapshot"]["quality"] == executed["quality"]
+    assert published["snapshot"]["files"] == executed["files"]
+    assert published["snapshot"]["effective_end"] == executed["effective_end"]
+    assert published["snapshot"]["identity_digest"] == snapshot.identity_digest
+    assert published["snapshot"]["tickers"] != ["ITUB4.SA"]
+
+
+def test_snapshot_removido_entre_run_e_persist_nao_muda_o_manifest(
+    snapshot: DatasetSnapshot, snapshot_dir: Path, runs_dir: Path, tmp_path: Path
+) -> None:
+    """Forma extrema da mesma janela: o artefato some antes de publicar."""
+    import shutil
+
+    runner = runner_for(snapshot, SMA, snapshot_dir, runs_dir, tmp_path)
+    result = runner.run()
+    expected_digest = snapshot.identity_digest
+    shutil.rmtree(snapshot.path)
+
+    path = runner.persist(result)
+    published = json.loads((path / "manifest.json").read_text(encoding="utf-8"))
+
+    assert published["snapshot"]["snapshot_id"] == snapshot.snapshot_id
+    assert published["snapshot"]["identity_digest"] == expected_digest
+
+
+# ── Coerência interna do manifest publicado ──────────────────────
+
+
+def test_manifest_publicado_prova_spec_hash_igual_ao_hash_da_spec(
+    snapshot: DatasetSnapshot, snapshot_dir: Path, runs_dir: Path, tmp_path: Path
+) -> None:
+    """A garantia fica presa no artefato: ninguém precisa confiar no runner."""
+    _, path = runner_for(
+        snapshot, SMA, snapshot_dir, runs_dir, tmp_path
+    ).run_and_persist()
+    manifest = json.loads((path / "manifest.json").read_text(encoding="utf-8"))
+
+    recomputed = hashlib.sha256(
+        canonical_json(manifest["experiment_spec"]).encode("utf-8")
+    ).hexdigest()
+
+    assert recomputed == manifest["spec_hash"]
+
+
+def test_spec_hash_do_manifest_nao_muda_com_mutacao_externa_do_participante(
+    snapshot: DatasetSnapshot, snapshot_dir: Path, runs_dir: Path, tmp_path: Path
+) -> None:
+    """run() e persist() usam exatamente a mesma ExperimentSpec."""
+    params = {"ticker": "PETR4.SA", "fast_window": 5, "slow_window": 15}
+    runner = runner_for(
+        snapshot, ParticipantSpec("sma_cross", params), snapshot_dir, runs_dir, tmp_path
+    )
+    expected = runner.spec.spec_hash
+
+    result = runner.run()
+    params["fast_window"] = 999
+    path = runner.persist(result)
+    manifest = json.loads((path / "manifest.json").read_text(encoding="utf-8"))
+
+    assert runner.spec.spec_hash == expected
+    assert result.spec_hash == expected
+    assert manifest["spec_hash"] == expected
+    assert manifest["experiment_spec"]["participant"]["params"]["fast_window"] == 5

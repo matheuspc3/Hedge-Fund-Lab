@@ -58,6 +58,15 @@ arquivo e registra proveniência e cobertura por sessões do `B3Calendar` local.
 O `ExperimentRunner` consome apenas esse artefato — nunca `yfinance` nem o cache
 mutável —, recusa snapshot com `scientific_ready=false` e reconfere tamanho e
 hash de cada arquivo antes de executar.
+
+Capacidade técnica adicional, também sem congelar decisão científica alguma: o
+manifest do snapshot possui identidade verificável. O `snapshot_id` é
+`timestamp + digest` do JSON canônico do manifest menos o próprio ID, cobrindo
+`quality`, `coverage`, `files`, `tickers`, intervalos, fonte, calendário e
+pipeline; o carregamento reconfere o digest e o nome do diretório. Adulterar o
+manifest — inclusive `scientific_ready` — é detectado, sem que isso substitua a
+conferência dos SHA-256 dos CSVs. É tamper-evidence do artefato, não assinatura
+criptográfica.
 Lacunas, datas inesperadas ou intervalo sem sessões resultam em
 `scientific_ready=false`; não há preenchimento de barras. O calendário é
 explicitamente identificado como aproximação local com exceções configuráveis e
@@ -297,12 +306,17 @@ Formato e schema versionado do manifest: `TBD`.
 Implementação técnica atual, que não congela nenhum item acima: cada execução
 por `ExperimentRunner` publica `data/runs/<run_id>/manifest.json` com
 `schema_version`, `run_id`, `spec_hash`, `created_at`, a `ExperimentSpec`
-canônica, o participante, metadados e hashes do snapshot consumido, universo
+canônica, o participante, identidade/metadados/hashes do snapshot consumido, universo
 efetivo, configuração de custo, configuração de métrica, capital, patrimônio
 final, métricas, contagem de trades, custo total executado, commit Git e estado
 dirty. `spec_hash` é o SHA-256 do JSON canônico da spec e identifica a
-configuração; `run_id` identifica a execução. Splits, seeds, prompts, modelos e
-benchmark ainda não fazem parte da spec porque dependem de decisões `TBD`.
+configuração; `run_id` identifica a execução. A coerência
+`spec_hash == SHA-256(canonical_json(experiment_spec))` é verificável no próprio
+artefato. O bloco `snapshot` registra `schema_version` e `identity_digest` do
+snapshot, o que permite responder "qual snapshot verificável foi usado neste
+run?" sem reler o diretório — a proveniência é capturada no `run()` e `persist()`
+não a redescobre. Splits, seeds, prompts, modelos e benchmark ainda não fazem
+parte da spec porque dependem de decisões `TBD`.
 
 Runs reproduzíveis exigem proveniência Git verificável e working tree limpa. O
 `ExperimentRunner` já impõe isso por padrão, de forma fail-closed estrita:

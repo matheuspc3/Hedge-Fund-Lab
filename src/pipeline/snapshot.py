@@ -12,7 +12,8 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
-from typing import Any, cast
+from types import MappingProxyType
+from typing import Any, Mapping, cast
 from uuid import uuid4
 
 import pandas as pd
@@ -22,12 +23,30 @@ from src.config import settings
 from src.pipeline.extract import DataExtractor
 from src.pipeline.transform import validate_ohlcv
 
-MANIFEST_SCHEMA_VERSION = 1
+# Schema 2 introduz a identidade verificável do manifest. Snapshots do schema 1
+# não possuem essa garantia e por isso não são aceitos como artefato científico.
+MANIFEST_SCHEMA_VERSION = 2
+LEGACY_MANIFEST_SCHEMA_VERSIONS = frozenset({1})
 MISSING_SESSION_SAMPLE_LIMIT = 50
+
+# Prefixo do digest embutido no ``snapshot_id``. 128 bits bastam para tornar a
+# adulteração evidente dentro deste modelo e mantêm o nome do diretório legível.
+SNAPSHOT_ID_DIGEST_LENGTH = 32
+SNAPSHOT_ID_TIMESTAMP_FORMAT = "%Y%m%dT%H%M%S%fZ"
+_SNAPSHOT_ID_PATTERN = re.compile(r"(\d{8}T\d{12}Z)-([0-9a-f]{32})")
 
 
 class SnapshotIntegrityError(Exception):
     """Um arquivo do snapshot não confere com o hash/tamanho do manifest."""
+
+
+class SnapshotIdentityError(Exception):
+    """O manifest não confere com a identidade declarada no ``snapshot_id``.
+
+    Garantia distinta de :class:`SnapshotIntegrityError`: esta cobre o que o
+    manifest *afirma* (cobertura, qualidade, universo, hashes declarados),
+    aquela cobre os bytes dos CSVs. Uma não substitui a outra.
+    """
 
 
 class SnapshotNotReadyError(Exception):
@@ -35,8 +54,35 @@ class SnapshotNotReadyError(Exception):
 
 
 @dataclass(frozen=True)
+class SnapshotEvidence:
+    """Prova imutável de *qual* snapshot foi consumido, capturada na leitura.
+
+    Guarda o manifest já verificado em forma canônica serializada em vez de
+    apontar para as estruturas internas de :class:`DatasetSnapshot` ou para o
+    arquivo em disco. Quem recebe esta evidência não precisa — e não deve —
+    reler o diretório para descobrir o que foi executado.
+    """
+
+    snapshot_id: str
+    schema_version: int
+    identity_digest: str
+    path: str
+    manifest_json: str
+
+    @property
+    def manifest(self) -> dict[str, Any]:
+        """Cópia nova do manifest verificado; mutá-la não afeta a evidência."""
+        return json.loads(self.manifest_json)
+
+
+@dataclass(frozen=True)
 class DatasetSnapshot:
-    """Descrição do artefato materializado em ``data/snapshots``."""
+    """Descrição do artefato materializado em ``data/snapshots``.
+
+    ``manifest_json`` é a forma canônica do manifest tal como ele estava quando
+    a identidade foi conferida; é dele que sai qualquer proveniência levada
+    adiante. Os campos de conveniência são views read-only do mesmo conteúdo.
+    """
 
     snapshot_id: str
     path: Path
@@ -46,9 +92,10 @@ class DatasetSnapshot:
     effective_start: str | None
     effective_end: str | None
     tickers: tuple[str, ...]
-    files: tuple[dict[str, Any], ...]
-    coverage: tuple[dict[str, Any], ...]
-    quality: dict[str, Any]
+    files: tuple[Mapping[str, Any], ...]
+    coverage: tuple[Mapping[str, Any], ...]
+    quality: Mapping[str, Any]
+    manifest_json: str
 
     @property
     def manifest_path(self) -> Path:
@@ -58,12 +105,60 @@ class DatasetSnapshot:
     def scientific_ready(self) -> bool:
         return bool(self.quality["scientific_ready"])
 
+    @property
+    def identity_digest(self) -> str:
+        """SHA-256 completo do payload de identidade deste manifest."""
+        return snapshot_identity_digest(json.loads(self.manifest_json))
+
+    def evidence(self) -> SnapshotEvidence:
+        """Congela a proveniência deste snapshot para consumo fora daqui."""
+        manifest = json.loads(self.manifest_json)
+        return SnapshotEvidence(
+            snapshot_id=self.snapshot_id,
+            schema_version=int(manifest["schema_version"]),
+            identity_digest=snapshot_identity_digest(manifest),
+            path=self.path.as_posix(),
+            manifest_json=self.manifest_json,
+        )
+
+
+def canonical_manifest_json(payload: Mapping[str, Any]) -> str:
+    """Serialização estável do manifest: chaves ordenadas, sem espaço supérfluo."""
+    return json.dumps(
+        payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+    )
+
+
+def snapshot_identity_payload(manifest: Mapping[str, Any]) -> dict[str, Any]:
+    """Tudo que o manifest afirma, menos o próprio identificador.
+
+    Excluir ``snapshot_id`` evita circularidade: o digest é calculado sobre o
+    payload e depois embutido no ID. Todo o resto — fonte, intervalos, universo,
+    ``files`` com seus SHA-256 declarados, ``coverage``, ``quality``,
+    ``calendar``, ``pipeline`` e ``code`` — entra na identidade, de modo que não
+    existe campo científico editável sem quebrar o ID.
+    """
+    return {key: value for key, value in manifest.items() if key != "snapshot_id"}
+
+
+def snapshot_identity_digest(manifest: Mapping[str, Any]) -> str:
+    """SHA-256 do payload de identidade, em JSON canônico."""
+    payload = canonical_manifest_json(snapshot_identity_payload(manifest))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
 
 def load_dataset_snapshot(path: str | Path) -> DatasetSnapshot:
     """Reconstrói um ``DatasetSnapshot`` já materializado a partir do manifest.
 
     Consumidores científicos entram por aqui: nenhum download, nenhum cache
-    mutável, nenhuma reconstrução de dados — apenas leitura do artefato.
+    mutável, nenhuma reconstrução de dados — apenas leitura do artefato. Os
+    guards são fail-closed e nesta ordem: JSON válido, schema suportado,
+    identidade do manifest conferida contra o ``snapshot_id`` e o nome do
+    diretório, e só então a reconstrução do objeto.
+
+    A verificação de tamanho/SHA-256 dos CSVs continua em
+    :func:`verify_snapshot_integrity`: identidade do manifest e integridade dos
+    arquivos são duas garantias separadas.
     """
     root = Path(path)
     manifest_path = root / "manifest.json"
@@ -74,13 +169,89 @@ def load_dataset_snapshot(path: str | Path) -> DatasetSnapshot:
     except json.JSONDecodeError as exc:
         raise ValueError(f"snapshot manifest is not valid JSON: {manifest_path}") from exc
 
-    schema_version = manifest.get("schema_version")
-    if schema_version != MANIFEST_SCHEMA_VERSION:
-        raise ValueError(
-            f"unsupported snapshot manifest schema_version: {schema_version!r}; "
-            f"expected {MANIFEST_SCHEMA_VERSION}"
+    _validate_schema_version(manifest_path, manifest.get("schema_version"))
+    _verify_manifest_identity(root, manifest)
+    return _snapshot_from_manifest(root, manifest)
+
+
+def _validate_schema_version(manifest_path: Path, schema_version: object) -> None:
+    """Schema legado é reconhecido para diagnóstico, nunca aceito em silêncio."""
+    if schema_version == MANIFEST_SCHEMA_VERSION:
+        return
+    if schema_version in LEGACY_MANIFEST_SCHEMA_VERSIONS:
+        raise SnapshotIdentityError(
+            f"snapshot manifest {manifest_path} uses schema_version "
+            f"{schema_version!r}: legacy snapshot schema does not provide "
+            "verifiable manifest identity; regenerate the snapshot with the "
+            "current pipeline"
+        )
+    raise ValueError(
+        f"unsupported snapshot manifest schema_version: {schema_version!r}; "
+        f"expected {MANIFEST_SCHEMA_VERSION}"
+    )
+
+
+def _verify_manifest_identity(root: Path, manifest: Mapping[str, Any]) -> str:
+    """Confere que o manifest é exatamente aquele que gerou o ``snapshot_id``.
+
+    Tamper-evidence dentro do modelo do projeto: detecta manifest adulterado ou
+    incoerente com o artefato. Não é assinatura criptográfica e não resiste a
+    quem recomputa o ID depois de editar o conteúdo.
+    """
+    snapshot_id = manifest.get("snapshot_id")
+    if not isinstance(snapshot_id, str):
+        raise SnapshotIdentityError(
+            f"snapshot manifest {root / 'manifest.json'} has no usable "
+            f"snapshot_id: {snapshot_id!r}"
+        )
+    match = _SNAPSHOT_ID_PATTERN.fullmatch(snapshot_id)
+    if match is None:
+        raise SnapshotIdentityError(
+            f"snapshot_id is not a valid identity token: {snapshot_id!r}; "
+            "expected <utc-timestamp>-<digest>"
+        )
+    timestamp, declared = match.groups()
+
+    digest = snapshot_identity_digest(manifest)
+    if declared != digest[:SNAPSHOT_ID_DIGEST_LENGTH]:
+        raise SnapshotIdentityError(
+            f"snapshot manifest identity mismatch for {snapshot_id}: the id "
+            f"declares {declared}, the manifest content hashes to "
+            f"{digest[:SNAPSHOT_ID_DIGEST_LENGTH]}; the manifest was modified "
+            "after materialization"
         )
 
+    expected_timestamp = _timestamp_token(manifest.get("created_at"))
+    if timestamp != expected_timestamp:
+        raise SnapshotIdentityError(
+            f"snapshot_id timestamp {timestamp} does not match created_at "
+            f"{manifest.get('created_at')!r}"
+        )
+
+    if root.name != snapshot_id:
+        raise SnapshotIdentityError(
+            f"snapshot directory {root.name!r} does not match manifest "
+            f"snapshot_id {snapshot_id!r}; a manifest copied into another "
+            "directory is not that snapshot"
+        )
+    return digest
+
+
+def _timestamp_token(created_at: object) -> str:
+    """Prefixo temporal que um ``snapshot_id`` coerente com ``created_at`` teria."""
+    if not isinstance(created_at, str):
+        raise SnapshotIdentityError(f"snapshot created_at is not a string: {created_at!r}")
+    try:
+        moment = datetime.fromisoformat(created_at.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise SnapshotIdentityError(
+            f"snapshot created_at is not a valid timestamp: {created_at!r}"
+        ) from exc
+    return moment.strftime(SNAPSHOT_ID_TIMESTAMP_FORMAT)
+
+
+def _snapshot_from_manifest(root: Path, manifest: Mapping[str, Any]) -> DatasetSnapshot:
+    """Fonte única do objeto: criação e leitura produzem o mesmo ``DatasetSnapshot``."""
     return DatasetSnapshot(
         snapshot_id=manifest["snapshot_id"],
         path=root,
@@ -90,10 +261,16 @@ def load_dataset_snapshot(path: str | Path) -> DatasetSnapshot:
         effective_start=manifest["effective_start"],
         effective_end=manifest["effective_end"],
         tickers=tuple(manifest["tickers"]),
-        files=tuple(manifest["files"]),
-        coverage=tuple(manifest["coverage"]),
-        quality=manifest["quality"],
+        files=_readonly_records(manifest["files"]),
+        coverage=_readonly_records(manifest["coverage"]),
+        quality=MappingProxyType(dict(manifest["quality"])),
+        manifest_json=canonical_manifest_json(manifest),
     )
+
+
+def _readonly_records(records: Any) -> tuple[Mapping[str, Any], ...]:
+    """Registros do manifest expostos sem permitir reescrita de chave."""
+    return tuple(MappingProxyType(dict(record)) for record in records)
 
 
 def verify_snapshot_integrity(snapshot: DatasetSnapshot) -> None:
@@ -249,18 +426,6 @@ def create_dataset_snapshot(
 
     try:
         files = _materialize_files(frames, staging_data)
-        snapshot_id = _make_snapshot_id(
-            created,
-            ordered_tickers,
-            requested_start.date().isoformat(),
-            requested_end.date().isoformat(),
-            files,
-            calendar,
-        )
-        target = root / snapshot_id
-        if target.exists():
-            raise FileExistsError(f"snapshot already exists: {target}")
-
         complete = all(item["complete"] for item in coverage)
         effective_starts = [
             item["effective_start"] for item in coverage if item["effective_start"]
@@ -277,9 +442,10 @@ def create_dataset_snapshot(
                 item["ticker"] for item in coverage if not item["complete"]
             ],
         }
-        manifest = {
+        # O ID é derivado do manifest completo, portanto o manifest é montado
+        # primeiro e sem ele — ver ``snapshot_identity_payload``.
+        identity = {
             "schema_version": MANIFEST_SCHEMA_VERSION,
-            "snapshot_id": snapshot_id,
             "created_at": created_at,
             "source": {
                 "name": "yfinance",
@@ -306,6 +472,12 @@ def create_dataset_snapshot(
             },
             "code": _git_metadata(repo),
         }
+        snapshot_id = _make_snapshot_id(created, identity)
+        target = root / snapshot_id
+        if target.exists():
+            raise FileExistsError(f"snapshot already exists: {target}")
+
+        manifest = {"snapshot_id": snapshot_id, **identity}
         (staging / "manifest.json").write_text(
             json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
@@ -317,19 +489,8 @@ def create_dataset_snapshot(
             shutil.rmtree(staging)
         raise
 
-    return DatasetSnapshot(
-        snapshot_id=snapshot_id,
-        path=target,
-        created_at=created_at,
-        requested_start=manifest["requested_start"],
-        requested_end=manifest["requested_end"],
-        effective_start=manifest["effective_start"],
-        effective_end=manifest["effective_end"],
-        tickers=ordered_tickers,
-        files=tuple(files),
-        coverage=tuple(coverage),
-        quality=quality,
-    )
+    # Mesma fonte usada na leitura: criar e recarregar produzem o mesmo objeto.
+    return _snapshot_from_manifest(target, manifest)
 
 
 def _materialize_files(
@@ -352,25 +513,10 @@ def _materialize_files(
     return files
 
 
-def _make_snapshot_id(
-    created: datetime,
-    tickers: tuple[str, ...],
-    start: str,
-    end: str,
-    files: list[dict[str, Any]],
-    calendar: B3Calendar,
-) -> str:
-    identity = {
-        "tickers": tickers,
-        "start": start,
-        "end": end,
-        "files": files,
-        "calendar": _calendar_metadata(calendar),
-    }
-    digest = hashlib.sha256(
-        json.dumps(identity, sort_keys=True, separators=(",", ":")).encode("utf-8")
-    ).hexdigest()[:12]
-    return f"{created.strftime('%Y%m%dT%H%M%S%fZ')}-{digest}"
+def _make_snapshot_id(created: datetime, identity: Mapping[str, Any]) -> str:
+    """Âncora verificável: timestamp UTC da criação + digest da identidade."""
+    digest = snapshot_identity_digest(identity)[:SNAPSHOT_ID_DIGEST_LENGTH]
+    return f"{created.strftime(SNAPSHOT_ID_TIMESTAMP_FORMAT)}-{digest}"
 
 
 def _calendar_metadata(calendar: B3Calendar) -> dict[str, Any]:

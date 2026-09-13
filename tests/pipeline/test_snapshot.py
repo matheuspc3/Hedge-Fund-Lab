@@ -2,7 +2,8 @@
 
 import hashlib
 import json
-from datetime import date
+import shutil
+from datetime import date, datetime
 from pathlib import Path
 from unittest.mock import patch
 
@@ -11,7 +12,17 @@ import pandas as pd
 import pytest
 
 from src.backtesting.b3_calendar import B3Calendar
-from src.pipeline.snapshot import create_dataset_snapshot
+from src.pipeline.snapshot import (
+    MANIFEST_SCHEMA_VERSION,
+    SNAPSHOT_ID_DIGEST_LENGTH,
+    SnapshotIdentityError,
+    SnapshotIntegrityError,
+    create_dataset_snapshot,
+    load_dataset_snapshot,
+    snapshot_identity_digest,
+    snapshot_identity_payload,
+    verify_snapshot_integrity,
+)
 from src.pipeline.transform import DataQualityError
 
 
@@ -326,3 +337,263 @@ def test_manifest_serialization_is_stable_and_sorted(tmp_path: Path):
     assert (
         text == json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
     )
+
+
+# ── Identidade verificável do manifest ───────────────────────────
+
+COMPLETE_DATES = [
+    "2020-01-02",
+    "2020-01-03",
+    "2020-01-06",
+    "2020-01-07",
+    "2020-01-08",
+    "2020-01-09",
+    "2020-01-10",
+]
+INCOMPLETE_DATES = ["2020-01-02", "2020-01-03", "2020-01-09", "2020-01-10"]
+
+
+def _rewrite_manifest(snapshot, mutate) -> dict:
+    """Edita o manifest publicado sem recalcular a identidade do snapshot.
+
+    Falha se a mutação não mudou nada: um teste de adulteração que não adultera
+    passaria por engano.
+    """
+    original = json.loads(snapshot.manifest_path.read_text(encoding="utf-8"))
+    manifest = json.loads(json.dumps(original))
+    mutate(manifest)
+    assert manifest != original, "a mutação precisa alterar o manifest"
+    snapshot.manifest_path.write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    return manifest
+
+
+def test_snapshot_id_ancora_o_digest_da_identidade(tmp_path: Path):
+    snapshot, _ = _build(tmp_path, COMPLETE_DATES)
+    manifest = json.loads(snapshot.manifest_path.read_text(encoding="utf-8"))
+
+    assert manifest["schema_version"] == MANIFEST_SCHEMA_VERSION
+    timestamp, _, digest = snapshot.snapshot_id.rpartition("-")
+    assert digest == snapshot_identity_digest(manifest)[:SNAPSHOT_ID_DIGEST_LENGTH]
+    assert len(digest) == SNAPSHOT_ID_DIGEST_LENGTH
+    # O ID não entra no próprio payload: nada de circularidade.
+    assert "snapshot_id" not in snapshot_identity_payload(manifest)
+    # O prefixo temporal é coerente com created_at.
+    assert timestamp == datetime.fromisoformat(
+        manifest["created_at"].replace("Z", "+00:00")
+    ).strftime("%Y%m%dT%H%M%S%fZ")
+    assert snapshot.path.name == snapshot.snapshot_id
+
+
+def test_identidade_cobre_todo_o_manifest_menos_o_id(tmp_path: Path):
+    """Nenhum campo científico do artefato fica fora da identidade."""
+    snapshot, _ = _build(tmp_path, COMPLETE_DATES)
+    manifest = json.loads(snapshot.manifest_path.read_text(encoding="utf-8"))
+    payload = snapshot_identity_payload(manifest)
+
+    assert set(payload) == set(manifest) - {"snapshot_id"}
+    assert {
+        "schema_version",
+        "created_at",
+        "source",
+        "requested_start",
+        "requested_end",
+        "effective_start",
+        "effective_end",
+        "tickers",
+        "files",
+        "coverage",
+        "quality",
+        "calendar",
+        "pipeline",
+        "code",
+    } <= set(payload)
+
+
+def test_snapshot_valido_recarrega_e_reconstroi_o_mesmo_objeto(tmp_path: Path):
+    snapshot, _ = _build(tmp_path, COMPLETE_DATES)
+
+    reloaded = load_dataset_snapshot(snapshot.path)
+
+    assert reloaded == snapshot
+    assert reloaded.identity_digest == snapshot.identity_digest
+    verify_snapshot_integrity(reloaded)
+
+
+@pytest.mark.parametrize(
+    "mutate",
+    [
+        lambda m: m["quality"].update(scientific_ready=False, status="attention"),
+        lambda m: m["coverage"][0].update(missing_sessions_count=5),
+        lambda m: m["coverage"][0].update(complete=False),
+        lambda m: m["coverage"][0].update(coverage_ratio=0.1),
+        lambda m: m["files"][0].update(sha256="0" * 64),
+        lambda m: m["files"][0].update(size=1),
+        lambda m: m.update(tickers=["ITUB4.SA"]),
+        lambda m: m["files"][0].update(ticker="ITUB4.SA"),
+        lambda m: m.update(requested_start="2019-01-01"),
+        lambda m: m.update(effective_end="2030-01-01"),
+        lambda m: m["calendar"].update(extra_closures=["2020-01-06"]),
+        lambda m: m["source"].update(name="outra-fonte"),
+        lambda m: m["pipeline"].update(extractor="outro.extrator"),
+        lambda m: m["code"].update(git_dirty=False),
+        lambda m: m.update(created_at="2020-01-02T00:00:00.000000Z"),
+    ],
+    ids=[
+        "quality",
+        "coverage-missing",
+        "coverage-complete",
+        "coverage-ratio",
+        "files-sha256",
+        "files-size",
+        "tickers",
+        "files-ticker",
+        "requested-interval",
+        "effective-interval",
+        "calendar",
+        "source",
+        "pipeline",
+        "code",
+        "created-at",
+    ],
+)
+def test_manifest_adulterado_e_rejeitado(tmp_path: Path, mutate):
+    """Adulterar o manifest quebra a identidade, sem tocar em CSV algum."""
+    snapshot, _ = _build(tmp_path, COMPLETE_DATES)
+    csv_before = (snapshot.path / "data/PETR4.SA.csv").read_bytes()
+
+    _rewrite_manifest(snapshot, mutate)
+
+    with pytest.raises(SnapshotIdentityError, match="identity mismatch"):
+        load_dataset_snapshot(snapshot.path)
+    assert (snapshot.path / "data/PETR4.SA.csv").read_bytes() == csv_before
+
+
+def test_promover_snapshot_reprovado_pelo_manifest_e_rejeitado(tmp_path: Path):
+    """O caso crítico: `scientific_ready` false -> true sem regenerar nada."""
+    snapshot, _ = _build(tmp_path, INCOMPLETE_DATES)
+    assert snapshot.scientific_ready is False
+
+    _rewrite_manifest(
+        snapshot,
+        lambda m: m["quality"].update(scientific_ready=True, status="ready"),
+    )
+
+    with pytest.raises(SnapshotIdentityError, match="identity mismatch"):
+        load_dataset_snapshot(snapshot.path)
+
+
+def test_snapshot_id_alterado_no_manifest_e_rejeitado(tmp_path: Path):
+    snapshot, _ = _build(tmp_path, COMPLETE_DATES)
+    last = snapshot.snapshot_id[-1]
+    forged = snapshot.snapshot_id[:-1] + ("0" if last != "0" else "1")
+
+    _rewrite_manifest(snapshot, lambda m: m.update(snapshot_id=forged))
+
+    with pytest.raises(SnapshotIdentityError, match="identity mismatch"):
+        load_dataset_snapshot(snapshot.path)
+
+
+def test_snapshot_id_fora_do_formato_e_rejeitado(tmp_path: Path):
+    snapshot, _ = _build(tmp_path, COMPLETE_DATES)
+
+    _rewrite_manifest(snapshot, lambda m: m.update(snapshot_id="snapshot-bonitinho"))
+
+    with pytest.raises(SnapshotIdentityError, match="not a valid identity token"):
+        load_dataset_snapshot(snapshot.path)
+
+
+def test_prefixo_temporal_incoerente_com_created_at_e_rejeitado(tmp_path: Path):
+    """Identidade científica não pode depender só do digest do conteúdo."""
+    snapshot, _ = _build(tmp_path, COMPLETE_DATES)
+    manifest = json.loads(snapshot.manifest_path.read_text(encoding="utf-8"))
+    del manifest["snapshot_id"]
+    digest = snapshot_identity_digest(manifest)[:SNAPSHOT_ID_DIGEST_LENGTH]
+    forged_id = f"20191231T235959000000Z-{digest}"
+    manifest["snapshot_id"] = forged_id
+
+    forged_dir = snapshot.path.parent / forged_id
+    forged_dir.mkdir()
+    forged_dir.joinpath("manifest.json").write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+
+    with pytest.raises(SnapshotIdentityError, match="does not match created_at"):
+        load_dataset_snapshot(forged_dir)
+
+
+def test_manifest_valido_em_diretorio_de_outro_nome_e_rejeitado(tmp_path: Path):
+    """Copiar um manifest íntegro para outro diretório não o torna esse snapshot."""
+    snapshot, _ = _build(tmp_path, COMPLETE_DATES)
+    clone = snapshot.path.parent / "outro-diretorio"
+    shutil.copytree(snapshot.path, clone)
+
+    with pytest.raises(SnapshotIdentityError, match="does not match manifest"):
+        load_dataset_snapshot(clone)
+    # O original continua carregável: nada nele foi tocado.
+    assert load_dataset_snapshot(snapshot.path).snapshot_id == snapshot.snapshot_id
+
+
+def test_schema_legado_nao_ganha_confianca_cientifica(tmp_path: Path):
+    """Schema 1 é reconhecido, nomeado e recusado — nunca migrado em silêncio."""
+    snapshot, _ = _build(tmp_path, COMPLETE_DATES)
+
+    _rewrite_manifest(snapshot, lambda m: m.update(schema_version=1))
+
+    with pytest.raises(SnapshotIdentityError, match="regenerate the snapshot"):
+        load_dataset_snapshot(snapshot.path)
+
+
+def test_schema_desconhecido_continua_sendo_erro_de_valor(tmp_path: Path):
+    snapshot, _ = _build(tmp_path, COMPLETE_DATES)
+
+    _rewrite_manifest(snapshot, lambda m: m.update(schema_version=99))
+
+    with pytest.raises(ValueError, match="unsupported snapshot manifest schema_version"):
+        load_dataset_snapshot(snapshot.path)
+
+
+def test_csv_adulterado_com_manifest_intacto_e_pego_pela_integridade(tmp_path: Path):
+    """Identidade do manifest e integridade dos arquivos são garantias distintas."""
+    snapshot, _ = _build(tmp_path, COMPLETE_DATES)
+    target = snapshot.path / "data/PETR4.SA.csv"
+    target.write_bytes(target.read_bytes() + b"2020-01-13,1.0,1.0,1.0,1.0,1.0\n")
+
+    reloaded = load_dataset_snapshot(snapshot.path)  # identidade intacta
+
+    assert reloaded.snapshot_id == snapshot.snapshot_id
+    with pytest.raises(SnapshotIntegrityError, match="size mismatch"):
+        verify_snapshot_integrity(reloaded)
+
+
+def test_estruturas_do_snapshot_nao_aceitam_mutacao_direta(tmp_path: Path):
+    snapshot, _ = _build(tmp_path, COMPLETE_DATES)
+
+    with pytest.raises(TypeError):
+        snapshot.quality["scientific_ready"] = False  # type: ignore[index]
+    with pytest.raises(TypeError):
+        snapshot.files[0]["sha256"] = "0" * 64  # type: ignore[index]
+    with pytest.raises(TypeError):
+        snapshot.coverage[0]["complete"] = False  # type: ignore[index]
+
+    assert snapshot.scientific_ready is True
+
+
+def test_evidencia_do_snapshot_e_canonica_e_independente_do_disco(tmp_path: Path):
+    snapshot, _ = _build(tmp_path, COMPLETE_DATES)
+    evidence = snapshot.evidence()
+    manifest_before = evidence.manifest
+
+    _rewrite_manifest(snapshot, lambda m: m.update(tickers=["ITUB4.SA"]))
+    shutil.rmtree(snapshot.path)
+
+    assert evidence.manifest == manifest_before
+    assert evidence.snapshot_id == snapshot.snapshot_id
+    assert evidence.identity_digest == snapshot_identity_digest(manifest_before)
+    assert evidence.schema_version == MANIFEST_SCHEMA_VERSION
+    assert json.loads(evidence.manifest_json) == manifest_before

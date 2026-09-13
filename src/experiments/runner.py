@@ -27,6 +27,7 @@ from src.experiments.participants import build_participant, required_tickers
 from src.experiments.spec import ExperimentSpec
 from src.pipeline.snapshot import (
     DatasetSnapshot,
+    SnapshotEvidence,
     SnapshotNotReadyError,
     _git_metadata,
     _package_version,
@@ -37,7 +38,9 @@ from src.pipeline.snapshot import (
 
 logger = logging.getLogger(__name__)
 
-RUN_MANIFEST_SCHEMA_VERSION = 1
+# Schema 2: a proveniência do snapshot passa a ser capturada no ``run()`` e o
+# manifest registra a identidade verificável do artefato consumido.
+RUN_MANIFEST_SCHEMA_VERSION = 2
 EQUITY_FILE = "equity.csv"
 TRADES_FILE = "trades.csv"
 MANIFEST_FILE = "manifest.json"
@@ -89,7 +92,10 @@ class RunResult:
     spec_hash: str
     spec: ExperimentSpec
     created_at: str
-    snapshot_id: str
+    # Proveniência do snapshot capturada no run, em forma canônica congelada:
+    # publicar o resultado não pode reler o diretório para redescobrir o que
+    # foi executado.
+    snapshot: SnapshotEvidence
     universe: tuple[str, ...]
     backtest: BacktestResult
     metrics: Mapping[str, float | int]
@@ -103,6 +109,10 @@ class RunResult:
     def clean_source(self) -> bool:
         """Só é ``True`` quando o código é comprovadamente um commit limpo."""
         return _is_verified_provenance(self.git_commit, self.git_dirty)
+
+    @property
+    def snapshot_id(self) -> str:
+        return self.snapshot.snapshot_id
 
     @property
     def equity_curve(self) -> pd.Series:
@@ -149,6 +159,10 @@ class ExperimentRunner:
         # reproduzido não deve nem carregar dados, nem criar participante.
         provenance = self._code_provenance()
         snapshot = self._load_snapshot()
+        # Evidência congelada no mesmo ponto em que o snapshot passou pelos
+        # guards e antes de qualquer execução: é esta descrição, e não o estado
+        # posterior do diretório, que o manifest do run publicará.
+        evidence = snapshot.evidence()
         universe = self._resolve_universe(snapshot)
         frames = load_snapshot_frames(snapshot, universe)
 
@@ -183,7 +197,7 @@ class ExperimentRunner:
             spec_hash=self.spec.spec_hash,
             spec=self.spec,
             created_at=_isoformat(created),
-            snapshot_id=snapshot.snapshot_id,
+            snapshot=evidence,
             universe=universe,
             backtest=backtest,
             metrics=metrics,
@@ -257,15 +271,19 @@ class ExperimentRunner:
     # ── Persistência ─────────────────────────────────────────────
 
     def persist(self, result: RunResult) -> Path:
-        """Publica o run atomicamente: staging completo, depois rename."""
-        snapshot = load_dataset_snapshot(self.snapshot_dir / result.spec.snapshot_id)
+        """Publica o run atomicamente: staging completo, depois rename.
+
+        Nada aqui relê o snapshot: o que o manifest descreve é a evidência
+        capturada no ``run()``. Alterar o artefato no disco entre executar e
+        publicar não reescreve retroativamente a proveniência do resultado.
+        """
         self.runs_dir.mkdir(parents=True, exist_ok=True)
         staging = self.runs_dir / f".tmp-{uuid4().hex}"
         staging.mkdir(parents=True)
         try:
             _write_equity(result, staging / EQUITY_FILE)
             _write_trades(result, staging / TRADES_FILE)
-            manifest = self._manifest(result, snapshot)
+            manifest = self._manifest(result)
             (staging / MANIFEST_FILE).write_text(
                 json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True)
                 + "\n",
@@ -282,9 +300,8 @@ class ExperimentRunner:
             raise
         return target
 
-    def _manifest(
-        self, result: RunResult, snapshot: DatasetSnapshot
-    ) -> dict[str, Any]:
+    def _manifest(self, result: RunResult) -> dict[str, Any]:
+        snapshot = result.snapshot.manifest
         return {
             "schema_version": RUN_MANIFEST_SCHEMA_VERSION,
             "run_id": result.run_id,
@@ -293,16 +310,18 @@ class ExperimentRunner:
             "experiment_spec": result.spec.to_dict(),
             "participant": result.spec.participant.to_dict(),
             "snapshot": {
-                "snapshot_id": snapshot.snapshot_id,
-                "path": snapshot.path.as_posix(),
-                "created_at": snapshot.created_at,
-                "requested_start": snapshot.requested_start,
-                "requested_end": snapshot.requested_end,
-                "effective_start": snapshot.effective_start,
-                "effective_end": snapshot.effective_end,
-                "tickers": list(snapshot.tickers),
-                "files": [dict(record) for record in snapshot.files],
-                "quality": dict(snapshot.quality),
+                "snapshot_id": result.snapshot.snapshot_id,
+                "schema_version": result.snapshot.schema_version,
+                "identity_digest": result.snapshot.identity_digest,
+                "path": result.snapshot.path,
+                "created_at": snapshot["created_at"],
+                "requested_start": snapshot["requested_start"],
+                "requested_end": snapshot["requested_end"],
+                "effective_start": snapshot["effective_start"],
+                "effective_end": snapshot["effective_end"],
+                "tickers": snapshot["tickers"],
+                "files": snapshot["files"],
+                "quality": snapshot["quality"],
             },
             "universe": list(result.universe),
             "cost_model": result.spec.costs.to_dict(),

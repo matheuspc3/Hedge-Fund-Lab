@@ -176,3 +176,84 @@ def test_parametro_invalido_do_participante_falha_cedo() -> None:
 )
 def test_universo_exigido_vem_da_spec(spec: ParticipantSpec, expected) -> None:
     assert required_tickers(spec) == expected
+
+
+# ── Imutabilidade real do participante ───────────────────────────
+
+
+def test_params_sao_copiados_na_construcao() -> None:
+    """`frozen=True` congela o campo; o dicionário precisa ser copiado."""
+    params = {"ticker": "PETR4.SA", "fast_window": 5, "slow_window": 15}
+    participant = ParticipantSpec("sma_cross", params)
+    spec = base_spec(participant=participant)
+    before = spec.spec_hash
+
+    params["fast_window"] = 999
+    params["injetado"] = "nao deveria aparecer"
+
+    assert participant.params["fast_window"] == 5
+    assert "injetado" not in participant.params
+    assert participant.to_dict()["params"]["fast_window"] == 5
+    assert spec.spec_hash == before
+
+
+def test_params_nao_aceitam_mutacao_direta() -> None:
+    participant = ParticipantSpec("sma_cross", {"ticker": "PETR4.SA", "fast_window": 5})
+
+    with pytest.raises(TypeError):
+        participant.params["fast_window"] = 999  # type: ignore[index]
+    with pytest.raises(TypeError):
+        del participant.params["ticker"]  # type: ignore[attr-defined]
+
+    assert participant.params["fast_window"] == 5
+
+
+def test_to_dict_devolve_dict_novo_e_desacoplado() -> None:
+    participant = ParticipantSpec("sma_cross", {"ticker": "PETR4.SA", "fast_window": 5})
+    payload = participant.to_dict()
+
+    assert isinstance(payload["params"], dict)
+    payload["params"]["fast_window"] = 999
+
+    assert participant.params["fast_window"] == 5
+    assert participant.to_dict()["params"]["fast_window"] == 5
+    assert json.loads(canonical_json(payload)) == payload
+
+
+def test_spec_hash_e_estavel_durante_toda_a_vida_da_spec() -> None:
+    """Nenhuma referência externa usada na criação pode alterar a identidade."""
+    params = {"ticker": "PETR4.SA", "fast_window": 5, "slow_window": 15}
+    participant = ParticipantSpec("sma_cross", params)
+    costs = CostSpec(brokerage_fixed=1.0, spread_bps=10.0, tax_rate=0.001)
+    metrics = MetricSpec()
+    spec = ExperimentSpec(
+        snapshot_id="20200102T000000000000Z-abc123456789",
+        participant=participant,
+        initial_capital=100_000.0,
+        costs=costs,
+        metrics=metrics,
+    )
+    before = spec.spec_hash
+
+    params.clear()
+    params["slow_window"] = -1
+
+    assert spec.spec_hash == before
+    assert spec.participant.params == {
+        "ticker": "PETR4.SA",
+        "fast_window": 5,
+        "slow_window": 15,
+    }
+
+
+def test_participante_read_only_continua_construindo_e_comparando() -> None:
+    """A estrutura read-only não pode quebrar registry, igualdade nem ordem."""
+    spec = ParticipantSpec("sma_cross", {"fast_window": 5, "ticker": "PETR4.SA"})
+    shuffled = ParticipantSpec("sma_cross", {"ticker": "PETR4.SA", "fast_window": 5})
+
+    instance = build_participant(spec)
+
+    assert instance is not None
+    assert required_tickers(spec) == ("PETR4.SA",)
+    assert spec == shuffled
+    assert canonical_json(spec.to_dict()) == canonical_json(shuffled.to_dict())

@@ -55,7 +55,41 @@ participante LLM continuam nos motores legados.
   datas inesperadas produzem `scientific_ready=false` sem fabricar barras.
   `load_dataset_snapshot`, `verify_snapshot_integrity` e `load_snapshot_frames`
   são a porta de entrada dos consumidores científicos: leem o artefato, conferem
-  os hashes e não tocam em rede nem no cache mutável.
+  identidade e hashes e não tocam em rede nem no cache mutável.
+
+O artefato tem **duas garantias distintas e complementares**:
+
+```text
+manifest identity          file integrity
+(o que o artefato afirma)  (os bytes dos CSVs)
+        │                          │
+snapshot_id = timestamp    verify_snapshot_integrity
+            + digest              tamanho + SHA-256
+```
+
+O `snapshot_id` é a âncora verificável da primeira. O digest é o SHA-256 do JSON
+canônico do manifest **inteiro menos o próprio `snapshot_id`** — evitando
+circularidade e, ao mesmo tempo, deixando de fora nenhum campo científico:
+`source`, intervalos solicitado e efetivo, `tickers`, `files` (com `path`,
+`size` e `sha256` declarados), `coverage`, `quality`, `calendar`, `pipeline` e
+`code` entram todos na identidade. Em particular, `quality.scientific_ready` —
+que o runner usa como gate — não pode ser editado sem quebrar o ID.
+
+No carregamento os guards são fail-closed e nesta ordem: JSON válido, schema
+suportado, identidade (formato do ID, digest recalculado, coerência entre o
+prefixo temporal e `created_at`, e nome do diretório igual ao `snapshot_id`),
+reconstrução do objeto; depois, no runner, `scientific_ready`, tamanho/SHA dos
+arquivos e só então os frames. Manifest adulterado levanta
+`SnapshotIdentityError`; CSV adulterado continua levantando
+`SnapshotIntegrityError`. Uma garantia não substitui a outra.
+
+Isso é tamper-evidence dentro do modelo do projeto — detecta adulteração e
+incoerência do artefato. Não é assinatura criptográfica e não resiste a quem
+recomputa o ID depois de editar o conteúdo.
+
+`MANIFEST_SCHEMA_VERSION = 2` introduz essa garantia. Snapshots do schema 1 não
+a possuem e são recusados por nome, pedindo regeneração pelo pipeline atual;
+não existe migração que copie um manifest antigo e o declare confiável.
 - `src/pipeline/transform.py` e `src/indicators/`: limpeza e features.
 - `src/pipeline/load.py`: batch e upsert.
 - `src/db/`: conexão e três modelos ORM.
@@ -155,23 +189,28 @@ os objetos a partir da spec e delega tudo ao `ExecutionEngine`.
 
 ```text
 DatasetSnapshot imutável (data/snapshots/<snapshot_id>)
-        │  scientific_ready + SHA-256 por arquivo
+        │  identidade do manifest + SHA-256 por arquivo
         v
 ExperimentSpec  (snapshot_id, ParticipantSpec, capital, CostSpec, MetricSpec)
         │  spec_hash = SHA-256(canonical_json(spec))
         v
-ExperimentRunner
+ExperimentRunner.run()
         ├── exige proveniência Git limpa ..... senão DirtyRepositoryError
         ├── carrega o manifest do snapshot
+        │     └── identidade verificada ...... senão SnapshotIdentityError
         ├── exige scientific_ready ........... senão SnapshotNotReadyError
         ├── confere tamanho e hash dos CSVs .. senão SnapshotIntegrityError
+        ├── CAPTURA SnapshotEvidence ......... manifest canônico congelado
         ├── resolve o universo efetivo
         ├── participant factory (registry) ... instância NOVA por run
         ├── CostSpec.build() -> CostModel
         └── ExecutionEngine(...).run()
         │
         v
-RunResult (run_id, spec_hash, BacktestResult, métricas canônicas, custo total)
+RunResult (run_id, spec_hash, SnapshotEvidence, BacktestResult, métricas, custo)
+        │
+        v
+ExperimentRunner.persist()  — não relê o snapshot
         │
         v
 data/runs/<run_id>/{manifest.json, equity.csv, trades.csv}   publicação atômica
@@ -179,6 +218,12 @@ data/runs/<run_id>/{manifest.json, equity.csv, trades.csv}   publicação atômi
 
 - `spec.py`: `ParticipantSpec`, `CostSpec`, `MetricSpec`, `ExperimentSpec`,
   `canonical_json` e `spec_hash`. Nenhum objeto vivo, nenhum caminho local.
+  `ParticipantSpec.params` é copiado na construção e guardado como
+  `MappingProxyType`: `frozen=True` congela o campo, não o dicionário que ele
+  aponta. Nem mutar o dicionário original do chamador nem escrever em
+  `participant.params[...]` altera a spec, de modo que uma `ExperimentSpec`
+  criada tem identidade estável por toda a sua vida. `to_dict()` continua
+  devolvendo um `dict` novo e JSON-serializável.
 - `participants.py`: registry explícito dos cinco clássicos e `build_participant`.
   Não existe import path arbitrário vindo de fora.
 - `runner.py`: `ExperimentRunner` e `RunResult`.
@@ -211,7 +256,19 @@ o manifest.
 
 `spec_hash` responde "estes dois runs usaram a mesma configuração?"; `run_id`
 identifica a execução concreta. Dois runs da mesma spec têm o mesmo `spec_hash`
-e `run_id` diferentes.
+e `run_id` diferentes. O manifest publicado prende essa coerência ao artefato:
+`spec_hash == SHA-256(canonical_json(manifest["experiment_spec"]))`, verificável
+sem confiar no runner que o escreveu.
+
+A proveniência do snapshot é capturada **durante o `run()`**, no mesmo ponto em
+que o artefato passa pelos guards e antes de qualquer execução. `RunResult`
+carrega um `SnapshotEvidence` — `snapshot_id`, `schema_version`,
+`identity_digest`, caminho e o manifest verificado em JSON canônico — e não uma
+referência para estruturas mutáveis do `DatasetSnapshot`. `persist()` não relê o
+diretório: alterar (ou apagar) o snapshot entre `run()` e `persist()` não
+reescreve retroativamente o que o manifest do run afirma ter sido executado. A
+regra é que nunca se registre B como executado quando A foi o snapshot
+efetivamente entregue ao `ExecutionEngine`.
 
 ### Sistema multiagente
 

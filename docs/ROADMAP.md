@@ -70,6 +70,10 @@ custos e métricas antes de construir a arena.
 - [x] Rejeitar barras inválidas, inclusive OHLC não positivo ou inconsistente.
 - [x] Criar snapshot imutável com versão, fonte, horário, parâmetros, hashes,
   cobertura por sessão e relatório de qualidade.
+- [x] Dar identidade verificável ao manifest do snapshot: `snapshot_id`
+  ancorado no digest do manifest completo, cobrindo `quality`, `coverage`,
+  `files` e demais metadados, conferido contra o nome do diretório no
+  carregamento. Schema legado recusado em vez de migrado.
 - [x] Tornar carga parcial observável e consumível por automação.
 - [ ] Adotar migrations antes que o schema passe a evoluir.
 
@@ -155,7 +159,12 @@ mesmos dados
   snapshot, participante serializável, capital, custos e parâmetros de métrica.
   Split, frequência, benchmark e seeds dependem de decisões ainda não congeladas.
 - [x] Garantir participante novo por execução, sem estado compartilhado entre runs.
-- [x] Exigir `scientific_ready` e verificar hashes do snapshot antes de executar.
+- [x] Exigir `scientific_ready` e verificar identidade do manifest e hashes dos
+  arquivos do snapshot antes de executar.
+- [x] Tornar `ExperimentSpec` realmente imutável: `ParticipantSpec.params`
+  read-only e `spec_hash` estável depois da construção.
+- [x] Capturar a proveniência do snapshot no `run()` e impedir que `persist()`
+  a redescubra relendo o artefato.
 - [x] Exigir proveniência Git verificável e working tree limpa, com escape
   explícito de desenvolvimento registrado no manifest.
 - [x] Criar `RunResult` e manifest canônicos.
