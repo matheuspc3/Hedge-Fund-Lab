@@ -590,6 +590,64 @@ def test_frequencia_invalida_e_rejeitada_na_construcao() -> None:
         LLMParticipant(TICKER, decision_frequency=0, llm_client=MockLLMClient())
 
 
+# ── Parâmetros inteiros ──────────────────────────────────────────
+
+#: Parâmetros conceitualmente inteiros, com o mínimo que cada um aceita.
+INTEGER_PARAMS = [
+    ("decision_frequency", 1),
+    ("volatility_window", 2),
+    ("retry_attempts", 1),
+    ("analyst_count", 1),
+    ("seed_base", 0),
+]
+
+
+def participant_with(name: str, value: Any) -> LLMParticipant:
+    """Constrói passando ``value`` no parâmetro ``name``, qualquer que seja o tipo.
+
+    O ``dict[str, Any]`` é deliberado: o alvo do teste é justamente entregar um
+    valor de tipo errado e exigir que a validação de runtime o recuse. Anotar
+    mais estreito só esconderia o caso do próprio teste.
+    """
+    overrides: dict[str, Any] = {name: value}
+    return LLMParticipant(TICKER, llm_client=MockLLMClient(), **overrides)
+
+
+@pytest.mark.parametrize(("name", "minimum"), INTEGER_PARAMS)
+def test_parametro_inteiro_aceita_inteiro_valido(name: str, minimum: int) -> None:
+    assert participant_with(name, minimum + 2) is not None
+
+
+@pytest.mark.parametrize(("name", "minimum"), INTEGER_PARAMS)
+@pytest.mark.parametrize("offset", [-1, -2], ids=["abaixo_do_minimo", "bem_abaixo"])
+def test_parametro_inteiro_rejeita_valor_abaixo_do_minimo(
+    name: str, minimum: int, offset: int
+) -> None:
+    with pytest.raises(ValueError, match=f"{name} must be >= {minimum}"):
+        participant_with(name, minimum + offset)
+
+
+@pytest.mark.parametrize(("name", "minimum"), INTEGER_PARAMS)
+def test_parametro_inteiro_rejeita_float_fracionario(name: str, minimum: int) -> None:
+    """``2.5 < 2`` é falso: comparar com o mínimo não valida o tipo."""
+    with pytest.raises(ValueError, match=f"{name} must be an integer"):
+        participant_with(name, minimum + 0.5)
+
+
+@pytest.mark.parametrize(("name", "minimum"), INTEGER_PARAMS)
+def test_parametro_inteiro_rejeita_booleano(name: str, minimum: int) -> None:
+    """``bool`` é subclasse de ``int`` e passaria valendo 1.
+
+    Pydantic sozinho não fecha esta borda: no modo padrão ele **converte**
+    ``True`` em ``1`` para um campo ``int``, de modo que ``analyst_count=True``
+    viraria um quorum de um analista e entraria assim no ``spec_hash`` e no
+    manifest.
+    """
+    del minimum
+    with pytest.raises(ValueError, match=f"{name} must be an integer"):
+        participant_with(name, True)
+
+
 # ── Paridade com o dimensionamento do motor legado ───────────────
 
 ZERO_COST = CostModel()

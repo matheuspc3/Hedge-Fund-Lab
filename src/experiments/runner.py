@@ -19,6 +19,7 @@ from uuid import uuid4
 
 import pandas as pd
 
+from src.artifacts import RunArtifact, RunArtifactProvider
 from src.backtesting.arena import ExecutionEngine
 from src.backtesting.engine import BacktestResult
 from src.backtesting.metrics import performance_metrics, total_transaction_cost
@@ -40,10 +41,15 @@ logger = logging.getLogger(__name__)
 
 # Schema 2: a proveniência do snapshot passa a ser capturada no ``run()`` e o
 # manifest registra a identidade verificável do artefato consumido.
-RUN_MANIFEST_SCHEMA_VERSION = 2
+# Schema 3: o manifest publica ``participant_artifacts`` — caminho, versão de
+# schema e SHA-256 da evidência que o participante produziu durante o run.
+RUN_MANIFEST_SCHEMA_VERSION = 3
 EQUITY_FILE = "equity.csv"
 TRADES_FILE = "trades.csv"
 MANIFEST_FILE = "manifest.json"
+#: Nomes que o runner escreve por conta própria; um artefato de participante
+#: não pode reivindicá-los.
+RESERVED_FILES = frozenset({EQUITY_FILE, TRADES_FILE, MANIFEST_FILE})
 
 
 class DirtyRepositoryError(Exception):
@@ -100,6 +106,10 @@ class RunResult:
     backtest: BacktestResult
     metrics: Mapping[str, float | int]
     total_transaction_cost: float
+    # Evidência congelada que o participante produziu durante *esta* execução,
+    # capturada logo após o motor terminar. ``persist()`` escreve estes bytes
+    # e mais nada: nunca reconsulta o participante nem o provedor.
+    artifacts: tuple[RunArtifact, ...] = ()
     # Proveniência conferida no início do run, não no momento de publicar: o
     # manifest registra exatamente o estado que passou (ou dispensou) o guard.
     git_commit: str | None = None
@@ -176,6 +186,9 @@ class ExperimentRunner:
             self.spec.costs.build(),
         )
         backtest = engine.run()
+        # Mesmo princípio do ``SnapshotEvidence``: a evidência é congelada no
+        # ponto em que o fato aconteceu, não redescoberta na hora de publicar.
+        artifacts = _participant_artifacts(participant)
 
         metrics = performance_metrics(
             backtest.equity_curve,
@@ -202,6 +215,7 @@ class ExperimentRunner:
             backtest=backtest,
             metrics=metrics,
             total_transaction_cost=total_transaction_cost(backtest.trades),
+            artifacts=artifacts,
             git_commit=provenance.get("git_commit"),
             git_dirty=provenance.get("git_dirty"),
         )
@@ -283,6 +297,8 @@ class ExperimentRunner:
         try:
             _write_equity(result, staging / EQUITY_FILE)
             _write_trades(result, staging / TRADES_FILE)
+            for artifact in result.artifacts:
+                (staging / artifact.filename).write_bytes(artifact.content)
             manifest = self._manifest(result)
             (staging / MANIFEST_FILE).write_text(
                 json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True)
@@ -343,7 +359,42 @@ class ExperimentRunner:
                 "allow_dirty": self.allow_dirty,
             },
             "artifacts": {"equity_curve": EQUITY_FILE, "trades": TRADES_FILE},
+            # Vazio para os participantes clássicos, que não produzem
+            # evidência própria e não implementam contrato nenhum para isso.
+            "participant_artifacts": {
+                artifact.name: artifact.describe() for artifact in result.artifacts
+            },
         }
+
+
+def _participant_artifacts(participant: object) -> tuple[RunArtifact, ...]:
+    """Evidência declarada pelo participante, se ele declarar alguma.
+
+    O runner não conhece participante nenhum em particular: o teste é o
+    ``Protocol`` genérico :class:`~src.artifacts.RunArtifactProvider`, não
+    ``isinstance(participant, LLMParticipant)``. Clássicos não implementam
+    ``run_artifacts`` e seguem publicando apenas curva, trades e manifest.
+    """
+    if not isinstance(participant, RunArtifactProvider):
+        return ()
+    artifacts = tuple(participant.run_artifacts())
+    names: set[str] = set()
+    filenames: set[str] = set()
+    for artifact in artifacts:
+        if artifact.name in names:
+            raise ValueError(f"duplicate participant artifact name: {artifact.name}")
+        if artifact.filename in filenames:
+            raise ValueError(
+                f"duplicate participant artifact file: {artifact.filename}"
+            )
+        if artifact.filename in RESERVED_FILES:
+            raise ValueError(
+                f"participant artifact cannot overwrite {artifact.filename}, "
+                "which the runner publishes itself"
+            )
+        names.add(artifact.name)
+        filenames.add(artifact.filename)
+    return artifacts
 
 
 def _isoformat(moment: datetime) -> str:

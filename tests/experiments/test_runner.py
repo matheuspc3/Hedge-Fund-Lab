@@ -18,6 +18,7 @@ import src.pipeline.snapshot as snapshot_module
 from src.backtesting.engine import BacktestResult
 from src.experiments.participants import build_participant
 from src.experiments.runner import (
+    RUN_MANIFEST_SCHEMA_VERSION,
     DirtyRepositoryError,
     ExperimentRunner,
     RunResult,
@@ -402,7 +403,7 @@ def test_manifest_registra_identidade_proveniencia_e_configuracao(
     ).run_and_persist()
     manifest = json.loads((path / "manifest.json").read_text(encoding="utf-8"))
 
-    assert manifest["schema_version"] == 2
+    assert manifest["schema_version"] == RUN_MANIFEST_SCHEMA_VERSION
     assert manifest["run_id"] == result.run_id
     assert manifest["spec_hash"] == result.spec_hash
     assert manifest["experiment_spec"] == result.spec.to_dict()
@@ -428,6 +429,14 @@ def test_manifest_registra_identidade_proveniencia_e_configuracao(
     assert manifest["total_transaction_cost"] == result.total_transaction_cost
     assert manifest["final_equity"] == result.final_equity
     assert "git_commit" in manifest["code"] and "git_dirty" in manifest["code"]
+    # Clássico não produz evidência própria e não implementa contrato algum
+    # para isso; o manifest registra a ausência explicitamente.
+    assert manifest["participant_artifacts"] == {}
+    assert sorted(item.name for item in path.iterdir()) == [
+        "equity.csv",
+        "manifest.json",
+        "trades.csv",
+    ]
 
 
 def test_manifest_e_json_estavel_e_ordenado(

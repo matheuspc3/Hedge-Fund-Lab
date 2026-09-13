@@ -207,21 +207,58 @@ O cliente real já existe; esta fase é de hardening, não de implementação in
 - [x] Tokens.
 - [x] Latência.
 - [x] Modelo.
+- [x] Trace por chamada lógica publicado junto do run
+      (`data/runs/<run_id>/llm_calls.jsonl`), com `schema_version` próprio.
+- [x] Identidade explícita de chamada: `call_id`, `sequence`, `stage`,
+      `analyst_id`, `decision_session`, provedor e modelo solicitados.
+- [x] Prompts lógicos completos e SHA-256 de cada um, sobre o texto exato em
+      UTF-8, com a distinção entre prompt lógico e prompt de transporte
+      documentada em vez de apagada.
+- [x] `response_schema_sha256` na identidade da chamada: o schema viaja dentro
+      do system prompt, então mudar a estrutura sem renomear a classe passa a
+      ser detectado pelo replay.
+- [x] Separação entre opção solicitada e opção efetivamente transmitida, que é
+      o que prova a lacuna de `seed`.
+- [x] `attempt_count` por chamada, sem estado mutável compartilhado.
+- [x] Replay determinístico do trace, sem rede, com detecção de divergência e
+      de trace incompleto ou excedente.
+- [x] Contrato genérico de evidência de participante (`RunArtifactProvider`),
+      com `path`, `schema_version`, `call_count` e `sha256` no manifest.
+- [x] Validação estrita de parâmetros inteiros do `LLMParticipant`, incluindo
+      a borda `bool`, que o Pydantic converteria para `1` em silêncio.
 
 Esses itens comprovam o protocolo HTTP implementado no repositório, não
 compatibilidade oficial com um provedor específico.
 
 ### Pendências
 
-- [ ] Registrar custo real ou estimado.
-- [ ] Vincular telemetria a run, agente, data e hash/versionamento de prompt.
-  Hoje a proveniência de prompt deriva apenas do `git_commit` do manifest;
-  `LLMDecisionRecord` e `LLMTelemetry` ainda não entram no `RunResult`.
+- [ ] Registrar custo real ou estimado. O trace já preserva `token_usage` do
+  provedor quando ele o devolve, e grava `null` quando não devolve; custo
+  continua sempre zero em `LLMTelemetry`.
+- [~] Vincular telemetria a run, agente, data e hash de prompt. **Feito** para o
+  trace por chamada: `decision_session`, `stage`, `analyst_id` e os hashes de
+  prompt estão no artefato do run. **Falta** versionamento de prompt de fato —
+  os prompts seguem como constantes de módulo, sem registry, e nenhum campo
+  `prompt_version` foi inventado sem mecanismo por trás.
 - [ ] Usar structured output nativo quando o endpoint suportar.
 - [ ] Verificar documentalmente o suporte real a `seed`.
-- [ ] Enviar `seed` somente quando suportada.
-- [ ] Tornar o cache seguro sob concorrência.
-- [ ] Remover estado mutável compartilhado de retry/telemetria.
+- [ ] Enviar `seed` somente quando suportada. A lacuna agora é visível no
+  artefato: `seed` aparece em `requested_options` e nunca em
+  `transport_options`.
+- [ ] Tornar o cache seguro sob concorrência. Mantido fora do caminho
+  científico em vez de corrigido: o `LLMParticipant` não monta
+  `CachedLLMClient` e o runner não o introduz. A chave do cache também ignora
+  `provider`/`model`.
+- [x] Remover estado mutável compartilhado de retry/telemetria.
+  `LLMClient._retries_context` deixou de existir; o contador vive em rascunho
+  por invocação em `ContextVar`, com teste de concorrência fora de lockstep.
+- [ ] Preservar `raw_response` em todo provedor. Hoje o `AgentRouterLLMClient`
+  grava o conteúdo bruto antes do parse; provedores sem essa captura registram
+  apenas `validated_response`.
+- [ ] Fingerprint real de modelo devolvido pelo provedor. O trace registra o
+  modelo *solicitado* e o endpoint sanitizado, não a versão de pesos servida.
+- [ ] Decidir se runs que falham devem publicar diretório próprio. Hoje uma
+  falha do participante impede a publicação, comportamento preservado.
 - [~] Garantir fail-closed completo após o quorum, inclusive risco e portfólio.
   No caminho da arena, falha não recuperada do provedor — timeout, erro HTTP,
   JSON inválido, schema inválido, quorum incompletado por falha — levanta
@@ -235,6 +272,11 @@ compatibilidade oficial com um provedor específico.
 
 **Critério de saída:** uma execução pequena pode ser reproduzida pelo manifest,
 tem custo conhecido e não perde votos ou atribuição de telemetria por corrida.
+
+Estado: a **atribuição por corrida está resolvida** e a **reprodução exata está
+resolvida por replay do trace**, não por reexecução contra o provedor — mesma
+spec com LLM ao vivo continua sem garantir resposta idêntica. Custo conhecido
+segue pendente.
 
 ## 7. Protocolo experimental
 

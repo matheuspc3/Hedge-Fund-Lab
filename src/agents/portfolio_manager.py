@@ -4,7 +4,8 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from src.agents.llm_client import LLMClient
+from src.agents.llm_client import LLMCallMetadata, LLMClient
+from src.agents.llm_trace import STAGE_PORTFOLIO_MANAGER
 from src.agents.state import AgentState, FinalDecision
 
 SYSTEM_PROMPT = """Você é o gestor de portfólio do Hedge-fund-lab.
@@ -98,7 +99,12 @@ def create_portfolio_manager_node(
             sort_keys=True,
         )
         try:
-            response = await llm.generate(SYSTEM_PROMPT, prompt, FinalDecision)
+            response = await llm.generate(
+                SYSTEM_PROMPT,
+                prompt,
+                FinalDecision,
+                metadata=LLMCallMetadata(stage=STAGE_PORTFOLIO_MANAGER),
+            )
             if not isinstance(response, FinalDecision):
                 raise TypeError("resposta não segue FinalDecision")
             if response.decision not in {signal.signal, "MANTER"}:

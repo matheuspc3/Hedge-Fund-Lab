@@ -10,22 +10,27 @@ cientificamente e por isso são registrados explicitamente no manifest.
 """
 
 import hashlib
-import json
 import math
 from dataclasses import dataclass, field
 from types import MappingProxyType
 from typing import Any, Mapping
 
+from src.artifacts import canonical_json
 from src.backtesting.costs import CostModel
 
 SPEC_SCHEMA_VERSION = 1
 
-
-def canonical_json(payload: Any) -> str:
-    """Serialização estável: chaves ordenadas, sem espaço supérfluo."""
-    return json.dumps(
-        payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False
-    )
+# ``canonical_json`` vive em :mod:`src.artifacts` para que a spec e o trace de
+# LLM usem literalmente a mesma serialização estável; continua reexportado
+# aqui porque é parte da API pública desta camada desde antes.
+__all__ = [
+    "SPEC_SCHEMA_VERSION",
+    "CostSpec",
+    "ExperimentSpec",
+    "MetricSpec",
+    "ParticipantSpec",
+    "canonical_json",
+]
 
 
 @dataclass(frozen=True)

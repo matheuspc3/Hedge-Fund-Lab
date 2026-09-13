@@ -4,7 +4,8 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from src.agents.llm_client import LLMClient
+from src.agents.llm_client import LLMCallMetadata, LLMClient
+from src.agents.llm_trace import STAGE_RISK_MANAGER
 from src.agents.state import AgentState, RiskVerdict
 
 SYSTEM_PROMPT = """Você é o gestor de risco do Hedge-fund-lab.
@@ -99,7 +100,12 @@ class RiskManager:
             sort_keys=True,
         )
         try:
-            response = await self.llm.generate(SYSTEM_PROMPT, prompt, RiskVerdict)
+            response = await self.llm.generate(
+                SYSTEM_PROMPT,
+                prompt,
+                RiskVerdict,
+                metadata=LLMCallMetadata(stage=STAGE_RISK_MANAGER),
+            )
             if not isinstance(response, RiskVerdict):
                 raise TypeError("resposta não segue RiskVerdict")
             response.risk_metrics.update(metrics)

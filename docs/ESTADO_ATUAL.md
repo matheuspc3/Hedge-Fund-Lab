@@ -324,12 +324,22 @@ seus resultados não são, por si só, conteúdo versionado no Git:
 | Suíte de pipeline com SQLite em memória (`poetry run pytest tests/pipeline -q`) | **108 passaram** em 10/09/2026 |
 | Suíte de backtesting (`poetry run pytest tests/backtesting -q`) | **191 passaram** em 12/09/2026 |
 | Suíte experimental (`poetry run pytest tests/experiments -q`) | **64 passaram** em 13/09/2026 |
+| Suítes de agentes e experimentos após o trace de LLM (`pytest tests/agents tests/experiments -q`) | **263 passaram** em 13/09/2026 |
 | Suíte completa com SQLite em memória (`poetry run pytest -q`) | **509 passaram** em 13/09/2026 |
+| Suíte completa após o trace de LLM (`poetry run pytest -q`) | **689 passaram** em 13/09/2026 |
 | Cobertura (última medição, anterior a esta mudança) | **95%** |
 | Ruff | **14 violações preexistentes fora dos arquivos desta mudança** |
 | Ruff nos arquivos desta mudança | **verde** |
 | Pyright nos arquivos desta mudança | **verde** |
 | Pyright no escopo configurado (última medição) | **181 erros** |
+| Pyright em `src/agents`+`src/experiments`+testes, antes/depois desta mudança | **50 -> 50** (nenhum erro novo) |
+| Mutação A — remover comparação de prompt no replay | **3 testes falham** |
+| Mutação B — contador de retry global entre chamadas concorrentes | **2 testes falham** |
+| Mutação C — aceitar registro sobrando no trace | **1 teste falha** |
+| Mutação D — retirar o hash do trace do manifest | **3 testes falham** |
+| Mutação E — retirar `response_schema_sha256` da identidade da chamada | **1 teste falha** |
+| Ensemble concorrente terminando fora de ordem (conclusão `[2, 3, 1]`) | trace publicado em ordem de emissão `[1, 2, 3]`, idêntico em 5 execuções |
+| Run mock determinístico antes/depois desta mudança | **impressão digital idêntica** (equity, trades, métricas e pesos alvo) |
 | Banco PostgreSQL local | 10 ativos; 26.390 datas únicas de cotação e indicadores |
 | Duplicatas ativo/data | 0 |
 | Barras com algum OHLC não positivo | 1 por ticker, na última data |
@@ -430,21 +440,39 @@ protocolo aprovado.
 
 - A opção `seed` é registrada no voto e na chave do cache, mas o cliente HTTP
   envia apenas `temperature`, `top_p` e `max_tokens`. A seed não chega ao modelo.
+  **Continua verdade**, agora provado e publicado: o trace separa
+  `requested_options` (o que o ensemble pediu, incluindo `seed`) de
+  `transport_options` (o que entrou no corpo HTTP, de onde `seed` está ausente).
+  Não há determinismo por seed neste provedor, e a documentação não afirma que
+  haja.
 - O schema Pydantic é anexado ao prompt, porém não é enviado como structured
   output nativo (`response_format`/JSON Schema do provedor).
-- Retry e telemetria compartilham um contador mutável entre chamadas concorrentes;
-  o número de retries pode ser atribuído à chamada errada.
+- ~~Retry e telemetria compartilham um contador mutável entre chamadas
+  concorrentes~~ — **corrigido**. `LLMClient._retries_context` foi removido; o
+  contador de tentativas vive em um rascunho por invocação guardado em
+  `ContextVar`, que o `asyncio` copia por task. Há teste de concorrência com
+  analistas que falham um número diferente de vezes, fora de lockstep.
 - O cache grava todas as chamadas concorrentes no mesmo arquivo temporário, sem
   lock. Isso cria risco de corrida, perda de entradas e votos inválidos.
+  **Deixado fora do caminho científico em vez de corrigido**: o
+  `LLMParticipant` não monta `CachedLLMClient` e o `ExperimentRunner` não o
+  introduz. Cache é otimização; evidência experimental é o trace. A chave do
+  cache também não inclui `provider`/`model`, então trocar de modelo
+  reaproveitaria a resposta anterior — mais uma razão para mantê-lo fora.
 - Falhas de conexão são agregadas com segurança no comitê técnico, mas risco e
   portfólio só capturam respostas inválidas; uma falha de rede após o quorum pode
   abortar o grafo.
 - A confiança textual do LLM é usada como probabilidade de vitória na fórmula de
   Kelly, sem calibração empírica. Esse número ainda não pode ser tratado como
   probabilidade financeira.
-- A telemetria registra tokens, latência, retry e modelo, mas custo permanece
-  sempre zero e os eventos não têm vínculo explícito com run, data, agente ou
-  hash de prompt.
+- A telemetria legada `LLMTelemetry` registra tokens, latência, retry e modelo,
+  mas custo permanece sempre zero. O vínculo com run, data, agente e hash de
+  prompt **passou a existir** no trace por chamada (`llm_calls.jsonl`), que é o
+  artefato científico; `LLMTelemetry` continua como telemetria operacional do
+  cliente e não é usada como evidência.
+- No trace, uso de tokens só aparece quando o provedor devolve `usage`; caso
+  contrário é `null`. Zero apresentado como medição seria estimativa disfarçada
+  de fato.
 - O dry-run subestima rodadas quando existe previsão no último dia e trata
   `analistas + 2` como número fixo, embora veto e `MANTER` evitem chamadas e cache
   evite chamadas externas. Hoje ele não é uma estimativa confiável de gasto.
@@ -516,12 +544,41 @@ fractional Kelly sobre a confiança textual. Isso é migração de comportamento
 não aprovação metodológica: a confiança textual continua não calibrada e o
 Kelly probabilístico continua em aberto.
 
-**Proveniência de prompt.** Os prompts vivem em
+**Proveniência de prompt.** Os prompts continuam vivendo em
 `src/agents/technical_analyst.py`, `risk_manager.py` e `portfolio_manager.py`,
-como constantes de módulo. Não existe registry nem versionamento explícito de
-prompt; hoje a proveniência do prompt deriva do `git_commit` registrado no
-manifest, e o guard fail-closed de working tree limpa é o que garante esse
-vínculo. Versionamento explícito de prompt continua hardening futuro.
+como constantes de módulo, e **continua não existindo registry nem
+versionamento explícito de prompt** — nenhum campo `prompt_version` foi
+inventado, porque não há mecanismo real de versionamento por trás dele.
+
+O que passou a existir é proveniência do texto concreto: cada chamada grava os
+dois prompts **lógicos completos** e seus SHA-256, calculados sobre o texto
+exato em UTF-8, sem normalizar espaço em branco. Gravar o texto, e não apenas o
+hash, é deliberado: o trace precisa permitir reconstruir a chamada, e nenhum
+prompt do projeto carrega segredo. Registry formal de prompt segue como
+hardening futuro.
+
+**Prompt lógico não é prompt de transporte.** O `AgentRouterLLMClient`
+transforma a chamada antes de enviá-la: ele serializa `model_json_schema()` do
+`response_schema` e o acrescenta ao system prompt. Logo, para esse provedor, o
+`system_prompt` publicado **não é** literalmente o texto que foi para o corpo
+HTTP, e o trace não o descreve como tal.
+
+```text
+system_prompt            -> prompt LÓGICO, o que a stack de agentes pediu
+response_schema_sha256   -> estrutura do schema, que vai junto na requisição
+molde que une os dois    -> código, coberto pelo git_commit
+--------------------------------------------------------------------------
+determinam o prompt de TRANSPORTE
+
+transport_system_prompt_sha256 -> hash do texto final, quando o cliente o
+                                  reporta (null no mock, que não transforma)
+```
+
+Essa distinção não é cosmética. Antes desta rodada a identidade da chamada
+usava só o **nome** da classe do schema, então afrouxar um limite de `Field`
+sem renomear a classe mudava o que era perguntado ao provedor e **o replay
+aceitava em silêncio**. Com `response_schema_sha256` na identidade, esse caso
+levanta `ReplayMismatchError`.
 
 **Fail-soft remanescente, herdado e não alterado.** O `portfolio_manager`
 converte em `MANTER` uma decisão que inverte o sinal técnico, e o
@@ -530,12 +587,66 @@ dois é falha de infraestrutura e ambos foram preservados como estão, para não
 substituir silenciosamente o comportamento científico atual. Ambos aparecem em
 `LLMDecisionRecord.errors`.
 
-**Telemetria não integrada.** `LLMTelemetry` (tokens, latência, retry, modelo)
-continua acumulando no cliente e `LLMDecisionRecord` vive na instância do
-participante. Nada disso entra no `RunResult` nem no manifest: integrar exigiria
-mudança de schema e ficou como próximo hardening. O requisito mínimo desta fase
-— reconstruir a decisão executada em teste e ver a configuração na
-spec/manifest — está atendido.
+**Trace de chamadas integrado ao run (fase atual).** O que antes vivia só na
+instância do participante agora é artefato publicado do run.
+
+Um run `llm_agent` publica `data/runs/<run_id>/llm_calls.jsonl` ao lado de
+`equity.csv` e `trades.csv`, e o manifest (schema 3) ganha
+`participant_artifacts` com caminho, `schema_version`, `call_count`,
+`error_count`, tamanho e `sha256` dos bytes publicados. O contrato é genérico
+(`RunArtifactProvider` em `src/artifacts.py`): o runner não faz
+`isinstance(participant, LLMParticipant)` e os clássicos não implementam nada,
+publicando `participant_artifacts` vazio.
+
+Cada registro contém `call_id`, `sequence`, `stage`, `analyst_id`,
+`decision_session`, `provider`, `requested_model`, prompts lógicos completos e
+seus hashes, `response_schema` com `response_schema_sha256`,
+`requested_options`, `transport_options`, `transport_system_prompt_sha256`,
+`started_at`, `duration_ms`, `attempt_count`/`retry_count`, `status`, tipo e
+mensagem do erro quando houver, e a resposta validada em
+`model_dump(mode="json")`.
+
+`LLMTelemetry` continua acumulando no cliente como telemetria operacional e
+não foi promovida a evidência.
+
+**Reprodutibilidade: o que é e o que não é garantido.** Esta é a distinção
+central para o TCC.
+
+```text
+mesma ExperimentSpec + mesmo snapshot + LLM externo ao vivo
+    -> NÃO garante resposta idêntica
+```
+
+Mesmo `model`, mesma `temperature` e mesmo `seed` registrado não bastam: o
+provedor não promete determinismo, e neste cliente `seed` sequer é transmitido.
+A garantia forte passou a ser outra, em dois tempos:
+
+```text
+run ao vivo -> trace
+trace       -> replay determinístico, sem rede, mesmas decisões
+```
+
+Há prova ponta a ponta: RUN A grava com mock determinístico e publica;
+RUN B reexecuta a mesma arena com `ReplayLLMClient` lendo o trace publicado,
+com as superfícies de rede patchadas para explodir, e produz as **mesmas**
+decisões, trades, curva de equity e métricas. Ao final, o replay exige que o
+trace tenha sido consumido inteiro.
+
+O replay se recusa a fingir: prompt, modelo, provedor, opções solicitadas,
+schema, papel, analista, sessão ou ordem diferentes levantam
+`ReplayMismatchError` em vez de devolver a próxima resposta. Registro faltando
+e registro sobrando também. Relógio e duração **não** entram na identidade —
+reproduzir não pode falhar porque o tempo passou.
+
+**Erro definitivo também é evidência.** Uma chamada que falhou de vez grava
+`status="error"`, `error_type`, `error_message` e `attempt_count`. Só a
+mensagem, sem stack trace: o stack é instável entre execuções e não acrescenta
+informação sobre a inferência.
+
+**Run que falha continua não sendo publicado.** `run_and_persist()` mantém o
+comportamento anterior — uma falha do participante impede a publicação do run,
+e nada foi alterado em silêncio. Persistir diretórios de run falho é proposta
+registrada, não implementada.
 
 ### Dashboard e operação
 

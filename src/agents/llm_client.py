@@ -4,14 +4,18 @@ import asyncio
 import hashlib
 import json
 import os
+import time
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from contextlib import contextmanager
+from contextvars import ContextVar
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterator, Mapping
 from urllib import error, request
+from urllib.parse import urlsplit
 
 from pydantic import BaseModel
-import time
+
 
 @dataclass
 class LLMTelemetry:
@@ -25,17 +29,72 @@ class LLMTelemetry:
 
 
 @dataclass(frozen=True)
+class LLMCallMetadata:
+    """Metadado técnico de *quem* está chamando, passado explicitamente.
+
+    Existe para que a proveniência de uma chamada (papel no grafo e, no
+    ensemble, qual analista) seja declarada pelo nó que chama, e não deduzida
+    depois lendo o texto do prompt ou a ordem das chamadas. Não entra no
+    prompt: observabilidade não contamina a entrada do modelo.
+    """
+
+    stage: str
+    analyst_id: int | None = None
+
+
+@dataclass
+class LLMCallTelemetry:
+    """Rascunho mutável de *uma única* invocação lógica de ``generate``.
+
+    Substitui o antigo ``LLMClient._retries_context``, que era atributo de
+    instância do cliente concreto e, portanto, compartilhado entre as chamadas
+    concorrentes do ensemble: um analista podia publicar o número de tentativas
+    de outro. Aqui o rascunho vive em ``ContextVar``, que ``asyncio`` copia por
+    task — cada analista enxerga e escreve apenas o seu.
+    """
+
+    attempts: int = 1
+    usage: dict[str, Any] | None = None
+    raw_response: str | None = None
+    #: System prompt **efetivamente** colocado no corpo HTTP, quando o cliente
+    #: concreto transforma o prompt lógico antes de enviar. ``None`` quando não
+    #: há transformação ou o cliente não a reporta.
+    transport_system_prompt: str | None = None
+
+
+_CALL_TELEMETRY: ContextVar[LLMCallTelemetry | None] = ContextVar(
+    "llm_call_telemetry", default=None
+)
+
+
+def current_call_telemetry() -> LLMCallTelemetry | None:
+    """Rascunho da invocação corrente, ou ``None`` fora de uma gravação."""
+    return _CALL_TELEMETRY.get()
+
+
+@contextmanager
+def call_telemetry_slot() -> Iterator[LLMCallTelemetry]:
+    """Abre um rascunho novo, isolado nesta task, e o fecha ao final."""
+    slot = LLMCallTelemetry()
+    token = _CALL_TELEMETRY.set(slot)
+    try:
+        yield slot
+    finally:
+        _CALL_TELEMETRY.reset(token)
+
+
+@dataclass(frozen=True)
 class LLMCall:
     system_prompt: str
     user_prompt: str
     response_schema: type[BaseModel] | None
     options: dict[str, Any]
+    metadata: LLMCallMetadata | None = field(default=None)
 
 
 class LLMClient(ABC):
     def __init__(self) -> None:
         self.telemetry_logs: list[LLMTelemetry] = []
-        self._retries_context: int = 0
 
     @property
     def all_telemetry(self) -> list[LLMTelemetry]:
@@ -44,6 +103,45 @@ class LLMClient(ABC):
             logs.extend(self.client.all_telemetry)
         return logs
 
+    # ── Descrição do provedor, propagada pelos wrappers ──────────
+    #
+    # As três funções abaixo existem para que a camada de gravação possa
+    # registrar o que *de fato* acontece no transporte sem conhecer o cliente
+    # concreto. A implementação da base delega para o cliente embrulhado; só o
+    # cliente que fala com o provedor sabe responder de verdade.
+
+    def _inner(self) -> "LLMClient | None":
+        inner = getattr(self, "client", None)
+        return inner if isinstance(inner, LLMClient) else None
+
+    def transport_options(
+        self, options: Mapping[str, Any] | None
+    ) -> dict[str, Any]:
+        """Subconjunto de ``options`` que este cliente realmente transmite.
+
+        Separar isto de ``options`` solicitadas é o que impede confundir
+        "opção registrada no pipeline" com "opção entregue ao provedor" —
+        distinção que hoje importa para ``seed``.
+        """
+        inner = self._inner()
+        return inner.transport_options(options) if inner is not None else {}
+
+    def provider_endpoint(self) -> str | None:
+        """Identidade não sensível do endpoint, sem credencial alguma."""
+        inner = self._inner()
+        return inner.provider_endpoint() if inner is not None else None
+
+    def begin_session(self, session: Any) -> None:
+        """Declara a sessão de decisão corrente e propaga para baixo.
+
+        A sessão é constante durante toda a decisão de ``close(t)``, inclusive
+        para as chamadas concorrentes do ensemble, por isso é atributo simples
+        e não precisa de isolamento por task.
+        """
+        inner = self._inner()
+        if inner is not None:
+            inner.begin_session(session)
+
     @abstractmethod
     async def generate(
         self,
@@ -51,6 +149,8 @@ class LLMClient(ABC):
         user_prompt: str,
         response_schema: type[BaseModel] | None = None,
         options: dict[str, Any] | None = None,
+        *,
+        metadata: LLMCallMetadata | None = None,
     ) -> BaseModel | str:
         """Gera uma resposta, opcionalmente validada por um schema."""
 
@@ -70,9 +170,13 @@ class MockLLMClient(LLMClient):
         user_prompt: str,
         response_schema: type[BaseModel] | None = None,
         options: dict[str, Any] | None = None,
+        *,
+        metadata: LLMCallMetadata | None = None,
     ) -> BaseModel | str:
         self.calls.append(
-            LLMCall(system_prompt, user_prompt, response_schema, options or {})
+            LLMCall(
+                system_prompt, user_prompt, response_schema, options or {}, metadata
+            )
         )
         response = self.responses.get(response_schema, "MANTER")
         if isinstance(response, list):
@@ -117,24 +221,42 @@ class RetryingLLMClient(LLMClient):
         user_prompt: str,
         response_schema: type[BaseModel] | None = None,
         options: dict[str, Any] | None = None,
+        *,
+        metadata: LLMCallMetadata | None = None,
     ) -> BaseModel | str:
+        # O contador de tentativas é o rascunho desta invocação, isolado por
+        # task: duas chamadas concorrentes do ensemble não se sobrescrevem.
+        slot = current_call_telemetry()
         for attempt in range(self.max_attempts - 1):
+            if slot is not None:
+                slot.attempts = attempt + 1
             try:
-                self.client._retries_context = attempt
                 return await self.client.generate(
-                    system_prompt, user_prompt, response_schema, options
+                    system_prompt, user_prompt, response_schema, options,
+                    metadata=metadata,
                 )
             except self.retry_exceptions:
                 await asyncio.sleep(self.base_delay * (2**attempt))
-        
-        self.client._retries_context = self.max_attempts - 1
+
+        if slot is not None:
+            slot.attempts = self.max_attempts
         return await self.client.generate(
-            system_prompt, user_prompt, response_schema, options
+            system_prompt, user_prompt, response_schema, options, metadata=metadata
         )
 
 
 class AgentRouterLLMClient(LLMClient):
-    """Cliente compatível com a API OpenAI-style do Agent Router/OpenRouter."""
+    """Cliente compatível com a API OpenAI-style do Agent Router/OpenRouter.
+
+    Proveniência declarada, e não presumida: ``TRANSMITTED_OPTION_KEYS`` é a
+    lista **única** das opções que chegam ao corpo HTTP. Tudo o que o pipeline
+    passa em ``options`` e não está nessa lista — hoje ``seed`` e
+    ``analyst_id`` — é opção *solicitada*, nunca opção aplicada pelo modelo.
+    """
+
+    #: Fonte única da verdade sobre o que é transmitido; o payload e
+    #: ``transport_options`` leem daqui para não poderem divergir.
+    TRANSMITTED_OPTION_KEYS: tuple[str, ...] = ("temperature", "top_p", "max_tokens")
 
     def __init__(
         self,
@@ -174,20 +296,58 @@ class AgentRouterLLMClient(LLMClient):
             return self.base_url
         return f"{self.base_url}/chat/completions"
 
+    def transport_options(
+        self, options: Mapping[str, Any] | None
+    ) -> dict[str, Any]:
+        if not options:
+            return {}
+        return {
+            key: options[key]
+            for key in self.TRANSMITTED_OPTION_KEYS
+            if options.get(key) is not None
+        }
+
+    def provider_endpoint(self) -> str | None:
+        """Esquema, host, porta e caminho — sem userinfo, query ou fragmento.
+
+        ``base_url`` é configurável por ambiente, então o mesmo
+        ``provider="agent_router"`` pode apontar para endpoints diferentes.
+        Registrar esta identidade fecha a lacuna sem levar credencial junto.
+        """
+        parsed = urlsplit(self._endpoint_url())
+        host = parsed.hostname or ""
+        if not host:
+            return None
+        if parsed.port:
+            host = f"{host}:{parsed.port}"
+        return f"{parsed.scheme}://{host}{parsed.path}"
+
     async def generate(
         self,
         system_prompt: str,
         user_prompt: str,
         response_schema: type[BaseModel] | None = None,
         options: dict[str, Any] | None = None,
+        *,
+        metadata: LLMCallMetadata | None = None,
     ) -> BaseModel | str:
         if not self.api_key:
             raise ConnectionError("LLM_API_KEY não configurada")
 
+        # O prompt lógico é transformado aqui: o JSON Schema do
+        # ``response_schema`` entra no system prompt. É por isso que o trace não
+        # pode tratar o prompt lógico como "texto exato enviado ao provedor", e
+        # por isso que o digest do schema faz parte da identidade da chamada.
         sys_prompt = system_prompt
         if response_schema:
             schema_json = json.dumps(response_schema.model_json_schema(), ensure_ascii=False)
             sys_prompt += f"\n\nResponda estritamente em JSON válido seguindo a estrutura:\n{schema_json}"
+
+        slot = current_call_telemetry()
+        if slot is not None:
+            # Reportado antes de qualquer I/O: mesmo uma chamada que falha no
+            # transporte deixa registrado o que ela ia enviar.
+            slot.transport_system_prompt = sys_prompt
 
         payload: dict[str, Any] = {
             "model": self.model,
@@ -198,10 +358,9 @@ class AgentRouterLLMClient(LLMClient):
             ],
         }
 
-        if options:
-            for key in ("temperature", "top_p", "max_tokens"):
-                if key in options and options[key] is not None:
-                    payload[key] = options[key]
+        # Mesma fonte que ``transport_options``: o que é registrado como
+        # transmitido é literalmente o que vai no corpo.
+        payload.update(self.transport_options(options))
 
         headers = {
             "Authorization": f"Bearer {self.api_key}",
@@ -229,6 +388,7 @@ class AgentRouterLLMClient(LLMClient):
         total_tokens = usage.get("total_tokens", prompt_tokens + completion_tokens)
         cost_usd = 0.0 # TODO: implement dynamic pricing if needed
 
+        attempts = slot.attempts if slot is not None else 1
         self.telemetry_logs.append(
             LLMTelemetry(
                 prompt_tokens=prompt_tokens,
@@ -236,15 +396,31 @@ class AgentRouterLLMClient(LLMClient):
                 total_tokens=total_tokens,
                 cost_usd=cost_usd,
                 latency_ms=latency_ms,
-                retries=self._retries_context,
+                retries=attempts - 1,
                 model=self.model,
             )
         )
-        self._retries_context = 0
+        if slot is not None and isinstance(body.get("usage"), dict):
+            # Só o que o provedor devolveu de fato. Ausência vira ``null`` no
+            # trace: zero apresentado como medição seria estimativa disfarçada.
+            slot.usage = {
+                "prompt_tokens": usage.get("prompt_tokens"),
+                "completion_tokens": usage.get("completion_tokens"),
+                "total_tokens": usage.get("total_tokens"),
+                "source": "provider",
+            }
 
         message_content = body["choices"][0]["message"]["content"]
         if isinstance(message_content, list):
             message_content = "".join(str(item) for item in message_content)
+        if slot is not None:
+            # Gravado antes do parse: uma resposta que falha na validação
+            # deixa mesmo assim o texto bruto como evidência.
+            slot.raw_response = (
+                message_content
+                if isinstance(message_content, str)
+                else str(message_content)
+            )
         if response_schema is None:
             return message_content if isinstance(message_content, str) else str(message_content)
 
@@ -262,7 +438,19 @@ class AgentRouterLLMClient(LLMClient):
 
 
 class CachedLLMClient(LLMClient):
-    """Cache JSON persistente por prompt e schema, sem dependência externa."""
+    """Cache JSON persistente por prompt e schema, sem dependência externa.
+
+    **Fora do caminho científico, deliberadamente.** Cache é otimização;
+    evidência experimental é o trace de :mod:`src.agents.llm_trace`. O
+    ``LLMParticipant`` não monta este cliente e o ``ExperimentRunner`` não o
+    introduz — reprodução de um run se faz por replay explícito.
+
+    Duas limitações ficam registradas em vez de corrigidas aqui, porque
+    corrigi-las mudaria chaves de caches já gravados sem necessidade para a
+    stack científica: a chave não inclui ``provider``/``model`` (trocar de
+    modelo reaproveita a resposta anterior) e o arquivo é reescrito inteiro a
+    cada gravação.
+    """
 
     def __init__(self, client: LLMClient, cache_path: str | Path):
         super().__init__()
@@ -308,11 +496,13 @@ class CachedLLMClient(LLMClient):
         user_prompt: str,
         response_schema: type[BaseModel] | None = None,
         options: dict[str, Any] | None = None,
+        *,
+        metadata: LLMCallMetadata | None = None,
     ) -> BaseModel | str:
         key = self._key(system_prompt, user_prompt, response_schema, options)
         if key in self._cache:
             cached = self._cache[key]
-            
+
             # Log cache hit as 0 cost, 0 latency
             self.telemetry_logs.append(
                 LLMTelemetry(
@@ -329,7 +519,7 @@ class CachedLLMClient(LLMClient):
             return response_schema.model_validate(cached) if response_schema else cached
 
         response = await self.client.generate(
-            system_prompt, user_prompt, response_schema, options
+            system_prompt, user_prompt, response_schema, options, metadata=metadata
         )
         self._cache[key] = (
             response.model_dump(mode="json")

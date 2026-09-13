@@ -318,6 +318,49 @@ e isso é uma lacuna conhecida de proveniência.
 Seed só será enviada a um provedor após confirmação de suporte. Toda seed
 configurada, enviada ou apenas auditada deverá ser distinguida no manifest.
 
+**Estado técnico verificado.** O `AgentRouterLLMClient` transmite apenas
+`temperature`, `top_p` e `max_tokens`. `seed` é gerada pelo ensemble, entra no
+`TechnicalVote` e aparece no trace como opção **solicitada**, mas **nunca é
+enviada ao endpoint**. Essa distinção passou a ser publicada por chamada:
+
+```text
+requested_options  -> {"temperature": ..., "seed": ..., "analyst_id": ...}
+transport_options  -> {"temperature": ...}       # seed ausente
+```
+
+Portanto: não existe, hoje, determinismo por seed neste provedor, e nada no
+projeto deve ser descrito como tal. A decisão sobre enviar `seed` quando houver
+suporte documentado continua `TBD`.
+
+### Inferência ao vivo versus inferência por replay
+
+Esta distinção é parte do protocolo, não detalhe de implementação.
+
+```text
+inferência ao vivo
+  mesma ExperimentSpec + mesmo snapshot + provedor externo
+  -> NÃO garante resposta idêntica
+  -> fonte primária de evidência: o trace gravado daquela execução
+
+inferência por replay
+  trace gravado -> ReplayLLMClient -> sem rede
+  -> mesmas respostas, mesmas decisões, mesmos trades, mesmas métricas
+  -> é o mecanismo de reprodução exata do experimento
+```
+
+Um resultado científico publicado por este projeto é, portanto, um par:
+o **run ao vivo** (com seu trace e seu commit) e a **capacidade de replay**
+daquele trace. Reexecutar a mesma spec contra o provedor produz *outra*
+execução, legítima como nova amostra, jamais como reprodução da primeira.
+
+O replay recusa divergência em vez de acomodá-la: prompt, modelo, provedor,
+opções solicitadas, schema, papel, analista, sessão ou ordem diferentes
+levantam `ReplayMismatchError`, e sobra ou falta de registro também. Relógio e
+duração não entram nessa identidade.
+
+**Nada aqui congela modelo, prompt, quorum ou seed.** O mecanismo de evidência
+existe; as escolhas científicas continuam `TBD`.
+
 ## 16. Prompt versioning
 
 Cada prompt científico terá identificador de versão, conteúdo ou hash, papel do
@@ -327,20 +370,44 @@ versão final são `TBD`.
 Prompts serão congelados antes do TEST. Alterações posteriores criam nova versão
 e não sobrescrevem resultados existentes.
 
-**Onde os prompts vivem hoje, e o que isso garante.** Eles são constantes de
-módulo em `src/agents/technical_analyst.py`, `src/agents/risk_manager.py` e
-`src/agents/portfolio_manager.py`. Não existe prompt registry, nem campo de
-versão, nem hash de prompt.
+**Onde os prompts vivem hoje, e o que isso garante.** Eles continuam sendo
+constantes de módulo em `src/agents/technical_analyst.py`,
+`src/agents/risk_manager.py` e `src/agents/portfolio_manager.py`. **Não existe
+prompt registry nem campo de versão de prompt**, e nenhum `prompt_version` é
+inventado enquanto não existir mecanismo que o sustente.
+
+O que passou a existir é proveniência do texto concreto de cada chamada:
 
 ```text
-prompt provenance currently derives from git_commit;
-explicit prompt versioning remains hardening futuro.
+git_commit                     -> proveniência do CÓDIGO que gerou o prompt
+system_prompt / user_prompt    -> o prompt LÓGICO completo, na íntegra
+system_prompt_sha256
+user_prompt_sha256             -> proveniência desse texto lógico
+response_schema_sha256         -> estrutura do schema pedido
+transport_system_prompt_sha256 -> hash do texto final enviado, quando o
+                                  cliente concreto o reporta
 ```
 
-O vínculo é indireto mas real: o `ExperimentRunner` recusa working tree suja, e
-o manifest grava o commit, então o texto exato dos prompts executados é
-recuperável a partir do commit registrado. Nenhum `prompt_version` é inventado
-enquanto não existir mecanismo que o sustente.
+Os hashes são SHA-256 do texto exato em UTF-8, **sem normalizar espaço em
+branco**: dois prompts que diferem em espaço em branco são prompts diferentes.
+O texto completo é gravado, e não só o hash, porque auditoria e replay precisam
+reconstruir a chamada — e nenhum prompt do projeto carrega segredo. Credencial
+e cabeçalho HTTP continuam fora do artefato por construção.
+
+**Prompt lógico ≠ prompt de transporte.** O `AgentRouterLLMClient` acrescenta o
+`model_json_schema()` serializado ao system prompt antes de montar o corpo
+HTTP. Portanto o `system_prompt` publicado no trace **não é**, para esse
+provedor, o texto literal enviado — e o protocolo não pode descrevê-lo assim.
+
+O que torna a requisição enviada inequívoca é a combinação: prompt lógico na
+íntegra + `response_schema_sha256` + o molde, que é código coberto pelo
+`git_commit`. Por isso o digest do schema entra na **identidade** usada pelo
+replay: dois schemas de mesmo nome e estrutura diferente perguntam coisas
+diferentes ao provedor e não podem ser tratados como a mesma chamada.
+
+O vínculo com o código permanece: o `ExperimentRunner` recusa working tree suja
+e o manifest grava o commit. Registry e versionamento formal de prompt seguem
+`TBD` e hardening futuro.
 
 ## 17. Metrics
 
@@ -432,10 +499,38 @@ de um patch anexado.
 Para o `llm_agent`, o bloco `participant` do manifest carrega a configuração
 material do LLM: provedor, modelo requisitado, política de retry, quorum,
 limites de risco e de portfólio, janela de volatilidade e payoff. Credencial
-não entra em spec, manifest, log nem artefato de auditoria. Dois itens da lista
-acima continuam **não** registrados no manifest e são hardening seguinte:
-eventos de telemetria por decisão (tokens, latência, retry) e versionamento de
-prompt — hoje eles ficam, respectivamente, no cliente LLM e no `git_commit`.
+não entra em spec, manifest, log nem artefato de auditoria.
+
+A partir do schema 3, o manifest também publica `participant_artifacts`, e um
+run `llm_agent` acompanha o arquivo `llm_calls.jsonl`:
+
+```json
+"participant_artifacts": {
+  "llm_calls": {
+    "path": "llm_calls.jsonl",
+    "schema_version": 2,
+    "call_count": 123,
+    "error_count": 0,
+    "bytes": 456789,
+    "sha256": "..."
+  }
+}
+```
+
+O `sha256` é dos bytes efetivamente publicados, o que torna detectável o estado
+"manifest íntegro, trace adulterado". O contrato é genérico
+(`RunArtifactProvider`), e participantes clássicos publicam
+`participant_artifacts` vazio. A `ExperimentSpec` **não** ganhou nada disso:
+`call_id`, timestamps, latência, tokens observados, resposta bruta e caminho do
+trace são o que *aconteceu*, não configuração pedida antes do run.
+
+Com isso, "eventos de telemetria, cache, retry e falha" da lista acima passa a
+ter cobertura por chamada — `attempt_count`, `retry_count`, `status`,
+`error_type`, `duration_ms` e `token_usage` quando o provedor o devolve. Seguem
+**não** registrados: custo monetário (sempre zero), versionamento de prompt
+(inexistente por decisão) e fingerprint de modelo devolvido pelo provedor (não
+é entregue no contrato atual — o manifest registra o modelo *solicitado* e o
+endpoint sanitizado).
 
 ## 21. Freeze procedure
 

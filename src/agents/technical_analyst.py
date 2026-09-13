@@ -6,7 +6,8 @@ from collections import Counter
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from src.agents.llm_client import LLMClient
+from src.agents.llm_client import LLMCallMetadata, LLMClient
+from src.agents.llm_trace import STAGE_TECHNICAL_ANALYST
 from src.agents.state import (
     AgentState,
     TechnicalConsensus,
@@ -86,7 +87,10 @@ def create_technical_analyst_node(llm: LLMClient):
             return {"technical_signal": _safe_signal(message), "errors": [message]}
         try:
             response = await llm.generate(
-                SYSTEM_PROMPT, build_prompt(state), TechnicalSignal
+                SYSTEM_PROMPT,
+                build_prompt(state),
+                TechnicalSignal,
+                metadata=LLMCallMetadata(stage=STAGE_TECHNICAL_ANALYST),
             )
             if not isinstance(response, TechnicalSignal):
                 raise TypeError("resposta não segue TechnicalSignal")
@@ -144,6 +148,11 @@ def create_technical_analyst_ensemble_node(
             prompt,
             TechnicalSignal,
             {"temperature": temperature, "seed": seed, "analyst_id": analyst_number},
+            # Quem é o analista é metadado técnico declarado pela chamada, não
+            # algo a ser deduzido depois lendo o texto do prompt.
+            metadata=LLMCallMetadata(
+                stage=STAGE_TECHNICAL_ANALYST, analyst_id=analyst_number
+            ),
         )
         if not isinstance(response, TechnicalSignal):
             raise TypeError("resposta não segue TechnicalSignal")

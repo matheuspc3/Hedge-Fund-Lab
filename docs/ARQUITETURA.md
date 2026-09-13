@@ -286,6 +286,11 @@ efetivamente entregue ao `ExecutionEngine`.
 - `portfolio_manager.py`: Kelly/limites e decisão LLM.
 - `graph.py`: grafo linear.
 - `llm_client.py`: mock, retry, cache e cliente HTTP real.
+- `llm_trace.py`: identidade de chamada, gravação ao vivo e replay
+  determinístico (`RecordingLLMClient`, `ReplayLLMClient`).
+- `src/artifacts.py`: contrato genérico de evidência publicável de participante
+  (`RunArtifact`, `RunArtifactProvider`), fora de `agents` e de `experiments`
+  porque os dois lados precisam dele.
 - `src/backtesting/agent_engine.py`: relógio fechamento -> próxima abertura.
 - `src/backtesting/daily_agent.py`: estado persistente, reconciliação da previsão
   pendente e avanço de uma sessão por execução.
@@ -404,6 +409,131 @@ Três decisões desta camada merecem registro:
    `LLMDecisionError` e derrubam o run. Quorum sem supermaioria com todos os
    votos válidos continua sendo `MANTER`: ali não houve falha nenhuma, é a
    regra de agregação da metodologia atual.
+
+#### Trace de chamadas e replay determinístico
+
+Um run com provedor externo **não é reprodutível por configuração**. Mesma
+spec, mesmo snapshot, mesmo `model` e mesma `temperature` podem devolver textos
+diferentes. A reprodutibilidade forte do projeto passa a ser feita em dois
+tempos, e é essa distinção que sustenta o capítulo experimental do TCC.
+
+```text
+LIVE
+
+MarketObservation(close(t))
+        v
+LLMParticipant.decide       -> begin_session(t)
+        v
+RecordingLLMClient          <- fronteira que o grafo enxerga
+        v
+FailureRecordingClient
+        v
+RetryingLLMClient
+        v
+provedor (agent_router / mock)
+        v
+LLMCallRecord por chamada lógica
+        v
+decision -> target_weight -> Arena -> RunResult
+        v
+data/runs/<run_id>/llm_calls.jsonl  (+ hash no manifest)
+```
+
+```text
+REPLAY
+
+llm_calls.jsonl
+        v
+ReplayLLMClient    <- sem rede, sem provedor, sem credencial
+        v
+mesma pilha, mesmo grafo, mesmo participante
+        v
+mesmas decisões -> mesma Arena -> mesmos trades, equity e métricas
+```
+
+A **ordem dos wrappers é material**. `RecordingLLMClient` fica acima do retry,
+de modo que cada registro descreve *uma chamada lógica* e sabe quantas
+tentativas HTTP ela custou (`attempt_count`), em vez de gerar um registro por
+tentativa; e acima do `FailureRecordingClient`, de modo que a falha final entre
+no trace antes de subir para o participante. Uma tentativa recuperada pelo
+retry continua não sendo falha — aparece apenas como `attempt_count > 1`.
+
+Cada `LLMCallRecord` registra `call_id`, `sequence`, `stage`
+(`technical_analyst` / `risk_manager` / `portfolio_manager`), `analyst_id`
+quando é ensemble, `decision_session`, `provider`, `requested_model`, os dois
+prompts **lógicos completos** mais seus SHA-256, `response_schema` com
+`response_schema_sha256`, `requested_options`, `transport_options`,
+`started_at`, `duration_ms`, `attempt_count`, `status`, erro quando houver, a
+resposta validada (`model_dump(mode="json")`), e — quando o provedor entrega —
+`raw_response`, `token_usage`, `provider_endpoint` e
+`transport_system_prompt_sha256`.
+
+**Prompt lógico e prompt de transporte são coisas diferentes.** O
+`AgentRouterLLMClient` serializa `model_json_schema()` do `response_schema`
+dentro do system prompt antes de montar o corpo HTTP:
+
+```text
+system_prompt (lógico)  +  model_json_schema(response_schema)
+        v
+system prompt de TRANSPORTE, que é o que vai no corpo HTTP
+```
+
+Por isso o trace não chama `system_prompt` de "texto enviado ao provedor", e
+por isso `response_schema_sha256` entra na identidade: o nome da classe não
+identifica o contrato, e o contrato viaja junto na requisição. Afrouxar um
+limite de `Field` sem renomear a classe muda o que foi perguntado ao modelo, e
+o replay precisa recusar isso — antes desta correção ele aceitava em silêncio.
+
+Três escolhas explicam o resto do desenho:
+
+- **`stage` e `decision_session` são declarados, não deduzidos.** O papel vem
+  de um `LLMCallMetadata` que o próprio nó passa na chamada, sem contaminar o
+  prompt; a sessão vem de `begin_session(observation.session)`, chamado pelo
+  participante, que é quem a conhece. Nada é reconstruído depois lendo texto de
+  prompt ou ordem de chamadas.
+- **Identidade não inclui relógio.** `started_at` e `duration_ms` são medições
+  da execução, não da pergunta, e ficam fora da identidade usada pelo replay —
+  reproduzir não pode falhar porque o tempo passou. Divergência de prompt,
+  modelo, provedor, opções solicitadas, schema, papel, analista ou sessão, sim,
+  falha com `ReplayMismatchError`.
+- **Contadores por invocação, não por cliente.** O número de tentativas vive em
+  um rascunho criado a cada `generate` e guardado em `ContextVar`, que o
+  `asyncio` copia por task. Os 30 analistas concorrentes do ensemble não podem
+  publicar o `attempt_count` uns dos outros.
+- **O trace é canônico por ordem de emissão, não de conclusão.** `sequence` é
+  atribuído de forma síncrona no momento em que a chamada é emitida, antes de
+  qualquer `await` que suspenda, e `records` publica ordenado por ele. Entre os
+  analistas paralelos, portanto, **quem terminou primeiro não influencia o
+  arquivo**: só a ordem em que `asyncio.gather` criou as tarefas, que é a ordem
+  dos argumentos. A ordem **entre estágios** (`technical` -> `risk` ->
+  `portfolio`) é sequencial e continua sendo material.
+
+O trace é `llm_calls.jsonl`: UTF-8, LF, um JSON por chamada lógica, chaves
+ordenadas, com `schema_version` próprio — independente de
+`RUN_MANIFEST_SCHEMA_VERSION` e de `SPEC_SCHEMA_VERSION`.
+
+#### Evidência de participante no run
+
+O runner **não conhece o `LLMParticipant`**. Existe um contrato genérico e
+pequeno em `src/artifacts.py`:
+
+```text
+Participant que também é RunArtifactProvider
+        v
+run_artifacts() -> tuple[RunArtifact, ...]   (bytes já congelados)
+        v
+RunResult.artifacts
+        v
+persist() escreve os bytes + manifest registra path/schema_version/sha256
+```
+
+Pelo mesmo princípio do `SnapshotEvidence`, a evidência é congelada logo após
+o motor terminar; `persist()` escreve o que foi capturado e não volta a
+perguntar nada ao participante nem ao provedor. O `sha256` é calculado sobre os
+bytes publicados, então "manifest íntegro com artefato adulterado" é um estado
+detectável. Participantes clássicos não implementam nada disso e seguem
+publicando apenas `equity.csv`, `trades.csv` e `manifest.json`, com
+`participant_artifacts` vazio.
 
 #### Contrato de carteira-alvo completa
 

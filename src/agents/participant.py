@@ -42,7 +42,8 @@ import pandas as pd
 from pydantic import BaseModel
 
 from src.agents.graph import build_graph
-from src.agents.llm_client import LLMClient, MockLLMClient
+from src.agents.llm_client import LLMCallMetadata, LLMClient, MockLLMClient
+from src.agents.llm_trace import LLMCallRecord, RecordingLLMClient
 from src.agents.portfolio_manager import PortfolioConfig
 from src.agents.risk_manager import RiskConfig
 from src.agents.state import (
@@ -53,6 +54,7 @@ from src.agents.state import (
     TechnicalSignal,
 )
 from src.agents.technical_analyst import INDICATOR_KEYS, AnalystEnsembleConfig
+from src.artifacts import RunArtifact
 from src.backtesting.arena import (
     WEIGHT_TOLERANCE,
     MarketObservation,
@@ -69,6 +71,27 @@ SUPPORTED_PROVIDERS = ("mock", "agent_router")
 
 #: Fator de anualização da volatilidade, herdado do motor legado de agentes.
 TRADING_DAYS_PER_YEAR = 252
+
+
+def _require_int(name: str, value: Any, *, minimum: int) -> int:
+    """Exige um inteiro de verdade, com mínimo, antes de qualquer comparação.
+
+    ``value < minimum`` sozinho não serve como validação: ``2.5 < 2`` é falso,
+    então uma janela fracionária passaria; e ``bool`` é subclasse de ``int``,
+    então ``True`` passaria valendo 1. Ambos são configuração inválida sendo
+    aceita em silêncio, e configuração inválida vira ``spec_hash`` e manifest.
+
+    ``analyst_count`` e ``seed_base`` também passam por aqui. Pydantic já
+    rejeita ``2.5`` neles, mas **converte** ``True`` em ``1`` no modo padrão;
+    esta função fecha exatamente essa borda, sem duplicar o resto.
+    """
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise ValueError(
+            f"{name} must be an integer, got {type(value).__name__}: {value!r}"
+        )
+    if value < minimum:
+        raise ValueError(f"{name} must be >= {minimum}")
+    return value
 
 
 class LLMDecisionError(ValueError):
@@ -159,10 +182,12 @@ class FailureRecordingClient(LLMClient):
         user_prompt: str,
         response_schema: type[BaseModel] | None = None,
         options: dict[str, Any] | None = None,
+        *,
+        metadata: LLMCallMetadata | None = None,
     ) -> BaseModel | str:
         try:
             return await self.client.generate(
-                system_prompt, user_prompt, response_schema, options
+                system_prompt, user_prompt, response_schema, options, metadata=metadata
             )
         except BaseException as exc:  # registrado e repropagado, nunca absorvido
             self.failures.append(exc)
@@ -313,14 +338,17 @@ class LLMParticipant:
     ) -> None:
         if not ticker.strip():
             raise ValueError("ticker cannot be empty")
-        if volatility_window < 2:
-            raise ValueError("volatility_window must be >= 2")
-        if decision_frequency < 1:
-            raise ValueError("decision_frequency must be >= 1")
+        volatility_window = _require_int(
+            "volatility_window", volatility_window, minimum=2
+        )
+        decision_frequency = _require_int(
+            "decision_frequency", decision_frequency, minimum=1
+        )
+        retry_attempts = _require_int("retry_attempts", retry_attempts, minimum=1)
+        analyst_count = _require_int("analyst_count", analyst_count, minimum=1)
+        seed_base = _require_int("seed_base", seed_base, minimum=0)
         if payoff_ratio <= 0 or not math.isfinite(payoff_ratio):
             raise ValueError("payoff_ratio must be finite and > 0")
-        if retry_attempts < 1:
-            raise ValueError("retry_attempts must be >= 1")
         if retry_base_delay < 0 or not math.isfinite(retry_base_delay):
             raise ValueError("retry_base_delay must be finite and >= 0")
 
@@ -355,8 +383,15 @@ class LLMParticipant:
         # Cliente injetado é usado como está: o teste controla a stack inteira.
         base = llm_client if llm_client is not None else self._build_client()
         self.client = FailureRecordingClient(base)
+        # Camada de gravação por fora de tudo. A ordem é declarada em
+        # ``RecordingLLMClient``: acima do retry para registrar chamadas
+        # lógicas em vez de tentativas, e acima do observador de falha para que
+        # a falha final entre no trace antes de subir para cá.
+        self.trace = RecordingLLMClient(
+            self.client, provider=self.provider, requested_model=self.model
+        )
         self.graph = build_graph(
-            self.client,
+            self.trace,
             risk_config=self.risk_config,
             portfolio_config=self.portfolio_config,
             ensemble_config=self.ensemble_config,
@@ -434,6 +469,9 @@ class LLMParticipant:
 
         close = float(cast(pd.Series, history["fechamento"]).iloc[-1])
         state = self._agent_state(observation, history, equity, close)
+        # A sessão de decisão é declarada pelo participante, que é quem a
+        # conhece; nenhuma camada abaixo a deduz da ordem das chamadas.
+        self.trace.begin_session(observation.session)
         self.client.reset()
         output = cast(dict, asyncio.run(self.graph.ainvoke(state)))
         failures = tuple(
@@ -468,6 +506,23 @@ class LLMParticipant:
         if weight is None:
             return []
         return target_portfolio_to_intents(observation, {self.ticker: weight})
+
+    # ── Evidência do run ─────────────────────────────────────────
+
+    @property
+    def llm_calls(self) -> tuple[LLMCallRecord, ...]:
+        """Trace desta execução, em ordem de emissão."""
+        return self.trace.records
+
+    def run_artifacts(self) -> tuple[RunArtifact, ...]:
+        """Congela o trace para publicação junto do run.
+
+        Satisfaz ``RunArtifactProvider`` estruturalmente: a camada
+        experimental publica esta evidência sem conhecer este tipo. Os bytes
+        saem daqui prontos — publicar o run não reconsulta provedor, cliente
+        nem estado externo, pela mesma razão que ``SnapshotEvidence`` existe.
+        """
+        return (self.trace.artifact(),)
 
     # ── Estado observável ────────────────────────────────────────
 
