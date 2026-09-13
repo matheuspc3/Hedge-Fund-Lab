@@ -1,6 +1,7 @@
 import asyncio
 import io
 import json
+from typing import cast
 from urllib import error
 
 import pytest
@@ -10,16 +11,25 @@ from src.agents.graph import build_graph
 from src.agents.llm_client import (
     AgentRouterLLMClient,
     CachedLLMClient,
+    LLMClient,
     MockLLMClient,
     RetryingLLMClient,
 )
 from src.agents.portfolio_manager import (
+    SIZING_MODE_LEGACY,
+    SIZING_MODE_QUALITATIVE,
     PortfolioConfig,
     calculate_kelly_size,
     create_portfolio_manager_node,
 )
 from src.agents.risk_manager import RiskConfig, RiskManager
-from src.agents.state import FinalDecision, RiskVerdict, TechnicalSignal
+from src.agents.state import (
+    AgentState,
+    FinalDecision,
+    PortfolioAction,
+    RiskVerdict,
+    TechnicalSignal,
+)
 from src.agents.technical_analyst import (
     AnalystEnsembleConfig,
     build_prompt,
@@ -29,8 +39,15 @@ from src.agents.technical_analyst import (
 )
 
 
-def state(**overrides):
-    base = {
+def state(**overrides) -> AgentState:
+    """Fábrica de ``AgentState`` para os nós, com defaults saudáveis.
+
+    O ``cast`` é deliberado: o valor construído aqui *é* um ``AgentState``
+    (``total=False``), mas montá-lo por ``**overrides`` apaga essa informação
+    para o verificador de tipos e faria todo chamador deste módulo acusar
+    incompatibilidade com o parâmetro ``state``.
+    """
+    base: dict = {
         "ticker": "WEGE3.SA",
         "date": "2025-01-02",
         "indicators": {"sma_50": 50.0, "sma_200": 45.0, "extra": 999.0},
@@ -44,7 +61,7 @@ def state(**overrides):
         "errors": [],
     }
     base.update(overrides)
-    return base
+    return cast(AgentState, base)
 
 
 def run(awaitable):
@@ -486,7 +503,7 @@ def test_fractional_kelly_rejects_invalid_parameters(args):
         calculate_kelly_size(*args)
 
 
-def test_portfolio_caps_purchase_by_kelly_and_concentration():
+def test_portfolio_legado_caps_purchase_by_kelly_and_concentration():
     llm = MockLLMClient(
         {
             FinalDecision: {
@@ -498,7 +515,12 @@ def test_portfolio_caps_purchase_by_kelly_and_concentration():
     )
     node = create_portfolio_manager_node(
         llm,
-        PortfolioConfig(kelly_fraction=0.5, max_position_size=0.5, max_concentration=0.3),
+        PortfolioConfig(
+            sizing_mode=SIZING_MODE_LEGACY,
+            kelly_fraction=0.5,
+            max_position_size=0.5,
+            max_concentration=0.3,
+        ),
     )
     result = run(
         node(
@@ -540,7 +562,7 @@ def test_portfolio_caps_purchase_by_kelly_and_concentration():
         ),
     ],
 )
-def test_portfolio_guardrails(overrides, reason):
+def test_portfolio_legado_guardrails(overrides, reason):
     base = {
         "technical_signal": TechnicalSignal(
             signal="COMPRA", justification="x", confidence=0.7
@@ -561,7 +583,7 @@ def test_portfolio_guardrails(overrides, reason):
         ("COMPRA", True),
     ],
 )
-def test_portfolio_validates_llm_decision(response, has_error):
+def test_portfolio_legado_validates_llm_decision(response, has_error):
     node = create_portfolio_manager_node(RawClient(response))
     result = run(
         node(
@@ -577,7 +599,7 @@ def test_portfolio_validates_llm_decision(response, has_error):
     assert bool(result["errors"]) is has_error
 
 
-def test_portfolio_can_size_a_sale():
+def test_portfolio_legado_can_size_a_sale():
     decision = FinalDecision(decision="VENDA", position_size=0.4, reasoning="reduzir")
     result = run(
         create_portfolio_manager_node(RawClient(decision))(
@@ -635,3 +657,264 @@ def test_graph_veto_path_ends_before_portfolio_manager():
     assert result["risk_verdict"].verdict == "VETADO"
     assert "final_decision" not in result
     assert len(llm.calls) == 30
+
+
+# ── Modo legado: confidence continua governando Kelly ────────────
+
+
+def legacy_portfolio_node(llm, **config):
+    """Nó explicitamente legado; o default do ``PortfolioConfig`` também é esse."""
+    return create_portfolio_manager_node(
+        llm, PortfolioConfig(sizing_mode=SIZING_MODE_LEGACY, **config)
+    )
+
+
+def test_portfolio_config_default_e_o_modo_legado():
+    """Quem constrói o grafo sem declarar nada não muda de estratégia sozinho.
+
+    Os runners operacionais (``AgentBacktestEngine``, ``DailyAgentRunner``)
+    recebem um grafo já construído por ``build_graph`` sem ``PortfolioConfig``.
+    Se o default virasse o modo qualitativo, eles trocariam de política de
+    dimensionamento em silêncio.
+    """
+    assert PortfolioConfig().sizing_mode == SIZING_MODE_LEGACY
+
+
+@pytest.mark.parametrize(
+    ("confidence", "expected"),
+    [(0.6, 0.1), (0.8, 0.3), (0.9, 0.4)],
+)
+def test_portfolio_legado_tamanho_ainda_depende_da_confidence(confidence, expected):
+    """No modo legado a cadeia ``confidence -> Kelly -> teto`` continua viva.
+
+    Isto é o contraponto explícito de
+    ``test_confidence_nao_altera_o_tamanho_da_posicao``: não existe
+    comportamento ambíguo entre os dois modos, e nenhum deles é acidental.
+    """
+    llm = MockLLMClient(
+        {
+            FinalDecision: {
+                "decision": "COMPRA",
+                "position_size": 1.0,
+                "reasoning": "sinal aprovado",
+            }
+        }
+    )
+    node = legacy_portfolio_node(
+        llm, kelly_fraction=0.5, max_position_size=1.0, max_concentration=1.0
+    )
+
+    result = run(
+        node(
+            state(
+                technical_signal=TechnicalSignal(
+                    signal="COMPRA", justification="x", confidence=confidence
+                ),
+                risk_verdict=RiskVerdict(verdict="APROVADO", analysis="x"),
+            )
+        )
+    )
+
+    assert result["final_decision"].position_size == pytest.approx(expected)
+    assert "portfolio_action" not in result
+
+
+def test_portfolio_legado_chama_kelly(monkeypatch):
+    """Prova direta de que o modo legado passa pela função de Kelly."""
+    import src.agents.portfolio_manager as module
+
+    observed = []
+
+    def spy(win_probability, payoff_ratio=1.0, fraction=0.5):
+        observed.append((win_probability, payoff_ratio, fraction))
+        return 0.2
+
+    monkeypatch.setattr(module, "calculate_kelly_size", spy)
+    llm = MockLLMClient(
+        {
+            FinalDecision: {
+                "decision": "COMPRA",
+                "position_size": 1.0,
+                "reasoning": "ok",
+            }
+        }
+    )
+
+    run(
+        legacy_portfolio_node(llm, max_position_size=1.0, max_concentration=1.0)(
+            state(
+                technical_signal=TechnicalSignal(
+                    signal="COMPRA", justification="x", confidence=0.77
+                ),
+                risk_verdict=RiskVerdict(verdict="APROVADO", analysis="x"),
+            )
+        )
+    )
+
+    assert observed == [(0.77, 1.0, 0.5)]
+
+
+# ── Modo qualitativo: direção sem quantidade ─────────────────────
+
+
+def qualitative_portfolio_node(llm):
+    return create_portfolio_manager_node(
+        llm, PortfolioConfig(sizing_mode=SIZING_MODE_QUALITATIVE)
+    )
+
+
+def qualitative_state(**overrides):
+    base = {
+        "technical_signal": TechnicalSignal(
+            signal="COMPRA", justification="x", confidence=0.7
+        ),
+        "risk_verdict": RiskVerdict(verdict="APROVADO", analysis="x"),
+    }
+    base.update(overrides)
+    return state(**base)
+
+
+def approved_action(decision="COMPRA"):
+    return MockLLMClient(
+        {PortfolioAction: {"decision": decision, "reasoning": "consolidado"}}
+    )
+
+
+def test_portfolio_qualitativo_devolve_acao_sem_tamanho():
+    result = run(qualitative_portfolio_node(approved_action())(qualitative_state()))
+
+    action = result["portfolio_action"]
+    assert isinstance(action, PortfolioAction)
+    assert action.decision == "COMPRA"
+    # Nenhuma quantidade sai deste nó, nem sob outro nome.
+    assert "final_decision" not in result
+    assert not hasattr(action, "position_size")
+
+
+def test_portfolio_qualitativo_nao_chama_kelly(monkeypatch):
+    import src.agents.portfolio_manager as module
+
+    def explode(*args, **kwargs):
+        raise AssertionError("o modo qualitativo não pode chamar Kelly")
+
+    monkeypatch.setattr(module, "calculate_kelly_size", explode)
+
+    result = run(qualitative_portfolio_node(approved_action())(qualitative_state()))
+
+    assert result["portfolio_action"].decision == "COMPRA"
+
+
+@pytest.mark.parametrize("confidence", [0.55, 0.95])
+def test_portfolio_qualitativo_independe_da_confidence(confidence):
+    """A confiança segue no prompt como contexto; ela só não vira número."""
+    llm = approved_action()
+    result = run(
+        qualitative_portfolio_node(llm)(
+            qualitative_state(
+                technical_signal=TechnicalSignal(
+                    signal="COMPRA", justification="x", confidence=confidence
+                )
+            )
+        )
+    )
+
+    assert result["portfolio_action"].decision == "COMPRA"
+    # Nenhum teto de posição é calculado nem enviado ao modelo.
+    assert "max_position_size" not in llm.calls[-1].user_prompt
+    assert f'"confidence": {confidence}' in llm.calls[-1].user_prompt
+
+
+def test_portfolio_qualitativo_nao_exige_caixa():
+    """Alvo é estado desejado: caixa zero não invalida querer estar exposto.
+
+    No modo legado a compra era uma fração do caixa, então caixa zero produzia
+    ordem vazia e o nó devolvia ``MANTER``. Aqui a decisão não fala em caixa —
+    se o alvo já está satisfeito, o executor simplesmente não negocia.
+    """
+    result = run(qualitative_portfolio_node(approved_action())(qualitative_state(cash=0.0)))
+
+    assert result["portfolio_action"].decision == "COMPRA"
+
+
+@pytest.mark.parametrize(
+    ("overrides", "reason"),
+    [
+        ({"technical_signal": None}, "parecer anterior"),
+        ({"risk_verdict": RiskVerdict(verdict="VETADO", analysis="x")}, "vetada"),
+        (
+            {
+                "technical_signal": TechnicalSignal(
+                    signal="MANTER", justification="x", confidence=0.5
+                )
+            },
+            "manter",
+        ),
+        ({"current_price": 0.0}, "preço atual"),
+    ],
+)
+def test_portfolio_qualitativo_guardrails(overrides, reason):
+    result = run(
+        qualitative_portfolio_node(approved_action())(qualitative_state(**overrides))
+    )
+
+    assert result["portfolio_action"].decision == "MANTER"
+    assert reason in result["portfolio_action"].reasoning
+
+
+@pytest.mark.parametrize(
+    ("response", "has_error"),
+    [
+        (PortfolioAction(decision="VENDA", reasoning="oposto"), True),
+        (PortfolioAction(decision="MANTER", reasoning="cautela"), False),
+        ("COMPRA", True),
+    ],
+)
+def test_portfolio_qualitativo_valida_a_resposta(response, has_error):
+    client = cast(LLMClient, RawClient(response))
+    result = run(qualitative_portfolio_node(client)(qualitative_state()))
+
+    assert result["portfolio_action"].decision == "MANTER"
+    assert bool(result["errors"]) is has_error
+
+
+def test_portfolio_qualitativo_segue_a_venda_aprovada():
+    result = run(
+        qualitative_portfolio_node(approved_action("VENDA"))(
+            qualitative_state(
+                position=100,
+                technical_signal=TechnicalSignal(
+                    signal="VENDA", justification="x", confidence=0.7
+                ),
+            )
+        )
+    )
+
+    assert result["portfolio_action"].decision == "VENDA"
+
+
+def test_grafo_qualitativo_termina_em_portfolio_action():
+    llm = MockLLMClient(
+        {
+            TechnicalSignal: {
+                "signal": "COMPRA",
+                "justification": "tendência",
+                "confidence": 0.7,
+            },
+            RiskVerdict: {
+                "verdict": "APROVADO",
+                "analysis": "risco aceitável",
+                "risk_metrics": {},
+            },
+            PortfolioAction: {"decision": "COMPRA", "reasoning": "consenso"},
+        }
+    )
+
+    result = run(
+        build_graph(
+            llm, portfolio_config=PortfolioConfig(sizing_mode=SIZING_MODE_QUALITATIVE)
+        ).ainvoke(state())
+    )
+
+    assert result["portfolio_action"].decision == "COMPRA"
+    assert "final_decision" not in result
+    assert len(llm.calls) == 32

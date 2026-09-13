@@ -38,6 +38,7 @@ LLM_PARAMS: dict[str, Any] = {
     "consensus_threshold": 1.0,
     "risk_max_volatility": 100.0,
     "decision_frequency": 5,
+    "long_target_weight": 0.25,
 }
 LLM = ParticipantSpec("llm_agent", LLM_PARAMS)
 
@@ -182,6 +183,49 @@ def test_trace_e_congelado_na_execucao_e_nao_reconsultado_ao_publicar(
     assert manifest["participant_artifacts"]["llm_calls"]["sha256"] == (
         hashlib.sha256(frozen).hexdigest()
     )
+
+
+def test_estagio_de_portfolio_grava_o_schema_qualitativo(
+    snapshot: DatasetSnapshot, snapshot_dir: Path, runs_dir: Path, tmp_path: Path
+) -> None:
+    """O estágio continua sendo ``portfolio_manager``; o contrato é que mudou.
+
+    A identidade da chamada inclui ``response_schema_sha256``, então trocar
+    ``FinalDecision`` por ``PortfolioAction`` muda a identidade — e é isso que
+    se quer: são perguntas diferentes feitas ao provedor. Traces gravados com o
+    schema antigo deixam de casar, o que é o comportamento correto, não uma
+    regressão a ser contornada.
+    """
+    _, path = runner_for(snapshot, snapshot_dir, runs_dir, tmp_path).run_and_persist()
+
+    portfolio = [
+        call for call in read_trace(path) if call["stage"] == "portfolio_manager"
+    ]
+    assert portfolio, "o cenário precisa chegar ao gestor de portfólio"
+    assert {call["response_schema"] for call in portfolio} == {"PortfolioAction"}
+    assert all(call["response_schema_sha256"] for call in portfolio)
+    for call in portfolio:
+        # Nenhuma quantidade financeira pedida, devolvida ou registrada.
+        assert set(call["validated_response"]) == {"decision", "reasoning"}
+        assert "position_size" not in call["user_prompt"]
+        assert "max_position_size" not in call["user_prompt"]
+
+
+def test_confidence_continua_auditavel_no_trace(
+    snapshot: DatasetSnapshot, snapshot_dir: Path, runs_dir: Path, tmp_path: Path
+) -> None:
+    """Tirar ``confidence`` do sizing não é apagá-la da evidência.
+
+    Ela continua sendo saída do analista, continua no trace e continua
+    disponível para calibração futura e análise — apenas não governa exposição.
+    """
+    _, path = runner_for(snapshot, snapshot_dir, runs_dir, tmp_path).run_and_persist()
+
+    technical = [
+        call for call in read_trace(path) if call["stage"] == "technical_analyst"
+    ]
+    assert technical
+    assert all("confidence" in call["validated_response"] for call in technical)
 
 
 # ── Clássicos ────────────────────────────────────────────────────

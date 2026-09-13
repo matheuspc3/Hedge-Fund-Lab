@@ -25,8 +25,31 @@ class RiskVerdict(StrictModel):
 
 
 class FinalDecision(StrictModel):
+    """Decisão com quantidade financeira embutida — contrato **legado**.
+
+    ``position_size`` é fração *da operação*: caixa disponível na compra,
+    posição corrente na venda. Continua sendo o contrato dos caminhos
+    operacionais legados (``AgentBacktestEngine``, ``DailyAgentRunner``). O
+    caminho científico da arena **não** usa este schema: lá o gestor de
+    portfólio responde :class:`PortfolioAction`, sem quantidade, e o tamanho
+    da posição é decidido por política determinística fora do LLM.
+    """
+
     decision: Literal["COMPRA", "VENDA", "MANTER"]
     position_size: float = Field(ge=0.0, le=1.0)
+    reasoning: str = Field(min_length=1)
+
+
+class PortfolioAction(StrictModel):
+    """Decisão **qualitativa** do gestor de portfólio: direção, sem tamanho.
+
+    Este é o contrato do caminho científico. Pedir ao LLM um ``position_size``
+    para depois ignorá-lo seria fingir que a autoridade de dimensionamento não
+    foi concedida; aqui o campo simplesmente não existe, então não há nada a
+    ignorar. A exposição alvo é decidida depois, por política determinística.
+    """
+
+    decision: Literal["COMPRA", "VENDA", "MANTER"]
     reasoning: str = Field(min_length=1)
 
 
@@ -52,6 +75,12 @@ class AgentState(TypedDict, total=False):
     ``position`` é quantidade de ações. ``position_size`` nas decisões é a
     fração da operação: capital disponível em compras, posição atual em vendas.
     Drawdown e volatilidade usam magnitudes positivas (0.20 = 20%).
+
+    O gestor de portfólio escreve **um** dos dois campos de saída, nunca os
+    dois, conforme o ``sizing_mode`` configurado: ``final_decision`` no modo
+    legado (com quantidade) e ``portfolio_action`` no modo científico (apenas
+    direção). ``payoff_ratio`` só é material para a fórmula de Kelly do modo
+    legado e é omitido pelo caminho científico.
     """
 
     ticker: str
@@ -69,4 +98,5 @@ class AgentState(TypedDict, total=False):
     technical_signal: TechnicalSignal | None
     risk_verdict: RiskVerdict | None
     final_decision: FinalDecision | None
+    portfolio_action: PortfolioAction | None
     errors: Annotated[list[str], operator.add]

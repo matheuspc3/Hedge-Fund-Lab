@@ -30,7 +30,7 @@ As escolhas abaixo são recomendações de trabalho, não aprovações implícit
 | Custos | Uma especificação versionada e idêntica para todos | **STATUS: proposta / pendente de congelamento** |
 | Resultado | `RunResult` e manifest canônicos, identificados por `run_id` | **STATUS: proposta / pendente de congelamento** |
 | Risco | Regras determinísticas obrigatórias; LLM apenas complementa | **STATUS: proposta / pendente de congelamento** |
-| Kelly | Confiança textual do LLM não é automaticamente `P(win)` | **STATUS: proposta / pendente de congelamento** |
+| Kelly | Confiança textual do LLM não é `P(win)`; sizing científico é determinístico | **STATUS: decisão metodológica aprovada** (o valor de `long_target_weight` continua `TBD`) |
 | Tempo real | Fora do caminho crítico até a arena histórica ser válida | **STATUS: proposta / pendente de congelamento** |
 
 Quorum, modelos, prompts, thresholds, splits, custos e demais parâmetros finais
@@ -265,7 +265,15 @@ compatibilidade oficial com um provedor específico.
   `LLMDecisionError` e derruba o run em vez de virar `MANTER`. Os motores
   legados continuam com o fail-soft anterior, e o fail-soft de "decisão inverteu
   o sinal técnico" no `portfolio_manager` segue intacto.
-- [ ] Calibrar confiança ou retirar Kelly probabilístico do primeiro experimento.
+- [x] Calibrar confiança **ou** retirar Kelly probabilístico do primeiro
+  experimento — **concluído pela segunda via**. O Kelly sobre `confidence` saiu
+  do caminho científico: o `LLMParticipant` usa `sizing_mode="qualitative"`, o
+  gestor de portfólio responde um schema sem campo de tamanho e o peso alvo vem
+  de política determinística (`FixedTargetSizing`). `calculate_kelly_size`
+  continua existindo e ativa apenas no modo `legacy_confidence_kelly`, que serve
+  o `AgentBacktestEngine` e o `DailyAgentRunner`. A calibração empírica de
+  `confidence` **não** foi feita e continua fora do experimento v1 — ela é
+  ablation futura, não pendência bloqueante.
 - [ ] Evoluir o participante LLM para carteira multi-ativo (contrato de
   carteira-alvo completa já implementado e testado).
 - [ ] Corrigir o dry-run para separar chamadas lógicas, externas e cache hits.
@@ -280,9 +288,17 @@ segue pendente.
 
 ## 7. Protocolo experimental
 
+**Este é o próximo marco do projeto: CONGELAR O EXPERIMENT PROTOCOL v1.** A
+infraestrutura experimental e a metodologia de decisão do participante LLM estão
+resolvidas; o que resta é decisão científica da dupla/orientador, não código.
+
+Entre os valores que o congelamento precisa fixar está `long_target_weight`, que
+hoje tem apenas default técnico (`0.25`) e continua `TBD` cientificamente.
+
 O contrato completo fica em
 [`EXPERIMENT_PROTOCOL.md`](EXPERIMENT_PROTOCOL.md). Esta fase inclui:
 
+- [ ] Congelar `long_target_weight` e a política de sizing do experimento v1.
 - [ ] Definir TRAIN, VALIDATION e TEST cronológicos e sem sobreposição.
 - [ ] Congelar universo, dados, features, parâmetros, prompts e modelos antes do
   teste final.

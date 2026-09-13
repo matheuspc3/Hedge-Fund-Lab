@@ -283,7 +283,9 @@ efetivamente entregue ao `ExecutionEngine`.
 - `src/agents/participant.py`: adaptador do grafo para o contrato da arena.
 - `technical_analyst.py`: chamada individual legada e ensemble concorrente.
 - `risk_manager.py`: regras determinísticas e parecer LLM.
-- `portfolio_manager.py`: Kelly/limites e decisão LLM.
+- `portfolio_manager.py`: decisão do gestor em dois modos explícitos —
+  `qualitative` (científico, sem quantidade) e `legacy_confidence_kelly`
+  (operacional, `confidence` -> Kelly -> teto de posição).
 - `graph.py`: grafo linear.
 - `llm_client.py`: mock, retry, cache e cliente HTTP real.
 - `llm_trace.py`: identidade de chamada, gravação ao vivo e replay
@@ -317,6 +319,11 @@ gestor de risco
          END
 ```
 
+No caminho científico o gestor de portfólio devolve `PortfolioAction`
+(qualitativa) e o grafo termina sem `FinalDecision`; no caminho legado ele
+devolve `FinalDecision` com `position_size`. O modo é declarado em
+`PortfolioConfig.sizing_mode` e nunca inferido.
+
 O primeiro estágio é um quorum interno, então a descrição mais precisa é
 **três estágios decisórios, sendo o primeiro um ensemble de 30 amostras**. São
 30 amostras do mesmo papel, do mesmo prompt e do mesmo modelo, variando
@@ -335,9 +342,15 @@ ExperimentRunner  (spec kind="llm_agent")
         v
 LLMParticipant.decide(MarketObservation)   <- só informação de close(t)
         v
-AgentState  -> quorum técnico -> risco -> portfólio
+AgentState
         v
-FinalDecision (COMPRA/VENDA/MANTER + position_size)
+quorum técnico (LLM)        -> COMPRA / VENDA / MANTER
+        v
+gestor de risco (regras + LLM) -> APROVADO / VETADO
+        v
+gestor de portfólio (LLM)   -> PortfolioAction: decisão QUALITATIVA
+        v
+política determinística de sizing  -> target_weight
         v
 carteira-alvo completa sobre o universo observado
         v
@@ -347,6 +360,12 @@ ExecutionEngine na abertura de t+1  -> Trade
         v
 RunResult + manifest
 ```
+
+**O LLM decide; o LLM não dimensiona.** Essa separação é a regra metodológica
+desta camada. O modelo participa de todas as etapas de *qualidade da decisão* —
+ler indicadores, formar consenso, aprovar risco, consolidar direção — e não
+participa de nenhuma etapa de *tamanho da posição*. A exposição alvo sai de uma
+política determinística e configurável, fora do alcance do modelo.
 
 A separação é a regra: **a stack de agentes decide, a arena executa.** O
 participante termina em peso alvo; quantidade inteira, direção, preço de
@@ -363,23 +382,50 @@ Três decisões desta camada merecem registro:
    `t` é idêntico ao da série inteira — a diferença é que não existe barra
    futura para observar.
 
-2. **Tradução explícita de ordem para peso.** O pipeline produz
-   `position_size` como fração *da operação* — caixa disponível na compra,
-   posição corrente na venda — e não como peso de carteira. O participante
-   aplica a identidade aritmética "em que estado de carteira esta ordem quer
-   chegar", avaliada no fechamento de `t`:
+2. **Decisão qualitativa e sizing determinístico.** O gestor de portfólio do
+   caminho científico responde `PortfolioAction` — `decision` e `reasoning`,
+   sem nenhum campo de quantidade. O peso alvo sai de `FixedTargetSizing`:
 
    ```text
-   COMPRA(s) -> (posição * close + s * caixa) / patrimônio
-   VENDA(s)  -> (posição * close * (1 - s))   / patrimônio
-   MANTER    -> nenhuma intenção
+   COMPRA aprovada -> target_weight = long_target_weight
+   VENDA  aprovada -> target_weight = 0.0
+   MANTER          -> nenhuma intenção
+   veto de risco   -> nenhuma intenção
    ```
 
-   Isso preserva o dimensionamento que o `portfolio_manager` já calcula sem
-   copiar a regra de Kelly para a arena e sem declará-la como sizing científico
-   final. Duas diferenças são declaradas: o peso alcançado difere do alvo
-   porque a execução acontece na abertura seguinte, a outro preço, e a tradução
-   não desconta custos, que pertencem ao executor.
+   Nada nessa tradução olha `confidence`, caixa, posição corrente ou próxima
+   abertura. Duas execuções que só diferem na confiança reportada produzem
+   exatamente o mesmo peso, e isso está preso por teste.
+
+   **Por que não é mais Kelly.** A cadeia anterior era
+   `confidence -> Kelly -> max_position_size -> position_size -> peso`. Ela
+   tratava a confiança textual do LLM como probabilidade empírica de vitória,
+   o que o projeto não sustenta sem calibração. `calculate_kelly_size` continua
+   existindo, e continua sendo usada — no modo `legacy_confidence_kelly`, que
+   serve o `AgentBacktestEngine` e o `DailyAgentRunner`, e que é o default de
+   `PortfolioConfig` justamente para que esses runners não troquem de política
+   em silêncio. O `LLMParticipant` força `sizing_mode="qualitative"` e não
+   expõe parâmetro algum de Kelly.
+
+   **`long_target_weight` não está congelado.** O default técnico é `0.25` — o
+   antigo teto `max_position_size`, adotado só para manter a API conveniente. O
+   valor científico é `TBD` no protocolo experimental v1. Ele é validado
+   (`0 < w <= 1`, e `w <= risk_max_concentration`, porque um alvo acima do
+   limite duro mandaria construir exatamente a exposição que o gestor de risco
+   existe para vetar), entra na `ParticipantSpec`, no `spec_hash` e no manifest.
+
+   **`COMPRA` é estado desejado, não ordem de compra.** Emitir o alvo significa
+   querer estar exposto naquele peso. Com exposição corrente abaixo do alvo o
+   executor compra; depois de um gap de alta que empurre a exposição acima do
+   alvo, o mesmo alvo exige vender. A direção financeira nasce na abertura de
+   `t+1` e pertence à arena — o participante não declara `side`. Duas
+   diferenças seguem declaradas: o peso alcançado difere do alvo porque a
+   execução acontece a outro preço, e o alvo não desconta custos, que pertencem
+   ao executor.
+
+   A política é um ponto de troca, não uma fórmula embutida: `FixedTargetSizing`
+   é a primeira de uma família prevista (`fixed_target`, `volatility_target`,
+   `calibrated_kelly`). As outras **não** existem e não são simuladas.
 
 3. **Frequência de decisão preservada.** `decision_frequency` migra a opção de
    mesmo nome do `AgentBacktestEngine`: só as sessões cujo índice é múltiplo

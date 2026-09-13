@@ -128,8 +128,11 @@ pregões, constrói um grafo e executa:
    `MANTER`.
 3. **Risco**: vendas/manutenção passam sem aumentar exposição; compras passam por
    volatilidade, drawdown e concentração antes da análise LLM.
-4. **Portfólio**: limita compras por fractional Kelly, tamanho máximo e espaço de
-   concentração; depois pede decisão ao LLM sem permitir inversão do sinal.
+4. **Portfólio**: no modo legado — que é o default de `PortfolioConfig` e o que
+   este script usa — limita compras por fractional Kelly sobre a `confidence`,
+   tamanho máximo e espaço de concentração; depois pede decisão ao LLM sem
+   permitir inversão do sinal. Esse caminho é **operacional, não científico**:
+   a arena usa o modo qualitativo, descrito abaixo.
 5. **Execução**: uma decisão de `t` vira ordem para a abertura de `t+1`.
 6. **Auditoria**: salva curva, trades, decisões, votos e telemetria em JSON. Cada
    decisão inclui `as_of`, `target_session`, `status`, `execution_date`,
@@ -462,9 +465,16 @@ protocolo aprovado.
 - Falhas de conexão são agregadas com segurança no comitê técnico, mas risco e
   portfólio só capturam respostas inválidas; uma falha de rede após o quorum pode
   abortar o grafo.
-- A confiança textual do LLM é usada como probabilidade de vitória na fórmula de
-  Kelly, sem calibração empírica. Esse número ainda não pode ser tratado como
-  probabilidade financeira.
+- ~~A confiança textual do LLM é usada como probabilidade de vitória na fórmula
+  de Kelly~~ — **resolvido no caminho científico**. `confidence` continua sendo
+  produzida pelo analista, continua no trace (`llm_calls.jsonl`), continua
+  chegando ao gestor de risco e ao de portfólio como contexto qualitativo e
+  continua disponível para calibração futura — ela apenas **não entra em
+  nenhuma fórmula de dimensionamento**. A arena usa sizing determinístico; o
+  Kelly sobre `confidence` sobrevive apenas onde explicitamente configurado
+  (`sizing_mode="legacy_confidence_kelly"`), que é o caminho operacional
+  legado. A calibração empírica de `confidence` continua não existindo e
+  continua fora do experimento v1.
 - A telemetria legada `LLMTelemetry` registra tokens, latência, retry e modelo,
   mas custo permanece sempre zero. O vínculo com run, data, agente e hash de
   prompt **passou a existir** no trace por chamada (`llm_calls.jsonl`), que é o
@@ -488,8 +498,16 @@ Entregue nesta fase:
   `spec_hash` e do manifest: `provider`, `model`, `retry_attempts`,
   `retry_base_delay`, `analyst_count`, `consensus_threshold`,
   `require_all_votes`, `temperature_min`, `temperature_max`, `seed_base`,
-  limites de risco e de portfólio, `volatility_window`, `payoff_ratio` e
-  `decision_frequency`.
+  `risk_max_volatility`, `risk_max_drawdown`, `risk_max_concentration`,
+  `long_target_weight`, `volatility_window` e `decision_frequency`.
+
+  Saíram da spec do `llm_agent`, por terem deixado de afetar o comportamento:
+  `kelly_fraction`, `max_position_size`, `portfolio_max_concentration` e
+  `payoff_ratio`. Manter parâmetro morto na spec permitiria registrar como
+  "configurações distintas" dois runs que decidem e executam exatamente igual —
+  `spec_hash` diferente, comportamento idêntico. Eles são recusados na
+  construção do participante e continuam existindo apenas nos caminhos legados,
+  com seus próprios parâmetros.
 - Credencial fora de tudo isso: continua vindo do ambiente, como antes.
 - `provider="agent_router"` exige `model` explícito — sem modelo declarado não
   há proveniência e o run não começa.
@@ -538,11 +556,68 @@ explicitamente universo com mais de um ativo. O contrato de carteira-alvo
 completa já está implementado e testado, então a evolução multi-ativo só
 precisa substituir a origem dos pesos.
 
-**Sizing ainda não é científico.** A tradução de `position_size` para peso alvo
-preserva exatamente o que o `portfolio_manager` já calculava — inclusive o
-fractional Kelly sobre a confiança textual. Isso é migração de comportamento,
-não aprovação metodológica: a confiança textual continua não calibrada e o
-Kelly probabilístico continua em aberto.
+**Sizing científico: decisão qualitativa + alvo determinístico.** A estratégia
+LLM da arena **mudou de propósito** nesta fase, e essa é a diferença em relação
+aos hardenings anteriores: aqui não se busca fingerprint idêntico ao
+comportamento antigo. O que permanece igual é dados, Arena, custos, timing,
+métricas e benchmarks; o que muda deliberadamente é a regra de dimensionamento
+do participante LLM.
+
+```text
+Technical Analyst (LLM)   -> COMPRA / VENDA / MANTER
+        v
+Risk Manager (regras+LLM) -> APROVADO / VETADO
+        v
+Portfolio Manager (LLM)   -> PortfolioAction  (qualitativa, sem quantidade)
+        v
+FixedTargetSizing         -> target_weight
+        v
+ExecutionEngine em open(t+1)
+```
+
+Semântica:
+
+```text
+COMPRA aprovada -> target_weight = long_target_weight
+VENDA  aprovada -> target_weight = 0.0
+MANTER          -> nenhuma intenção
+veto de risco   -> nenhuma intenção
+```
+
+O gestor de portfólio não escolhe 3%, 17%, 42% ou 82% de exposição: o schema
+`PortfolioAction` não tem campo de tamanho, então a autoridade de sizing não é
+ignorada — ela não é concedida. `calculate_kelly_size` não é chamada neste
+caminho, e há teste que faz a função explodir e exige que o run continue.
+
+`long_target_weight` é validado (`0 < w <= 1`, e `w <= risk_max_concentration`),
+entra no `spec_hash` e no manifest. O default técnico é `0.25`, herdado do antigo
+teto `max_position_size` para manter API e testes convenientes:
+
+```text
+technical default       = 0.25
+scientific frozen value = TBD  (EXPERIMENT PROTOCOL v1)
+```
+
+Nada nisso congela 25% como decisão metodológica.
+
+**`COMPRA` passou a significar exposição alvo, não ordem de compra.** Com a
+exposição corrente abaixo do alvo o executor compra; depois de um gap de alta
+que empurre a exposição acima do alvo, o mesmo alvo exige vender. Isso está
+preso por teste: dois datasets idênticos até `close(t)` e diferentes apenas em
+`open(t+1)` produzem a mesma decisão e o mesmo alvo, e trades de direção
+oposta. A direção financeira continua sendo responsabilidade da arena.
+
+**O que ficou de fora.** Calibração empírica de `confidence`, long/short,
+`volatility_target`, `calibrated_kelly` e o valor definitivo do alvo. A
+arquitetura deixa o ponto de troca de política explícito (`FixedTargetSizing`),
+sem implementar as alternativas.
+
+**Paridade com o motor legado terminou aqui, de propósito.** Existiam três
+provas de que a tradução reproduzia `floor(caixa * size / preço)` do
+`AgentBacktestEngine`. Elas foram removidas junto com o comportamento que
+prendiam: mantê-las exigiria manter `position_size` vivo no caminho científico
+só para satisfazê-las. O motor legado segue com seu dimensionamento e seus
+próprios testes.
 
 **Proveniência de prompt.** Os prompts continuam vivendo em
 `src/agents/technical_analyst.py`, `risk_manager.py` e `portfolio_manager.py`,

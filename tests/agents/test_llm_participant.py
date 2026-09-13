@@ -9,17 +9,21 @@ import pytest
 
 from src.agents.llm_client import LLMClient, MockLLMClient
 from src.agents.participant import (
+    DEFAULT_LONG_TARGET_WEIGHT,
+    FixedTargetSizing,
     LLMDecisionError,
     LLMParticipant,
     target_portfolio_to_intents,
 )
-from src.agents.state import FinalDecision, RiskVerdict, TechnicalSignal
-from src.backtesting.agent_engine import _buy_order, _sell_order
+from src.agents.state import PortfolioAction, RiskVerdict, TechnicalSignal
 from src.backtesting.arena import ExecutionEngine, MarketObservation, OrderIntent
-from src.backtesting.costs import CostModel
 
 TICKER = "PETR4"
 CAPITAL = 1_000.0
+
+#: Alvo usado pelos cenários deste módulo. Metade do patrimônio dá números
+#: inteiros nos preços do recorte e não é, nem pretende ser, valor científico.
+TARGET = 0.5
 
 APPROVED = {
     "verdict": "APROVADO",
@@ -32,12 +36,9 @@ def signal(kind: str, confidence: float = 1.0) -> dict[str, Any]:
     return {"signal": kind, "justification": "mock", "confidence": confidence}
 
 
-def buy(size: float) -> dict[str, Any]:
-    return {"decision": "COMPRA", "position_size": size, "reasoning": "mock"}
-
-
-def sell(size: float) -> dict[str, Any]:
-    return {"decision": "VENDA", "position_size": size, "reasoning": "mock"}
+def action(kind: str) -> dict[str, Any]:
+    """Resposta qualitativa do gestor de portfólio: direção, sem quantidade."""
+    return {"decision": kind, "reasoning": "mock"}
 
 
 def frame(opens: list[float], closes: list[float]) -> pd.DataFrame:
@@ -59,14 +60,13 @@ def scripted_client(
     """Mock determinístico: um analista por sessão e decisões roteirizadas.
 
     As respostas são ``dict`` de propósito — ``MockLLMClient`` devolveria uma
-    instância Pydantic por referência e ``portfolio_manager`` escreve em
-    ``position_size`` ao aplicar o teto.
+    instância Pydantic compartilhada por referência entre sessões.
     """
     return MockLLMClient(
         {
             TechnicalSignal: signals,
             RiskVerdict: APPROVED,
-            FinalDecision: decisions,
+            PortfolioAction: decisions,
         }
     )
 
@@ -87,9 +87,7 @@ def scripted_participant(
         "risk_max_volatility": 100.0,
         "risk_max_drawdown": 1.0,
         "risk_max_concentration": 1.0,
-        "kelly_fraction": 1.0,
-        "max_position_size": 1.0,
-        "portfolio_max_concentration": 1.0,
+        "long_target_weight": TARGET,
     }
     params.update(overrides)
     return LLMParticipant(TICKER, llm_client=client, **params)
@@ -98,13 +96,14 @@ def scripted_participant(
 def two_buys_participant() -> tuple[LLMParticipant, MockLLMClient]:
     """Roteiro comum sobre ``WARMUP_CLOSES``.
 
-    Três sessões de aquecimento em ``MANTER``, alvos de 0,5 e 0,6 nas duas
-    compras e, na última sessão, uma saída integral para caixa — que existe
-    como decisão mas não tem abertura seguinte onde executar.
+    Três sessões de aquecimento em ``MANTER``, duas compras — ambas no mesmo
+    alvo determinístico, porque o alvo não depende da sessão — e, na última,
+    uma saída para caixa, que existe como decisão mas não tem abertura seguinte
+    onde executar.
     """
     client = scripted_client(
         [signal("MANTER")] * 3 + [signal("COMPRA")] * 2 + [signal("VENDA")],
-        [buy(0.5), buy(0.2), sell(1.0)],
+        [action("COMPRA"), action("COMPRA"), action("VENDA")],
     )
     return scripted_participant(client), client
 
@@ -189,7 +188,7 @@ def test_decisao_no_fechamento_executa_na_abertura_seguinte() -> None:
     first = result.trades[0]
     assert first.date == data.index[4]
     assert first.price == data.loc[data.index[4], "abertura"]
-    assert (first.type, first.quantity) == ("BUY", 50)
+    assert (first.type, first.quantity) == ("BUY", 50)  # 50% de 1000 a 10,00
 
 
 def test_decisao_da_ultima_sessao_existe_e_so_executa_com_proxima_abertura() -> None:
@@ -221,10 +220,15 @@ def test_gap_overnight_inverte_a_operacao_sem_mudar_a_decisao() -> None:
     """O participante declara estado desejado; a direção nasce na abertura.
 
     Os dois recortes são idênticos até ``close(t)`` e diferem apenas na
-    abertura seguinte. O peso alvo emitido é o mesmo nos dois; com a abertura
-    estável chegar a 0,6 exige comprar, e com o gap de alta exige vender.
+    abertura seguinte. O mesmo ``COMPRA`` produz o mesmo peso alvo nos dois — e
+    é justamente por isso que a direção física diverge: com a abertura em baixa
+    a exposição corrente fica abaixo de 50% e chegar ao alvo exige **comprar**;
+    com o gap de alta ela ultrapassa 50% e o mesmo alvo exige **vender**.
+
+    Esta é a consequência declarada da semântica de alvo: ``COMPRA`` significa
+    "desejo estar exposto no peso configurado", não "emita uma ordem de compra".
     """
-    calm = frame(WARMUP_OPENS, WARMUP_CLOSES)
+    calm = frame([*WARMUP_OPENS[:5], 8.0], WARMUP_CLOSES)
     gapped = frame([*WARMUP_OPENS[:5], 20.0], WARMUP_CLOSES)
 
     outcomes = []
@@ -244,11 +248,14 @@ def test_gap_overnight_inverte_a_operacao_sem_mudar_a_decisao() -> None:
     # Comparação até a decisão sob teste: a partir da sessão do gap as
     # carteiras divergem legitimamente, porque a execução foi diferente.
     assert calm_targets[:5] == gap_targets[:5]
-    assert calm_targets[3] == pytest.approx(0.5)
-    assert calm_targets[4] == pytest.approx(0.6)
+    assert calm_targets[3] == pytest.approx(TARGET)
+    assert calm_targets[4] == pytest.approx(TARGET)
 
-    assert [(trade.type, trade.quantity) for trade in calm_trades[1:]] == [("BUY", 10)]
-    assert [(trade.type, trade.quantity) for trade in gap_trades[1:]] == [("SELL", 5)]
+    # Premissa: as duas primeiras decisões são o mesmo ``COMPRA``, e a primeira
+    # execução é idêntica nos dois recortes (mesma abertura em t4).
+    assert calm_trades[0].quantity == gap_trades[0].quantity == 50
+    assert [(trade.type, trade.quantity) for trade in calm_trades[1:]] == [("BUY", 6)]
+    assert [(trade.type, trade.quantity) for trade in gap_trades[1:]] == [("SELL", 13)]
 
 
 def test_participante_nao_altera_caixa_posicao_nem_produz_trade() -> None:
@@ -262,46 +269,110 @@ def test_participante_nao_altera_caixa_posicao_nem_produz_trade() -> None:
 
     assert all(isinstance(intent, OrderIntent) for intent in intents)
     assert [(intent.ticker, intent.target_weight) for intent in intents] == [
-        (TICKER, pytest.approx(0.5))
+        (TICKER, pytest.approx(TARGET))
     ]
     assert intents[0].decision_time == data.index[3]
     assert not hasattr(participant, "cash")
     assert not hasattr(participant, "positions")
 
 
-# ── Tradução de decisão em peso alvo ─────────────────────────────
+# ── Sizing determinístico: decisão qualitativa -> peso alvo ──────
 
 
-def test_compra_traduz_fracao_de_caixa_em_peso_de_carteira() -> None:
-    data = frame(WARMUP_OPENS, WARMUP_CLOSES)
-    participant, _ = two_buys_participant()
+def decided(participant: LLMParticipant) -> float | None:
+    return participant.decisions[-1].target_weight
+
+
+def warm_up(participant: LLMParticipant, data: pd.DataFrame) -> None:
+    """Três sessões de aquecimento para o risco ter volatilidade e drawdown."""
     for index in range(1, 4):
         participant.decide(observation(data.iloc[:index]))
 
-    # 40 ações a 10 valem 400 de um patrimônio de 1000; comprar metade dos 600
-    # de caixa mira 700/1000.
-    intents = participant.decide(
-        observation(
-            data.iloc[:4],
-            positions=MappingProxyType({TICKER: 40}),
-            cash=600.0,
-            equity=1_000.0,
-        )
-    )
 
-    assert intents[0].target_weight == pytest.approx(0.7)
+@pytest.mark.parametrize("confidence", [0.55, 0.95])
+def test_confidence_nao_altera_o_tamanho_da_posicao(confidence: float) -> None:
+    """Prova central desta metodologia: o alvo é invariante à confiança.
 
+    Os dois cenários são idênticos exceto pela ``confidence`` reportada pelo
+    analista, e a cadeia qualitativa produz ``COMPRA`` nos dois. Se a confiança
+    entrasse em qualquer fórmula de dimensionamento — fractional Kelly ou um
+    simples ``alvo * confidence`` — os pesos divergiriam aqui.
 
-def test_venda_traduz_fracao_de_posicao_em_peso_de_carteira() -> None:
+    ``confidence`` textual de um LLM não é ``P(win)``; ela continua sendo
+    registrada e continua chegando aos agentes seguintes como contexto, mas não
+    tem autoridade aritmética sobre exposição.
+    """
     data = frame(WARMUP_OPENS, WARMUP_CLOSES)
     client = scripted_client(
-        [signal("MANTER")] * 3 + [signal("VENDA")], [sell(0.25)]
+        [signal("MANTER", confidence=confidence)] * 3
+        + [signal("COMPRA", confidence=confidence)],
+        [action("COMPRA")],
     )
     participant = scripted_participant(client)
-    for index in range(1, 4):
-        participant.decide(observation(data.iloc[:index]))
+    warm_up(participant, data)
 
-    # Vender um quarto de 800 em ações deixa 600 investidos de 1000.
+    intents = participant.decide(observation(data.iloc[:4]))
+
+    recorded = participant.decisions[-1].technical_signal
+    assert recorded is not None and recorded.confidence == pytest.approx(confidence)
+    assert intents[0].target_weight == pytest.approx(TARGET)
+
+
+def test_confianca_baixa_e_alta_produzem_exatamente_o_mesmo_alvo() -> None:
+    """A mesma invariância comparada lado a lado, sem depender do parametrize."""
+    data = frame(WARMUP_OPENS, WARMUP_CLOSES)
+    targets = []
+    for confidence in (0.55, 0.95):
+        client = scripted_client(
+            [signal("MANTER", confidence=confidence)] * 3
+            + [signal("COMPRA", confidence=confidence)],
+            [action("COMPRA")],
+        )
+        participant = scripted_participant(client)
+        warm_up(participant, data)
+        participant.decide(observation(data.iloc[:4]))
+        targets.append(decided(participant))
+
+    assert targets[0] == targets[1] == pytest.approx(TARGET)
+
+
+def test_compra_aprovada_vira_o_alvo_configurado_qualquer_que_seja_a_carteira() -> None:
+    """O alvo é estado desejado, não função de caixa nem de posição corrente.
+
+    Duas carteiras muito diferentes no mesmo pregão — sem posição e com 80% do
+    patrimônio investido — recebem o mesmo alvo. A antiga tradução, que
+    convertia "fração do caixa" em peso, devolveria números distintos.
+    """
+    data = frame(WARMUP_OPENS, WARMUP_CLOSES)
+    carteiras = [
+        {"positions": MappingProxyType({TICKER: 0}), "cash": 1_000.0},
+        {"positions": MappingProxyType({TICKER: 80}), "cash": 200.0},
+    ]
+
+    targets = []
+    for carteira in carteiras:
+        client = scripted_client(
+            [signal("MANTER")] * 3 + [signal("COMPRA")], [action("COMPRA")]
+        )
+        participant = scripted_participant(client)
+        warm_up(participant, data)
+        intents = participant.decide(
+            observation(data.iloc[:4], equity=1_000.0, **carteira)
+        )
+        targets.append(intents[0].target_weight)
+
+    assert targets == [pytest.approx(TARGET), pytest.approx(TARGET)]
+
+
+def test_venda_aprovada_vira_alvo_zero_e_nao_reducao_parcial() -> None:
+    """``VENDA`` é sair da exposição, não reduzir uma fração dela."""
+    data = frame(WARMUP_OPENS, WARMUP_CLOSES)
+    client = scripted_client(
+        [signal("MANTER")] * 3 + [signal("VENDA")], [action("VENDA")]
+    )
+    participant = scripted_participant(client)
+    warm_up(participant, data)
+
     intents = participant.decide(
         observation(
             data.iloc[:4],
@@ -311,7 +382,7 @@ def test_venda_traduz_fracao_de_posicao_em_peso_de_carteira() -> None:
         )
     )
 
-    assert intents[0].target_weight == pytest.approx(0.6)
+    assert intents[0].target_weight == 0.0
 
 
 def test_manter_nao_emite_intencao() -> None:
@@ -320,7 +391,178 @@ def test_manter_nao_emite_intencao() -> None:
     participant = scripted_participant(client)
 
     assert participant.decide(observation(data.iloc[:4])) == []
-    assert participant.decisions[-1].target_weight is None
+    assert decided(participant) is None
+
+
+def test_portfolio_manter_apos_sinal_de_compra_nao_emite_intencao() -> None:
+    """O gestor pode recusar seguir o analista; recusar não é dimensionar."""
+    data = frame(WARMUP_OPENS, WARMUP_CLOSES)
+    client = scripted_client(
+        [signal("MANTER")] * 3 + [signal("COMPRA")], [action("MANTER")]
+    )
+    participant = scripted_participant(client)
+    warm_up(participant, data)
+
+    assert participant.decide(observation(data.iloc[:4])) == []
+    record = participant.decisions[-1]
+    assert record.portfolio_action is not None
+    assert record.portfolio_action.decision == "MANTER"
+    assert record.target_weight is None
+
+
+def test_veto_de_risco_nao_emite_intencao_e_nem_consulta_o_sizing() -> None:
+    """Vetado é vetado: não existe alvo, nem alvo reduzido."""
+    data = frame(WARMUP_OPENS, WARMUP_CLOSES)
+    client = scripted_client(
+        [signal("MANTER")] * 3 + [signal("COMPRA")], [action("COMPRA")]
+    )
+    # Concentração mínima possível: qualquer posição já viola o limite duro.
+    participant = scripted_participant(
+        client, risk_max_concentration=0.001, long_target_weight=0.001
+    )
+    warm_up(participant, data)
+
+    intents = participant.decide(
+        observation(
+            data.iloc[:4],
+            positions=MappingProxyType({TICKER: 80}),
+            cash=200.0,
+            equity=1_000.0,
+        )
+    )
+
+    record = participant.decisions[-1]
+    assert intents == []
+    assert record.risk_verdict is not None and record.risk_verdict.verdict == "VETADO"
+    # O grafo termina no risco: o gestor de portfólio nem chega a ser chamado.
+    assert record.portfolio_action is None
+    assert record.target_weight is None
+
+
+def test_portfolio_nao_pode_inverter_o_sinal_tecnico_aprovado() -> None:
+    """``COMPRA`` aprovada admite seguir ou manter; nunca virar ``VENDA``."""
+    data = frame(WARMUP_OPENS, WARMUP_CLOSES)
+    client = scripted_client(
+        [signal("MANTER")] * 3 + [signal("COMPRA")], [action("VENDA")]
+    )
+    participant = scripted_participant(client)
+    warm_up(participant, data)
+
+    assert participant.decide(observation(data.iloc[:4])) == []
+    record = participant.decisions[-1]
+    assert record.portfolio_action is not None
+    assert record.portfolio_action.decision == "MANTER"
+    assert any("inverteu o sinal" in error for error in record.errors)
+
+
+def test_schema_qualitativo_nao_tem_campo_de_tamanho() -> None:
+    """A autoridade de sizing não é ignorada — ela não é concedida.
+
+    Pedir ``position_size`` ao LLM para depois sobrescrevê-lo deixaria o campo
+    no prompt, no schema enviado e no trace. Aqui ele não existe: o modelo não
+    tem onde escrever um tamanho, e ``extra="forbid"`` recusa inventá-lo.
+    """
+    assert set(PortfolioAction.model_fields) == {"decision", "reasoning"}
+    with pytest.raises(ValueError):
+        PortfolioAction.model_validate(
+            {"decision": "COMPRA", "reasoning": "x", "position_size": 0.99}
+        )
+
+
+def test_kelly_nao_e_chamado_no_caminho_cientifico(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Kelly saiu do caminho científico de fato, não apenas de nome."""
+    import src.agents.portfolio_manager as portfolio_manager
+
+    def explode(*args: Any, **kwargs: Any) -> float:
+        raise AssertionError("o caminho científico não pode chamar Kelly")
+
+    monkeypatch.setattr(portfolio_manager, "calculate_kelly_size", explode)
+
+    data = frame(WARMUP_OPENS, WARMUP_CLOSES)
+    client = scripted_client(
+        [signal("MANTER")] * 3 + [signal("COMPRA")], [action("COMPRA")]
+    )
+    participant = scripted_participant(client)
+    warm_up(participant, data)
+
+    intents = participant.decide(observation(data.iloc[:4]))
+
+    assert intents[0].target_weight == pytest.approx(TARGET)
+
+
+# ── Política de sizing e sua configuração ────────────────────────
+
+
+@pytest.mark.parametrize(
+    ("decision", "expected"),
+    [("COMPRA", 0.25), ("VENDA", 0.0), ("MANTER", None)],
+)
+def test_politica_de_alvo_fixo_traduz_direcao_em_estado_desejado(
+    decision: str, expected: float | None
+) -> None:
+    assert FixedTargetSizing(0.25).target_weight(decision) == expected
+
+
+def test_default_tecnico_do_alvo_e_declarado_como_tecnico() -> None:
+    """0,25 existe para manter a API conveniente, não por aprovação científica.
+
+    O valor científico definitivo continua ``TBD`` no protocolo experimental; o
+    que este teste prende é apenas que o default não mudou sem querer.
+    """
+    assert DEFAULT_LONG_TARGET_WEIGHT == 0.25
+    assert LLMParticipant(TICKER, llm_client=MockLLMClient()).long_target_weight == 0.25
+
+
+@pytest.mark.parametrize(
+    ("weight", "message"),
+    [
+        (0.0, "must be > 0"),
+        (-0.1, "must be > 0"),
+        (1.5, "must be > 0"),
+        (float("nan"), "must be finite"),
+        (float("inf"), "must be finite"),
+        (True, "must be a number"),
+        ("0.2", "must be a number"),
+    ],
+    ids=["zero", "negativo", "acima_de_um", "nan", "inf", "booleano", "texto"],
+)
+def test_alvo_invalido_e_rejeitado_na_construcao(weight: Any, message: str) -> None:
+    with pytest.raises(ValueError, match=message):
+        LLMParticipant(TICKER, long_target_weight=weight, llm_client=MockLLMClient())
+
+
+def test_alvo_acima_do_limite_duro_de_concentracao_e_rejeitado() -> None:
+    """Sizing que manda construir o que o risco existe para vetar é contradição."""
+    with pytest.raises(ValueError, match="exceeds risk_max_concentration"):
+        LLMParticipant(
+            TICKER,
+            long_target_weight=0.40,
+            risk_max_concentration=0.30,
+            llm_client=MockLLMClient(),
+        )
+
+
+def test_alvo_igual_ao_limite_duro_de_concentracao_e_aceito() -> None:
+    participant = LLMParticipant(
+        TICKER,
+        long_target_weight=0.30,
+        risk_max_concentration=0.30,
+        llm_client=MockLLMClient(),
+    )
+
+    assert participant.long_target_weight == pytest.approx(0.30)
+
+
+@pytest.mark.parametrize("name", ["kelly_fraction", "max_position_size", "payoff_ratio"])
+def test_parametros_mortos_de_kelly_nao_existem_mais_na_api_cientifica(
+    name: str,
+) -> None:
+    """Parâmetro que não afeta comportamento não pode entrar no ``spec_hash``."""
+    overrides: dict[str, Any] = {name: 0.5}
+    with pytest.raises(TypeError):
+        LLMParticipant(TICKER, llm_client=MockLLMClient(), **overrides)
 
 
 # ── Falha do LLM não vira HOLD ───────────────────────────────────
@@ -481,11 +723,19 @@ def test_participante_single_asset_recusa_universo_multi_ativo() -> None:
         client.decide(portfolio_observation(TICKER, "VALE3"))
 
 
-def test_peso_traduzido_permanece_no_intervalo_fechado() -> None:
-    """A tradução não pode produzir alavancagem nem peso negativo."""
+def test_alvo_maximo_de_carteira_inteira_continua_sendo_decisao_valida() -> None:
+    """Alvo 100% é long sem alavancagem, e o contrato de carteira o aceita.
+
+    O sizing determinístico não pode produzir peso fora de ``[0, 1]`` por
+    construção — o alvo é validado na criação do participante —, então o que
+    resta provar é a borda superior atravessando ``target_portfolio_to_intents``
+    sem ser normalizada nem recusada.
+    """
     data = frame(WARMUP_OPENS, WARMUP_CLOSES)
-    client = scripted_client([signal("MANTER")] * 3 + [signal("COMPRA")], [buy(1.0)])
-    participant = scripted_participant(client)
+    client = scripted_client(
+        [signal("MANTER")] * 3 + [signal("COMPRA")], [action("COMPRA")]
+    )
+    participant = scripted_participant(client, long_target_weight=1.0)
     for index in range(1, 4):
         participant.decide(observation(data.iloc[:index]))
 
@@ -648,155 +898,28 @@ def test_parametro_inteiro_rejeita_booleano(name: str, minimum: int) -> None:
         participant_with(name, True)
 
 
-# ── Paridade com o dimensionamento do motor legado ───────────────
+# ── O que deixou de valer, e por quê ─────────────────────────────
 
-ZERO_COST = CostModel()
-
-
-class ParitySpy:
-    """Observa caixa, posição e fechamento no instante da decisão."""
-
-    def __init__(self, participant: LLMParticipant) -> None:
-        self.participant = participant
-        self.states: list[tuple[pd.Timestamp, float, int, float]] = []
-
-    def decide(self, observation: MarketObservation) -> list[OrderIntent]:
-        self.states.append(
-            (
-                observation.session,
-                observation.cash,
-                observation.positions[TICKER],
-                float(observation.history[TICKER]["fechamento"].iloc[-1]),
-            )
-        )
-        return self.participant.decide(observation)
-
-
-def run_parity(
-    closes: list[float], signals: list[dict], decisions: list[dict]
-) -> tuple[ParitySpy, LLMParticipant, list]:
-    """Executa sem custos e sem gap: ``abertura == fechamento`` em toda sessão."""
-    data = frame(list(closes), list(closes))
-    participant = scripted_participant(scripted_client(signals, decisions))
-    spy = ParitySpy(participant)
-    result = ExecutionEngine(spy, {TICKER: data}, CAPITAL, ZERO_COST).run()
-    return spy, participant, result.trades
-
-
-def test_compra_tem_paridade_de_quantidade_com_o_motor_legado() -> None:
-    """Mesmo cenário, mesma quantidade: a tradução não muda o dimensionamento.
-
-    Sem gap (``open(t+1) == close(t)``) e sem custos, o peso alvo traduzido
-    reproduz exatamente ``floor(caixa * size / preço)`` — a fórmula que
-    ``_buy_order`` aplica no motor legado.
-
-    São duas compras de propósito. Na primeira a posição é zero e caixa iguala
-    patrimônio, o que tornaria a prova cega a confundir um com o outro. Na
-    segunda já existe posição, então ``caixa != patrimônio`` e a fórmula fica
-    de fato presa.
-    """
-    # 10,37 não divide o caixa em quantidade inteira: o ``floor`` é exercido.
-    closes = [9.0, 11.0, 10.37, 10.37, 10.37, 10.37]
-    spy, participant, trades = run_parity(
-        closes, [signal("MANTER")] * 3 + [signal("COMPRA")] * 2, [buy(0.4), buy(0.4)]
-    )
-
-    executed_quantities = []
-    for index, trade in zip((3, 4), trades, strict=True):
-        _, cash, position, close = spy.states[index]
-        decision = participant.decisions[index].final_decision
-        assert decision is not None and decision.decision == "COMPRA"
-
-        _, legacy_quantity, legacy_trade = _buy_order(
-            cash, close, decision.position_size, ZERO_COST
-        )
-        assert legacy_trade is not None
-        assert trade.price == close  # sem gap
-        assert trade.type == "BUY"
-        assert trade.quantity == legacy_quantity
-        executed_quantities.append((cash, position, legacy_quantity))
-
-    (first_cash, first_position, first_quantity) = executed_quantities[0]
-    (second_cash, second_position, second_quantity) = executed_quantities[1]
-
-    # Premissa da primeira compra: sem posição, caixa == patrimônio.
-    assert first_position == 0
-    assert first_cash == CAPITAL
-    assert first_quantity == 38  # floor(1000 * 0.4 / 10.37) = floor(38.57)
-
-    # Premissa da segunda: já há posição, então caixa != patrimônio e a compra
-    # não pode ser explicada por uma fração do patrimônio.
-    assert second_position == first_quantity
-    assert second_cash < CAPITAL
-    assert second_quantity == 23  # floor(605.94 * 0.4 / 10.37) = floor(23.37)
-
-
-def test_venda_tem_paridade_de_quantidade_com_o_motor_legado() -> None:
-    """Venda com ``posição * size`` inteiro reproduz ``floor(q * size)``.
-
-    O participante nunca arredonda quantidade: quem trunca é o executor, e ele
-    trunca a *posição alvo*, não a quantidade negociada. Quando ``q * size`` é
-    inteiro as duas contas coincidem exatamente.
-    """
-    closes = [9.0, 11.0, 10.0, 10.0, 10.0, 10.0]
-    spy, participant, trades = run_parity(
-        closes,
-        [signal("MANTER")] * 3 + [signal("COMPRA")] + [signal("VENDA")],
-        [buy(1.0), sell(0.25)],
-    )
-
-    _, cash, position, close = spy.states[4]
-    decision = participant.decisions[4].final_decision
-    assert decision is not None and decision.decision == "VENDA"
-    assert position * decision.position_size == int(position * decision.position_size)
-
-    _, remaining, legacy_trade = _sell_order(
-        cash, position, close, decision.position_size, ZERO_COST
-    )
-    assert legacy_trade is not None
-    assert position - remaining == legacy_trade.quantity
-
-    executed = trades[-1]
-    assert executed.price == close  # sem gap
-    assert executed.type == "SELL"
-    assert executed.quantity == legacy_trade.quantity
-
-
-def test_venda_com_fracao_nao_inteira_diverge_em_uma_acao_por_arredondamento() -> None:
-    """Divergência conhecida e declarada, de arredondamento — não de sizing.
-
-    O motor legado trunca a *quantidade vendida*; a arena trunca a *posição
-    alvo* que sobra. Quando ``q * size`` não é inteiro, as duas políticas
-    diferem em uma ação. Corrigir isso seria mudar a política de lote da arena,
-    que continua ``TBD``, e não cabe ao participante.
-    """
-    closes = [9.0, 11.0, 10.0, 10.0, 10.0, 10.0]
-    spy, participant, trades = run_parity(
-        closes,
-        [signal("MANTER")] * 3 + [signal("COMPRA")] + [signal("VENDA")],
-        [buy(1.0), sell(0.333)],
-    )
-
-    _, cash, position, close = spy.states[4]
-    decision = participant.decisions[4].final_decision
-    assert decision is not None
-    assert position * decision.position_size != int(position * decision.position_size)
-
-    _, remaining, legacy_trade = _sell_order(
-        cash, position, close, decision.position_size, ZERO_COST
-    )
-    assert legacy_trade is not None
-
-    executed = trades[-1]
-    assert executed.type == "SELL"
-    assert executed.quantity == legacy_trade.quantity + 1
+# Existiam aqui três provas de paridade de quantidade com o
+# ``AgentBacktestEngine``: sem gap e sem custos, a tradução
+# ``position_size -> target_weight`` reproduzia ``floor(caixa * size / preço)``
+# do motor legado.
+#
+# Elas foram removidas porque o comportamento que elas prendiam foi
+# **deliberadamente abandonado** no caminho científico. O participante não
+# traduz mais fração de operação em peso: ele declara um alvo determinístico.
+# Manter aquelas provas exigiria manter ``position_size`` vivo só para
+# satisfazê-las, que é exatamente a compatibilidade falsa que esta mudança
+# elimina. O motor legado segue com seu próprio dimensionamento e seus próprios
+# testes (``tests/backtesting/test_agent_engine.py``,
+# ``tests/agents/test_agents.py::test_portfolio_legado_*``).
 
 
 def test_manter_nao_vira_rebalance_para_o_peso_corrente() -> None:
     """``MANTER`` é ausência de ordem, não alvo igual ao peso do fechamento.
 
     A compra decidida em ``close(t3)`` executa em ``open(t4)`` e deixa metade
-    do patrimônio no ativo. Em ``close(t4)`` o agente diz ``MANTER`` e a
+    do patrimônio no ativo, que é o alvo determinístico deste cenário. Em ``close(t4)`` o agente diz ``MANTER`` e a
     abertura de ``t5`` traz um gap de alta. Se ``MANTER`` reemitisse o peso
     observado (0,5), o executor recalcularia a quantidade alvo sobre o
     patrimônio inflado da abertura e precisaria **vender** para voltar a 0,5 —
@@ -809,7 +932,7 @@ def test_manter_nao_vira_rebalance_para_o_peso_corrente() -> None:
     )
     client = scripted_client(
         [signal("MANTER")] * 3 + [signal("COMPRA")] + [signal("MANTER")] * 2,
-        [buy(0.5)],
+        [action("COMPRA")],
     )
     participant = scripted_participant(client)
 
@@ -817,8 +940,8 @@ def test_manter_nao_vira_rebalance_para_o_peso_corrente() -> None:
 
     manter = participant.decisions[4]
     assert manter.target_weight is None
-    assert manter.final_decision is not None
-    assert manter.final_decision.decision == "MANTER"
+    assert manter.portfolio_action is not None
+    assert manter.portfolio_action.decision == "MANTER"
     # Premissa: em close(t4) a posição valia exatamente metade do patrimônio,
     # e o gap de t5 desfaz essa proporção na abertura.
     assert [(trade.type, trade.date, trade.quantity) for trade in result.trades] == [

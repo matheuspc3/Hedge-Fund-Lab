@@ -19,15 +19,24 @@ from src.agents.llm_trace import (
     ReplayMismatchError,
 )
 from src.agents.participant import (
+    DEFAULT_LONG_TARGET_WEIGHT,
     SUPPORTED_PROVIDERS,
+    FixedTargetSizing,
     LLMDecisionError,
     LLMDecisionRecord,
     LLMParticipant,
     target_portfolio_to_intents,
 )
+from src.agents.portfolio_manager import (
+    SIZING_MODE_LEGACY,
+    SIZING_MODE_QUALITATIVE,
+    PortfolioConfig,
+    calculate_kelly_size,
+)
 from src.agents.state import (
     AgentState,
     FinalDecision,
+    PortfolioAction,
     RiskVerdict,
     TechnicalConsensus,
     TechnicalSignal,
@@ -36,14 +45,18 @@ from src.agents.state import (
 from src.agents.technical_analyst import AnalystEnsembleConfig
 
 __all__ = [
+    "DEFAULT_LONG_TARGET_WEIGHT",
     "LLM_TRACE_FILENAME",
     "LLM_TRACE_SCHEMA_VERSION",
+    "SIZING_MODE_LEGACY",
+    "SIZING_MODE_QUALITATIVE",
     "SUPPORTED_PROVIDERS",
     "AgentRouterLLMClient",
     "AgentState",
     "AnalystEnsembleConfig",
     "CachedLLMClient",
     "FinalDecision",
+    "FixedTargetSizing",
     "LLMCallMetadata",
     "LLMCallRecord",
     "LLMCallRequest",
@@ -52,6 +65,8 @@ __all__ = [
     "LLMDecisionRecord",
     "LLMParticipant",
     "MockLLMClient",
+    "PortfolioAction",
+    "PortfolioConfig",
     "RecordingLLMClient",
     "ReplayLLMClient",
     "ReplayMismatchError",
@@ -61,5 +76,6 @@ __all__ = [
     "TechnicalSignal",
     "TechnicalVote",
     "build_graph",
+    "calculate_kelly_size",
     "target_portfolio_to_intents",
 ]

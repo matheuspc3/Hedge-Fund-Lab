@@ -11,7 +11,10 @@ acrescenta é o contrato causal da arena::
     AgentState  -- grafo (quorum técnico -> risco -> portfólio)
             |
             v
-    FinalDecision (COMPRA/VENDA/MANTER + position_size)
+    PortfolioAction (COMPRA/VENDA/MANTER, sem quantidade)
+            |
+            v
+    política determinística de sizing  -> target_weight
             |
             v
     carteira-alvo completa sobre o universo observado
@@ -22,6 +25,13 @@ acrescenta é o contrato causal da arena::
 O participante termina em peso alvo. Quantidade, direção, preço de execução,
 custo, caixa e ``Trade`` continuam sendo exclusividade do ``ExecutionEngine``:
 nada aqui reimplementa o motor financeiro.
+
+**Qualidade da decisão e tamanho da posição são coisas separadas.** O LLM
+decide a direção; quanto expor é política determinística e configurável
+(:class:`FixedTargetSizing`), fora do alcance do modelo. Este participante usa
+sempre o modo científico do gestor de portfólio
+(``sizing_mode="qualitative"``), portanto nunca chama a fractional Kelly e
+nunca consome a ``confidence`` textual como número.
 
 Limitação declarada: a stack de agentes atual é single-asset. ``AgentState``
 descreve um ticker, um preço e uma posição escalar, e não existe etapa de
@@ -44,11 +54,11 @@ from pydantic import BaseModel
 from src.agents.graph import build_graph
 from src.agents.llm_client import LLMCallMetadata, LLMClient, MockLLMClient
 from src.agents.llm_trace import LLMCallRecord, RecordingLLMClient
-from src.agents.portfolio_manager import PortfolioConfig
+from src.agents.portfolio_manager import SIZING_MODE_QUALITATIVE, PortfolioConfig
 from src.agents.risk_manager import RiskConfig
 from src.agents.state import (
     AgentState,
-    FinalDecision,
+    PortfolioAction,
     RiskVerdict,
     TechnicalConsensus,
     TechnicalSignal,
@@ -72,6 +82,19 @@ SUPPORTED_PROVIDERS = ("mock", "agent_router")
 #: Fator de anualização da volatilidade, herdado do motor legado de agentes.
 TRADING_DAYS_PER_YEAR = 252
 
+#: Default **técnico** de ``long_target_weight``, não valor científico.
+#:
+#: 0.25 é o antigo teto ``max_position_size`` do gestor de portfólio, adotado
+#: aqui só para manter testes e API convenientes sem inventar um número novo.
+#:
+#: .. code-block:: text
+#:
+#:     technical default      = 0.25
+#:     scientific frozen value = TBD  (EXPERIMENT PROTOCOL v1)
+#:
+#: Ele nunca foi aprovado metodologicamente e não pode ser citado como tal.
+DEFAULT_LONG_TARGET_WEIGHT = 0.25
+
 
 def _require_int(name: str, value: Any, *, minimum: int) -> int:
     """Exige um inteiro de verdade, com mínimo, antes de qualquer comparação.
@@ -92,6 +115,45 @@ def _require_int(name: str, value: Any, *, minimum: int) -> int:
     if value < minimum:
         raise ValueError(f"{name} must be >= {minimum}")
     return value
+
+
+def _validate_long_target_weight(value: Any, risk_max_concentration: float) -> float:
+    """Exige um peso alvo long viável e coerente com o limite duro de risco.
+
+    Duas validações, com motivos distintos:
+
+    ``0 < weight <= 1``
+        O projeto é long-only e sem alavancagem. Zero não é "manter": seria uma
+        estratégia que nunca se expõe, e declará-la assim por engano de
+        configuração é pior que recusar. Acima de 1 é alavancagem, que o
+        contrato de carteira-alvo já proíbe.
+
+    ``weight <= risk_max_concentration``
+        Configuração em que o sizing determinístico manda construir exatamente
+        a exposição que o gestor de risco existe para vetar é contraditória: o
+        participante pediria todo pregão um alvo que a regra dura recusa, e o
+        run silenciosamente viraria "quase nunca opera" em vez de falhar. O
+        limite de risco é o teto; o alvo tem de caber embaixo dele.
+    """
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(
+            f"long_target_weight must be a number, got {type(value).__name__}"
+        )
+    weight = float(value)
+    if not math.isfinite(weight):
+        raise ValueError("long_target_weight must be finite")
+    if weight <= 0 or weight > 1:
+        raise ValueError(
+            "long_target_weight must be > 0 and <= 1; this participant is "
+            "long-only and unlevered"
+        )
+    if weight > float(risk_max_concentration):
+        raise ValueError(
+            f"long_target_weight {weight} exceeds risk_max_concentration "
+            f"{risk_max_concentration}; the deterministic target would build an "
+            "exposure the hard risk rule exists to veto"
+        )
+    return weight
 
 
 class LLMDecisionError(ValueError):
@@ -116,10 +178,41 @@ class LLMDecisionRecord:
     technical_signal: TechnicalSignal | None
     consensus: TechnicalConsensus | None
     risk_verdict: RiskVerdict | None
-    final_decision: FinalDecision | None
+    portfolio_action: PortfolioAction | None
     target_weight: float | None
     errors: tuple[str, ...] = ()
     llm_failures: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class FixedTargetSizing:
+    """Política de sizing determinística: alvo fixo para exposição long.
+
+    Traduz **decisão qualitativa** em **estado desejado de carteira**::
+
+        COMPRA -> long_target_weight
+        VENDA  -> 0.0
+        MANTER -> None  (nenhuma intenção nova)
+
+    Deliberadamente simples, porque o participante é single-asset e long-only.
+    Nada aqui olha ``confidence``, preço, caixa, posição corrente ou próxima
+    abertura: o alvo é o mesmo estado desejado, e traduzi-lo em compra ou venda
+    concreta é trabalho do ``ExecutionEngine`` em ``open(t+1)``.
+
+    Ela é a primeira de uma família prevista (``fixed_target``,
+    ``volatility_target``, ``calibrated_kelly``); as outras **não** existem e
+    não são simuladas. O que este tipo garante é o ponto de troca: o
+    participante consulta uma política, não uma fórmula embutida.
+    """
+
+    long_target_weight: float
+
+    def target_weight(self, decision: str) -> float | None:
+        if decision == "COMPRA":
+            return self.long_target_weight
+        if decision == "VENDA":
+            return 0.0
+        return None
 
 
 def _mock_client() -> MockLLMClient:
@@ -129,10 +222,8 @@ def _mock_client() -> MockLLMClient:
     valida contra nenhum schema, então as respostas são declaradas aqui.
 
     As respostas são ``dict``, não instâncias Pydantic: ``MockLLMClient``
-    devolve uma instância pré-construída por referência, e ``portfolio_manager``
-    escreve em ``position_size`` ao aplicar o teto. Um objeto compartilhado
-    seria mutado de sessão em sessão; o ``dict`` faz cada chamada validar um
-    objeto novo.
+    devolveria uma instância pré-construída por referência, compartilhada entre
+    sessões. O ``dict`` faz cada chamada validar um objeto novo.
     """
     return MockLLMClient(
         {
@@ -146,9 +237,8 @@ def _mock_client() -> MockLLMClient:
                 "analysis": "Resposta determinística de mock",
                 "risk_metrics": {},
             },
-            FinalDecision: {
+            PortfolioAction: {
                 "decision": "COMPRA",
-                "position_size": 1.0,
                 "reasoning": "Resposta determinística de mock",
             },
         }
@@ -258,25 +348,31 @@ class LLMParticipant:
     sessão nem o tamanho do recorte, então não consegue identificar o fim da
     amostra experimental.
 
-    **Tradução de decisão para peso alvo.** O pipeline atual produz
-    ``COMPRA``/``VENDA``/``MANTER`` com ``position_size`` que é fração *da
-    operação* — caixa disponível na compra, posição corrente na venda — e não
-    um peso de carteira. A tradução aplicada aqui é a identidade aritmética
-    "em que estado de carteira esta ordem quer chegar", avaliada com o
-    fechamento de ``t``::
+    **Decisão qualitativa, sizing determinístico.** O grafo termina em
+    :class:`~src.agents.state.PortfolioAction` — direção e justificativa, sem
+    quantidade. O peso alvo sai de :class:`FixedTargetSizing`::
 
-        COMPRA(s) -> (posição * close + s * caixa) / patrimônio
-        VENDA(s)  -> (posição * close * (1 - s))   / patrimônio
-        MANTER    -> nenhuma intenção
+        COMPRA aprovada -> target_weight = long_target_weight
+        VENDA  aprovada -> target_weight = 0.0
+        MANTER          -> nenhuma intenção
+        veto de risco   -> nenhuma intenção
 
-    Ela preserva o dimensionamento que o ``portfolio_manager`` já calcula
-    (fractional Kelly sobre ``confidence``, teto de posição e folga de
-    concentração), sem copiar essa regra para cá e sem declará-la como o sizing
-    científico final — Kelly sobre *confidence* textual continua sendo uma
-    decisão metodológica em aberto. Duas diferenças são declaradas: o peso
-    alcançado difere do peso alvo porque a execução acontece na abertura de
-    ``t+1``, a outro preço, e a tradução não desconta custos, que pertencem ao
-    executor.
+    Nada nessa tradução depende de ``confidence``, de Kelly ou de qualquer
+    número escolhido pelo LLM: duas execuções que só diferem na confiança
+    reportada produzem exatamente o mesmo peso alvo. ``confidence`` continua
+    existindo como saída do analista, como contexto qualitativo dos agentes
+    seguintes e como variável de análise no trace — ela apenas não entra em
+    fórmula de dimensionamento.
+
+    **``COMPRA`` é estado desejado, não ordem de compra.** Emitir
+    ``target_weight = long_target_weight`` significa *querer estar exposto
+    naquele peso*, e não que o trade físico em ``open(t+1)`` será ``BUY``. Com
+    exposição corrente abaixo do alvo o executor compra; depois de um gap de
+    alta que empurre a exposição acima do alvo, o mesmo alvo exige vender. A
+    direção financeira concreta nasce na abertura e pertence à arena; o
+    participante não declara ``side``. Duas diferenças seguem declaradas: o peso
+    alcançado difere do alvo porque a execução acontece a outro preço, e o alvo
+    não desconta custos, que são do executor.
 
     **Ausência de intenção não é decisão parcial.** ``MANTER``, veto de risco e
     ausência de decisão final devolvem lista vazia: nenhuma decisão nova, e o
@@ -328,11 +424,8 @@ class LLMParticipant:
         risk_max_volatility: float = 0.50,
         risk_max_drawdown: float = 0.25,
         risk_max_concentration: float = 0.30,
-        kelly_fraction: float = 0.50,
-        max_position_size: float = 0.25,
-        portfolio_max_concentration: float = 0.30,
+        long_target_weight: float = DEFAULT_LONG_TARGET_WEIGHT,
         volatility_window: int = 21,
-        payoff_ratio: float = 1.0,
         decision_frequency: int = 1,
         llm_client: LLMClient | None = None,
     ) -> None:
@@ -347,10 +440,11 @@ class LLMParticipant:
         retry_attempts = _require_int("retry_attempts", retry_attempts, minimum=1)
         analyst_count = _require_int("analyst_count", analyst_count, minimum=1)
         seed_base = _require_int("seed_base", seed_base, minimum=0)
-        if payoff_ratio <= 0 or not math.isfinite(payoff_ratio):
-            raise ValueError("payoff_ratio must be finite and > 0")
         if retry_base_delay < 0 or not math.isfinite(retry_base_delay):
             raise ValueError("retry_base_delay must be finite and >= 0")
+        long_target_weight = _validate_long_target_weight(
+            long_target_weight, risk_max_concentration
+        )
 
         self.ticker = ticker.strip()
         self.provider = provider
@@ -358,8 +452,9 @@ class LLMParticipant:
         self.retry_attempts = retry_attempts
         self.retry_base_delay = retry_base_delay
         self.volatility_window = volatility_window
-        self.payoff_ratio = float(payoff_ratio)
         self.decision_frequency = decision_frequency
+        self.long_target_weight = long_target_weight
+        self.sizing = FixedTargetSizing(long_target_weight)
 
         self.ensemble_config = AnalystEnsembleConfig(
             analyst_count=analyst_count,
@@ -374,11 +469,9 @@ class LLMParticipant:
             max_drawdown=risk_max_drawdown,
             max_concentration=risk_max_concentration,
         )
-        self.portfolio_config = PortfolioConfig(
-            kelly_fraction=kelly_fraction,
-            max_position_size=max_position_size,
-            max_concentration=portfolio_max_concentration,
-        )
+        # Modo científico, sempre: o participante da arena nunca executa o
+        # caminho de Kelly sobre ``confidence``, nem por configuração.
+        self.portfolio_config = PortfolioConfig(sizing_mode=SIZING_MODE_QUALITATIVE)
 
         # Cliente injetado é usado como está: o teste controla a stack inteira.
         base = llm_client if llm_client is not None else self._build_client()
@@ -478,11 +571,14 @@ class LLMParticipant:
             f"{type(error).__name__}: {error}" for error in self.client.failures
         )
 
-        decision = output.get("final_decision")
+        action = output.get("portfolio_action")
         errors = tuple(str(error) for error in output.get("errors", []))
+        # Sizing só é consultado quando existe decisão qualitativa e nenhuma
+        # falha: veto de risco e ``MANTER`` sequer chegam até aqui com ação
+        # acionável, e falha de infraestrutura não vira decisão.
         weight = (
-            self._target_weight(decision, observation, close)
-            if decision is not None and decision.decision != "MANTER" and not failures
+            self.sizing.target_weight(action.decision)
+            if action is not None and not failures
             else None
         )
         self.decisions.append(
@@ -491,7 +587,7 @@ class LLMParticipant:
                 technical_signal=output.get("technical_signal"),
                 consensus=output.get("technical_consensus"),
                 risk_verdict=output.get("risk_verdict"),
-                final_decision=decision,
+                portfolio_action=action,
                 target_weight=weight,
                 errors=errors,
                 llm_failures=failures,
@@ -566,36 +662,11 @@ class LLMParticipant:
             "current_price": close_price,
             "equity": equity,
             "current_drawdown": (peak - equity) / peak,
-            "payoff_ratio": self.payoff_ratio,
+            # ``payoff_ratio`` é insumo exclusivo da fórmula de Kelly do modo
+            # legado. O caminho científico não o produz para que não haja
+            # parâmetro morto fingindo ser material.
             "errors": [],
         }
         if volatility is not None:
             state["recent_volatility"] = volatility
         return state
-
-    # ── Tradução para peso alvo ──────────────────────────────────
-
-    def _target_weight(
-        self,
-        decision: FinalDecision,
-        observation: MarketObservation,
-        close: float,
-    ) -> float:
-        exposure = float(observation.positions[self.ticker]) * close
-        size = float(decision.position_size)
-        if decision.decision == "COMPRA":
-            target_value = exposure + size * float(observation.cash)
-        else:
-            target_value = exposure * (1.0 - size)
-        weight = target_value / float(observation.equity)
-        if (
-            not math.isfinite(weight)
-            or weight < -WEIGHT_TOLERANCE
-            or weight > 1 + WEIGHT_TOLERANCE
-        ):
-            raise LLMDecisionError(
-                f"translated target weight {weight!r} is outside [0, 1]"
-            )
-        # Apenas resíduo de ponto flutuante é aparado; nenhum peso é
-        # normalizado para caber em um limite econômico.
-        return min(1.0, max(0.0, weight))

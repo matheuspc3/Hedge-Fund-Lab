@@ -114,6 +114,20 @@ na abertura da próxima sessão válida `t+1`.
 
 As mesmas regras serão aplicadas a todos os participantes.
 
+Consequência da semântica de peso alvo, registrada explicitamente: no agente,
+`COMPRA` passa a significar **desejar exposição long no peso alvo configurado**,
+e não que o trade físico em `open(t+1)` será `BUY`.
+
+```text
+target = 25%
+
+close(t): exposição = 20%   -> provavelmente BUY
+gap overnight leva a 30%    -> ExecutionEngine pode SELL para voltar a 25%
+```
+
+Isso é correto e é a consequência pretendida: a direção financeira concreta
+continua sendo responsabilidade da arena, e o participante não declara `side`.
+
 Implementação técnica preliminar, sem congelar as escolhas acima:
 `OrderIntent` registra ticker, peso alvo long-only e instante da decisão —
 direção não é declarada pelo participante. Nem a direção nem a elegibilidade de
@@ -167,10 +181,82 @@ financeiro total e aplicados igualmente a todos os participantes.
 - Política de caixa residual e lote: `TBD`.
 - Política definitiva de Kelly: `TBD`.
 - Thresholds determinísticos de risco: `TBD`.
+- Valor definitivo de `long_target_weight`: `TBD`.
 
-Confiança textual do LLM não será tratada como `P(win)` sem calibração empírica
-prévia. Caso essa calibração não exista no primeiro experimento, será adotado
-sizing determinístico ainda a definir.
+### Decisão metodológica APROVADA
+
+Duas decisões desta seção deixaram de ser proposta e passaram a ser decisão
+aprovada da estratégia LLM. Elas não congelam nenhum valor numérico.
+
+```text
+1. confiança textual do LLM NÃO é probabilidade financeira
+   -> não será usada como P(win) em fórmula de sizing sem calibração empírica
+
+2. o sizing principal do experimento v1 será DETERMINÍSTICO
+   -> o LLM decide direção; a exposição é definida por política externa a ele
+```
+
+Consequência operacional adotada para o `llm_agent` da arena:
+
+```text
+Technical Analyst   -> COMPRA / VENDA / MANTER
+Risk Manager        -> APROVADO / VETADO
+Portfolio Manager   -> decisão QUALITATIVA (schema sem campo de tamanho)
+Sizing determinístico:
+    COMPRA aprovada -> target_weight = long_target_weight
+    VENDA  aprovada -> target_weight = 0.0
+    MANTER / VETO   -> nenhuma intenção
+```
+
+O gestor de portfólio não tem autoridade para escolher a quantidade financeira:
+o schema `PortfolioAction` não possui campo de tamanho, de modo que não existe
+número a ignorar depois. `confidence` continua sendo produzida, registrada no
+trace e enviada aos agentes seguintes como contexto qualitativo — se ela deve
+ou não influenciar *qualitativamente* a decisão é uma ablation futura, não
+objeto desta decisão.
+
+### O que continua NÃO congelado
+
+```text
+long_target_weight  = TBD
+```
+
+O default técnico em código é `0.25`, herdado do antigo teto
+`max_position_size` apenas para manter API e testes convenientes. **Isso não é
+aprovação metodológica.** O valor científico será escolhido junto com os demais
+itens do congelamento (seção 21).
+
+Também continuam `TBD`: calibração empírica de `confidence`, adoção de
+long/short (o participante atual é long-only por construção) e qualquer
+política alternativa de sizing (`volatility_target`, `calibrated_kelly`).
+
+### Kelly não foi removido do projeto
+
+`calculate_kelly_size` continua implementada e continua ativa no modo
+`legacy_confidence_kelly`, que serve os caminhos operacionais legados
+(`AgentBacktestEngine`, `DailyAgentRunner`) e permanece o default de
+`PortfolioConfig` para que esses runners não troquem de política em silêncio.
+Ela segue disponível para ablation, comparação metodológica e uma versão
+calibrada futura.
+
+```text
+legacy / experimental alternative   != main scientific sizing v1
+```
+
+O `LLMParticipant` força `sizing_mode="qualitative"` e não expõe parâmetro
+algum de Kelly. Os parâmetros que deixaram de ser materiais no caminho
+científico — `kelly_fraction`, `max_position_size`,
+`portfolio_max_concentration`, `payoff_ratio` — foram retirados da
+`ParticipantSpec` do `llm_agent`, para que duas configurações de comportamento
+idêntico não produzam `spec_hash` diferente por causa de um parâmetro morto.
+
+### Registro, não congelamento
+
+`long_target_weight` é configuração material: é validado
+(`0 < w <= 1` e `w <= risk_max_concentration`, porque um alvo acima do limite
+duro mandaria construir exatamente a exposição que o gestor de risco existe
+para vetar), entra no `spec_hash` e aparece no manifest. Registrar não é
+congelar.
 
 ## 12. Benchmarks
 

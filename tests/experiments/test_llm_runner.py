@@ -34,6 +34,9 @@ LLM_PARAMS = {
     # Frequência declarada explicitamente: ela é material e precisa aparecer no
     # spec_hash e no manifest. O valor aqui é técnico, não congelado.
     "decision_frequency": 5,
+    # Sizing determinístico do caminho científico. Valor técnico: o alvo
+    # definitivo é `TBD` no protocolo experimental v1.
+    "long_target_weight": 0.25,
 }
 LLM = ParticipantSpec("llm_agent", LLM_PARAMS)
 
@@ -119,7 +122,7 @@ def test_provider_real_exige_modelo_declarado() -> None:
         {"temperature_min": 0.4},
         {"temperature_max": 0.9},
         {"seed_base": 999},
-        {"kelly_fraction": 0.25},
+        {"long_target_weight": 0.30},
         {"decision_frequency": 1},
         {"ticker": "VALE3.SA"},
     ],
@@ -131,7 +134,7 @@ def test_provider_real_exige_modelo_declarado() -> None:
         "temperature_min",
         "temperature_max",
         "seed_base",
-        "kelly_fraction",
+        "long_target_weight",
         "decision_frequency",
         "ticker",
     ],
@@ -157,6 +160,62 @@ def test_credencial_fica_fora_da_spec_e_nao_muda_o_spec_hash(
     assert spec.spec_hash == first
     assert "LLM_API_KEY" not in json.dumps(spec.to_dict())
     assert "chave-" not in json.dumps(spec.to_dict())
+
+
+def test_alvo_diferente_muda_o_spec_hash(snapshot: DatasetSnapshot) -> None:
+    """``long_target_weight`` é configuração material: dois alvos, dois hashes.
+
+    Sem isso, duas configurações que produzem carteiras diferentes se
+    confundiriam no manifest e no diretório de runs.
+    """
+    hashes = {
+        weight: spec_for(
+            snapshot,
+            ParticipantSpec("llm_agent", {**LLM_PARAMS, "long_target_weight": weight}),
+        ).spec_hash
+        for weight in (0.20, 0.30)
+    }
+
+    assert len(set(hashes.values())) == 2
+
+
+def test_alvo_entra_na_spec_e_no_manifest(
+    snapshot: DatasetSnapshot,
+    snapshot_dir: Path,
+    runs_dir: Path,
+    tmp_path: Path,
+) -> None:
+    """Registrar não é congelar, mas o que governa a exposição tem de aparecer."""
+    _, path = runner_for(snapshot, snapshot_dir, runs_dir, tmp_path).run_and_persist()
+    manifest = json.loads((path / "manifest.json").read_text(encoding="utf-8"))
+
+    for block in (manifest["participant"], manifest["experiment_spec"]["participant"]):
+        assert block["params"]["long_target_weight"] == 0.25
+
+
+@pytest.mark.parametrize(
+    "dead", ["kelly_fraction", "max_position_size", "portfolio_max_concentration", "payoff_ratio"]
+)
+def test_parametro_morto_de_kelly_nao_entra_na_spec_cientifica(dead: str) -> None:
+    """Duas specs de comportamento idêntico não podem ter ``spec_hash`` diferente.
+
+    Enquanto esses parâmetros existissem no ``llm_agent`` sem afetar nada, seria
+    possível registrar como "configurações distintas" runs que decidem e
+    executam exatamente igual. Recusá-los na construção fecha isso.
+    """
+    with pytest.raises(ValueError, match="invalid params"):
+        build_participant(ParticipantSpec("llm_agent", {**LLM_PARAMS, dead: 0.5}))
+
+
+@pytest.mark.parametrize(
+    "weight", [0.0, -0.1, 1.5, 0.9], ids=["zero", "negativo", "acima_de_um", "acima_do_risco"]
+)
+def test_alvo_invalido_derruba_a_construcao_do_participante(weight: float) -> None:
+    """Configuração inválida falha antes do run, não vira ``spec_hash``."""
+    with pytest.raises(ValueError):
+        build_participant(
+            ParticipantSpec("llm_agent", {**LLM_PARAMS, "long_target_weight": weight})
+        )
 
 
 # ── Ponta a ponta pelo runner ────────────────────────────────────
