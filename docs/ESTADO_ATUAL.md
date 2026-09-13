@@ -20,9 +20,12 @@ decisão como `OrderIntent` e executa os cinco benchmarks clássicos — single 
 multi-ativo — pelo mesmo `ExecutionEngine`. **O participante LLM entrou nesse
 mesmo caminho**, na versão single-asset: `ExperimentSpec(kind="llm_agent")` ->
 `ExperimentRunner` -> `LLMParticipant` -> `ExecutionEngine` -> `RunResult` ->
-manifest, com os mesmos guards de snapshot e de proveniência Git. Ainda não
-existem divisão train/validation/test, walk-forward, análise estatística nem
-protocolo congelado, e o hardening do cliente LLM continua pendente. Portanto,
+manifest, com os mesmos guards de snapshot e de proveniência Git. O desenho
+experimental foi formalizado em `EXPERIMENT_PROTOCOL.md` como calibração
+retrospectiva do sistema seguida de avaliação pseudo-live, mas nenhuma data de
+calibração, validação ou teste foi selecionada; não existem walk-forward,
+análise estatística nem protocolo congelado, e o hardening do cliente LLM
+continua pendente. Portanto,
 os números exibidos no dashboard e os JSONs de agentes são demonstrações
 técnicas, não evidência de que uma abordagem venceu outra.
 
@@ -44,9 +47,10 @@ técnicas, não evidência de que uma abordagem venceu outra.
 | Arena clássicos x LLM | Parcial | Contrato mínimo de participante e intenção, com execução comum long-only single e multi-ativo para os cinco benchmarks clássicos e para o participante LLM single-asset. Todos executam pelo mesmo `ExecutionEngine`, pelo mesmo `ExperimentRunner` e produzem o mesmo `RunResult`. Falta o participante LLM multi-ativo e falta o protocolo científico. |
 | Participante LLM na arena | Implementado (single-asset) | `LLMParticipant` recebe apenas `MarketObservation`, monta o `AgentState` a partir de `close(t)`, delega ao grafo existente e termina em peso alvo. Não executa trade, não mexe em caixa, não aplica custo. Falha de provedor derruba o run em vez de virar `MANTER`. Registrado no registry como `llm_agent`. |
 | Dashboard | Parcial | Compara as cinco estratégias clássicas e exibe indicadores. Uma tela separada dispara backtest LLM, mas não incorpora o resultado à arena. |
-| Orquestração experimental | Implementado com lacunas | `src/experiments/` executa os cinco clássicos **e o `llm_agent`** a partir de um snapshot validado, com `spec_hash` estável, `run_id`, participante novo por run, evidência do snapshot capturada no `run()` e manifest atômico em `data/runs/<run_id>/`. Não cobre splits temporais nem análise estatística. |
-| Avaliação científica | Planejado | Não existem splits temporais, walk-forward, testes de hipótese, análise de sensibilidade ou exportação científica. |
-| Operação em tempo real/MT5/BRAPI | Planejado | O runner diário é simulação persistente; integrações de mercado e execução automática não existem. |
+| Orquestração experimental | Implementado com lacunas | `src/experiments/` executa os cinco clássicos **e o `llm_agent`** a partir de um snapshot validado, com `spec_hash` estável, `run_id`, participante novo por run, evidência do snapshot capturada no `run()` e manifest atômico em `data/runs/<run_id>/`. A `ExperimentSpec` não declara período: o intervalo executado é a cobertura efetiva do snapshot. Não cobre seleção de janelas experimentais nem análise estatística. |
+| Avaliação científica | Planejado | O protocolo pseudo-live está documentado, mas não existem janelas experimentais selecionadas, walk-forward, testes de hipótese, análise de sensibilidade ou exportação científica. |
+| Operação em tempo real/MT5/BRAPI | Planejado | O runner diário é simulação persistente; integrações de mercado e execução automática não existem. O estágio Live/Shadow do protocolo ainda não foi executado. |
+| Historical Memory | Planejado | Não existe. Sem corpus, proveniência temporal de documentos, retriever, embeddings ou vector store. Registrada no protocolo como extensão planejada e hipótese experimental separável. |
 
 ## Fluxos executáveis
 
@@ -312,8 +316,16 @@ SHA é inventado.
 Nenhum diff ou patch do working tree é persistido. A regra é simples: run
 científico reproduzível equivale a commit conhecido mais tree limpa.
 
-Limitações desta camada: não há participante LLM, `ExperimentSpec` não descreve
-splits nem walk-forward, não há catálogo/consulta de runs, o dashboard continua
+Participantes cobertos por esta camada: os cinco benchmarks clássicos e o
+`llm_agent`. O participante LLM é experimental e single-asset, roda pela mesma
+Arena e pelo mesmo `ExperimentRunner` dos benchmarks, termina em decisão
+qualitativa com sizing determinístico e publica trace auditável com replay —
+detalhes em "Participante LLM na arena". Historical Memory não está
+implementada e o protocolo científico continua **DRAFT — NÃO CONGELADO**.
+
+Limitações desta camada: `ExperimentSpec` não descreve período, janelas
+experimentais nem walk-forward — o recorte executado é a cobertura do snapshot —,
+não há catálogo/consulta de runs, o dashboard continua
 gerando seus números pelos motores legados e o snapshot ainda depende do
 `B3Calendar` local não validado contra fonte oficial.
 
@@ -408,10 +420,41 @@ opera apenas um ticker. Essas unidades experimentais não são equivalentes.
 
 Existe um protocolo documental em `docs/EXPERIMENT_PROTOCOL.md`, marcado como
 **DRAFT — NÃO CONGELADO**. `ExperimentSpec`, `RunResult` e run manifest já
-existem como mecanismo técnico, mas ainda não existem splits, prompts,
-parâmetros ou universo congelados; walk-forward; teste out-of-sample; nem
-análise estatística implementada. Ter um manifest reproduzível não torna o
-protocolo aprovado.
+existem como mecanismo técnico, mas ainda não existem janelas experimentais,
+prompts, parâmetros ou universo congelados; walk-forward; avaliação pseudo-live
+executada; nem análise estatística implementada. Ter um manifest reproduzível
+não torna o protocolo aprovado.
+
+#### Metodologia registrada, ainda não executada
+
+O desenho experimental deixou de ser TRAIN/VALIDATION/TEST clássico e passou a
+ser descrito como calibração retrospectiva do sistema seguida de avaliação em
+ambiente causal pseudo-live:
+
+```text
+SYSTEM CALIBRATION -> FREEZE -> PSEUDO-LIVE VALIDATION -> FINAL TEST -> LIVE/SHADOW
+```
+
+Motivo: o LLM chega pré-treinado e o experimento v1 não faz fine-tuning nem
+estima pesos sobre período algum. O que se ajusta retrospectivamente é o
+**sistema** — prompts, papéis, quorum, consenso, temperaturas, limites de risco,
+`long_target_weight`, `decision_frequency` —, e o risco metodológico a conter
+passa a ser o overfitting dos próprios pesquisadores sobre os períodos
+observados.
+
+Estado factual de cada item:
+
+| Item | Estado |
+|---|---|
+| Desenho pseudo-live (decisão em `close(t)`, execução em `open(t+1)`, relógio avançando uma sessão por vez) | Documentado; o mecanismo de execução já existe na arena e no `AgentBacktestEngine` |
+| Calibração retrospectiva do sistema como etapa declarada | Documentada; nunca executada como fase formal |
+| Janela base de mercado `>= 2 anos` | Aprovada conceitualmente; **sem** implementação. A arena entrega janela expansiva (`snapshot[:t]`) e não existe parâmetro de janela mínima nem gate de warm-up |
+| Historical Memory | Não implementada. Nenhum corpus, retriever, embedding ou vector store |
+| Calibration Cases, Validation, Final Test | `TBD`. Nenhuma data selecionada |
+| Métrica primária, universo final, provider/model, custos | `TBD` |
+
+Nada disso alterou código, schema ou configuração de execução: a formalização é
+documental.
 
 ## Riscos técnicos relevantes
 

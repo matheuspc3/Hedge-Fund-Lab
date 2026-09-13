@@ -658,6 +658,37 @@ RunResult + auditoria + métricas canônicas
 `Participant` pode ser Buy & Hold, SMA, Bollinger, Equal Weight, Mínima
 Variância ou o grafo LLM. O adaptador muda; dados, execução, custos e métricas não.
 
+### Contexto base de mercado e Historical Memory
+
+O protocolo distingue duas fontes de informação para a decisão em `t`
+(`docs/EXPERIMENT_PROTOCOL.md`, seções 7 e 23). Arquiteturalmente elas são
+camadas diferentes, e só a primeira existe:
+
+```text
+Base Market Context        (EXISTE, em forma expansiva)
+  janela recente de mercado causalmente disponível até t
+  decisão metodológica aprovada: >= 2 anos
+  hoje: history = snapshot[:t] -> indicadores recalculados sobre o truncado
+
+Historical Memory          (NÃO EXISTE)
+  recuperação seletiva de episódios mais antigos, sob demanda do agente
+  exigiria corpus com proveniência temporal e um retriever
+```
+
+O que o código faz hoje: a arena entrega `MarketObservation.history` como o
+recorte do snapshot até a sessão corrente — janela **expansiva**, não janela de
+dois anos —, e o `LLMParticipant` recalcula os indicadores sobre esse recorte.
+Não existe parâmetro de janela mínima, gate de warm-up de dois anos, nem período
+declarado na `ExperimentSpec`: o intervalo experimental é a cobertura efetiva do
+snapshot. Garantir a janela base é, hoje, escolher a cobertura do snapshot.
+
+O que o código **não** faz: não há retrieval histórico, corpus documental,
+embeddings, vector store nem qualquer consulta a episódios antigos. Historical
+Memory é extensão planejada e hipótese experimental separável; se vier a existir,
+cada item recuperado precisará satisfazer `available_at <= decision_time`, o que
+torna a proveniência temporal do corpus requisito arquitetural, não detalhe de
+implementação.
+
 ## Ciclo operacional diário desejado
 
 O produto-alvo não toma todas as decisões de uma vez. Ele avança um pregão por
@@ -741,7 +772,7 @@ diário avança exatamente um passo do mesmo motor.
 
 ```text
                          ExperimentSpec
-        (snapshot, universo, split, capital, custos, calendário, seeds)
+       (snapshot, universo, janela, capital, custos, calendário, seeds)
                                 │
                                 v
                     Unified Experiment Runner
@@ -808,7 +839,7 @@ src/
 │   └── multiagent/    # adaptador do grafo para o contrato comum
 ├── execution/         # ordens, broker simulado, custos e motor único
 ├── agents/            # quorum, risco, portfólio, clientes e contratos LLM
-├── experiments/       # specs, splits, arena, manifests e runs
+├── experiments/       # specs, janelas, arena, manifests e runs
 └── reporting/         # métricas, tabelas e payloads do dashboard
 ```
 
@@ -827,7 +858,11 @@ Migração mínima, na ordem:
 4. Caixa não fica negativo e posição respeita lote/short configurado.
 5. Toda métrica vem do mesmo módulo e mesma curva líquida.
 6. Todo run possui configuração imutável, hashes, seeds e versões.
-7. Prompt e modelo são congelados antes do conjunto de teste.
+7. Prompt, modelo e demais parâmetros materiais do sistema são congelados
+   antes da validação pseudo-live e do teste final.
 8. LLM pode sugerir; regras determinísticas preservam limites financeiros.
 9. Falha de dados, rede ou validação é explícita e fail-closed.
 10. Resultado mock nunca é misturado a resultado científico.
+11. Qualquer informação recuperada para uma decisão em `t` — inclusive documento
+    histórico, se a Historical Memory vier a existir — precisa ter estado
+    disponível em ou antes de `t`.

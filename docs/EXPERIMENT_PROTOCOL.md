@@ -6,15 +6,61 @@
 > e políticas marcados como `TBD` ou `PENDENTE DE CONGELAMENTO` não foram
 > aprovados pela dupla/orientador e não podem ser tratados como decisão final.
 
+## 0. Desenho em uma página
+
+O laboratório reproduz um problema operacional, não um problema de aprendizado
+supervisionado:
+
+```text
+informação conhecida até hoje
+        v
+sistema multiagente
+        v
+decisão para o próximo pregão
+        v
+amanhã acontece
+        v
+o novo dado passa a fazer parte do histórico
+        v
+próxima decisão
+```
+
+O experimento histórico simula exatamente essa condição, em quatro estágios
+sequenciais mais um estágio operacional posterior:
+
+```text
+SYSTEM CALIBRATION      (ajuste retrospectivo do sistema, resultado observável)
+        v
+FREEZE                  (configuração identificável e reproduzível)
+        v
+PSEUDO-LIVE VALIDATION  (datas fora da calibração, sistema congelado)
+        v
+FINAL TEST              (avaliação final, separada de calibração e validação)
+        v
+LIVE / SHADOW           (decisão para o próximo pregão real)
+```
+
+Detalhamento na seção 5. Onde este documento diz apenas `TEST`, leia
+**FINAL TEST**.
+
 ## 1. Research question
 
-Sob os mesmos dados, informação disponível, relógio, capital, custos e modelo de
-execução, qual é o efeito da utilização de um sistema multiagente baseado em LLM
-sobre o desempenho líquido ajustado ao risco em comparação com abordagens
-quantitativas clássicas?
+**STATUS: DRAFT — PENDENTE DE CONGELAMENTO.**
 
-**STATUS: PENDENTE DE CONGELAMENTO.** A redação final e a definição operacional
-de desempenho líquido ajustado ao risco devem ser aprovadas antes do TEST.
+Sob a mesma informação historicamente disponível em cada data de decisão, o
+mesmo relógio, o mesmo capital, os mesmos custos e o mesmo modelo de execução,
+qual é o efeito da utilização de um sistema multiagente baseado em LLM sobre o
+desempenho líquido ajustado ao risco em comparação com abordagens quantitativas
+clássicas?
+
+A comparação é feita em **ambiente causal pseudo-live**: em cada data simulada
+`t` o participante decide com o conjunto de informação que estaria disponível em
+`close(t)`, e o resultado de `t+1` só passa a existir para o sistema quando a
+simulação avança para `t+1` (seção 5). Não há, no experimento principal v1,
+estimação de pesos do LLM sobre período algum.
+
+A redação final e a definição operacional de desempenho líquido ajustado ao
+risco devem ser aprovadas antes do FINAL TEST. Nenhuma redação está congelada.
 
 ## 2. Hypotheses
 
@@ -72,25 +118,273 @@ Lacunas, datas inesperadas ou intervalo sem sessões resultam em
 explicitamente identificado como aproximação local com exceções configuráveis e
 ainda requer validação contra fonte oficial/versionada.
 
-## 5. Train / Validation / Test
+## 5. Desenho experimental — calibração retrospectiva e avaliação pseudo-live
 
-- TRAIN: datas definitivas `TBD`.
-- VALIDATION: datas definitivas `TBD`.
-- TEST: datas definitivas `TBD`.
+**STATUS: PENDENTE DE CONGELAMENTO.** O desenho abaixo é a metodologia aprovada;
+datas, períodos e valores continuam `TBD`.
 
-Os intervalos serão cronológicos, sem sobreposição. TRAIN será usado apenas onde
-houver estimação; VALIDATION poderá orientar parâmetros e prompts; TEST será
-aberto somente após congelamento. **STATUS: PENDENTE DE CONGELAMENTO.**
+### 5.1 Por que não é um TRAIN/TEST clássico
+
+O protocolo clássico
+
+```text
+treinar modelo em TRAIN
+-> aplicar pesos treinados em TEST
+```
+
+pressupõe um modelo cujos parâmetros são estimados sobre os dados do período de
+treino. Não é o caso do experimento principal v1. O LLM chega **pré-treinado** e,
+neste experimento:
+
+- não haverá fine-tuning;
+- não haverá treinamento supervisionado dos pesos do modelo;
+- não haverá treinamento sobre retornos futuros;
+- não haverá uso de informação posterior à data simulada.
+
+Isso **não** dispensa a separação entre desenvolvimento e avaliação, que continua
+obrigatória — por uma razão diferente: quem se ajusta ao período observado não é
+o modelo, são os pesquisadores (seção 5.6). O que muda é a natureza do objeto
+ajustado: ajusta-se o **sistema**, não o modelo.
+
+### 5.2 System Calibration não é treinamento
+
+Distinção terminológica obrigatória neste projeto.
+
+```text
+retrospective system calibration   (calibração retrospectiva do sistema)
+        != treinamento do LLM
+        != calibração estatística de confidence -> probabilidade
+```
+
+**System Calibration** é o ajuste retrospectivo do sistema declarado, sobre datas
+históricas conhecidas. Abrange, quando existirem:
+
+- prompts;
+- papéis dos agentes;
+- quorum;
+- parâmetros de consenso;
+- temperaturas;
+- limites de risco;
+- `long_target_weight`;
+- `decision_frequency`;
+- regras de recuperação de contexto histórico;
+- demais configurações declaradas do sistema.
+
+Nenhum peso de modelo é alterado nesse processo. O artefato ajustado é a
+configuração, capturada pela `ExperimentSpec`, pelo `spec_hash` e pelo commit
+(seção 20).
+
+A calibração estatística de `LLM confidence -> probability` é questão
+**separada** e permanece fora do protocolo principal v1, como já registrado na
+seção 11.
+
+### 5.3 Unidade básica da calibração
+
+Uma unidade de calibração é uma **data histórica `t`** (âncora), não um período
+inteiro.
+
+```text
+informação permitida:
+  tudo que estaria disponível até close(t)
+
+informação proibida:
+  qualquer dado cuja disponibilidade seja posterior a t
+```
+
+Fluxo de uma âncora:
+
+```text
+historical anchor t
+        v
+reconstruir o information set disponível em t
+        v
+sistema multiagente
+        v
+target_weight decidido em close(t)
+        v
+execução pela Arena em open(t+1)
+        v
+revelar o resultado observado
+        v
+avaliar a decisão
+```
+
+Durante a fase de CALIBRATION — e somente nela — os pesquisadores podem observar
+esse resultado e ajustar o sistema antes de executar novos casos.
+
+### 5.4 Sequência temporal
+
+O experimento imita a passagem real do tempo:
+
+```text
+t0
+-> prever t0+1
+-> revelar t0+1
+
+t0+1
+-> prever t0+2
+-> revelar t0+2
+
+t0+2
+-> prever t0+3
+...
+```
+
+O dado observado em `t+1` só pode entrar na informação do sistema quando a
+simulação avançar para `t+1`. **Nunca retroativamente.**
+
+### 5.5 Calibration Cases
+
+```text
+CALIBRATION CASES = TBD
+```
+
+Nenhuma data está escolhida. Fica registrada apenas a restrição metodológica: a
+calibração **não** deve ocorrer sobre um único episódio ou um único regime de
+mercado. A seleção final deverá representar mais de uma condição de mercado,
+entre critérios candidatos como:
+
+- tendência de alta;
+- tendência de baixa;
+- mercado lateral;
+- alta volatilidade;
+- baixa volatilidade;
+- choques macroeconômicos;
+- eventos políticos;
+- períodos eleitorais;
+- mudanças relevantes em juros;
+- regimes específicos de commodities, quando aplicável.
+
+São **critérios candidatos**, não uma seleção congelada. Quantidade de casos,
+datas e ativo do piloto: `TBD`.
+
+### 5.6 Researcher overfitting
+
+Vazamento não ocorre apenas quando o modelo vê o futuro. Os próprios
+pesquisadores produzem overfitting ao repetir:
+
+```text
+roda período
+-> observa resultado
+-> altera o sistema
+-> roda o mesmo período
+-> altera novamente
+```
+
+até maximizar aquele conjunto. O produto disso é um sistema sintonizado nas datas
+observadas, não uma hipótese testada.
+
+Por isso a separação de estágios é obrigatória:
+
+```text
+SYSTEM CALIBRATION
+        v
+FREEZE
+        v
+PSEUDO-LIVE VALIDATION
+        v
+FINAL TEST
+```
+
+### 5.7 Freeze
+
+Ao encerrar a calibração deve existir uma configuração **identificável e
+reproduzível**. O freeze abrange, no mínimo, os parâmetros científicos materiais
+então existentes:
+
+- prompts;
+- papéis dos agentes;
+- provider/model;
+- configuração do ensemble;
+- consensus threshold;
+- temperatures;
+- risk limits;
+- `long_target_weight`;
+- `decision_frequency`;
+- política de Historical Memory, caso esteja ativa;
+- custos;
+- métricas;
+- universo;
+- demais parâmetros materiais da `ExperimentSpec`.
+
+O mecanismo técnico de proveniência já existe e não é objeto de mudança nesta
+formalização:
+
+```text
+git commit
+spec_hash
+snapshot_id
+manifest
+LLM trace
+```
+
+Freeze é um ato metodológico registrado sobre esse mecanismo. Possuir o
+mecanismo não equivale a ter congelado (seção 21).
+
+### 5.8 Pseudo-live Validation
+
+Depois do freeze, a validação usa datas que **não** participaram da calibração.
+
+```text
+parâmetros congelados
+prompts congelados
+regras congeladas
+```
+
+A execução continua sessão a sessão:
+
+```text
+information set <= t
+-> decisão
+-> execução em t+1
+-> resultado
+-> avançar o relógio
+```
+
+Nenhuma alteração metodológica pode ser feita com base nos resultados dessa
+própria janela. Se for feita, aquela janela deixa de ser validation e volta a ser
+development/calibration, e uma nova janela precisa ser reservada.
+
+Datas de validation: `TBD`.
+
+### 5.9 Final Test
+
+```text
+FINAL TEST PERIOD = TBD
+```
+
+O FINAL TEST deve ser temporal e intencionalmente separado das datas usadas na
+calibração e na validação. Depois de congelado o protocolo, ele é tratado como
+avaliação final: qualquer mudança posterior motivada pelo que se observou nele é
+explicitamente classificada como
+
+```text
+post-hoc
+```
+
+e não como confirmação da hipótese original (seção 22).
+
+### 5.10 Live / Shadow
+
+Estágio posterior ao experimento histórico, detalhado na seção 24. Ele não
+substitui o teste histórico; aproxima o laboratório do objetivo operacional.
 
 ## 6. Walk-Forward
 
 - Tipo de janela: `TBD`.
-- Tamanho da janela de treino: `TBD`.
+- Tamanho da janela de estimação, para participantes que estimam parâmetros:
+  `TBD`.
 - Tamanho da janela de avaliação: `TBD`.
 - Passo entre janelas: `TBD`.
 - Política de reestimação: `TBD`.
 
-O Walk-Forward será uma análise de robustez sem vazamento de informação futura.
+O Walk-Forward é **análise de robustez**, não o desenho principal, e não
+introduz treinamento do LLM. Para os participantes clássicos que estimam
+parâmetros a partir de histórico — Mínima Variância é o caso concreto hoje —
+ele descreve a janela de estimação usada em cada ponto. Para o participante LLM
+ele descreve apenas subperíodos de avaliação sob o mesmo protocolo causal da
+seção 5. Em nenhum dos dois casos uma janela pode usar dado posterior à data da
+decisão.
 
 ## 7. Information available at t
 
@@ -99,6 +393,77 @@ calculáveis até o fechamento da sessão `t`. A lista definitiva de campos, reg
 de warm-up, defasagens de publicação e tratamento de ausências é `TBD`.
 
 Nenhuma feature poderá incorporar a abertura ou qualquer dado de `t+1`.
+
+### 7.1 Information set
+
+O critério é **disponibilidade**, não existência do dado no arquivo histórico:
+
+```text
+permitido   -> tudo que estaria disponível até close(t)
+proibido    -> qualquer informação cuja disponibilidade seja posterior a t
+```
+
+Isso vale para preços, features derivadas e — quando existir — qualquer documento
+recuperado pela Historical Memory (seções 23 e 25).
+
+### 7.2 Base Market Window >= 2 anos
+
+**Decisão metodológica aprovada nesta versão do documento:**
+
+```text
+Base Market Window >= 2 anos
+```
+
+Para cada decisão em `t`, o sistema deve ter acesso a pelo menos
+aproximadamente dois anos de histórico de mercado causalmente disponível até
+`t`. É o contexto base mínimo da decisão.
+
+O que **não** foi congelado e permanece `TBD — EXPERIMENT PROTOCOL v1`:
+
+```text
+exatamente 2 anos calendários?        TBD
+exatamente 504 pregões?               TBD
+2 anos como máximo ou só mínimo?      TBD
+política exata para sessões faltantes TBD
+```
+
+A decisão congelada agora é apenas esta: o sistema deve trabalhar com uma janela
+recente de mercado de pelo menos dois anos para formar o contexto base da
+decisão.
+
+**Estado técnico verificado, que não congela nada acima.** Hoje a arena entrega
+ao participante o recorte `history` do início do snapshot até `session`, isto é,
+uma janela **expansiva**, e a `ExperimentSpec` não possui campo de período: o
+intervalo experimental é a cobertura efetiva do snapshot. Consequência prática a
+resolver no congelamento: garantir a janela base de dois anos em `t` é hoje
+responsabilidade de **escolher a cobertura do snapshot** de modo que as datas de
+decisão comecem pelo menos dois anos após o início da série. Não existe, no
+código atual, parâmetro de janela mínima nem gate que recuse decidir antes disso
+— é lacuna conhecida, não capacidade existente.
+
+### 7.3 Informação disponível não é prompt bruto
+
+Dizer
+
+```text
+o sistema tem acesso a >= 2 anos
+```
+
+não significa
+
+```text
+colocar dois anos de candles integralmente no prompt do LLM
+```
+
+A infraestrutura pode transformar esses dados em indicadores, estatísticas,
+resumos, features ou estruturas consultáveis. A política exata de context
+engineering — o que entra no prompt, em que forma, com que agregação e com que
+orçamento de tokens — é `TBD`.
+
+Este documento não descreve implementação de context engineering porque ela não
+existe: o `LLMParticipant` monta hoje o `AgentState` com o preço de `close(t)` e
+os oito indicadores recalculados sobre o histórico truncado, e é isso que chega
+ao prompt.
 
 ## 8. Execution at t+1
 
@@ -340,8 +705,8 @@ scripts/run_agent_backtest.py       default = 5   <- escolha operacional de demo
 ```
 
 Nenhum dos dois foi aprovado como parâmetro científico. A frequência definitiva
-do experimento deve ser decidida junto com splits e orçamento de chamadas,
-antes do TEST.
+do experimento deve ser decidida junto com as janelas experimentais e o
+orçamento de chamadas, antes do FINAL TEST.
 
 Descrição correta do primeiro estágio: **ensemble/quorum de múltiplas amostras
 do mesmo papel, do mesmo prompt e do mesmo modelo**, variando temperatura e
@@ -497,17 +862,44 @@ e o manifest grava o commit. Registry e versionamento formal de prompt seguem
 
 ## 17. Metrics
 
-Métricas candidatas:
+Duas famílias de métricas poderão ser analisadas **separadamente**, sem que uma
+seja convertida na outra.
 
-- retorno total e anualizado;
+### 17.1 Decision diagnostics
+
+Diagnóstico do comportamento decisório, por decisão:
+
+- direção prevista;
+- direção observada;
+- taxa de acerto direcional;
+- comportamento de COMPRA/VENDA/MANTER;
+- `confidence` reportada;
+- consenso e divergência do quorum.
+
+Servem para explicar *como* o sistema decide. Acurácia direcional **não** é,
+por conta disto, objetivo principal do TCC, e não pode ser promovida a métrica
+primária sem decisão explícita registrada aqui.
+
+### 17.2 Portfolio performance
+
+Família canônica, sobre a curva líquida:
+
+- retorno líquido, total e anualizado;
+- CAGR;
 - volatilidade anualizada;
 - Sharpe líquido;
 - Sortino;
 - Max Drawdown;
-- Turnover;
 - custos totais;
+- número de trades e turnover;
 - exposição e caixa;
 - medidas adicionais: `TBD`.
+
+### 17.3 Métrica primária
+
+```text
+MÉTRICA PRIMÁRIA DO TCC = TBD
+```
 
 Taxa livre de risco, convenções de anualização, tratamento de dias sem posição e
 fórmulas definitivas: `TBD`.
@@ -523,9 +915,30 @@ fórmulas definitivas: `TBD`.
 
 Os testes e suas premissas serão escolhidos antes de observar o ranking em TEST.
 
-## 19. Ablations
+## 19. Ablations e estrutura de comparação
 
-Plano candidato:
+### 19.1 Estrutura conceitual das comparações
+
+```text
+classical benchmarks
+    Buy & Hold
+    SMA
+    Bollinger
+    [benchmarks multiativo, quando aplicável]
+
+LLM / agentic variants
+    sistema multiagente base
+
+future ablations
+    multiagent + Historical Memory
+    outras, apenas se metodologicamente justificadas
+```
+
+Futuras ablations deverão isolar a contribuição de cada componente. Nenhum
+participante "LLM simples" está definido neste projeto, e este documento não o
+declara existente.
+
+### 19.2 Plano candidato
 
 ```text
 A — quantitativos clássicos
@@ -535,6 +948,7 @@ D — ensemble + risk manager
 E — sistema completo
 F — local vs cloud
 G — roteamento híbrido local/cloud (opcional posterior)
+H — sistema completo + Historical Memory (seção 23)
 ```
 
 O objetivo é estimar qual componente acrescenta valor. Contrastes, seeds,
@@ -547,7 +961,8 @@ Cada `run_id` deverá registrar, no mínimo:
 - versão do código e ambiente;
 - `ExperimentSpec` completa;
 - snapshot e hashes;
-- universo, calendário e split;
+- universo, calendário e janela experimental (calibration, validation ou
+  final test);
 - participante e parâmetros;
 - capital, custos e regras de execução;
 - modelo, provedor e parâmetros efetivamente enviados;
@@ -570,8 +985,10 @@ configuração; `run_id` identifica a execução. A coerência
 artefato. O bloco `snapshot` registra `schema_version` e `identity_digest` do
 snapshot, o que permite responder "qual snapshot verificável foi usado neste
 run?" sem reler o diretório — a proveniência é capturada no `run()` e `persist()`
-não a redescobre. Splits, seeds, prompts, modelos e benchmark ainda não fazem
-parte da spec porque dependem de decisões `TBD`.
+não a redescobre. Janelas experimentais, seeds, prompts, modelos e benchmark
+ainda não fazem parte da spec porque dependem de decisões `TBD`. Em particular, a
+spec não declara período: o recorte executado é a cobertura efetiva do snapshot,
+e é por ela que uma janela experimental é hoje materializada.
 
 Runs reproduzíveis exigem proveniência Git verificável e working tree limpa. O
 `ExperimentRunner` já impõe isso por padrão, de forma fail-closed estrita:
@@ -620,16 +1037,21 @@ endpoint sanitizado).
 
 ## 21. Freeze procedure
 
-Antes de abrir TEST, dupla e orientador deverão aprovar e registrar:
+O freeze encerra a SYSTEM CALIBRATION (seção 5.7) e abre a PSEUDO-LIVE
+VALIDATION. Antes dele, dupla e orientador deverão aprovar e registrar:
 
 1. pergunta e hipóteses;
 2. universo e snapshot;
-3. splits e Walk-Forward;
+3. Calibration Cases, período de Validation, período de Final Test e
+   Walk-Forward;
 4. participantes, parâmetros e benchmarks;
-5. modelos, prompts e seeds;
-6. capital, custos, execução e risco;
-7. métricas, análise estatística e ablations;
-8. versão do código e do manifest.
+5. modelos, prompts, papéis, quorum, temperaturas e seeds;
+6. capital, custos, execução e risco, incluindo `long_target_weight` e
+   `decision_frequency`;
+7. janela base de mercado (parametrização exata da seção 7.2);
+8. política de Historical Memory, se houver alguma ativa;
+9. métricas, métrica primária, análise estatística e ablations;
+10. versão do código e do manifest.
 
 Forma de aprovação, responsáveis e registro imutável: `TBD`. Até essa aprovação,
 o status deste documento permanece **DRAFT — NÃO CONGELADO**.
@@ -642,5 +1064,175 @@ o status deste documento permanece **DRAFT — NÃO CONGELADO**.
 - Não promover análise pós-hoc a hipótese confirmatória.
 - Toda correção indispensável deverá gerar nova versão do protocolo, novo
   `run_id` e justificativa explícita; a execução anterior será preservada.
-- Resultados mock, VALIDATION e TEST terão rótulos distintos.
+- Resultados mock, CALIBRATION, VALIDATION, FINAL TEST e LIVE/SHADOW terão
+  rótulos distintos e não serão agregados como se fossem a mesma evidência.
+- Alterar o sistema depois de observar a VALIDATION devolve aquela janela à
+  condição de development/calibration (seção 5.8); ela deixa de servir como
+  evidência out-of-sample.
 - Exceções a estas regras: `TBD` e dependem de aprovação antes do congelamento.
+
+## 23. Historical Memory — extensão planejada
+
+**STATUS: hipótese experimental separável. NÃO IMPLEMENTADA.** Nada nesta seção
+existe em código, e nada aqui está congelado.
+
+### 23.1 Ideia
+
+Além do contexto base recente obrigatório
+
+```text
+Base Market Context >= 2 anos
+```
+
+o sistema poderá futuramente consultar uma **Historical Memory** contendo
+períodos mais antigos, para que consiga identificar o regime/contexto atual e
+solicitar episódios históricos potencialmente análogos.
+
+Exemplo apenas explicativo, não especificação:
+
+```text
+contexto atual percebido:
+- ano eleitoral
+- juros elevados
+- alta exposição a commodity
+
+        v
+agente solicita contextos historicamente semelhantes
+
+        v
+retriever recupera episódios anteriores relevantes
+```
+
+### 23.2 Não é history dump
+
+Historical Memory **não** significa fornecer todo o histórico possível ao LLM em
+todas as decisões. A proposta é:
+
+```text
+contexto recente obrigatório
++
+recuperação seletiva de episódios mais antigos
+```
+
+A recuperação deve ser acionada segundo política definida pelo sistema. Essa
+política é `TBD`, assim como algoritmo de retrieval, embeddings e armazenamento.
+
+### 23.3 Regra científica obrigatória — disponibilidade temporal
+
+Para uma decisão simulada em `t`:
+
+```text
+qualquer informação recuperada
+deve ter estado disponível em ou antes de t
+```
+
+Portanto o futuro corpus precisará de proveniência temporal suficiente para
+*provar* essa disponibilidade. Conceitualmente, documentos/eventos poderão
+precisar de campos como:
+
+```text
+event_date
+available_at
+source
+content
+tags / metadata
+```
+
+O requisito científico central é:
+
+```text
+available_at <= decision_time
+```
+
+Nenhum schema definitivo é congelado aqui.
+
+### 23.4 Hindsight em documentos históricos
+
+Forma mais sutil de vazamento: não basta o **evento** ter ocorrido antes de `t`.
+Uma descrição posterior do evento pode conter conhecimento que ainda não existia
+em `t`.
+
+```text
+evento em 2018
+documento retrospectivo escrito em 2025
+```
+
+Esse documento **não** pode ser tratado como informação disponível numa simulação
+de 2019 apenas porque descreve um evento de 2018. O critério é a disponibilidade
+da informação, não a data do evento.
+
+### 23.5 Ablation recomendada
+
+Desenho experimental futuro recomendado:
+
+```text
+Multiagent — Base Context
+vs
+Multiagent — Base Context + Historical Memory
+```
+
+Mantendo idênticos dados recentes, modelo, prompts-base, quorum, risco, sizing,
+Arena, custos e período. A única variável experimental deve ser a
+disponibilidade/política de Historical Memory, de modo a responder:
+
+> recuperação adaptativa de contextos históricos acrescenta valor incremental?
+
+Parâmetros dessa ablation não estão congelados e ela não foi executada.
+
+## 24. Live / Shadow forecasting
+
+Estágio posterior ao experimento histórico. Objetivo: usar a informação
+disponível no dia corrente real para produzir a decisão do próximo pregão real.
+
+```text
+hoje
+        v
+information set real disponível
+        v
+decisão
+        v
+registrar ANTES do próximo pregão
+        v
+amanhã acontece
+        v
+avaliar a previsão
+```
+
+O registro anterior ao pregão é o que torna a previsão avaliável; uma decisão
+registrada depois da abertura não é evidência live. Esta camada **não** substitui
+o teste histórico — ela aproxima o laboratório do objetivo operacional final.
+
+Base técnica já existente e reaproveitável, sem que isso a torne aprovada: o
+`DailyAgentRunner` persiste a previsão pendente entre processos, reconcilia a
+sessão-alvo e avança uma sessão por execução, mas continua fora da arena comum e
+sem manifest canônico (`docs/ESTADO_ATUAL.md`). Frequência, ativo, duração e
+critério de avaliação do estágio live: `TBD`.
+
+## 25. Controles de leakage — consolidado
+
+Quatro vazamentos distintos, com controles distintos.
+
+```text
+1. market future leakage
+   decisão em close(t) nunca vê open(t+1) nem barra posterior
+   -> features calculadas sobre histórico truncado em t (seção 7)
+   -> execução exclusiva pelo ExecutionEngine na abertura seguinte (seção 8)
+   -> MarketObservation não revela se existe barra futura no recorte
+
+2. document / retrieval leakage   (quando houver Historical Memory)
+   available_at <= decision_time, obrigatório por documento
+   -> seção 23.3
+
+3. hindsight annotation
+   descrição posterior de evento anterior não é informação disponível
+   -> seção 23.4
+
+4. researcher overfitting
+   ajustar o sistema repetidamente sobre o mesmo período observado
+   -> separação obrigatória calibration / freeze / validation / final test
+   -> seções 5.6 a 5.9 e regras da seção 22
+```
+
+Os três primeiros são controles sobre o que o **sistema** vê. O quarto é controle
+sobre o que os **pesquisadores** fazem, e nenhum mecanismo técnico do repositório
+o impede sozinho: ele depende do procedimento das seções 5.7 e 22.

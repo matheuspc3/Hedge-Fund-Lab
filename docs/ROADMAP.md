@@ -27,15 +27,19 @@ As escolhas abaixo são recomendações de trabalho, não aprovações implícit
 | Universo principal | Os 10 ativos já usados pelo projeto | **STATUS: proposta / pendente de congelamento** |
 | Análises secundárias | PETR4 e WEGE3, sem substituir a comparação principal | **STATUS: proposta / pendente de congelamento** |
 | Informação e execução | Features disponíveis no fechamento de `t`; execução na abertura de `t+1` | **STATUS: proposta / pendente de congelamento** |
+| Desenho experimental | Calibração retrospectiva do sistema -> freeze -> validação pseudo-live -> teste final -> live/shadow, em vez de TRAIN/TEST clássico | **STATUS: decisão metodológica aprovada** (datas e períodos continuam `TBD`) |
+| Janela base de mercado | O sistema decide em `t` com pelo menos ~2 anos de histórico causalmente disponível | **STATUS: decisão metodológica aprovada** (parametrização exata continua `TBD`) |
+| Historical Memory | Recuperação seletiva de episódios antigos, sob `available_at <= decision_time` | **STATUS: extensão planejada, não implementada** |
 | Custos | Uma especificação versionada e idêntica para todos | **STATUS: proposta / pendente de congelamento** |
 | Resultado | `RunResult` e manifest canônicos, identificados por `run_id` | **STATUS: proposta / pendente de congelamento** |
 | Risco | Regras determinísticas obrigatórias; LLM apenas complementa | **STATUS: proposta / pendente de congelamento** |
 | Kelly | Confiança textual do LLM não é `P(win)`; sizing científico é determinístico | **STATUS: decisão metodológica aprovada** (o valor de `long_target_weight` continua `TBD`) |
 | Tempo real | Fora do caminho crítico até a arena histórica ser válida | **STATUS: proposta / pendente de congelamento** |
 
-Quorum, modelos, prompts, thresholds, splits, custos e demais parâmetros finais
-devem ser aprovados pela dupla/orientador e congelados no protocolo antes do
-TEST. Uma recomendação deste roadmap não substitui esse congelamento.
+Quorum, modelos, prompts, thresholds, janelas experimentais, custos e demais
+parâmetros finais devem ser aprovados pela dupla/orientador e congelados no
+protocolo antes da validação pseudo-live e do teste final. Uma recomendação
+deste roadmap não substitui esse congelamento.
 
 ## 3. Estado atual resumido
 
@@ -163,10 +167,21 @@ mesmos dados
 - [ ] Evoluir o participante LLM para carteira-alvo multi-ativo; o contrato de
   carteira completa já existe e é validado, falta a etapa de alocação entre
   ativos na stack de agentes.
-- [~] Criar `ExperimentSpec` com snapshot, universo, split, capital, frequência,
-  custos, benchmark, calendário, seeds e participante; a spec atual cobre
-  snapshot, participante serializável, capital, custos e parâmetros de métrica.
-  Split, frequência, benchmark e seeds dependem de decisões ainda não congeladas.
+- [~] Criar `ExperimentSpec` como identidade completa da execução.
+
+  Já existe na spec, dentro do `spec_hash`: `snapshot_id`, `ParticipantSpec`
+  serializável com os parâmetros materiais do participante, universo derivado
+  deterministicamente, capital, custos e parâmetros de métrica.
+
+  Ainda falta: representação explícita do período/janela experimental. Hoje o
+  período **deriva da cobertura efetiva do snapshot**, e não existe campo de
+  janela na spec. Benchmark de mercado também não é campo da spec, e os valores
+  científicos de frequência, seeds e demais parâmetros continuam dependendo do
+  congelamento.
+- [ ] Decidir como o período/janela experimental será representado —
+  campo de janela na `ExperimentSpec`, snapshots separados por período ou outro
+  mecanismo explícito. `TBD — EXPERIMENT PROTOCOL v1`; nenhuma implementação
+  está assumida.
 - [x] Garantir participante novo por execução, sem estado compartilhado entre runs.
 - [x] Exigir `scientific_ready` e verificar identidade do manifest e hashes dos
   arquivos do snapshot antes de executar.
@@ -288,26 +303,62 @@ segue pendente.
 
 ## 7. Protocolo experimental
 
-**Este é o próximo marco do projeto: CONGELAR O EXPERIMENT PROTOCOL v1.** A
-infraestrutura experimental e a metodologia de decisão do participante LLM estão
-resolvidas; o que resta é decisão científica da dupla/orientador, não código.
+**PRÓXIMO MARCO DO PROJETO: `Freeze EXPERIMENT PROTOCOL v1`.** A infraestrutura
+experimental e a metodologia de decisão do participante LLM estão resolvidas; o
+desenho científico está formalizado em
+[`EXPERIMENT_PROTOCOL.md`](EXPERIMENT_PROTOCOL.md). O que resta é decisão
+científica da dupla/orientador, não código.
 
-Entre os valores que o congelamento precisa fixar está `long_target_weight`, que
-hoje tem apenas default técnico (`0.25`) e continua `TBD` cientificamente.
+O desenho aprovado é calibração retrospectiva do sistema seguida de avaliação
+causal pseudo-live, e não TRAIN/TEST clássico — o LLM chega pré-treinado e o
+experimento v1 não faz fine-tuning:
 
-O contrato completo fica em
-[`EXPERIMENT_PROTOCOL.md`](EXPERIMENT_PROTOCOL.md). Esta fase inclui:
+```text
+SYSTEM CALIBRATION -> FREEZE -> PSEUDO-LIVE VALIDATION -> FINAL TEST -> LIVE/SHADOW
+```
 
-- [ ] Congelar `long_target_weight` e a política de sizing do experimento v1.
-- [ ] Definir TRAIN, VALIDATION e TEST cronológicos e sem sobreposição.
-- [ ] Congelar universo, dados, features, parâmetros, prompts e modelos antes do
-  teste final.
-- [ ] Definir Walk-Forward como análise de robustez.
-- [ ] Congelar custos e taxa livre de risco.
-- [ ] Definir benchmark de mercado e benchmarks internos.
-- [ ] Registrar seeds e política de estocasticidade.
+O freeze é o que separa calibração de avaliação e é o controle contra
+overfitting dos pesquisadores. Ele se subdivide nas decisões pendentes abaixo.
+
+### 7.1 Seleção das janelas experimentais
+
+- [ ] Selecionar os Calibration Cases, cobrindo mais de um regime de mercado
+  (alta, baixa, lateral, volatilidade alta/baixa, choques macro, eventos
+  políticos, juros, commodities quando aplicável).
+- [ ] Definir a quantidade de Calibration Cases.
+- [ ] Definir o período de PSEUDO-LIVE VALIDATION, sem interseção com a
+  calibração.
+- [ ] Definir o FINAL TEST PERIOD, separado de calibração e validação.
+- [ ] Definir Walk-Forward como análise de robustez, não como desenho principal.
+
+### 7.2 Parâmetros a congelar
+
+- [ ] Congelar `long_target_weight` (hoje apenas default técnico `0.25`) e a
+  política de sizing do experimento v1.
+- [ ] Congelar `decision_frequency`.
+- [ ] Congelar prompts, papéis, `analyst_count`, `consensus_threshold` e
+  temperaturas.
+- [ ] Congelar provider/model e política de seeds/estocasticidade.
+- [ ] Congelar universo, snapshot, dados e features.
+- [ ] Congelar a parametrização exata da janela base de mercado `>= 2 anos`
+  (calendário x pregões, mínimo x máximo, sessões faltantes).
+- [ ] Congelar custos, taxa livre de risco e benchmark de mercado.
+- [ ] Definir a métrica primária e separar diagnóstico de decisão de performance
+  de carteira.
+- [ ] Aprovar ablations e análise estatística antes de observar o FINAL TEST.
 - [ ] Versionar prompts e snapshots.
-- [ ] Aprovar ablations e análise estatística antes de observar TEST.
+
+### 7.3 Desenho da Historical Memory
+
+Fora do caminho crítico do freeze v1; entra no protocolo apenas se for ativada.
+
+- [ ] Definir a política de recuperação (quando o agente consulta e o que
+  recebe).
+- [ ] Definir o schema de proveniência temporal com `available_at`, garantindo
+  `available_at <= decision_time`.
+- [ ] Definir o tratamento de hindsight em documentos retrospectivos.
+- [ ] Definir algoritmo de retrieval, embeddings e armazenamento.
+- [ ] Desenhar a ablation `base context` vs `base context + historical memory`.
 
 ## 8. Ablation Study
 
@@ -327,14 +378,22 @@ Opcional posteriormente:
 
 ```text
 G — roteamento híbrido local/cloud
+H — sistema completo + Historical Memory
 ```
+
+A ablation `H` só existe se a Historical Memory for implementada, e deve isolar
+exclusivamente a disponibilidade/política de recuperação histórica, mantendo
+dados recentes, modelo, prompts-base, quorum, risco, sizing, Arena, custos e
+período idênticos.
 
 **STATUS: proposta / pendente de congelamento.** Variantes, número de seeds e
 comparações estatísticas devem ser aprovados no protocolo.
 
 ## 9. Resultados científicos
 
-- [ ] Executar experimento out-of-sample após congelamento.
+- [ ] Executar a PSEUDO-LIVE VALIDATION após o congelamento, sem alterar o
+  sistema com base nos seus resultados.
+- [ ] Executar o FINAL TEST após o congelamento.
 - [ ] Executar Walk-Forward.
 - [ ] Reportar Sharpe líquido, Sortino, MaxDD, Turnover, custos e robustez.
 - [ ] Fazer análise estatística com premissas declaradas previamente.
@@ -350,7 +409,8 @@ O dashboard vem depois da validade experimental.
 
 - [ ] Consultar catálogo por `run_id`, sem depender de um JSON monolítico.
 - [ ] Impedir comparação de runs com specs diferentes.
-- [ ] Exibir badges `MOCK`, `VALIDATION`, `TEST` e `FINAL`.
+- [ ] Exibir badges `MOCK`, `CALIBRATION`, `VALIDATION`, `FINAL TEST` e
+  `LIVE/SHADOW`.
 - [ ] Exibir custos, modelo e versão do prompt.
 - [ ] Isolar jobs, status e logs; permitir cancelamento.
 - [ ] Escapar conteúdo não confiável e evitar chamada paga acidental.
@@ -375,7 +435,10 @@ Fora do caminho crítico do primeiro experimento:
 
 ### P2/P3
 
-- LoRA/fine-tuning — experimento opcional, não requisito da hipótese principal.
+- LoRA/fine-tuning — experimento opcional, não requisito da hipótese principal;
+  o experimento v1 é explicitamente sem fine-tuning.
+- Historical Memory: corpus com proveniência temporal, retriever e ablation
+  correspondente (seção 7.3).
 - Roteamento híbrido local/cloud.
 - Modelos quantitativos auxiliares.
 - Integração MT5.
@@ -393,16 +456,18 @@ Sem datas até existir cronograma confirmado.
 | M1 — Scientific Core | Dados, execução, custos e métricas canônicos e validados |
 | M2 — Common Arena | Participantes sob o mesmo contrato, motor e `ExperimentSpec` |
 | M3 — LLM Hardened | Concorrência, telemetria, custo e fail-closed confiáveis |
-| M4 — Experimental Protocol Frozen | Contrato aprovado antes de abrir TEST |
+| M4 — Experimental Protocol Frozen | `Freeze EXPERIMENT PROTOCOL v1`: janelas, parâmetros e métricas aprovados antes da validação pseudo-live |
 | M5 — Ablations Executed | Variantes executadas e rastreadas por manifest |
-| M6 — OOS Scientific Results | Resultados OOS, Walk-Forward e análises concluídos |
+| M6 — OOS Scientific Results | Validação pseudo-live, FINAL TEST, Walk-Forward e análises concluídos |
 | M7 — TCC Final | Código, evidências, monografia e defesa alinhados |
+| M8 — Live / Shadow | Decisão para o próximo pregão real registrada antes da abertura e avaliada depois |
 
 ## Definição de pronto do primeiro experimento científico
 
 Um resultado só entra na comparação principal quando usa snapshot validado e
 imutável; universo, período, calendário, capital e custos idênticos; decisão em
 `t` e execução em `t+1`; métricas canônicas sobre curva líquida; manifest com
-versões, seeds, modelos e prompts; parâmetros congelados antes de TEST; falhas
+versões, seeds, modelos e prompts; parâmetros congelados antes da validação
+pseudo-live e do FINAL TEST; falhas
 explícitas; e reprodução possível em outra máquina. Até lá, toda saída deve ser
 rotulada **DEMONSTRAÇÃO TÉCNICA — NÃO CIENTÍFICA**.
