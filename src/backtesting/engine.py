@@ -24,7 +24,9 @@ class Trade:
         date: Data da execução.
         type: "BUY" ou "SELL".
         price: Preço unitário do ativo.
-        quantity: Quantidade de ações negociada.
+        quantity: Quantidade negociada. Inteira nos caminhos legados e na arena
+            em ``integer_shares``; fracionária na arena científica, onde a
+            unidade é sintética (série de retorno total) e não uma ação física.
         cost: Custo total da transação (R$).
         ticker: Ativo negociado, quando conhecido pelo caminho de execução.
     """
@@ -32,7 +34,7 @@ class Trade:
     date: Date | pd.Timestamp
     type: str  # "BUY" | "SELL"
     price: float
-    quantity: int
+    quantity: float
     cost: float = 0.0
     ticker: str | None = None
 

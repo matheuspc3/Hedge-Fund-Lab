@@ -12,18 +12,28 @@ from typing import cast
 import pandas as pd
 import pytest
 
-from src.backtesting.arena import EvaluationWindowError
+from src.backtesting.arena import (
+    QUANTITY_MODE_FRACTIONAL_NOTIONAL,
+    EvaluationWindowError,
+)
 from src.experiments.context import RunContext
 from src.experiments.runner import (
     RUN_MANIFEST_SCHEMA_VERSION,
     ExperimentRunner,
     MissingRunContextError,
 )
-from src.experiments.spec import EvaluationSpec, ExperimentSpec, ParticipantSpec
+from src.experiments.spec import (
+    EvaluationSpec,
+    ExecutionSpec,
+    ExperimentSpec,
+    ParticipantSpec,
+)
 from src.pipeline.snapshot import DatasetSnapshot, load_snapshot_frames
 
 BUY_AND_HOLD = ParticipantSpec("buy_and_hold", {"ticker": "PETR4.SA"})
 CAPITAL = 100_000.0
+#: Toda fase científica declara a semântica de execução científica.
+SCIENTIFIC_EXECUTION = ExecutionSpec(quantity_mode=QUANTITY_MODE_FRACTIONAL_NOTIONAL)
 #: Contexto padrão dos cenários que não estão testando a fase em si.
 CALIBRATION = RunContext("CALIBRATION")
 
@@ -55,6 +65,7 @@ def spec_for(
         snapshot_id=snapshot.snapshot_id,
         participant=BUY_AND_HOLD,
         initial_capital=CAPITAL,
+        execution=SCIENTIFIC_EXECUTION,
         evaluation=EvaluationSpec(
             decision_start=decision_start,
             decision_end=decision_end,
@@ -542,6 +553,7 @@ def test_custo_da_ultima_decisao_entra_no_resultado_publicado(
         participant=BUY_AND_HOLD,
         initial_capital=CAPITAL,
         costs=CostSpec(brokerage_fixed=12.5),
+        execution=SCIENTIFIC_EXECUTION,
         evaluation=EvaluationSpec(
             decision_start=anchor,
             decision_end=anchor,
@@ -583,6 +595,7 @@ def test_ancora_sem_intent_publica_run_valido_sem_trade(
             "bollinger", {"ticker": "PETR4.SA", "window": 10, "k": 4.0}
         ),
         initial_capital=CAPITAL,
+        execution=SCIENTIFIC_EXECUTION,
         evaluation=EvaluationSpec(
             decision_start=anchor,
             decision_end=anchor,

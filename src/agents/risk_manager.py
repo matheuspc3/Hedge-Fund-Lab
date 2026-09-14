@@ -1,9 +1,8 @@
 """Nó de risco com regras duras anteriores a qualquer chamada de LLM."""
 
-import json
-
 from pydantic import BaseModel, ConfigDict, Field
 
+from src.agents.features import canonical_metrics, canonical_prompt_json
 from src.agents.llm_client import LLMCallMetadata, LLMClient
 from src.agents.llm_trace import STAGE_RISK_MANAGER
 from src.agents.state import AgentState, RiskVerdict
@@ -28,6 +27,15 @@ class RiskManager:
 
     @staticmethod
     def _metrics(state: AgentState) -> dict[str, float]:
+        """Métricas de risco na representação canônica única.
+
+        A quantização acontece **aqui**, antes das regras duras, e não apenas
+        na serialização do prompt. Dois vintages da mesma série ajustada
+        produzem níveis que diferem por um fator comum; sem a canonicalização,
+        ``0.25000000000001`` e ``0.24999999999999`` atravessariam o mesmo
+        limiar em lados opostos e o veredito de risco dependeria de proventos
+        posteriores à decisão. O valor canônico é o valor científico.
+        """
         metrics = {}
         for key in ("recent_volatility", "current_drawdown"):
             value = state.get(key)
@@ -38,7 +46,7 @@ class RiskManager:
         position = state.get("position", 0.0)
         if equity and equity > 0 and price is not None:
             metrics["current_concentration"] = max(0.0, position * price / equity)
-        return metrics
+        return canonical_metrics(metrics)
 
     @staticmethod
     def _verdict(verdict: str, analysis: str, metrics: dict[str, float]) -> RiskVerdict:
@@ -94,10 +102,8 @@ class RiskManager:
                 "errors": [],
             }
 
-        prompt = json.dumps(
-            {"technical_signal": signal.model_dump(), "risk_metrics": metrics},
-            ensure_ascii=False,
-            sort_keys=True,
+        prompt = canonical_prompt_json(
+            {"technical_signal": signal.model_dump(), "risk_metrics": metrics}
         )
         try:
             response = await self.llm.generate(

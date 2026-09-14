@@ -28,6 +28,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from src.agents.features import canonical_prompt_json
 from src.agents.llm_client import LLMCallMetadata, LLMClient
 from src.agents.llm_trace import STAGE_PORTFOLIO_MANAGER
 from src.agents.state import AgentState, FinalDecision, PortfolioAction
@@ -143,13 +144,15 @@ def _qualitative_node(llm: LLMClient):
             message = "portfolio_manager: preço atual ausente ou inválido"
             return {"portfolio_action": _hold_action(message), "errors": [message]}
 
-        prompt = json.dumps(
+        # Canonicalização também aqui: o parecer de risco carrega as métricas
+        # escalares e o sinal técnico carrega ``confidence``. Um único estágio
+        # sem quantização bastaria para quebrar a identidade do prompt entre
+        # dois vintages da mesma série.
+        prompt = canonical_prompt_json(
             {
                 "technical_signal": signal.model_dump(),
                 "risk_verdict": verdict.model_dump(),
-            },
-            ensure_ascii=False,
-            sort_keys=True,
+            }
         )
         try:
             response = await llm.generate(

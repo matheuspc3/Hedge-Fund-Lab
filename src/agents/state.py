@@ -85,7 +85,14 @@ class AgentState(TypedDict, total=False):
 
     ticker: str
     date: str
+    #: Níveis brutos de indicadores — contrato **legado**. O caminho científico
+    #: não os preenche, para que não exista nível a transmitir por acidente.
     indicators: dict[str, float | None]
+    #: Razões adimensionais do contrato causal (:mod:`src.agents.features`).
+    #: É o único conjunto quantitativo que o caminho científico publica ao
+    #: provedor; ``ticker``, ``date`` e ``current_price`` permanecem no estado
+    #: como informação interna e de auditoria, nunca como payload.
+    features: dict[str, float]
     cash: float
     position: float
     current_price: float

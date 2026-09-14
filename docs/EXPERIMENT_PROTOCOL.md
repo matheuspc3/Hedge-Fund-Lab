@@ -103,8 +103,56 @@ mínimo:
 - horário de obtenção, versão e hash dos arquivos;
 - versão do pipeline de features.
 
-Fonte definitiva, formato, localização, política de ajustes e schema do manifest:
-`TBD`.
+Fonte definitiva, formato e localização: `TBD`. **Política de ajuste: DECIDIDA.**
+
+### Price representation — DECIDIDO
+
+```text
+PRICE REPRESENTATION = adjusted total-return
+PROVEDOR             = yfinance com auto_adjust=True EXPLÍCITO
+SÉRIE                = única; sinal e execução usam a mesma
+```
+
+`auto_adjust` deixou de depender do default da versão instalada: a restrição
+`yfinance >= 0.2.0` atravessa a virada em que esse default passou de `False`
+para `True`, de modo que a semântica de preço variava com a versão resolvida. O
+manifest registra a política **resolvida**, não uma frase dizendo que ela não
+estava configurada.
+
+Simplificações declaradas, válidas para **todos** os participantes:
+
+```text
+S-P1  "preço" é preço de retorno total, não preço negociável da sessão
+S-P2  a posição é medida em unidades fracionárias sintéticas da série de
+      retorno total; lote, tick, custo por ação e participação em volume
+      não são expressáveis no v1 (seção 8)
+S-P3  proventos são reinvestidos implicitamente, na data ex, ao preço da
+      data ex, sem custo, sem defasagem de pagamento e sem imposto;
+      JCP recebe o mesmo tratamento, e a retenção de 15% não é modelada
+S-P4  o nível absoluto da série depende do vintage do download; o
+      snapshot materializado é a fonte de verdade e a série NÃO é
+      reprodutível a partir do provedor em data posterior
+S-P5  os RETORNOS são causalmente limpos (o fator posterior a t+1 cancela
+      na razão); o NÍVEL em t não é, porque embute proventos posteriores
+      a t. Por isso nenhum nível atravessa para o provedor de LLM
+      (seção 7) e nenhuma quantidade é arredondada sobre ele (seção 8)
+```
+
+### Evidência de eventos corporativos
+
+O snapshot captura dividendos e splits em `actions/<ticker>.csv`, com SHA-256 na
+identidade do manifest. **O motor v1 não os consome** — a série já é de retorno
+total. Eles existem porque a série ajustada não é reprodutível depois (S-P4): o
+que não for congelado agora não pode ser recuperado. Servem para auditar os
+fatores de ajuste, identificar âncoras em data ex e permitir uma futura
+representação dual sem novo download.
+
+### Sessão fechada
+
+O recorte de um snapshot não pode alcançar a sessão em formação: o provedor a
+devolve como barra parcial — foi assim que o cache local ganhou uma linha com
+OHLC zerado — e barra parcial não é evidência. `requested_end` anterior à data
+corrente no fuso da bolsa é gate do pipeline, não recomendação.
 
 Implementação técnica atual, ainda sem congelar essas decisões: o
 `DatasetSnapshot` materializa CSVs em diretório próprio, calcula SHA-256 por
@@ -516,8 +564,7 @@ contagem comum é deliberada: é o único número igual para todos os tickers do
 run e é limite inferior do histórico que qualquer um deles recebe. Em run
 single-asset — todo o caminho `llm_agent` hoje — os dois números coincidem.
 
-**Valor recomendado — decisão metodológica aprovada, pendente de
-congelamento formal:**
+**Valor DECIDIDO — não é `TBD`:**
 
 ```text
 minimum_history_sessions = 504
@@ -851,8 +898,62 @@ N e R realizados são reportados
 O escore agregado de CAL-A é **evidência de desenvolvimento** e nunca é
 reportado como resultado científico.
 
-**Critério agregado: `TBD`.** O espaço está restrito, o valor não está escolhido.
-Ele precisa satisfazer:
+#### Critério agregado — DECIDIDO
+
+```text
+CAL_A_SELECTION_SCORE = S1
+
+S1(c) = média aritmética do retorno líquido realizado nas 20 Calibration
+        Anchors da configuração c
+
+C1    = nome histórico do candidato de critério que foi escolhido;
+        no protocolo operacional use apenas S1
+```
+
+Regra de seleção, declarada antes de qualquer resultado:
+
+```text
+maior S1 vence, INDEPENDENTEMENTE DO SINAL
+empate EXATO em S1 -> menor config_id da enumeração pré-declarada
+
+nenhum critério econômico secundário
+nenhum performance gate: S1 negativo continua ordenando o espaço
+```
+
+Diagnóstico registrado, sem autoridade de seleção:
+
+```text
+se todos os S1 são exatamente iguais -> CAL_A_DISCRIMINATION = NONE
+```
+
+Mesmo nesse caso **a seleção acontece**, pelo `config_id`. O protocolo nunca
+escreve "nenhuma seleção" e seleciona em seguida.
+
+#### Vocabulário de cobertura — dois conceitos distintos
+
+```text
+dataset_session_coverage   barras observadas / sessões esperadas, por ticker
+                           vive no manifest do SNAPSHOT
+                           (campo coverage[].coverage_ratio)
+
+cal_a_trade_coverage       âncoras com trade executado / 20
+                           diagnóstico de CAL-A, NUNCA do snapshot
+```
+
+Os dois nunca compartilham nome de campo e `coverage_ratio` não é reutilizado
+para CAL-A. A cobertura de CAL-A é publicada em três contadores, não um:
+
+```text
+cal_a_anchors_with_trade
+cal_a_anchors_with_intent_but_no_trade
+cal_a_anchors_abstained          (MANTER, veto, sem intent)
+```
+
+Ambas são `diagnostic_only`: reportadas, nunca gateadas.
+
+#### Restrições que o critério satisfaz
+
+Registro das restrições declaradas antes da escolha. O critério precisa ser:
 
 ```text
 válido sobre 20 âncoras de um dia
@@ -863,18 +964,19 @@ uma única quantidade agregada
 declarado antes dos resultados
 ```
 
-Candidatos registrados como **discussão, não decisão**:
+Candidatos avaliados, com o escolhido marcado:
 
 ```text
-C1  P&L líquido agregado ou médio das 20 âncoras, com exposição fixa
+C1  P&L líquido médio das 20 âncoras, com exposição fixa      <- ESCOLHIDO
 C2  retorno intradiário capturado por decisão acionável, com abstenções
     reportadas à parte
 C3  proporção de âncoras com contribuição líquida positiva
 C4  média aparada (trimmed mean) do P&L por âncora, com corte declarado antes
 ```
 
-`C1` e `C4` só são comparáveis entre configurações porque `long_target_weight`
-está fixo (seção 11); se a exposição variasse, nenhum deles seria válido.
+O escolhido é operacionalizado como `S1` acima. `C1` e `C4` só são comparáveis
+entre configurações porque `long_target_weight` está fixo (seção 11); se a
+exposição variasse, nenhum deles seria válido.
 
 #### Parâmetros não identificáveis numa âncora
 
@@ -1275,10 +1377,81 @@ resumos, features ou estruturas consultáveis. A política exata de context
 engineering — o que entra no prompt, em que forma, com que agregação e com que
 orçamento de tokens — é `TBD`.
 
+### Contrato causal do provedor — DECIDIDO
+
+O que chega ao provedor de LLM é **adimensional e anônimo**. Duas razões
+distintas, ambas CLASSE B (uso de informação fora do information set):
+
+```text
+NÍVEL     o preço ajustado em t embute proventos posteriores a t (S-P4/S-P5).
+          Transmitir close, SMA, banda ou MACD em nível entregaria futuro.
+
+IDENTIDADE  ticker e data abrem um canal independente: memorização do próprio
+            modelo sobre o que aquele ativo fez naquela data.
+```
+
+Contrato transmitido (`LLM_FEATURE_SCHEMA_VERSION = 1`):
+
+```text
+sma50_gap           = close / sma_50   − 1
+sma200_gap          = close / sma_200  − 1
+bb_upper_gap        = close / bb_upper − 1
+bb_lower_gap        = close / bb_lower − 1
+bb_width            = (bb_upper − bb_lower) / bb_middle
+rsi                 = rsi
+macd_ratio          = macd       / close
+macd_signal_ratio   = macd_sinal / close
+```
+
+Uma única orientação (`close / referência − 1`) para todos os níveis. Não há
+`bb_middle_gap` porque `bb_middle ≡ (bb_upper + bb_lower)/2` o torna
+exatamente derivável. Não há `price_index = 1.0`: constante não carrega
+informação e só consome token.
+
+**NÃO transmitidos:** `Close`, ticker, data, nível de SMA, de banda ou de MACD.
+
+```text
+audit layer KNOWS identity and date
+provider    does NOT
+```
+
+Manifest, `RunContext`, `ExperimentSpec`, `DatasetSnapshot`, trace de LLM e
+`LLMDecisionRecord` continuam com ticker e `decision_session` íntegros. Nenhuma
+rastreabilidade foi perdida.
+
+### Quantização canônica
+
+```text
+LLM_NUMERIC_PRECISION = 6
+```
+
+Invariância matemática não produz igualdade de bytes: `(k·a)/(k·b)` só é
+bit-idêntico a `a/b` quando `k` é potência de dois, e o desvio medido em dados
+reais chega a ~2,5e-13 — suficiente para mudar o SHA-256 do prompt e quebrar
+replay, ainda que jamais mude uma decisão. **Todo** número científico enviado ao
+provedor é quantizado antes de serializar, nos três estágios.
+
+A quantização também vale **antes das regras duras de risco**, não só na
+serialização: sem isso, `0,25000000000001` e `0,24999999999999` — dois vintages
+da mesma série — atravessariam o mesmo limiar em lados opostos e o veredito
+dependeria de proventos posteriores à decisão. A representação canônica é a
+representação científica.
+
+Invariante verificado em teste, para qualquer `k > 0` aplicado ao prefixo
+histórico disponível em `t`:
+
+```text
+prompt do analista técnico   idêntico
+prompt do gestor de risco    idêntico
+prompt do gestor de portfólio idêntico
+veredito duro de risco       idêntico, inclusive na fronteira do limiar
+decisão final sob replay     idêntica
+```
+
 Este documento não descreve implementação de context engineering porque ela não
-existe: o `LLMParticipant` monta hoje o `AgentState` com o preço de `close(t)` e
-os oito indicadores recalculados sobre o histórico truncado, e é isso que chega
-ao prompt.
+existe: o `LLMParticipant` monta hoje o `AgentState` com as oito features
+adimensionais recalculadas sobre o histórico truncado, e é isso que chega ao
+prompt.
 
 ## 8. Execution at t+1
 
@@ -1286,13 +1459,66 @@ Direção proposta: ordens decididas após o fechamento de `t` tornam-se elegív
 na abertura da próxima sessão válida `t+1`.
 
 - Tipo de ordem canônica: `TBD`.
-- Formação do preço de execução: `TBD`.
-- Lotes, arredondamento e liquidez: `TBD`.
-- Slippage e spread: `TBD`.
+- Formação do preço de execução: **`OPENING_AUCTION_EXECUTION`** (decidido).
+- Lotes, arredondamento e liquidez: **não expressáveis no v1** (ver abaixo).
+- Slippage e spread: `TBD` — valor em `TBD_EXTERNAL_SOURCE`, semântica na seção 10.
 - Falta de barra, suspensão e execução parcial: `TBD`.
 - Política de short: `TBD`.
 
 As mesmas regras serão aplicadas a todos os participantes.
+
+### Semântica econômica da execução — DECIDIDO
+
+```text
+OPENING_AUCTION_EXECUTION
+```
+
+O motor executa no preço `abertura(t+1)`. A leitura mais direta e reproduzível
+desse preço é uma execução no **leilão de abertura** da sessão seguinte. A
+escolha é material e não cosmética: a B3 tarifa a negociação em leilão de
+abertura/fechamento com alíquota própria, diferente do livro contínuo (seção
+10). A semântica é publicada no manifest de cada run, em
+`execution.semantics`.
+
+### Quantidade — `fractional_notional` (DECIDIDO)
+
+```text
+quantity_mode = fractional_notional          (caminho científico)
+quantity_mode = integer_shares               (caminhos legados)
+
+desired_units = target_weight × equity_at_open / adjusted_open
+                SEM floor()
+```
+
+Motivo estrutural, não conveniência numérica: a série de preços é de retorno
+total (seção 4) e seu **nível** depende de proventos pagos *depois* de `t`.
+Arredondar para ação inteira sobre esse nível faz a quantidade executada
+depender do futuro. Além disso, uma "ação" contada sobre série ajustada nunca
+foi uma ação negociável — declarar a mesma quantidade como "unidade nocional" e
+como "1 ação do mercado fracionário" era contradição.
+
+Consequências declaradas:
+
+```text
+posição = unidade fracionária sintética da série de retorno total
+        ≠ ação física · ≠ mercado fracionário
+
+lote, tick, custo por ação e participação em volume
+        NÃO são expressáveis no v1 — não por simplificação de
+        arredondamento, mas porque o objeto negociado no modelo
+        não é uma ação
+
+resíduo de arredondamento = zero
+peso alvo alcançado       = exato
+```
+
+Com `target_weight = 1` e custo proporcional `r`, o alvo `equity/preço` custaria
+`equity·(1+r)` e estouraria o caixa. As compras são escalonadas pelo maior fator
+viável, que converge para `1/(1+r)`: o caixa termina em zero e o peso alcançado
+sobre o patrimônio pós-execução é exatamente 1.
+
+O runner **recusa** fase científica com `integer_shares`, pelo mesmo padrão
+fail-closed com que já recusa snapshot incompleto e janela ausente.
 
 Consequência direta deste contrato sobre o **alvo** da decisão, formalizada na
 seção 17.1: uma entrada nova decidida em `close(t)` e executada em `open(t+1)`
@@ -1335,26 +1561,137 @@ política definitiva de short continuam `TBD`.
 
 ## 9. Capital
 
-- Capital inicial: `TBD`.
-- Moeda-base: `TBD`.
-- Aportes e retiradas: `TBD`.
-- Remuneração de caixa: `TBD`.
-- Alavancagem e limites de exposição: `TBD`.
+- Capital inicial: **R$ 100.000** (decidido) — ver a justificativa abaixo.
+- Moeda-base: **BRL** (decidido; registrada no manifest do snapshot).
+- Aportes e retiradas: **não existem no v1**.
+- Remuneração de caixa: **`cash_return = 0`** (decidido), coerente com
+  `MetricSpec.risk_free_rate = 0`.
+- Alavancagem e limites de exposição: long-only, sem alavancagem.
 
 Caixa negativo será proibido, salvo decisão explícita e congelada em sentido
 contrário.
 
+### Por que R$ 100.000 — e por que NÃO pelo motivo antigo
+
+Sob `fractional_notional`, com `brokerage_fixed = 0` e custos proporcionais ao
+notional, o modelo é **homogêneo de grau 1 no capital**:
+
+```text
+equity_curve(C) == (C / C0) × equity_curve(C0)
+```
+
+Logo retorno, Sharpe, drawdown e turnover **não dependem** do capital inicial.
+Ele é escala nominal de apresentação e interpretação, nada mais.
+
+```text
+JUSTIFICATIVA VÁLIDA      escala nominal de apresentação
+JUSTIFICATIVAS INVÁLIDAS  lote · mercado fracionário · preço máximo
+                          (deixaram de existir no modelo científico)
+```
+
+A homogeneidade é condicional a `brokerage_fixed = 0` e há teste que falha no
+dia em que essa premissa mudar.
+
+`cash_return = 0` e `risk_free_rate = 0` se movem **juntos**: alterar um sem o
+outro faria o Sharpe penalizar caixa parado duas vezes.
+
 ## 10. Transaction costs
 
-- Corretagem: `TBD`.
-- Emolumentos e taxas: `TBD`.
-- Spread: `TBD`.
-- Slippage: `TBD`.
-- Tributos: `TBD`.
-- Fonte e data de vigência dos valores: `TBD`.
+- Corretagem: **R$ 0,00 por ordem executada** — cenário-base de varejo.
+- Emolumentos e taxas: **0,0320% por perna** (ver composição abaixo).
+- Spread / fricção de execução: `TBD_EXTERNAL_SOURCE` — **bloqueador**.
+- Slippage: incorporado à semântica de `spread_bps` (abaixo).
+- Tributos do investidor: **excluídos do v1**, declaradamente.
+- Fonte e data de vigência: registradas abaixo.
 
-**STATUS: PENDENTE DE CONGELAMENTO.** Custos serão calculados sobre o valor
-financeiro total e aplicados igualmente a todos os participantes.
+**STATUS: PENDENTE DE CONGELAMENTO** enquanto `spread_bps` não tiver valor.
+Custos são calculados sobre o valor financeiro total e aplicados igualmente a
+todos os participantes.
+
+### Composição de `tax_rate` sob `OPENING_AUCTION_EXECUTION`
+
+Como a execução do v1 é declarada no leilão de abertura, a tarifa aplicável
+**não** é a do livro contínuo:
+
+```text
+Tarifa de Negociação (leilão de abertura/fechamento)   0,00700%
+Tarifa de CCP (faixa ADTV 0 a R$ 3 mi)                 0,02240%
+TTA — Tarifa de Transferência de Ativos                0,00260%
+---------------------------------------------------------------
+tax_rate = 0,03200% por perna  =  0.000320
+```
+
+```text
+fonte      B3 — Tarifas de Ações e Fundos de Investimento, Mercado à Vista
+           "As operações realizadas durante os leilões de abertura e
+            fechamento, o valor da tarifa de negociação será 0,007%,
+            desde que não sejam caracterizadas como day trade"
+documento  "Tarifação de Produtos de Renda Variável", versão 3.0
+vigência   15/08/2025 (Ofício Circular 097/2025-PRE); política em vigor
+           desde 01/08/2025 (CE 026/2025-VPC)
+investidor SEM distinção por tipo desde 01/08/2025 — a tarifa depende
+           apenas do ADTV mensal por CPF/CNPJ
+simetria   incide sobre comprador E vendedor; não há assimetria
+           compra/venda, e o CostModel simétrico está correto
+consulta   2026-09-14 — conferência documental final pendente
+```
+
+A tarifa do livro contínuo na mesma faixa seria 0,0300%; usá-la seria
+tarifar uma execução que o protocolo não declara.
+
+### `spread_bps` — semântica sob execução em leilão
+
+O campo do código continua chamado `spread_bps` por compatibilidade, mas sua
+semântica científica **não** é meio-spread cotado: a microestrutura do leilão de
+abertura é diferente da do livro contínuo, e não há evidência que sustente essa
+leitura.
+
+```text
+spread_bps = effective_execution_friction_bps
+           = fricção/slippage adicional por perna, em bps do notional,
+             em relação ao preço Open de referência
+           aplicada simetricamente a compra e venda
+```
+
+Sem evidência externa, `TBD_EXTERNAL_SOURCE` é a resposta — nunca um número
+arbitrário.
+
+### Regime temporal de custo — cenário contrafactual
+
+```text
+REGIME DE CUSTO EXPERIMENTAL CONSTANTE
+
+a tabela vigente na data do freeze é aplicada a TODA a janela avaliada
+
+D1  NÃO reconstrói a tabela histórica e não estima o custo que teria sido
+    efetivamente pago em cada ano
+D2  é um cenário contrafactual reproduzível: todos os participantes são
+    avaliados sob o mesmo regime definido ex-ante
+D3  o nível de custo PODE alterar o ranking, porque o turnover difere
+```
+
+Análise de sensibilidade permitida apenas se **pré-declarada** e descritiva:
+multiplicador `m ∈ {0, 1, 2, 4}` sobre o `CostSpec` congelado. Nunca critério de
+seleção.
+
+### Simetria de custo NÃO é neutralidade de comparação
+
+```text
+O mesmo CostSpec garante TRATAMENTO SIMÉTRICO: nenhum participante recebe
+regra de custo própria.
+
+Tratamento simétrico NÃO é neutralidade. Custo altera o desempenho RELATIVO
+sempre que o turnover difere — e ele difere por construção entre Buy & Hold,
+que negocia uma vez, e um participante que decide a cada sessão.
+
+É exatamente por isso que o CostSpec é congelado ANTES do CAL-A: escolher o
+custo depois de observar os resultados seria escolher o vencedor.
+```
+
+Tributos do investidor (IRRF de 0,005% sobre a venda e IR sobre ganho de
+capital) ficam **fora** do v1. Eles incidem só na venda e tornariam o
+`CostModel` simétrico incompatível; a exclusão é declarada e favorece
+marginalmente participantes de alto giro.
 
 ## 11. Position sizing
 
@@ -1434,16 +1771,42 @@ Análise de sensibilidade em `w` continua permitida como análise de
 development, ou como análise secundária **pré-declarada**, nunca como seleção
 disfarçada.
 
-### O que continua NÃO congelado
+### Valores decididos
 
 ```text
-long_target_weight  = TBD
+long_target_weight      = 1.0
+risk_max_concentration  = 1.0
+minimum_history_sessions = 504
 ```
 
-O default técnico em código é `0.25`, herdado do antigo teto
-`max_position_size` apenas para manter API e testes convenientes. **Isso não é
-aprovação metodológica.** O valor científico será escolhido junto com os demais
-itens do congelamento (seção 21).
+`minimum_history_sessions = 504` **não é TBD**. Semântica, idêntica à de
+`EvaluationWindow.available_history_sessions`:
+
+```text
+503 sessões comuns anteriores a decision_start
++   a própria barra de decision_start
+=   504 sessões disponíveis
+```
+
+Sobre a redundância do limite de concentração, a formulação é esta — e não uma
+igualdade matemática:
+
+```text
+Em desenho single-asset, long-only e não alavancado, max_concentration não
+fornece uma dimensão de risco independente do alvo long_target_weight. Com
+w = 1.0, o limite é ESTRUTURALMENTE REDUNDANTE no v1: ele não pode vetar
+nenhuma exposição que a política de sizing seja capaz de construir.
+
+Isso NÃO é a identidade "concentração == w". Custos e caixa residual fazem a
+concentração realizada ficar estritamente abaixo de w sempre que houver caixa.
+```
+
+O valor `1.0` de `risk_max_concentration` segue sujeito a amendment formal da
+matriz de autoridade. O default técnico em código continua `0.25` para
+`long_target_weight`, herdado do antigo teto `max_position_size` apenas para
+manter API e testes convenientes; ele **não** é o valor científico.
+
+### O que continua NÃO congelado
 
 Também continuam `TBD`: calibração empírica de `confidence`, adoção de
 long/short (o participante atual é long-only por construção) e qualquer
@@ -1915,10 +2278,12 @@ Família canônica, sobre a curva líquida:
 ### 17.3 Métrica primária
 
 ```text
-MÉTRICA PRIMÁRIA DO TCC = TBD
+MÉTRICA PRIMÁRIA DO TCC = Sharpe anualizado LÍQUIDO
+BENCHMARK PRIMÁRIO      = Buy & Hold
+BENCHMARKS SECUNDÁRIOS  = SMA · Bollinger
 ```
 
-O que já está decidido é o **objeto** que ela mede:
+O objeto que ela mede:
 
 ```text
 resultado científico = P&L realizado pela Arena (D)
@@ -1926,17 +2291,23 @@ resultado científico = P&L realizado pela Arena (D)
                      + métricas canônicas da seção 17.2
 ```
 
-Falta escolher qual função desse objeto é a métrica primária. Duas quantidades
-distintas, que não devem ser confundidas e que continuam ambas `TBD`:
+Duas quantidades distintas, que continuam não podendo ser confundidas:
 
 ```text
 MÉTRICA PRIMÁRIA          resultado do TCC, sobre VALIDATION e FINAL TEST
-CRITÉRIO AGREGADO CAL-A   seleção entre configurações, evidência de
-                          desenvolvimento, restrições na seção 5.12
+                          = Sharpe anualizado líquido
+CAL_A_SELECTION_SCORE     seleção entre configurações, evidência de
+                          desenvolvimento, definido como S1 na seção 5.12
 ```
 
-Taxa livre de risco, convenções de anualização, tratamento de dias sem posição e
-fórmulas definitivas: `TBD`.
+Sharpe é explicitamente **proibido** como critério de CAL-A (seção 5.12): uma
+âncora de um dia não tem curva de patrimônio de onde extraí-lo.
+
+Taxa livre de risco: `risk_free_rate = 0`, coerente com `cash_return = 0`
+(seção 9). O escopo do amendment de benchmarks permanece `TBD_ORIENTADOR`.
+
+Convenções de anualização, tratamento de dias sem posição e fórmulas
+definitivas: `TBD`.
 
 ## 18. Statistical analysis
 

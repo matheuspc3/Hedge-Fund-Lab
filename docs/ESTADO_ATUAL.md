@@ -115,8 +115,12 @@ alterações posteriores nele não reescrevem snapshots existentes.
 Cada diretório possui `manifest.json` serializado com chaves ordenadas e um CSV
 por ticker. O manifest registra intervalo solicitado e efetivo, contagens,
 lacunas e datas inesperadas, SHA-256 e tamanho dos arquivos, fonte e versão do
-`yfinance`, política de ajuste observável, versão do Python/pipeline, commit e
-estado dirty do Git, além das regras e exceções do calendário. Um ID existente
+`yfinance`, a política de ajuste **resolvida** (`auto_adjust=true`), a
+representação de preço (`adjusted_total_return`), moeda, timezone da bolsa,
+versão do Python/pipeline, commit e estado dirty do Git, além das regras e
+exceções do calendário. Quando a captura de eventos corporativos está ligada,
+`actions/<ticker>.csv` guarda dividendos e splits com SHA-256 na identidade do
+manifest — evidência, não insumo do motor v1. Um ID existente
 nunca é sobrescrito silenciosamente.
 
 #### Identidade verificável do manifest (schema 2)
@@ -234,8 +238,12 @@ sobre o patrimônio observado e compara com a posição corrente: déficit vira
 `BUY`, excesso vira `SELL`, posição já no alvo não gera trade. Como o preço de
 abertura pode ter aberto em gap, uma intenção que no fechamento anterior
 implicaria aumento pode ser executada como venda — `Trade.type` reflete a
-operação realmente executada. O executor usa `CostModel`, quantidade inteira,
-caixa não negativo e posição long-only. Um intent na única/última sessão permanece uma decisão sem abertura
+operação realmente executada. O executor usa `CostModel`, caixa não negativo e
+posição long-only. A **quantidade depende do modo declarado**: `integer_shares`
+(default, caminhos legados) trunca para ação inteira; `fractional_notional` (o
+caminho científico, exigido em fase científica pelo runner) executa em unidades
+fracionárias sintéticas da série de retorno total, sem `floor()` e sem resíduo
+de arredondamento. Um intent na única/última sessão permanece uma decisão sem abertura
 observada e não gera trade — o participante decide igual e não é informado de
 que aquela era a última sessão. A observação contém cópias dos históricos
 truncadas em `t` e nenhum campo sobre a sessão seguinte, portanto o participante
@@ -246,9 +254,14 @@ forward-fill nem barra fabricada; os tickers são percorridos em ordem
 determinística; e a alocação segue uma política puramente técnica: alvos e
 deltas calculados sobre o patrimônio na abertura, vendas antes das compras e,
 quando o caixa não cobre todos os déficits, escalonamento de todos os alvos pelo
-mesmo fator seguido de truncamento. O fator vem de busca binária sobre o custo
-reportado pelo `CostModel`, então o resultado não depende da ordem dos tickers e
-não assume a fórmula de custo. O resíduo de caixa não é redistribuído.
+mesmo fator, seguido de truncamento apenas em `integer_shares`. O fator vem de
+busca binária sobre o custo reportado pelo `CostModel`, então o resultado não
+depende da ordem dos tickers e não assume a fórmula de custo. Em
+`fractional_notional` essa etapa deixa de compensar truncamento e passa a ser o
+que torna a execução exequível: com peso alvo 1 e custo proporcional `r`, o alvo
+custaria `equity·(1+r)` e o fator converge para `1/(1+r)`, zerando o caixa e
+atingindo peso exato. Em `integer_shares` o resíduo de caixa continua existindo e
+não é redistribuído.
 
 Esta implementação continua técnica: peso alvo entre zero e um foi escolhido
 como semântica extensível, sem congelar lote B3, slippage, liquidez, margem,
@@ -540,9 +553,10 @@ documental.
   validação OHLCV.
 - O snapshot detecta limites e lacunas internas pelo `B3Calendar`, mas esse
   calendário continua sendo aproximação local não validada contra fonte oficial
-  versionada. Moeda, timezone e política científica de proventos/splits seguem
-  pendentes; o extractor ainda usa o default de ajuste do provedor e o registra
-  como tal no manifest.
+  versionada. Moeda e timezone passaram a ser declarados no manifest, e o
+  extractor passa `auto_adjust=True` explicitamente em vez de depender do
+  default da versão instalada do provedor. O snapshot recusa recorte que alcance
+  a sessão ainda em formação.
 - O flow continua processando os demais tickers após uma falha, porém agora
   retorna `PipelineResult` com tickers bem-sucedidos, falhos, erros e
   `complete=false`, tornando a carga parcial observável por automação.

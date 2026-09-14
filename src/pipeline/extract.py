@@ -19,6 +19,16 @@ from src.pipeline.transform import DataQualityError, validate_ohlcv
 
 logger = logging.getLogger(__name__)
 
+#: Política de ajuste **resolvida**, passada explicitamente ao provedor.
+#:
+#: Antes disso o projeto dependia do default da versão instalada: a restrição
+#: do ``pyproject`` (``yfinance >= 0.2.0``) atravessa a virada em que o default
+#: de ``auto_adjust`` passou de ``False`` para ``True``, de modo que a
+#: semântica dos preços do experimento variava com a versão resolvida. O
+#: manifest do snapshot registra esta constante, não mais uma frase dizendo
+#: que a política não estava configurada.
+PRICE_ADJUSTMENT = "auto_adjust=true"
+
 
 @dataclass
 class RetryPolicy:
@@ -47,12 +57,15 @@ class DataExtractor:
         df = extractor.download("PETR4.SA", "2023-01-01", "2023-12-31")
     """
 
+    #: ``adj_close`` não aparece aqui de propósito: com ``auto_adjust=True`` o
+    #: provedor já devolve OHLC ajustado e **não** emite a coluna ``Adj
+    #: Close``. Manter o mapeamento sugeriria uma coluna que nenhum artefato
+    #: deste projeto tem.
     COLUMN_MAP: ClassVar[dict[str, str]] = {
         "open": "abertura",
         "high": "maxima",
         "low": "minima",
         "close": "fechamento",
-        "adj_close": "fechamento_ajustado",
         "volume": "volume",
     }
 
@@ -120,6 +133,80 @@ class DataExtractor:
         result = self._slice_interval(df, requested_start, requested_end)
         logger.info("Download concluído: %s → %d registros", ticker, len(result))
         return result
+
+    def download_actions(self, ticker: str, start: str, end: str) -> pd.DataFrame:
+        """Proventos e splits do período, como **evidência** do snapshot.
+
+        O motor v1 não consome estes dados: a série de preços já é de retorno
+        total e os eventos estão embutidos nela. Eles são capturados porque a
+        série ajustada **não é reprodutível** a partir do provedor numa data
+        posterior — cada provento novo reescala todo o histórico —, de modo que
+        o que não for congelado agora não pode ser recuperado depois. Servem
+        para auditar os fatores de ajuste, identificar âncoras em data ex e
+        permitir uma futura representação dual sem novo download.
+
+        Sem cache: evidência pertence ao snapshot imutável, não ao cache mutável.
+        """
+        requested_start, requested_end = self._parse_interval(start, end)
+        yf_end = (requested_end + pd.Timedelta(days=1)).strftime("%Y-%m-%d")
+        delay = self.retry_policy.delay_seconds
+        last_exc: Exception | None = None
+
+        for attempt in range(1, self.retry_policy.max_retries + 1):
+            try:
+                history = yf.Ticker(ticker).history(
+                    start=requested_start.strftime("%Y-%m-%d"),
+                    end=yf_end,
+                    auto_adjust=False,
+                    actions=True,
+                )
+                if history is None or history.empty:
+                    raise ValueError(f"yfinance retornou ações vazias para {ticker}")
+                return self._normalize_actions(history)
+            except Exception as exc:
+                last_exc = exc
+                logger.warning(
+                    "Erro ao baixar corporate actions de %s (tentativa %d/%d): %s",
+                    ticker,
+                    attempt,
+                    self.retry_policy.max_retries,
+                    exc,
+                )
+                if attempt < self.retry_policy.max_retries:
+                    time.sleep(delay)
+                    delay *= self.retry_policy.backoff_factor
+
+        raise RuntimeError(
+            f"Download de corporate actions de {ticker} falhou após "
+            f"{self.retry_policy.max_retries} tentativas. Último erro: {last_exc}"
+        )
+
+    @staticmethod
+    def _normalize_actions(history: pd.DataFrame) -> pd.DataFrame:
+        """Extrai apenas os eventos, com índice de data civil e sem timezone."""
+        raw_index = pd.DatetimeIndex(history.index)
+        if raw_index.tz is not None:
+            raw_index = cast(pd.DatetimeIndex, raw_index.tz_localize(None))
+        index = pd.DatetimeIndex(
+            [cast(pd.Timestamp, pd.Timestamp(value)).normalize() for value in raw_index]
+        )
+
+        def column(name: str) -> np.ndarray:
+            if name not in history.columns:
+                return np.zeros(len(history), dtype=float)
+            values = cast(pd.Series, history[name])
+            return np.nan_to_num(values.astype(float).to_numpy(), nan=0.0)
+
+        frame = pd.DataFrame(
+            {"dividends": column("Dividends"), "splits": column("Stock Splits")},
+            index=index,
+        )
+        events = cast(
+            pd.DataFrame,
+            frame.loc[(frame["dividends"] != 0.0) | (frame["splits"] != 0.0)],
+        )
+        events.index.name = "date"
+        return cast(pd.DataFrame, events.sort_index())
 
     # ── Cache ────────────────────────────────────────────────────
 
@@ -209,7 +296,15 @@ class DataExtractor:
                 max_retries,
             )
             try:
-                df = yf.download(ticker, start=start, end=yf_end, progress=False)
+                # ``auto_adjust`` explícito: a política de preço do experimento
+                # não pode depender do default da versão instalada.
+                df = yf.download(
+                    ticker,
+                    start=start,
+                    end=yf_end,
+                    progress=False,
+                    auto_adjust=True,
+                )
                 if df is None or df.empty:
                     raise ValueError(f"yfinance retornou dados vazios para {ticker}")
                 logger.debug("Download %s OK (tentativa %d)", ticker, attempt)

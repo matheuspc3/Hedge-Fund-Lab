@@ -410,7 +410,7 @@ def test_manifest_registra_identidade_proveniencia_e_configuracao(
     assert manifest["experiment_spec"] == result.spec.to_dict()
     assert manifest["participant"]["kind"] == "sma_cross"
     assert manifest["snapshot"]["snapshot_id"] == snapshot.snapshot_id
-    assert manifest["snapshot"]["schema_version"] == 2
+    assert manifest["snapshot"]["schema_version"] == 3
     assert manifest["snapshot"]["identity_digest"] == snapshot.identity_digest
     assert manifest["snapshot"]["files"][0]["sha256"] == snapshot.files[0]["sha256"]
     assert manifest["universe"] == ["PETR4.SA"]
@@ -777,7 +777,7 @@ def test_run_captura_a_evidencia_do_snapshot_executado(
 
     assert evidence.snapshot_id == snapshot.snapshot_id
     assert result.snapshot_id == snapshot.snapshot_id
-    assert evidence.schema_version == 2
+    assert evidence.schema_version == 3
     assert evidence.identity_digest == snapshot.identity_digest
     assert evidence.manifest == json.loads(
         snapshot.manifest_path.read_text(encoding="utf-8")

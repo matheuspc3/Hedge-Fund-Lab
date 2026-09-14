@@ -199,6 +199,7 @@ class TestDataExtractor:
             start=start,
             end=(pd.Timestamp(end) + pd.Timedelta(days=1)).strftime("%Y-%m-%d"),
             progress=False,
+            auto_adjust=True,
         )
         assert result.index.min() == pd.Timestamp(start)
         assert result.index.max() == pd.Timestamp(end)
@@ -267,6 +268,7 @@ class TestDataExtractor:
             start="2024-01-01",
             end="2024-02-01",
             progress=False,
+            auto_adjust=True,
         )
 
     def test_invalid_downloaded_bar_fails_before_cache(self, tmp_path: Path):

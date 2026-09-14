@@ -19,8 +19,11 @@ from uuid import uuid4
 
 import pandas as pd
 
+from src.agents.features import LLM_FEATURE_SCHEMA_VERSION, LLM_NUMERIC_PRECISION
 from src.artifacts import RunArtifact, RunArtifactProvider
 from src.backtesting.arena import (
+    EXECUTION_SEMANTICS,
+    QUANTITY_MODE_FRACTIONAL_NOTIONAL,
     EvaluationWindow,
     ExecutionEngine,
     common_sessions,
@@ -33,6 +36,7 @@ from src.experiments.context import RunContext
 from src.experiments.participants import build_participant, required_tickers
 from src.experiments.spec import ExperimentSpec
 from src.pipeline.snapshot import (
+    PRICE_REPRESENTATION,
     DatasetSnapshot,
     SnapshotEvidence,
     SnapshotNotReadyError,
@@ -56,7 +60,11 @@ logger = logging.getLogger(__name__)
 # executado. No mesmo schema, ``sessions`` virou ``equity_points``: ao lado de
 # ``evaluated_sessions`` o nome antigo passou a descrever outra coisa do que
 # sugeria — a curva publicada inclui a ``settlement_session``.
-RUN_MANIFEST_SCHEMA_VERSION = 4
+# Schema 5: o manifest publica a semântica com que o run foi executado —
+# modo de quantidade, interpretação econômica do preço de execução,
+# representação de preço do dataset — e o contrato numérico transmitido ao
+# provedor de LLM. Nenhum desses itens era observável no artefato antes.
+RUN_MANIFEST_SCHEMA_VERSION = 5
 EQUITY_FILE = "equity.csv"
 TRADES_FILE = "trades.csv"
 MANIFEST_FILE = "manifest.json"
@@ -221,6 +229,7 @@ class ExperimentRunner:
         # custar uma única chamada paga ao provedor. Mesmo motivo pelo qual o
         # guard de proveniência roda antes de carregar dados.
         evaluation = self._resolve_evaluation(frames)
+        self._require_scientific_execution()
 
         # Instância nova a cada run: participantes clássicos carregam estado
         # entre sessões e não podem atravessar execuções.
@@ -236,6 +245,7 @@ class ExperimentRunner:
             minimum_history_sessions=(
                 None if window is None else window.minimum_history_sessions
             ),
+            quantity_mode=self.spec.execution.quantity_mode,
         )
         backtest = engine.run()
         # Mesmo princípio do ``SnapshotEvidence``: a evidência é congelada no
@@ -329,6 +339,27 @@ class ExperimentRunner:
             )
         verify_snapshot_integrity(snapshot)
         return snapshot
+
+    def _require_scientific_execution(self) -> None:
+        """Fase científica exige a semântica de execução científica.
+
+        ``integer_shares`` sobre preço ajustado faz a quantidade depender do
+        nível da série, e o nível depende de proventos posteriores à decisão.
+        Aceitar esse modo numa fase científica publicaria um run cujo
+        arredondamento olhou o futuro — por isso o gate é fail-closed aqui, e
+        não uma recomendação em documento.
+        """
+        if self.context is None:
+            return
+        mode = self.spec.execution.quantity_mode
+        if mode != QUANTITY_MODE_FRACTIONAL_NOTIONAL:
+            raise ValueError(
+                f"phase {self.context.phase} requires quantity_mode="
+                f"{QUANTITY_MODE_FRACTIONAL_NOTIONAL!r}, got {mode!r}; integer "
+                "share rounding over an adjusted total-return series depends on "
+                "the price level, which depends on dividends paid after the "
+                "decision"
+            )
 
     def _resolve_evaluation(self, frames: Mapping[str, pd.DataFrame]) -> EvaluationWindow:
         """Resolve a janela sobre o calendário comum, ou falha antes do run.
@@ -430,6 +461,20 @@ class ExperimentRunner:
             "evaluation_evidence": result.evaluation.to_dict(),
             "cost_model": result.spec.costs.to_dict(),
             "metric_configuration": result.spec.metrics.to_dict(),
+            # Semântica com que estes números foram produzidos. Sem isto, duas
+            # execuções com modelos de execução diferentes chegariam ao leitor
+            # como se fossem a mesma coisa.
+            "execution": {
+                "quantity_mode": result.spec.execution.quantity_mode,
+                "semantics": EXECUTION_SEMANTICS,
+                "price_representation": PRICE_REPRESENTATION,
+            },
+            # Contrato numérico transmitido ao provedor. Publicado sempre, e
+            # não só em run de LLM: é a versão do que o provedor pôde ver.
+            "llm_contract": {
+                "feature_schema_version": LLM_FEATURE_SCHEMA_VERSION,
+                "numeric_precision": LLM_NUMERIC_PRECISION,
+            },
             "initial_capital": result.initial_capital,
             "final_equity": result.final_equity,
             "metrics": dict(result.metrics),

@@ -40,6 +40,32 @@ from src.backtesting.engine import BacktestResult, Trade
 # somas de pesos e comparações de peso alvo, nunca folga econômica.
 WEIGHT_TOLERANCE = 1e-9
 
+# Tolerância **técnica** de caixa, em reais. Cobre resíduo de ponto flutuante
+# de somas de notional e custo; não é parâmetro científico e não é folga
+# econômica. Caixa abaixo de ``-CASH_TOLERANCE`` é corrupção numérica e falha.
+CASH_TOLERANCE = 1e-9
+
+#: Quantidade inteira de ações — semântica dos motores legados, preservada.
+QUANTITY_MODE_INTEGER_SHARES = "integer_shares"
+
+#: Unidades fracionárias da série de retorno total — semântica científica.
+#:
+#: A posição deixa de representar ação física. Isso não é um afrouxamento do
+#: modelo, é o que remove duas contradições: ``floor()`` sobre preço ajustado
+#: dependia do vintage (logo, de proventos posteriores à decisão), e uma
+#: "ação" contada sobre série de retorno total nunca foi uma ação negociável.
+#: Lote, tick e custo por ação deixam de ser expressáveis — declaradamente.
+QUANTITY_MODE_FRACTIONAL_NOTIONAL = "fractional_notional"
+
+QUANTITY_MODES = (QUANTITY_MODE_INTEGER_SHARES, QUANTITY_MODE_FRACTIONAL_NOTIONAL)
+
+#: Interpretação econômica declarada do preço de execução ``abertura(t+1)``.
+#: O motor executa no preço de abertura da sessão seguinte; a leitura mais
+#: direta e reproduzível disso é uma execução no leilão de abertura. A escolha
+#: é material porque a tarifa de negociação da B3 no leilão difere da tarifa do
+#: livro contínuo.
+EXECUTION_SEMANTICS = "OPENING_AUCTION_EXECUTION"
+
 
 class EvaluationWindowError(ValueError):
     """A janela pedida não pode ser avaliada sobre o calendário disponível.
@@ -337,7 +363,10 @@ class MarketObservation:
 
     session: pd.Timestamp
     history: Mapping[str, pd.DataFrame]
-    positions: Mapping[str, int]
+    #: Quantidades em posse. Inteiras em ``integer_shares``; fracionárias em
+    #: ``fractional_notional``, onde representam unidades sintéticas da série
+    #: de retorno total e não ações físicas.
+    positions: Mapping[str, float]
     cash: float
     equity: float
 
@@ -381,11 +410,17 @@ class ExecutionEngine:
         decision_start: object = None,
         decision_end: object = None,
         minimum_history_sessions: int | None = None,
+        quantity_mode: str = QUANTITY_MODE_INTEGER_SHARES,
     ) -> None:
         if not data:
             raise ValueError("data cannot be empty")
         if initial_capital <= 0 or not math.isfinite(initial_capital):
             raise ValueError("initial_capital must be finite and > 0")
+        if quantity_mode not in QUANTITY_MODES:
+            supported = ", ".join(QUANTITY_MODES)
+            raise ValueError(
+                f"unsupported quantity_mode: {quantity_mode!r}; supported: {supported}"
+            )
 
         frames: dict[str, pd.DataFrame] = {}
         for raw_ticker, frame in data.items():
@@ -415,6 +450,8 @@ class ExecutionEngine:
         )
         self.initial_capital = float(initial_capital)
         self.cost_model = cost_model or CostModel()
+        self.quantity_mode = quantity_mode
+        self._fractional = quantity_mode == QUANTITY_MODE_FRACTIONAL_NOTIONAL
 
     @staticmethod
     def _validate(ticker: str, frame: pd.DataFrame) -> pd.DataFrame:
@@ -439,8 +476,55 @@ class ExecutionEngine:
 
     # ── Execução ─────────────────────────────────────────────────
 
+    def _units(self, units: float) -> float:
+        """Aplica a política de quantidade do modo declarado.
+
+        Em ``integer_shares`` devolve ``int`` — e não ``float`` arredondado —
+        para que os artefatos publicados pelos caminhos legados continuem
+        idênticos byte a byte. Em ``fractional_notional`` não há truncamento
+        algum: é exatamente essa ausência que remove a dependência do nível
+        ajustado, e com ela o resíduo de caixa.
+        """
+        if self._fractional:
+            return float(units)
+        return math.floor(units)
+
+    def _check_numbers(
+        self, cash: float, positions: Mapping[str, float], session: pd.Timestamp
+    ) -> float:
+        """Pós-condições numéricas da liquidação; falha fechado em corrupção.
+
+        ``CASH_TOLERANCE`` é tolerância técnica de ponto flutuante, não folga
+        econômica: no modo fracionário um alvo de peso 1 esgota o caixa por
+        construção e o zero exato só existe a menos de epsilon.
+        """
+        if not math.isfinite(cash):
+            raise RuntimeError(f"cash is not finite after settling {_date_text(session)}")
+        for ticker in sorted(positions):
+            quantity = positions[ticker]
+            if not math.isfinite(quantity):
+                raise RuntimeError(
+                    f"position for {ticker} is not finite after settling "
+                    f"{_date_text(session)}"
+                )
+            if quantity < 0:
+                raise RuntimeError(
+                    f"position for {ticker} turned negative ({quantity}) at "
+                    f"{_date_text(session)}; this arena is long-only"
+                )
+        if cash < -CASH_TOLERANCE:
+            raise RuntimeError(
+                f"cash turned negative ({cash}) at {_date_text(session)}"
+            )
+        if self._fractional and abs(cash) < CASH_TOLERANCE:
+            # Resíduo de ponto flutuante de uma carteira integralmente
+            # investida vira zero exato, e não um centavo de nanorreal que
+            # sobreviveria até o fim da curva.
+            return 0.0
+        return cash
+
     def _buy_total(
-        self, quantities: Mapping[str, int], prices: Mapping[str, float]
+        self, quantities: Mapping[str, float], prices: Mapping[str, float]
     ) -> float:
         """Custo financeiro total de um conjunto de compras, via ``CostModel``."""
         total = 0.0
@@ -454,19 +538,26 @@ class ExecutionEngine:
 
     def _scale_buys(
         self,
-        wanted: Mapping[str, int],
+        wanted: Mapping[str, float],
         prices: Mapping[str, float],
         budget: float,
-    ) -> dict[str, int]:
+    ) -> dict[str, float]:
         """Dimensiona as compras em conjunto, sem privilegiar nenhum ticker.
 
         Quando o caixa não cobre todos os déficits, os alvos são escalonados
-        pelo mesmo fator e truncados para baixo. O fator vem de uma busca
-        binária sobre o custo real reportado pelo ``CostModel``, portanto o
-        resultado não depende da ordem dos tickers nem assume a fórmula de custo.
+        pelo mesmo fator. O fator vem de uma busca binária sobre o custo real
+        reportado pelo ``CostModel``, portanto o resultado não depende da ordem
+        dos tickers nem assume a fórmula de custo.
 
-        ponytail: o resíduo de caixa não é redistribuído; a política científica
-        de lote e arredondamento continua TBD e deve substituir este truncamento.
+        **Esta etapa não é opcional no modo fracionário — ela é o que o torna
+        exequível.** Com ``target_weight = 1`` e custo proporcional ``r``, o
+        alvo ``equity/price`` custa ``equity·(1+r) > cash``: comprar a
+        quantidade exata estouraria o caixa por construção. A busca converge
+        para ``lambda = 1/(1+r)``, o caixa termina em zero e o peso alcançado
+        sobre o patrimônio pós-execução é exatamente 1.
+
+        Em ``integer_shares`` o truncamento para baixo permanece, e com ele o
+        resíduo de caixa do modo legado.
         """
         if not wanted:
             return {}
@@ -474,11 +565,11 @@ class ExecutionEngine:
             return dict(wanted)
 
         low, high = 0.0, 1.0
-        best = dict.fromkeys(wanted, 0)
+        best: dict[str, float] = dict.fromkeys(wanted, self._units(0))
         for _ in range(64):
             middle = (low + high) / 2
             candidate = {
-                ticker: math.floor(middle * quantity)
+                ticker: self._units(middle * quantity)
                 for ticker, quantity in wanted.items()
             }
             if self._buy_total(candidate, prices) <= budget:
@@ -493,7 +584,7 @@ class ExecutionEngine:
         session: pd.Timestamp,
         prices: Mapping[str, float],
         cash: float,
-        positions: dict[str, int],
+        positions: dict[str, float],
     ) -> tuple[float, list[Trade]]:
         """Aplica os intents pendentes na abertura de ``session``.
 
@@ -509,12 +600,27 @@ class ExecutionEngine:
         targets = {intent.ticker: intent.target_weight for intent in intents}
         desired = {
             ticker: (
-                math.floor(equity_at_open * targets[ticker] / prices[ticker])
+                self._units(equity_at_open * targets[ticker] / prices[ticker])
                 if ticker in targets
                 else positions[ticker]
             )
             for ticker in self.tickers
         }
+        if self._fractional:
+            # Sem ``floor()`` nada arredonda a diferença entre a posição e um
+            # alvo que ela já satisfaz, e o resíduo de ponto flutuante — ordens
+            # de 1e-12 reais — viraria trade publicado. Uma ordem abaixo da
+            # tolerância técnica de caixa não é uma ordem: o alvo é colapsado
+            # na posição corrente, de modo que nem compra nem venda nascem.
+            desired = {
+                ticker: (
+                    positions[ticker]
+                    if abs(desired[ticker] - positions[ticker]) * prices[ticker]
+                    <= CASH_TOLERANCE
+                    else desired[ticker]
+                )
+                for ticker in self.tickers
+            }
 
         trades: list[Trade] = []
         # Vendas primeiro: o caixa liberado financia as compras do rebalance.
@@ -527,7 +633,11 @@ class ExecutionEngine:
             if cash + notional - cost < 0:
                 raise ValueError("sell costs would make cash negative")
             cash += notional - cost
-            positions[ticker] -= quantity
+            # Atribuir o alvo, e não subtrair a diferença: com quantidade
+            # fracionária ``p - (p - d)`` não retorna exatamente ``d``, e o
+            # resíduo viraria uma compra de poeira na mesma sessão. Em
+            # quantidade inteira as duas formas são idênticas.
+            positions[ticker] = desired[ticker]
             trades.append(
                 Trade(
                     date=session,
@@ -543,6 +653,7 @@ class ExecutionEngine:
             ticker: desired[ticker] - positions[ticker]
             for ticker in self.tickers
             if desired[ticker] > positions[ticker]
+            and (desired[ticker] - positions[ticker]) * prices[ticker] > CASH_TOLERANCE
         }
         quantities = self._scale_buys(wanted, prices, cash)
         spent = self._buy_total(quantities, prices)
@@ -564,7 +675,7 @@ class ExecutionEngine:
                     ticker=ticker,
                 )
             )
-        return cash - spent, trades
+        return self._check_numbers(cash - spent, positions, session), trades
 
     def _validate_intents(
         self, intents: list[OrderIntent], observation: MarketObservation
@@ -618,7 +729,7 @@ class ExecutionEngine:
         )
 
         cash = self.initial_capital
-        positions = dict.fromkeys(self.tickers, 0)
+        positions: dict[str, float] = dict.fromkeys(self.tickers, self._units(0))
         pending: list[OrderIntent] = []
         trades: list[Trade] = []
         equity_values: list[float] = []
@@ -641,6 +752,10 @@ class ExecutionEngine:
             equity = cash + sum(
                 positions[ticker] * closes[ticker] for ticker in self.tickers
             )
+            if not math.isfinite(equity):
+                raise RuntimeError(
+                    f"equity is not finite at {_date_text(session)}"
+                )
             equity_values.append(equity)
             if session > window.decision_end:
                 # Settlement: o pendente já foi liquidado e o patrimônio já foi

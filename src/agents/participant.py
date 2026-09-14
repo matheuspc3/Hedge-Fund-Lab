@@ -51,6 +51,7 @@ from typing import Any, Iterable, Mapping, cast
 import pandas as pd
 from pydantic import BaseModel
 
+from src.agents.features import dimensionless_features
 from src.agents.graph import build_graph
 from src.agents.llm_client import LLMCallMetadata, LLMClient, MockLLMClient
 from src.agents.llm_trace import LLMCallRecord, RecordingLLMClient
@@ -677,15 +678,21 @@ class LLMParticipant:
         (``rolling`` e ``ewm(adjust=False)``), o valor em ``t`` é idêntico ao
         que a série inteira produziria — a diferença é que aqui não existe
         barra futura para observar.
+
+        Os níveis brutos morrem nesta função: o que entra no estado é o
+        conjunto adimensional de :mod:`src.agents.features`. ``ticker``,
+        ``date`` e ``current_price`` continuam no estado porque as regras
+        internas e a auditoria precisam deles — o prompt é que não os recebe.
         """
         close = cast(pd.Series, history["fechamento"])
         with_indicators = self.transformer.calculate_indicators(history)
         row = with_indicators.iloc[-1]
-        indicators: dict[str, float | None] = {
+        levels: dict[str, float] = {
             key: float(row[key])
             for key in INDICATOR_KEYS
             if key in with_indicators.columns and pd.notna(row[key])
         }
+        features = dimensionless_features(close_price, levels)
 
         returns = close.pct_change().dropna().tail(self.volatility_window)
         volatility = (
@@ -697,7 +704,7 @@ class LLMParticipant:
         state: AgentState = {
             "ticker": self.ticker,
             "date": str(observation.session.date()),
-            "indicators": indicators,
+            "features": features,
             "cash": float(observation.cash),
             "position": float(observation.positions[self.ticker]),
             "current_price": close_price,

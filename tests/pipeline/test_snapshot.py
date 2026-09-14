@@ -41,13 +41,28 @@ def _ohlcv(dates: list[str]) -> pd.DataFrame:
 
 
 class StubExtractor:
-    def __init__(self, frames: dict[str, pd.DataFrame]):
+    def __init__(
+        self, frames: dict[str, pd.DataFrame], actions: dict[str, pd.DataFrame] | None = None
+    ):
         self.frames = frames
+        self.actions = actions or {}
         self.calls: list[tuple[str, str, str]] = []
+        self.action_calls: list[tuple[str, str, str]] = []
 
     def download(self, ticker: str, start: str, end: str) -> pd.DataFrame:
         self.calls.append((ticker, start, end))
         return self.frames[ticker].copy()
+
+    def download_actions(self, ticker: str, start: str, end: str) -> pd.DataFrame:
+        self.action_calls.append((ticker, start, end))
+        declared = self.actions.get(ticker)
+        if declared is not None:
+            return declared.copy()
+        return pd.DataFrame(
+            {"dividends": [], "splits": []},
+            index=pd.DatetimeIndex([], name="date"),
+            dtype=float,
+        )
 
 
 def _build(
@@ -226,8 +241,10 @@ def test_interval_without_expected_session_is_explicit_attention(tmp_path: Path)
     empty = _ohlcv([])
     snapshot = create_dataset_snapshot(
         ["PETR4.SA"],
-        "2026-12-24",
-        "2026-12-25",
+        # Fim de semana já encerrado: nenhum pregão esperado, e o recorte não
+        # alcança a sessão em formação.
+        "2025-01-04",
+        "2025-01-05",
         extractor=StubExtractor({"PETR4.SA": empty}),  # type: ignore[arg-type]
         snapshot_dir=tmp_path / "snapshots",
         repository_dir=tmp_path,

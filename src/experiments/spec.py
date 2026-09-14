@@ -19,12 +19,21 @@ from typing import Any, Mapping
 import pandas as pd
 
 from src.artifacts import canonical_json
+from src.backtesting.arena import (
+    QUANTITY_MODE_INTEGER_SHARES,
+    QUANTITY_MODES,
+)
 from src.backtesting.costs import CostModel
 
 # Schema 2: a spec passa a declarar a janela avaliada. O período deixou de ser
 # consequência da cobertura do snapshot e virou configuração material, dentro
 # do ``spec_hash``.
-SPEC_SCHEMA_VERSION = 2
+#
+# Schema 3: a spec passa a declarar a semântica de quantidade da execução.
+# Duas semânticas que produzem números diferentes sob o mesmo ``spec_hash``
+# destruiriam o significado do hash — "mesma configuração, mesmo resultado" —,
+# e o manifest precisa dizer qual delas gerou o run.
+SPEC_SCHEMA_VERSION = 3
 
 # ``canonical_json`` vive em :mod:`src.artifacts` para que a spec e o trace de
 # LLM usem literalmente a mesma serialização estável; continua reexportado
@@ -33,6 +42,7 @@ __all__ = [
     "SPEC_SCHEMA_VERSION",
     "CostSpec",
     "EvaluationSpec",
+    "ExecutionSpec",
     "ExperimentSpec",
     "MetricSpec",
     "ParticipantSpec",
@@ -229,6 +239,32 @@ class CostSpec:
 
 
 @dataclass(frozen=True)
+class ExecutionSpec:
+    """Semântica de quantidade com que a arena executa os intents.
+
+    O default é ``integer_shares``, o comportamento histórico: quem não
+    declara nada continua recebendo o que já tinha, em vez de mudar de modelo
+    de execução sem pedir. O caminho científico **precisa** declarar
+    ``fractional_notional``, e o runner recusa fase científica sem isso — pelo
+    mesmo padrão fail-closed com que já recusa snapshot incompleto e janela
+    ausente.
+    """
+
+    quantity_mode: str = QUANTITY_MODE_INTEGER_SHARES
+
+    def __post_init__(self) -> None:
+        mode = self.quantity_mode
+        if not isinstance(mode, str) or mode not in QUANTITY_MODES:
+            supported = ", ".join(QUANTITY_MODES)
+            raise ValueError(
+                f"unsupported quantity_mode: {mode!r}; supported: {supported}"
+            )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"quantity_mode": self.quantity_mode}
+
+
+@dataclass(frozen=True)
 class MetricSpec:
     """Parâmetros técnicos de ``performance_metrics``.
 
@@ -282,6 +318,9 @@ class ExperimentSpec:
     initial_capital: float
     costs: CostSpec = field(default_factory=CostSpec)
     metrics: MetricSpec = field(default_factory=MetricSpec)
+    #: Semântica de quantidade da execução. Material: dois modos produzem
+    #: curvas diferentes sobre os mesmos dados.
+    execution: ExecutionSpec = field(default_factory=ExecutionSpec)
     #: Janela avaliada. ``None`` é o **modo técnico legado**: toda a cobertura
     #: efetiva do snapshot é decidida, como antes da janela existir. O caminho
     #: científico declara a janela, e o runner recusa executar uma fase
@@ -307,6 +346,7 @@ class ExperimentSpec:
             "initial_capital": self.initial_capital,
             "costs": self.costs.to_dict(),
             "metrics": self.metrics.to_dict(),
+            "execution": self.execution.to_dict(),
             # Sempre presente na forma canônica, inclusive como ``null``: a
             # ausência de janela é uma configuração, não um campo que sumiu.
             "evaluation": (

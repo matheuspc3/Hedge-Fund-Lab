@@ -97,6 +97,7 @@ def test_spec_hash_nao_depende_de_horario_nem_de_caminho_local() -> None:
         "initial_capital",
         "costs",
         "metrics",
+        "execution",
         "evaluation",
     }
 
@@ -117,6 +118,7 @@ def test_spec_nao_aceita_instancia_de_participante() -> None:
         "initial_capital",
         "costs",
         "metrics",
+        "execution",
         "evaluation",
     }
     with pytest.raises(ValueError, match="must be a JSON scalar"):

@@ -147,8 +147,12 @@ histórico copiado e truncado até close(t)
        Trade(s) + equity de carteira no fechamento
 ```
 
-`OrderIntent` representa decisão, não execução. Preço, quantidade inteira,
-custo e caixa resultante pertencem ao executor e aparecem apenas no `Trade`.
+`OrderIntent` representa decisão, não execução. Preço, quantidade, custo e
+caixa resultante pertencem ao executor e aparecem apenas no `Trade`. A
+quantidade segue `ExecutionSpec.quantity_mode`: inteira em `integer_shares`
+(default, caminhos legados), fracionária em `fractional_notional` (caminho
+científico), onde ela mede unidades sintéticas da série de retorno total e não
+ações físicas.
 `MarketObservation` carrega somente informação de `t`: o participante não
 conhece o horizonte do dataset e não consegue identificar a última sessão do
 recorte. A elegibilidade de execução pertence ao executor, que associa cada
@@ -368,9 +372,8 @@ participa de nenhuma etapa de *tamanho da posição*. A exposição alvo sai de 
 política determinística e configurável, fora do alcance do modelo.
 
 A separação é a regra: **a stack de agentes decide, a arena executa.** O
-participante termina em peso alvo; quantidade inteira, direção, preço de
-execução, custo, caixa e `Trade` continuam sendo exclusividade do
-`ExecutionEngine`.
+participante termina em peso alvo; quantidade, direção, preço de execução,
+custo, caixa e `Trade` continuam sendo exclusividade do `ExecutionEngine`.
 
 Três decisões desta camada merecem registro:
 
@@ -765,6 +768,9 @@ Base Market Context        (EXISTE, em forma expansiva)
   janela recente de mercado causalmente disponível até t
   decisão metodológica aprovada: >= 2 anos
   hoje: history = snapshot[:t] -> indicadores recalculados sobre o truncado
+        -> convertidos em oito features ADIMENSIONAIS antes do prompt
+           (src/agents/features.py); nenhum nível, ticker ou data chega
+           ao provedor, e todos continuam no trace e no manifest
 
 Historical Memory          (NÃO EXISTE)
   recuperação seletiva de episódios mais antigos, sob demanda do agente

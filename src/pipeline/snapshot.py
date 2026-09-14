@@ -20,14 +20,32 @@ import pandas as pd
 
 from src.backtesting.b3_calendar import B3Calendar
 from src.config import settings
-from src.pipeline.extract import DataExtractor
+from src.pipeline.extract import PRICE_ADJUSTMENT, DataExtractor
 from src.pipeline.transform import validate_ohlcv
 
 # Schema 2 introduz a identidade verificável do manifest. Snapshots do schema 1
 # não possuem essa garantia e por isso não são aceitos como artefato científico.
-MANIFEST_SCHEMA_VERSION = 2
-LEGACY_MANIFEST_SCHEMA_VERSIONS = frozenset({1})
+#
+# Schema 3 registra a política de preço **resolvida** (em vez de declarar que
+# ela não estava configurada), moeda, timezone e a evidência de eventos
+# corporativos. Snapshots do schema 2 descrevem dados cuja semântica de ajuste
+# dependia da versão do provedor instalada e por isso não são aceitos.
+MANIFEST_SCHEMA_VERSION = 3
+LEGACY_MANIFEST_SCHEMA_VERSIONS = frozenset({1, 2})
 MISSING_SESSION_SAMPLE_LIMIT = 50
+
+#: Representação de preço do dataset científico. O preço é de retorno total:
+#: proventos e splits estão embutidos na série, não em cashflow.
+PRICE_REPRESENTATION = "adjusted_total_return"
+
+#: Moeda e fuso **declarados** do universo B3. Não são derivados do provedor —
+#: o provedor não os publica de forma verificável — e por isso aparecem no
+#: manifest como declaração explícita, passível de auditoria.
+DEFAULT_CURRENCY = "BRL"
+DEFAULT_EXCHANGE_TIMEZONE = "America/Sao_Paulo"
+
+#: Subdiretório da evidência de eventos corporativos dentro do snapshot.
+ACTIONS_DIRNAME = "actions"
 
 # Prefixo do digest embutido no ``snapshot_id``. 128 bits bastam para tornar a
 # adulteração evidente dentro deste modelo e mantêm o nome do diretório legível.
@@ -93,6 +111,9 @@ class DatasetSnapshot:
     effective_end: str | None
     tickers: tuple[str, ...]
     files: tuple[Mapping[str, Any], ...]
+    #: Evidência de eventos corporativos, quando capturada. Vazia quando o
+    #: snapshot foi materializado sem ela; nunca consumida pelo motor v1.
+    action_files: tuple[Mapping[str, Any], ...]
     coverage: tuple[Mapping[str, Any], ...]
     quality: Mapping[str, Any]
     manifest_json: str
@@ -262,6 +283,7 @@ def _snapshot_from_manifest(root: Path, manifest: Mapping[str, Any]) -> DatasetS
         effective_end=manifest["effective_end"],
         tickers=tuple(manifest["tickers"]),
         files=_readonly_records(manifest["files"]),
+        action_files=_readonly_records(manifest.get("action_files", [])),
         coverage=_readonly_records(manifest["coverage"]),
         quality=MappingProxyType(dict(manifest["quality"])),
         manifest_json=canonical_manifest_json(manifest),
@@ -277,8 +299,10 @@ def verify_snapshot_integrity(snapshot: DatasetSnapshot) -> None:
     """Rejeita snapshot adulterado depois da materialização.
 
     Compara tamanho e SHA-256 de cada arquivo com o que o manifest registrou.
+    A evidência de eventos corporativos entra na mesma conferência: ela é
+    evidência publicada, não anexo informal.
     """
-    for record in snapshot.files:
+    for record in (*snapshot.files, *snapshot.action_files):
         target = snapshot.path / record["path"]
         if not target.is_file():
             raise SnapshotIntegrityError(
@@ -391,17 +415,29 @@ def create_dataset_snapshot(
     calendar: B3Calendar | None = None,
     snapshot_dir: str | Path | None = None,
     repository_dir: str | Path | None = None,
+    capture_actions: bool = True,
+    currency: str = DEFAULT_CURRENCY,
+    exchange_timezone: str = DEFAULT_EXCHANGE_TIMEZONE,
 ) -> DatasetSnapshot:
     """Cria uma cópia imutável dos dados usados e seu manifest determinístico.
 
     Lacunas não são preenchidas nem interpretadas como corrupção. O artefato é
     criado com ``scientific_ready=false`` e ``attention_required`` para permitir
     auditoria, mas consumidores científicos devem rejeitá-lo.
+
+    ``end`` precisa ser anterior à data corrente no fuso da bolsa: a sessão em
+    formação chega do provedor como barra parcial — foi assim que o cache local
+    ganhou uma linha com OHLC zerado — e uma barra parcial não é evidência.
+
+    ``capture_actions`` desliga a captura de eventos corporativos. O default é
+    capturar; desligar é uma decisão explícita de quem materializa, nunca um
+    silêncio do pipeline.
     """
     requested_start, requested_end = DataExtractor._parse_interval(start, end)
     ordered_tickers = tuple(sorted(set(tickers)))
     if not ordered_tickers:
         raise ValueError("at least one ticker is required")
+    _require_closed_session(requested_end, exchange_timezone)
 
     extractor = extractor or DataExtractor()
     calendar = calendar or B3Calendar()
@@ -409,6 +445,7 @@ def create_dataset_snapshot(
     repo = Path(repository_dir or Path.cwd())
 
     frames: dict[str, pd.DataFrame] = {}
+    actions: dict[str, pd.DataFrame] = {}
     coverage: list[dict[str, Any]] = []
     for ticker in ordered_tickers:
         _validate_ticker(ticker)
@@ -416,6 +453,8 @@ def create_dataset_snapshot(
         validate_ohlcv(frame)
         frames[ticker] = frame.copy()
         coverage.append(analyze_session_coverage(ticker, frame, start, end, calendar))
+        if capture_actions:
+            actions[ticker] = _download_actions(extractor, ticker, start, end)
 
     created = datetime.now(timezone.utc)
     created_at = created.isoformat(timespec="microseconds").replace("+00:00", "Z")
@@ -426,6 +465,7 @@ def create_dataset_snapshot(
 
     try:
         files = _materialize_files(frames, staging_data)
+        action_files = _materialize_actions(actions, staging)
         complete = all(item["complete"] for item in coverage)
         effective_starts = [
             item["effective_start"] for item in coverage if item["effective_start"]
@@ -450,9 +490,11 @@ def create_dataset_snapshot(
             "source": {
                 "name": "yfinance",
                 "version": _package_version("yfinance"),
-                "price_adjustment": (
-                    "provider default; auto_adjust is not explicitly configured"
-                ),
+                "price_adjustment": PRICE_ADJUSTMENT,
+                "price_representation": PRICE_REPRESENTATION,
+                "currency": currency,
+                "exchange_timezone": exchange_timezone,
+                "corporate_actions_captured": bool(capture_actions),
             },
             "requested_start": requested_start.date().isoformat(),
             "requested_end": requested_end.date().isoformat(),
@@ -460,6 +502,7 @@ def create_dataset_snapshot(
             "effective_end": max(effective_ends) if effective_ends else None,
             "tickers": list(ordered_tickers),
             "files": files,
+            "action_files": action_files,
             "coverage": coverage,
             "quality": quality,
             "calendar": _calendar_metadata(calendar),
@@ -511,6 +554,60 @@ def _materialize_files(
             }
         )
     return files
+
+
+def _require_closed_session(requested_end: pd.Timestamp, timezone_name: str) -> None:
+    """Recusa um recorte que alcance a sessão ainda em formação."""
+    try:
+        today = pd.Timestamp.now(tz=timezone_name).date()
+    except Exception as exc:  # fuso inválido é erro de configuração, não dado
+        raise ValueError(f"invalid exchange timezone: {timezone_name!r}") from exc
+    if requested_end.date() >= today:
+        raise ValueError(
+            f"requested_end {requested_end.date().isoformat()} is not a closed "
+            f"session in {timezone_name} (today is {today.isoformat()}); a "
+            "snapshot must not capture the bar of a session still forming"
+        )
+
+
+def _download_actions(
+    extractor: DataExtractor, ticker: str, start: str, end: str
+) -> pd.DataFrame:
+    """Evidência de eventos corporativos, exigida do extrator declarado."""
+    downloader = getattr(extractor, "download_actions", None)
+    if downloader is None:
+        raise ValueError(
+            f"{type(extractor).__name__} cannot provide corporate actions; "
+            "pass capture_actions=False to materialize a snapshot without that "
+            "evidence"
+        )
+    return downloader(ticker, start, end)
+
+
+def _materialize_actions(
+    actions: Mapping[str, pd.DataFrame], staging: Path
+) -> list[dict[str, Any]]:
+    """Grava a evidência de eventos e a devolve pronta para entrar na identidade."""
+    if not actions:
+        return []
+    directory = staging / ACTIONS_DIRNAME
+    directory.mkdir(parents=True, exist_ok=True)
+    records: list[dict[str, Any]] = []
+    for ticker in sorted(actions):
+        frame = actions[ticker].copy()
+        frame.index.name = "date"
+        path = directory / f"{ticker}.csv"
+        frame.to_csv(path, date_format="%Y-%m-%d", lineterminator="\n")
+        records.append(
+            {
+                "ticker": ticker,
+                "path": path.relative_to(staging).as_posix(),
+                "size": path.stat().st_size,
+                "sha256": _sha256(path),
+                "events": int(len(frame)),
+            }
+        )
+    return records
 
 
 def _make_snapshot_id(created: datetime, identity: Mapping[str, Any]) -> str:

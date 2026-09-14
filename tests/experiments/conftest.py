@@ -27,6 +27,14 @@ class StubExtractor:
     def download(self, ticker: str, start: str, end: str) -> pd.DataFrame:
         return self.frames[ticker].copy()
 
+    def download_actions(self, ticker: str, start: str, end: str) -> pd.DataFrame:
+        """Universo sintético sem eventos corporativos: evidência vazia, não ausente."""
+        return pd.DataFrame(
+            {"dividends": [], "splits": []},
+            index=pd.DatetimeIndex([], name="date"),
+            dtype=float,
+        )
+
 
 def price_series(sessions: pd.DatetimeIndex, base: float, wave: float) -> pd.DataFrame:
     """Preços determinísticos com oscilação suficiente para cruzar médias."""

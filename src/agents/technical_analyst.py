@@ -6,6 +6,7 @@ from collections import Counter
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from src.agents.features import FEATURE_KEYS, canonical_prompt_json
 from src.agents.llm_client import LLMCallMetadata, LLMClient
 from src.agents.llm_trace import STAGE_TECHNICAL_ANALYST
 from src.agents.state import (
@@ -26,8 +27,17 @@ INDICATOR_KEYS = (
     "macd_sinal",
 )
 
+#: Prompt dos caminhos **legados** (``AgentBacktestEngine``,
+#: ``DailyAgentRunner``), que continuam alimentando o estado com níveis brutos.
 SYSTEM_PROMPT = """You are the technical analyst for Hedge-fund-lab.
 Exclusively evaluate the provided bar close value and technical indicators. Ignore news, external knowledge, and future prices.
+Return JSON with signal (COMPRA, VENDA, or MANTER), a concise justification in Portuguese, and confidence between 0 and 1."""
+
+#: Prompt do caminho **científico**. Ele não menciona preço, ativo nem data
+#: porque nenhum dos três é transmitido: o payload é adimensional e anônimo por
+#: contrato (:mod:`src.agents.features`).
+CAUSAL_SYSTEM_PROMPT = """You are the technical analyst for Hedge-fund-lab.
+Exclusively evaluate the dimensionless technical features provided. They are scale-free ratios: no price level, no asset identity and no calendar date are available, and none is required for this decision. Ignore news, external knowledge, and future prices.
 Return JSON with signal (COMPRA, VENDA, or MANTER), a concise justification in Portuguese, and confidence between 0 and 1."""
 
 
@@ -59,7 +69,47 @@ def parse_indicators_from_state(state: AgentState) -> dict[str, float]:
     }
 
 
+def parse_features_from_state(state: AgentState) -> dict[str, float]:
+    """Features causais do estado, restritas ao contrato declarado.
+
+    Filtrar por :data:`~src.agents.features.FEATURE_KEYS` não é redundância
+    defensiva: é o ponto em que um campo novo — e possivelmente portador de
+    nível — deixa de atravessar para o provedor por acidente.
+    """
+    features = state.get("features", {})
+    return {
+        key: float(features[key])
+        for key in FEATURE_KEYS
+        if features.get(key) is not None
+    }
+
+
+def has_quantitative_context(state: AgentState) -> bool:
+    """Há contexto quantitativo suficiente para consultar o analista?"""
+    return bool(parse_features_from_state(state)) or bool(
+        parse_indicators_from_state(state)
+    )
+
+
+def system_prompt_for(state: AgentState) -> str:
+    """Escolhe o system prompt pelo contrato que o estado satisfaz."""
+    return CAUSAL_SYSTEM_PROMPT if parse_features_from_state(state) else SYSTEM_PROMPT
+
+
 def build_prompt(state: AgentState) -> str:
+    """Prompt do usuário — causal quando há features, legado quando não há.
+
+    O caminho científico **não** transmite ticker, data nem preço: identidade e
+    calendário abrem um canal de memorização do modelo, e o nível absoluto é
+    contaminado por proventos posteriores a ``t``. Os três continuam íntegros
+    nos artefatos de auditoria.
+    """
+    features = parse_features_from_state(state)
+    if features:
+        return (
+            f"Features: {canonical_prompt_json(features)}\n"
+            "Emit COMPRA, VENDA, or MANTER based solely on these quantitative metrics."
+        )
     indicators = parse_indicators_from_state(state)
     indicator_text = json.dumps(indicators, ensure_ascii=False, sort_keys=True)
     return (
@@ -82,12 +132,12 @@ def create_technical_analyst_node(llm: LLMClient):
         if price is None or price <= 0:
             message = "technical_analyst: preço atual ausente ou inválido"
             return {"technical_signal": _safe_signal(message), "errors": [message]}
-        if not parse_indicators_from_state(state):
+        if not has_quantitative_context(state):
             message = "technical_analyst: indicadores ausentes"
             return {"technical_signal": _safe_signal(message), "errors": [message]}
         try:
             response = await llm.generate(
-                SYSTEM_PROMPT,
+                system_prompt_for(state),
                 build_prompt(state),
                 TechnicalSignal,
                 metadata=LLMCallMetadata(stage=STAGE_TECHNICAL_ANALYST),
@@ -144,7 +194,7 @@ def create_technical_analyst_ensemble_node(
             "Avalie de forma independente.\n" + build_prompt(state)
         )
         response = await llm.generate(
-            SYSTEM_PROMPT,
+            system_prompt_for(state),
             prompt,
             TechnicalSignal,
             {"temperature": temperature, "seed": seed, "analyst_id": analyst_number},
@@ -165,7 +215,7 @@ def create_technical_analyst_ensemble_node(
 
     async def node(state: AgentState) -> dict:
         price = state.get("current_price")
-        if price is None or price <= 0 or not parse_indicators_from_state(state):
+        if price is None or price <= 0 or not has_quantitative_context(state):
             message = "technical_ensemble: preço ou indicadores ausentes"
             result = _no_consensus(config, [], Counter(), message)
             result["errors"] = [message]
