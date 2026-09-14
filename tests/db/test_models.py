@@ -3,7 +3,8 @@
 from datetime import date
 
 import pytest
-from sqlalchemy import Column, Date, Integer, String, create_engine
+from sqlalchemy import Column, Date, create_engine
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, sessionmaker
 
 from src.db.models import Ativo, Base, CotacaoDiaria, IndicadorTecnico
@@ -43,7 +44,7 @@ class TestAtivo:
         session.add(Ativo(ticker="WEGE3", setor="Máquinas"))
         session.flush()
 
-        with pytest.raises(Exception):
+        with pytest.raises(IntegrityError):
             session.add(Ativo(ticker="WEGE3", setor="Duplicado"))
             session.flush()
 

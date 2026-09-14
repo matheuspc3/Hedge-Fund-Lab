@@ -26,7 +26,9 @@ class TestSMACross:
         rng = np.random.default_rng(42)
         dates = pd.bdate_range("2022-01-01", periods=30)
         # Preços estáveis, depois sobem
-        prices = list(np.full(15, 100.0)) + list(100.0 + np.cumsum(rng.uniform(0.5, 1.5, 15)))
+        prices = list(np.full(15, 100.0)) + list(
+            100.0 + np.cumsum(rng.uniform(0.5, 1.5, 15))
+        )
         df = pd.DataFrame({"fechamento": prices}, index=dates)
 
         strategy = SMACross(fast_window=3, slow_window=10)

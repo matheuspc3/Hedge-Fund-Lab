@@ -1,14 +1,23 @@
-﻿"""Modelos ORM para o Hedge-fund-lab.
+"""Modelos ORM para o Hedge-fund-lab.
 
-TrÃªs tabelas principais:
-- ``Ativo`` â€” ativos financeiros (PETR4, WEGE3, etc.)
-- ``CotacaoDiaria`` â€” cotaÃ§Ãµes OHLCV diÃ¡rias
-- ``IndicadorTecnico`` â€” indicadores tÃ©cnicos calculados
+Três tabelas principais:
+- ``Ativo`` — ativos financeiros (PETR4, WEGE3, etc.)
+- ``CotacaoDiaria`` — cotações OHLCV diárias
+- ``IndicadorTecnico`` — indicadores técnicos calculados
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-from sqlalchemy import Column, Date, DateTime, Float, ForeignKey, Integer, String
+from sqlalchemy import (
+    Column,
+    Date,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import DeclarativeBase, relationship, validates
 
 
@@ -24,22 +33,29 @@ class Ativo(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     ticker = Column(String(20), unique=True, nullable=False, index=True)
     setor = Column(String(100), nullable=False)
-    created_at = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, nullable=False, default=lambda: datetime.now(UTC))
 
-    cotacoes = relationship("CotacaoDiaria", back_populates="ativo", cascade="all, delete-orphan")
-    indicadores = relationship("IndicadorTecnico", back_populates="ativo", cascade="all, delete-orphan")
+    cotacoes = relationship(
+        "CotacaoDiaria", back_populates="ativo", cascade="all, delete-orphan"
+    )
+    indicadores = relationship(
+        "IndicadorTecnico", back_populates="ativo", cascade="all, delete-orphan"
+    )
 
     def __repr__(self) -> str:
         return f"<Ativo(ticker='{self.ticker}', setor='{self.setor}')>"
 
 
 class CotacaoDiaria(Base):
-    """CotaÃ§Ã£o diÃ¡ria OHLCV de um ativo."""
+    """Cotação diária OHLCV de um ativo."""
 
     __tablename__ = "cotacoes_diarias"
+    __table_args__ = (UniqueConstraint("ativo_id", "data", name="uq_cotacao_ativo_data"),)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    ativo_id = Column(Integer, ForeignKey("ativos.id", ondelete="CASCADE"), nullable=False)
+    ativo_id = Column(
+        Integer, ForeignKey("ativos.id", ondelete="CASCADE"), nullable=False
+    )
     data = Column(Date, nullable=False, index=True)
     abertura = Column(Float, nullable=False)
     maxima = Column(Float, nullable=False)
@@ -60,12 +76,17 @@ class CotacaoDiaria(Base):
 
 
 class IndicadorTecnico(Base):
-    """Indicadores tÃ©cnicos calculados para um ativo em uma data."""
+    """Indicadores técnicos calculados para um ativo em uma data."""
 
     __tablename__ = "indicadores_tecnicos"
+    __table_args__ = (
+        UniqueConstraint("ativo_id", "data", name="uq_indicador_ativo_data"),
+    )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    ativo_id = Column(Integer, ForeignKey("ativos.id", ondelete="CASCADE"), nullable=False)
+    ativo_id = Column(
+        Integer, ForeignKey("ativos.id", ondelete="CASCADE"), nullable=False
+    )
     data = Column(Date, nullable=False, index=True)
     sma_50 = Column(Float, nullable=True)
     sma_200 = Column(Float, nullable=True)
@@ -80,5 +101,3 @@ class IndicadorTecnico(Base):
 
     def __repr__(self) -> str:
         return f"<IndicadorTecnico(ativo_id={self.ativo_id}, data={self.data})>"
-
-

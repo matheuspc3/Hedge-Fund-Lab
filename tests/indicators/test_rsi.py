@@ -1,10 +1,8 @@
 """Testes para o indicador RSI."""
 
-import numpy as np
 import pandas as pd
 import pytest
-from hypothesis import given, settings
-from hypothesis import strategies as st
+from hypothesis import given, settings, strategies as st
 
 from src.indicators.rsi import rsi
 
@@ -57,13 +55,17 @@ class TestRSI:
         """Menos dados que o period → RSI = 100 (fillna)."""
         series = pd.Series([1.0, 2.0, 3.0])
         resultado = rsi(series, period=14)
-        assert resultado.isna().all() == False  # noqa: E711
+        assert not resultado.isna().all()
         assert (resultado == 100.0).all()
 
     # ── Property-based ─────────────────────────────────────────
 
     @given(
-        values=st.lists(st.floats(min_value=0.01, max_value=1000, allow_nan=False), min_size=20, max_size=200),
+        values=st.lists(
+            st.floats(min_value=0.01, max_value=1000, allow_nan=False),
+            min_size=20,
+            max_size=200,
+        ),
         period=st.integers(min_value=1, max_value=30),
     )
     @settings(max_examples=50)

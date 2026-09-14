@@ -1,31 +1,85 @@
-[build-system]
-requires = ["setuptools>=68.0"]
-build-backend = "setuptools.build_meta"
-
-[project]
+[tool.poetry]
 name = "hedge-fund-lab"
 version = "0.1.0"
 description = "Laboratório Quantitativo de Backtesting baseado em Sistemas Multiagentes"
-requires-python = ">=3.11"
-dependencies = [
-    "yfinance>=0.2.0",
-    "pandas>=2.0.0",
-    "numpy>=1.24.0",
-    "sqlalchemy>=2.0",
-    "psycopg2-binary",
-    "prefect>=2.0,<3.0",
-    "pydantic-settings",
-]
+authors = ["Matheus <matheus@example.com>", "Lucas <lucas@example.com>"]
+readme = "README.md"
+packages = [{include = "src"}]
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=8.0",
-    "pytest-cov>=4.0",
-    "pytest-mock>=3.0",
-    "hypothesis>=6.0",
-    "responses",
-]
+[tool.poetry.dependencies]
+python = ">=3.11,<3.14"
+yfinance = ">=0.2.0"
+pandas = ">=2.0.0"
+numpy = ">=1.24.0"
+scipy = ">=1.10.0"
+greenlet = "^3.0.0"
+sqlalchemy = ">=2.0"
+psycopg2-binary = "^2.9.10"
+psycopg = {extras = ["binary"], version = "^3.3.4"}
+prefect = "^2.20.0"
+anyio = "4.5.0"
+pydantic = ">=2.0"
+pydantic-settings = "^2.3.3"
+langgraph = ">=1.0,<2.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.0"
+pytest-cov = ">=4.0"
+pytest-mock = ">=3.0"
+hypothesis = ">=6.0"
+responses = "^0.25.0"
+ruff = "^0.6.9"
+pyright = "^1.1.385"
+pre-commit = "^3.7.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+addopts = "--basetemp=./.pytest_cache/tmp"
+
+[tool.pyright]
+include = ["src", "tests", "scripts", "dashboard"]
+pythonVersion = "3.11"
+typeCheckingMode = "basic"
+venvPath = "."
+venv = ".venv"
+
+[tool.ruff]
+exclude = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "build",
+    "dist"
+]
+line-length = 90
+indent-width = 4
+show-fixes = true
+
+[tool.ruff.format]
+line-ending = "lf"
+quote-style = "double"
+indent-style = "space"
+
+[tool.ruff.lint]
+extend-select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+    "RUF"  # ruff-specific rules
+]
+ignore = [
+    "E501", # line-length managed by formatter
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+combine-as-imports = true
