@@ -715,6 +715,28 @@ tamanho de histórico deixariam o Buy & Hold sem comprar e o pico de patrimônio
 ancorado no início do snapshot. `PortfolioParticipant` já usava esse relógio; os
 demais participantes passaram a usá-lo também.
 
+#### Subfases da CALIBRATION não são objetos de arquitetura
+
+O protocolo passou a descrever subfases de calibração — Diagnostic Hardening,
+CAL-A, Sequential Development, Stress e CAL-B (`EXPERIMENT_PROTOCOL.md` §5.12).
+Elas são **governança metodológica**, não novas classes: cada uma é executada
+pela mesma infraestrutura já existente.
+
+```text
+Calibration Anchor      EvaluationSpec com decision_start == decision_end
+Sequential Development  EvaluationSpec com decision_start < decision_end
+Stress / CAL-B          idem, âncoras declaradas
+                        v
+        mesma ExperimentSpec -> ExperimentRunner -> Arena/ExecutionEngine
+        mesmo snapshot_id · spec_hash por janela · manifest · trace
+```
+
+O que distingue uma subfase da outra é a declaração (`phase`, `case_id`) e o
+registro metodológico, não o caminho de execução. Não existe — e não deve ser
+criado — um objeto de código por subfase: `phase` e `case_id` já são declarados
+na construção do runner e deliberadamente **não** entram no `spec_hash`, porque
+não alteram nada do que é computado.
+
 ### Lacunas / arquitetura alvo
 
 O que **ainda não existe** no contrato, comprovado no repositório:

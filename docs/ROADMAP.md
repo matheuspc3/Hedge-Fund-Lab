@@ -35,13 +35,17 @@ está em [`ESTADO_ATUAL.md`](ESTADO_ATUAL.md).
 | Análises secundárias | PETR4 e WEGE3, sem substituir a comparação principal | **STATUS: proposta / pendente de congelamento** |
 | Informação e execução | Features disponíveis no fechamento de `t`; execução na abertura de `t+1` | **STATUS: proposta / pendente de congelamento** |
 | Desenho experimental | Calibração retrospectiva do sistema -> freeze -> validação pseudo-live -> teste final -> live/shadow, em vez de TRAIN/TEST clássico | **STATUS: decisão metodológica aprovada** (datas e períodos continuam `TBD`) |
-| Janela base de mercado | O sistema decide em `t` com pelo menos ~2 anos de histórico causalmente disponível | **STATUS: decisão metodológica aprovada**; gate implementado como `minimum_history_sessions` (valor `TBD`) |
+| Janela base de mercado | O sistema decide em `t` com pelo menos ~2 anos de histórico causalmente disponível | **STATUS: decisão metodológica aprovada**; gate implementado como `minimum_history_sessions`, valor recomendado 504 (503 sessões anteriores + a sessão de decisão), pendente de congelamento |
+| Governança da CALIBRATION | Subfases com autoridades distintas — Diagnostic Hardening, CAL-A (20 âncoras), Sequential Development, Stress (`<= 8`, fora do CORE) e CAL-B (10 âncoras, one-shot) | **STATUS: decisão metodológica aprovada**; datas, critérios e valores continuam `TBD` |
+| Embargo temporal | Nenhum embargo obrigatório; separação garantida por ordem cronológica, disjunção, freeze e pré-registro | **STATUS: decisão metodológica aprovada** |
+| Alvo científico | Resultado é o P&L realizado pela Arena e a curva líquida; `open(t+1) -> close(t+1)` é diagnóstico de decisão; `close(t) -> close(t+1)` é descritivo; não há tarefa de previsão probabilística no v1 | **STATUS: decisão metodológica aprovada** (métrica primária continua `TBD`) |
 | Modo de histórico | `expanding`: a decisão em `t` enxerga todo o histórico causal até `t` | **STATUS: decisão metodológica aprovada para o v1**; rolling fica como ablation futura |
 | Historical Memory | Recuperação seletiva de episódios antigos, sob `available_at <= decision_time` | **STATUS: extensão planejada, não implementada** |
 | Custos | Uma especificação versionada e idêntica para todos | **STATUS: proposta / pendente de congelamento** |
 | Resultado | `RunResult` e manifest canônicos, identificados por `run_id` | **STATUS: proposta / pendente de congelamento** |
 | Risco | Regras determinísticas obrigatórias; LLM apenas complementa | **STATUS: proposta / pendente de congelamento** |
 | Kelly | Confiança textual do LLM não é `P(win)`; sizing científico é determinístico | **STATUS: decisão metodológica aprovada** (o valor de `long_target_weight` continua `TBD`) |
+| Exposição | `long_target_weight` é decisão declarada de política de exposição, não parâmetro de calibração por desempenho; não é otimizado em CAL-A | **STATUS: decisão metodológica aprovada** (valor `TBD`) |
 | Tempo real | Fora do caminho crítico até a arena histórica ser válida | **STATUS: proposta / pendente de congelamento** |
 
 Quorum, modelos, prompts, thresholds, janelas experimentais, custos e demais
@@ -319,6 +323,30 @@ desenho científico está formalizado em
 [`EXPERIMENT_PROTOCOL.md`](EXPERIMENT_PROTOCOL.md). O que resta é decisão
 científica da dupla/orientador, não código.
 
+**A governança da CALIBRATION deixou de ser pendência de desenho.** Subfases,
+autoridade por parâmetro, quantidade de âncoras, regra one-shot do CAL-B,
+invariantes de disjunção, alvo científico, ausência de embargo e warm-up de 504
+sessões estão documentados na seção 5.12 do protocolo. O que resta nesta frente
+é **escolha de valores**, não metodologia:
+
+```text
+DESENHADO / DOCUMENTADO
+   subfases da calibração e autoridade por parâmetro
+   CORE = 30 = CAL-A (20) + CAL-B (10); stress <= 8 fora do CORE
+   CAL-B one-shot e regra de consumo do holdout
+   classe de comparabilidade e change log
+   alvo científico e diagnostics
+   warm-up = 504 · sem embargo obrigatório
+
+AINDA FALTA ESCOLHER
+   critério agregado de CAL-A
+   janela, duração, critério e tetos do Sequential Development
+   long_target_weight (política de exposição)
+   métrica primária e regra de síntese dos runs de Validation
+   universo final, provider/model e custos
+   datas: âncoras de calibração, stress, CAL-B, Validation e Final Test
+```
+
 O desenho aprovado é calibração retrospectiva do sistema seguida de avaliação
 causal pseudo-live, e não TRAIN/TEST clássico — o LLM chega pré-treinado e o
 experimento v1 não faz fine-tuning:
@@ -335,7 +363,12 @@ overfitting dos pesquisadores. Ele se subdivide nas decisões pendentes abaixo.
 - [ ] Selecionar os Calibration Cases, cobrindo mais de um regime de mercado
   (alta, baixa, lateral, volatilidade alta/baixa, choques macro, eventos
   políticos, juros, commodities quando aplicável).
-- [ ] Definir a quantidade de Calibration Cases.
+- [x] Definir a quantidade de Calibration Cases: `CORE = 30` (`CAL-A = 20`,
+  `CAL-B = 10`), mais até 8 âncoras de stress declaradas fora do CORE.
+- [ ] Escolher as 20 datas de CAL-A, as 10 de CAL-B e as âncoras de stress,
+  respeitando os invariantes de disjunção da seção 5.12 do protocolo.
+- [ ] Definir a janela e a duração do Sequential Development, verificando que
+  ela não contém nenhuma âncora de CAL-B.
 - [ ] Definir o período de PSEUDO-LIVE VALIDATION, sem interseção com a
   calibração.
 - [ ] Definir o FINAL TEST PERIOD, separado de calibração e validação.
@@ -343,15 +376,26 @@ overfitting dos pesquisadores. Ele se subdivide nas decisões pendentes abaixo.
 
 ### 7.2 Parâmetros a congelar
 
-- [ ] Congelar `long_target_weight` (hoje apenas default técnico `0.25`) e a
+- [ ] Definir `long_target_weight` (hoje apenas default técnico `0.25`) como
+  política declarada de exposição — não por calibração em CAL-A — e congelar a
   política de sizing do experimento v1.
-- [ ] Congelar `decision_frequency`.
+- [ ] Definir o critério agregado único de seleção de CAL-A, dentro das
+  restrições da seção 5.12 (candidatos `C1`–`C4` registrados lá).
+- [ ] Definir o critério de seleção e os tetos `N_seq`/`R_seq` do Sequential
+  Development, antes de executá-lo.
+- [ ] Congelar `decision_frequency` (selecionado no Sequential Development, não
+  em âncoras).
 - [ ] Congelar prompts, papéis, `analyst_count`, `consensus_threshold` e
   temperaturas.
-- [ ] Congelar provider/model e política de seeds/estocasticidade.
+- [ ] Declarar explicitamente na `ParticipantSpec` todo parâmetro material,
+  inclusive quando o valor coincidir com o default técnico.
+- [ ] Congelar provider/model e política de estocasticidade, incluindo a regra
+  de síntese entre os 2–3 *independent live LLM runs* da validação (não descrever
+  como "seeds distintas" enquanto a seed não for transmitida ao provedor).
 - [ ] Congelar universo, snapshot, dados e features.
-- [ ] Congelar a parametrização exata da janela base de mercado `>= 2 anos`
-  (calendário x pregões, mínimo x máximo, sessões faltantes).
+- [x] Parametrizar a janela base de mercado `>= 2 anos`:
+  `minimum_history_sessions = 504`, contado em sessões do calendário comum,
+  como mínimo e não máximo — pendente apenas do ato formal de congelamento.
 - [ ] Congelar custos, taxa livre de risco e benchmark de mercado.
 - [ ] Definir a métrica primária e separar diagnóstico de decisão de performance
   de carteira.
@@ -466,7 +510,7 @@ Sem datas até existir cronograma confirmado.
 | M1 — Scientific Core | Dados, execução, custos e métricas canônicos e validados |
 | M2 — Common Arena | Participantes sob o mesmo contrato, motor e `ExperimentSpec` |
 | M3 — LLM Hardened | Concorrência, telemetria, custo e fail-closed confiáveis |
-| M4 — Experimental Protocol Frozen | `Freeze EXPERIMENT PROTOCOL v1`: janelas, parâmetros e métricas aprovados antes da validação pseudo-live |
+| M4 — Experimental Protocol Frozen | `Freeze EXPERIMENT PROTOCOL v1`. Governança da CALIBRATION **desenhada e documentada** (subfases, autoridade por parâmetro, CAL-B one-shot, disjunção, warm-up 504, sem embargo). Falta escolher: critério agregado de CAL-A, parâmetros e janela do Sequential Development, `long_target_weight`, métrica primária, universo/model/custos e as fronteiras temporais reais — tudo aprovado antes da validação pseudo-live |
 | M5 — Ablations Executed | Variantes executadas e rastreadas por manifest |
 | M6 — OOS Scientific Results | Validação pseudo-live, FINAL TEST, Walk-Forward e análises concluídos |
 | M7 — TCC Final | Código, evidências, monografia e defesa alinhados |

@@ -40,8 +40,15 @@ FINAL TEST              (avaliação final, separada de calibração e validaç�
 LIVE / SHADOW           (decisão para o próximo pregão real)
 ```
 
-Detalhamento na seção 5. Onde este documento diz apenas `TEST`, leia
-**FINAL TEST**.
+A SYSTEM CALIBRATION, por sua vez, tem subfases com autoridades distintas:
+
+```text
+DIAGNOSTIC HARDENING -> CAL-A -> SEQUENTIAL DEVELOPMENT -> STRESS REPORT -> CAL-B
+```
+
+Detalhamento na seção 5; a governança das subfases, suas autoridades e suas
+regras de invalidação estão na seção 5.12. Onde este documento diz apenas
+`TEST`, leia **FINAL TEST**.
 
 ## 1. Research question
 
@@ -166,7 +173,8 @@ históricas conhecidas. Abrange, quando existirem:
 - parâmetros de consenso;
 - temperaturas;
 - limites de risco;
-- `long_target_weight`;
+- `long_target_weight` — declarado e congelado, **não** calibrado por desempenho
+  (seções 5.12 e 11);
 - `decision_frequency`;
 - regras de recuperação de contexto histórico;
 - demais configurações declaradas do sistema.
@@ -174,6 +182,13 @@ históricas conhecidas. Abrange, quando existirem:
 Nenhum peso de modelo é alterado nesse processo. O artefato ajustado é a
 configuração, capturada pela `ExperimentSpec`, pelo `spec_hash` e pelo commit
 (seção 20).
+
+**Nem todo item desta lista pode ser ajustado em qualquer momento da
+calibração, nem com base em qualquer evidência.** A lista acima descreve o
+*escopo* do que é ajustável; qual subfase tem autoridade sobre cada parâmetro,
+e sob que tipo de justificativa, está na seção 5.12. Em particular,
+`long_target_weight` deixou de ser parâmetro de calibração por desempenho
+(seções 5.12 e 11).
 
 A calibração estatística de `LLM confidence -> probability` é questão
 **separada** e permanece fora do protocolo principal v1, como já registrado na
@@ -256,8 +271,33 @@ entre critérios candidatos como:
 - mudanças relevantes em juros;
 - regimes específicos de commodities, quando aplicável.
 
-São **critérios candidatos**, não uma seleção congelada. Quantidade de casos,
-datas e ativo do piloto: `TBD`.
+São **critérios candidatos**, não uma seleção congelada. Datas concretas,
+episódios e ativo do piloto: `TBD`.
+
+**Quantidade de âncoras — decisão metodológica aprovada.** A quantidade deixou
+de ser `TBD`; as datas não.
+
+```text
+CORE   = 30 âncoras
+       = CAL-A (20)  ∪  CAL-B (10)
+       CAL-A ∩ CAL-B = ∅
+
+STRESS <= 8 âncoras ADICIONAIS, declaradas FORA do CORE
+```
+
+Consequência explícita, porque a alternativa oposta chegou a ser considerada:
+
+```text
+Stress NÃO reduz CAL-A.
+
+alternativa REJEITADA: retirar as âncoras de stress de dentro do CORE,
+o que forçaria CAL-A a cair de 20 para 12 e enfraqueceria a única
+subfase de seleção quantitativa do protocolo.
+```
+
+Papel de cada conjunto, detalhado na seção 5.12: CAL-A seleciona parâmetros de
+decisão instantânea; CAL-B é sanity check one-shot em datas nunca vistas; as
+âncoras de stress são diagnóstico qualitativo, sem autoridade de seleção.
 
 ### 5.6 Researcher overfitting
 
@@ -287,10 +327,16 @@ PSEUDO-LIVE VALIDATION
 FINAL TEST
 ```
 
+A separação de estágios é condição necessária e **não suficiente**: ela impede
+que a avaliação seja ajustada, mas não limita o ajuste dentro da própria
+calibração. O que limita esse ajuste — espaço de busca finito, teto de
+configurações e rodadas, critério declarado antes, change log e autoridade por
+subfase — está na seção 5.12.
+
 ### 5.7 Freeze
 
-Ao encerrar a calibração deve existir uma configuração **identificável e
-reproduzível**. O freeze acontece **antes da PSEUDO-LIVE VALIDATION**, não antes
+O freeze só ocorre **depois de CAL-B aprovado** (seção 5.12). Ao encerrar a
+calibração deve existir uma configuração **identificável e reproduzível**. O freeze acontece **antes da PSEUDO-LIVE VALIDATION**, não antes
 do FINAL TEST: se um elemento material ainda puder mudar quando a validação
 começar, a validação não é out-of-sample. Todo item listado abaixo está
 congelado a partir daquele ponto.
@@ -326,6 +372,16 @@ LLM trace
 
 Freeze é um ato metodológico registrado sobre esse mecanismo. Possuir o
 mecanismo não equivale a ter congelado (seção 21).
+
+**Declaração explícita obrigatória.** Todo parâmetro científico material deve
+ser declarado na `ParticipantSpec` no momento do freeze, **mesmo quando o valor
+escolhido coincide com o default técnico do código**. A razão é de proveniência,
+não de estilo: `build_participant` liga apenas o que a spec declara, e um
+parâmetro omitido é resolvido pelo default do construtor — isto é, pelo código,
+coberto só pelo `git_commit`. Parâmetro omitido não entra em `spec.params` e,
+portanto, não é distinguido pelo `spec_hash`: duas calibrações com escolhas
+diferentes poderiam colidir no mesmo hash. Decisão científica não pode depender
+silenciosamente de um default.
 
 A regra de reversão continua valendo em toda a fase seguinte: **alteração
 decidida depois de observar a VALIDATION devolve aquela janela para
@@ -460,10 +516,30 @@ contagem comum é deliberada: é o único número igual para todos os tickers do
 run e é limite inferior do histórico que qualquer um deles recebe. Em run
 single-asset — todo o caminho `llm_agent` hoje — os dois números coincidem.
 
-O valor científico continua **`TBD`**. Nada aqui congela 504 sessões, 730 dias
-ou "exatamente 2 anos". O manifest publica as duas medidas realizadas —
-`warmup_sessions` e `warmup_calendar_days` — para que a conformidade com o
-requisito aprovado seja auditável depois, sem reler o snapshot.
+**Valor recomendado — decisão metodológica aprovada, pendente de
+congelamento formal:**
+
+```text
+minimum_history_sessions = 504
+
+504 sessões disponíveis até e incluindo decision_start
+  = 503 sessões estritamente anteriores + a própria sessão t
+```
+
+Justificativa aprovada, e só ela: são aproximadamente dois anos de pregões da
+B3; satisfaz por construção a janela base aprovada na seção 7.2; é `> 2,5 × 200`,
+de modo que a maior janela finita em uso (`sma_200`) está bem além da
+inicialização e o MACD — recursivo por EMA, `adjust=False` — tem burn-in amplo;
+é **gate de maturidade informacional, não truncamento**, porque o histórico
+continua expansivo e nada é descartado. Argumentos estatísticos adicionais
+(independência de observações mensais, contagem de regimes, erro de estimador)
+foram considerados e **retirados** por não serem demonstráveis neste desenho;
+se forem desejados, entram apenas com referência de literatura.
+
+O manifest publica as duas medidas realizadas — `warmup_sessions` e
+`warmup_calendar_days` — para que a conformidade seja auditável depois, sem
+reler o snapshot. A equivalência em dias corridos é evidência publicada, não
+requisito.
 
 #### Duas formas de usar a mesma janela
 
@@ -536,12 +612,568 @@ no `spec_hash` porque a janela difere. Não se cria snapshot por caso.
 runner — antes de executar, antes de qualquer chamada ao provedor. Não existe
 caminho que anexe a fase durante a publicação do run.
 
+Como `phase` distingue apenas os quatro estágios, **a subfase da calibração
+(seção 5.12) é registrada no `case_id`**, que é rótulo humano curto e existe
+justamente para isso. Nenhum campo novo é criado para representar subfase:
+
+```text
+phase   = CALIBRATION
+case_id = "hardening-v3" · "cal-a-cfg2-anchor07" · "seqdev-w1-cfg3"
+          "stress-report-03" · "cal-b-final"
+```
+
 `phase` e `case_id` **não entram no `spec_hash`**, porque não alteram nada do
 que é computado: dois runs que só diferem na fase produzem exatamente os mesmos
 números, e separá-los no hash quebraria o significado de "mesma configuração,
 mesmo resultado". O controle contra reclassificação é a declaração prévia, não o
 hash. Diretório nunca é identidade metodológica.
 
+
+### 5.12 Governança da CALIBRATION
+
+**STATUS: metodologia aprovada. Datas, valores e critérios continuam `TBD`.**
+
+A CALIBRATION não é uma fase única. Ela tem cinco subfases, com autoridades
+distintas e **não cumulativas**: um parâmetro ajustado numa subfase não volta a
+ser ajustado em outra.
+
+#### Subfases e ordem
+
+```text
+CALIBRATION WINDOW
+│
+├── DIAGNOSTIC HARDENING
+│      defeitos de contrato, epistêmicos e de coerência
+│      outcome-blind · versionado · sem métrica financeira
+│      -> produz o baseline estável B0
+│
+├── CAL-A                         20 âncoras
+│      Performance Calibration de decisão instantânea
+│      espaço finito pré-registrado
+│
+├── SEQUENTIAL DEVELOPMENT        janela curta, datas TBD
+│      parâmetros dependentes de trajetória
+│      development contaminado, rotulado
+│
+├── STRESS REPORT                 <= 8 âncoras adicionais, fora do CORE
+│      diagnóstico qualitativo de robustez, autoridade zero
+│
+└── CAL-B                         10 âncoras nunca vistas
+       sanity check one-shot, outcome-blind
+            v
+         FREEZE
+```
+
+A ordem é fixa. As mesmas âncoras de stress podem ser executadas **duas vezes**,
+em funções distintas:
+
+```text
+STRESS PROBING    durante o DIAGNOSTIC HARDENING
+                  instrumento de descoberta de defeito, o mais cedo possível
+
+STRESS REPORT     depois do SEQUENTIAL DEVELOPMENT, antes do CAL-B
+                  regressão qualitativa / relatório de robustez da
+                  configuração candidata final
+```
+
+Reutilizar as mesmas datas nas duas funções é legítimo **porque elas pertencem
+integralmente a development**. Nenhuma das duas passagens é holdout, nenhuma é
+out-of-sample e nenhuma produz evidência de generalização.
+
+#### Duas classes de mudança
+
+```text
+DIAGNOSTIC    a justificativa permanece válida com o resultado financeiro
+              de t+1 apagado
+              -> corrige defeito
+
+PERFORMANCE   a justificativa depende do comportamento observado nos
+              resultados das âncoras
+              -> seleciona configuração
+```
+
+A classe não é determinada pelo parâmetro tocado, e sim pelo que aparece na
+justificativa. A mesma mudança em `consensus_threshold` pode ser Diagnostic
+("o quorum aprovava com poucos votos válidos por causa de falhas silenciosas")
+ou Performance ("o limiar mais alto rendeu mais"). O change log precisa dizer
+qual, por versão.
+
+#### Diagnostic Hardening
+
+Objetivo: corrigir defeitos de processo e integridade. **Não otimiza desempenho
+financeiro** e não usa métrica financeira.
+
+Taxonomia mínima, obrigatória no change log:
+
+```text
+CLASSE A — contrato / operação
+   schema inválido, run abortado, quorum incompletado por falha,
+   violação de contrato da arena, erro de execução
+
+CLASSE B — epistêmico / leakage
+   hallucination, dado inventado, uso de informação fora do information
+   set, referência a evento posterior a t
+
+CLASSE C — coerência interna
+   reasoning contradiz a ação emitida
+   risk verdict contraria a própria regra declarada
+   confidence incoerente com a dispersão observada do quorum
+```
+
+**Por que esta subfase não é ilimitada.** Outcome-blindness fecha um canal de
+contaminação — o resultado financeiro — e deixa outro aberto: os próprios
+contextos conhecidos. Iterar prompts, papéis e regras contra as mesmas âncoras
+ajusta o sistema àquelas situações mesmo sem ninguém olhar um retorno, porque o
+pesquisador já sabe de memória o que aconteceu naquelas datas e porque o texto
+do prompt pode absorver o contexto sem citar o resultado.
+
+**Regra de generalidade**, que é o controle verificável desta subfase:
+
+```text
+toda alteração de prompt ou de regra deve ser expressa em termos GERAIS
+
+PROIBIDO no texto:
+   uma data                   uma faixa de preço
+   um ativo específico        um evento nomeado
+   um contexto que simplesmente descreva as âncoras observadas
+```
+
+Ela é auditável lendo o diff do prompt, o que nenhum teto numérico consegue ser.
+
+**Condição de saída**, declarada antes de começar:
+
+```text
+uma passada completa sobre as âncoras de development, com:
+   zero defeitos CLASSE A
+   zero defeitos CLASSE B
+   defeitos CLASSE C apenas do tipo residual declarado previamente
++
+duas versões consecutivas sem nova CLASSE de defeito
+        v
+baseline estável B0
+```
+
+**Limite procedimental**, e o que ele *não* é:
+
+```text
+H = 10 versões de hardening  ->  LIMIAR DE ESCALONAMENTO
+```
+
+Não é proibição de corrigir bug real. Recusar-se a corrigir um defeito para
+respeitar um contador seria falha metodológica pior do que a que o contador
+tenta evitar. Ultrapassar `H` significa que o sistema não está pronto para ser
+congelado, e a decisão de continuar sobe para dupla e orientador com o change
+log. O número de versões de hardening é reportado.
+
+O hardening roda sobre as âncoras de CAL-A e sobre o Stress Probing. **Nunca
+sobre CAL-B.**
+
+#### Baseline B0 e classe de comparabilidade
+
+O Diagnostic Hardening produz um baseline identificável:
+
+```text
+B0 = git_commit
+   + ExperimentSpec / spec_hash aplicável
+   + prompts (texto e hashes registrados no trace)
+   + configuração material declarada
+```
+
+Performance Calibration só pode comparar configurações pertencentes à **mesma
+classe de comparabilidade**, isto é, ao mesmo baseline. Se durante a Performance
+Calibration surgir correção comportamental de classe A ou B:
+
+```text
+corrigir o defeito (obrigatório; nunca adiar correção para preservar contagem)
+        v
+as comparações feitas sobre o baseline anterior ficam INVALIDADAS
+        v
+nova calibration_version, com novo baseline
+        v
+a seleção afetada é executada novamente, de forma declarada
+        v
+as comparações invalidadas permanecem REGISTRADAS, nunca apagadas
+```
+
+Teste operacional, quando aplicável, usando o mecanismo que já existe
+(seção 15):
+
+```text
+replay dos traces existentes contra a versão corrigida
+   replay idêntico     -> alteração não-comportamental
+                          a classe de comparabilidade sobrevive
+   ReplayMismatchError -> comportamento ou contrato mudou
+                          nova classe de comparabilidade
+```
+
+Limite explícito deste teste: **replay não substitui nova execução contra o
+modelo quando o próprio prompt foi alterado.** Prompt alterado é, por
+construção, `ReplayMismatchError` — o replay diagnostica a quebra, não fornece
+os resultados da nova configuração.
+
+#### CAL-A
+
+```text
+CAL-A = 20 âncoras
+```
+
+Papel: **Performance Calibration da lógica instantânea de decisão**. Somente
+parâmetros cujo efeito seja identificável numa decisão isolada podem ser
+selecionados aqui.
+
+Candidatos anchor-calibratable — a lista do protocolo v1 conforme a arquitetura
+atual, não uma lista eterna:
+
+```text
+prompt variant (dentro do conjunto declarado)
+analyst_count
+consensus_threshold
+temperature_min / temperature_max
+risk_max_volatility
+volatility_window
+```
+
+Procedimento:
+
+```text
+espaço finito PRÉ-REGISTRADO, enumerado como lista de specs
+N <= 8 configurações no total
+R <= 3 rodadas
+as 20 âncoras sempre avaliadas integralmente
+um único critério agregado
+critério declarado ANTES de observar qualquer resultado
+desempate declarado antes
+nenhuma mudança justificada por âncora individual
+nenhum uso de CAL-B, VALIDATION ou FINAL TEST
+N e R realizados são reportados
+```
+
+O escore agregado de CAL-A é **evidência de desenvolvimento** e nunca é
+reportado como resultado científico.
+
+**Critério agregado: `TBD`.** O espaço está restrito, o valor não está escolhido.
+Ele precisa satisfazer:
+
+```text
+válido sobre 20 âncoras de um dia
+alinhado ao trading target (seção 17)
+NÃO Sharpe · NÃO Sortino · NÃO CAGR · NÃO MaxDD
+NÃO acurácia direcional close-to-close
+uma única quantidade agregada
+declarado antes dos resultados
+```
+
+Candidatos registrados como **discussão, não decisão**:
+
+```text
+C1  P&L líquido agregado ou médio das 20 âncoras, com exposição fixa
+C2  retorno intradiário capturado por decisão acionável, com abstenções
+    reportadas à parte
+C3  proporção de âncoras com contribuição líquida positiva
+C4  média aparada (trimmed mean) do P&L por âncora, com corte declarado antes
+```
+
+`C1` e `C4` só são comparáveis entre configurações porque `long_target_weight`
+está fixo (seção 11); se a exposição variasse, nenhum deles seria válido.
+
+#### Parâmetros não identificáveis numa âncora
+
+Uma Calibration Anchor é `decision_start == decision_end == t`, e o run começa
+sempre com o capital inicial em caixa, posição zero e contadores zerados
+(seção 5.11). Isso produz **impossibilidade estrutural**, não preferência
+metodológica:
+
+```text
+risk_max_drawdown
+   o pico de patrimônio nasce na própria sessão da decisão
+   -> current_drawdown = 0 -> o limite nunca é alcançado
+
+risk_max_concentration
+   não há posição no instante da decisão
+   -> current_concentration = 0 -> o limite nunca liga
+
+decision_frequency
+   session_index = 0 na primeira decisão
+   -> toda frequência é elegível -> todas produzem a mesma decisão
+```
+
+Logo, os três **não podem ser selecionados em CAL-A**. Selecioná-los ali não
+seria overfitting: seria escolher com base em evidência de variação nula, com o
+desempate virando arbítrio disfarçado de resultado. Eles pertencem ao Sequential
+Development.
+
+#### Sequential Development
+
+Subfase formal da CALIBRATION. Natureza:
+
+```text
+development contaminado
+janela sequencial curta, dentro da área de calendário da CALIBRATION
+NÃO é Validation · NÃO é holdout · NÃO é evidência out-of-sample
+```
+
+Toda data dentro dessa janela fica queimada para fins out-of-sample,
+permanentemente.
+
+Seleciona os parâmetros dependentes de trajetória:
+
+```text
+decision_frequency
+risk_max_drawdown
+risk_max_concentration
+```
+
+E verifica, sem selecionar:
+
+```text
+turnover
+custos acumulados
+persistência de posição entre sessões
+trajetória de caixa e de patrimônio
+efeito de gaps sobre posição já existente
+comportamento de VENDA sobre posição existente
+```
+
+Esse último item é material: o participante é long-only e `VENDA` significa
+peso alvo zero. Sobre carteira zerada isso não gera trade nenhum; a decisão de
+venda só é acionável quando há posição, estado que **não existe** numa âncora.
+
+**É a primeira subfase em que Sharpe, Sortino, CAGR, MaxDD, turnover e custos
+sequer são definidos**, porque é a primeira com curva de patrimônio. E é
+exatamente onde a tentação aparece:
+
+```text
+esses números são DEVELOPMENT EVIDENCE
+nunca são resultado científico
+nunca são agregados aos resultados de VALIDATION ou FINAL TEST
+```
+
+Contenção — proposta, ainda sujeita a aprovação final:
+
+```text
+uma única janela curta      datas TBD · duração TBD
+N_seq <= 4 configurações
+R_seq <= 2 rodadas
+critério de seleção TBD, declarado ANTES de executar a subfase
+```
+
+O Sequential Development **não reabre parâmetro já selecionado em CAL-A**. Se
+revelar incompatibilidade real com uma escolha de CAL-A:
+
+```text
+amendment declarado de protocolo/calibração
+        v
+nova calibration_version
+        v
+repetir a seleção afetada
+```
+
+Nunca retuning silencioso.
+
+#### Stress Cases
+
+```text
+STRESS <= 8 âncoras ADICIONAIS, fora do CORE
+CAL-A permanece 20 · CAL-B permanece 10 · CORE permanece 30
+```
+
+Autoridade:
+
+```text
+PODE   revelar defeito durante o Diagnostic Hardening (Stress Probing)
+PODE   descrever qualitativamente a robustez da configuração final
+       (Stress Report)
+
+NÃO PODE   entrar em critério agregado
+NÃO PODE   melhorar score de configuração alguma
+NÃO PODE   selecionar configuração
+NÃO PODE   servir como evidência out-of-sample
+```
+
+Datas, episódios e condições concretas: `TBD`. Candidatos de condição extrema —
+gap severo, circuit breaker, choque macro, suspensão de negociação, anomalia de
+dado, virada abrupta de regime — são critérios candidatos, não seleção.
+
+#### CAL-B — one-shot
+
+```text
+CAL-B = 10 âncoras
+```
+
+Nunca utilizadas em Diagnostic Hardening, CAL-A, Sequential Development ou
+Stress — **nem como âncora, nem contidas dentro da janela sequencial**.
+
+Papel:
+
+```text
+one-shot out-of-sample SANITY CHECK
+NÃO é performance test
+```
+
+Critérios de aprovação, integralmente outcome-blind:
+
+```text
+run completa, sem falha de infraestrutura
+information set respeitado (nada posterior a t no reasoning)
+sem hallucination material
+reasoning e ação coerentes
+regras duras respeitadas
+quorum e contratos de schema íntegros
+sem comportamento degenerado
+```
+
+Não usar como barra de aprovação:
+
+```text
+retorno mínimo · accuracy mínima · P&L mínimo
+```
+
+A razão é dimensional antes de ser metodológica: 10 âncoras de um dia não
+sustentam afirmação de desempenho, nem para aprovar nem para reprovar. E a
+consequência precisa estar escrita, não subentendida:
+
+```text
+CAL-B aprovado significa: a configuração congelada se comporta de forma
+   íntegra e não degenerada em datas que ninguém usou para ajustá-la.
+
+CAL-B aprovado NÃO significa: desempenho out-of-sample.
+
+desempenho out-of-sample começa na PSEUDO-LIVE VALIDATION.
+```
+
+**Consumo do holdout.** A fronteira é anterior à natureza do que foi observado:
+
+```text
+run abortou ANTES de produzir decisão, trace e reasoning utilizáveis
+   (provedor indisponível, LLMDecisionError por infraestrutura,
+    snapshot indisponível)
+        -> pode repetir, segundo política declarada ANTES
+        -> o holdout ainda não foi observado cientificamente
+
+run produziu decisão, trace e reasoning utilizáveis
+        -> CAL-B CONSUMIDO, definitivamente, para esta versão
+```
+
+A natureza do que se observou **não importa**. Se dentro do CAL-B aparecer
+hallucination, reasoning incoerente ou risk verdict errado, a janela foi aberta
+do mesmo jeito. Corrigir o sistema com base nisso é legítimo — o que não é
+legítimo é continuar chamando as mesmas 10 âncoras de holdout:
+
+```text
+observou comportamento no CAL-B
+        v
+corrigiu o sistema por causa disso
+        v
+aquela versão da calibração NÃO PASSOU
+aquelas 10 âncoras são development a partir de agora
+        v
+nova tentativa exige nova versão metodológica e novo pré-registro
+```
+
+Nunca: corrigir e seguir tratando as mesmas âncoras como holdout.
+
+#### Matriz de autoridade sobre parâmetros
+
+```text
+ALTERAR   a subfase tem autoridade para selecionar ou mudar o valor
+AVALIAR   pode medir e reportar evidência, mas não pode mudar
+OBSERVA   o valor é registrado; avaliá-lo naquela subfase não é significativo
+N/A       o parâmetro não tem efeito observável naquela subfase
+```
+
+| Parâmetro / decisão | Diagnostic Hardening | CAL-A | Sequential Dev | Stress | CAL-B |
+|---|:--:|:--:|:--:|:--:|:--:|
+| prompt variants | ALTERAR (só por defeito) | ALTERAR (seleção declarada) | AVALIAR | OBSERVA | OBSERVA |
+| `analyst_count` | AVALIAR | ALTERAR | AVALIAR | OBSERVA | OBSERVA |
+| `consensus_threshold` | AVALIAR | ALTERAR | AVALIAR | OBSERVA | OBSERVA |
+| `temperature_min` / `temperature_max` | AVALIAR | ALTERAR | AVALIAR | OBSERVA | OBSERVA |
+| `volatility_window` | AVALIAR | ALTERAR | AVALIAR | OBSERVA | OBSERVA |
+| `risk_max_volatility` | AVALIAR | ALTERAR | AVALIAR | OBSERVA | OBSERVA |
+| `risk_max_drawdown` | AVALIAR | **N/A** | ALTERAR | OBSERVA | OBSERVA |
+| `risk_max_concentration` | AVALIAR | **N/A** | ALTERAR | OBSERVA | OBSERVA |
+| `decision_frequency` | AVALIAR | **N/A** | ALTERAR | OBSERVA | OBSERVA |
+| `long_target_weight` | AVALIAR | AVALIAR | AVALIAR | OBSERVA | OBSERVA |
+| `require_all_votes` | ALTERAR (regra dura) | AVALIAR | AVALIAR | OBSERVA | OBSERVA |
+| `retry_attempts` / `retry_base_delay` | ALTERAR (operacional) | OBSERVA | OBSERVA | OBSERVA | OBSERVA |
+| `seed_base` | **N/A** | **N/A** | **N/A** | **N/A** | **N/A** |
+| `provider` / `model` | AVALIAR | OBSERVA | OBSERVA | OBSERVA | OBSERVA |
+| capital, custos, universo, janela | OBSERVA | OBSERVA | OBSERVA | OBSERVA | OBSERVA |
+
+Invariante:
+
+```text
+cada parâmetro tem NO MÁXIMO UMA subfase com autoridade de ALTERAR
+```
+
+Uma exceção, deliberada e nomeada: **prompt variants** aparece com `ALTERAR` em
+duas subfases. A fronteira não é o parâmetro, é a natureza do ato — no
+Diagnostic Hardening a alteração é dirigida por defeito, outcome-blind e em
+termos gerais; em CAL-A é **seleção entre variantes já declaradas**, sem edição
+nova. Editar prompt durante CAL-A é hardening fora de hora e dispara a regra da
+classe de comparabilidade.
+
+`seed_base` é `N/A` em todas as subfases porque a `seed` é solicitada e
+registrada no trace, mas **não é transmitida ao provedor** (seção 15): alterá-la
+muda o `spec_hash` sem poder mudar resposta alguma do modelo. Mantê-la na matriz
+é o que impede que alguém "calibre a seed" no futuro acreditando estar fazendo
+algo.
+
+#### Orçamento de chamadas
+
+Duas contagens distintas, que não devem ser confundidas:
+
+```text
+CHAMADAS LÓGICAS         o que o grafo pede
+   por decisão elegível:  N ... N+2        (N = analyst_count)
+   nominal, derivado do grafo, NUNCA garantia
+
+TENTATIVAS AO PROVEDOR   o que a rede vê
+   <= retry_attempts x chamadas lógicas
+   retry apenas em falha transitória de transporte
+```
+
+A faixa `N ... N+2` decorre do grafo: o veredito de risco resolve
+deterministicamente vários caminhos antes de qualquer chamada, e o Portfolio
+Manager não é executado quando o veredito não é `APROVADO` nem quando o sinal é
+`MANTER`. **`N+2` é o teto de um ramo específico, não a média**, e um run que
+aborta consome chamadas sem produzir resultado científico utilizável.
+
+Por isso o custo é **medido, não previsto**: o trace publica `attempt_count` por
+chamada lógica, de modo que `chamadas lógicas` é o número de registros e
+`tentativas` é a soma dos `attempt_count`. O relato de custo do TCC usa o
+realizado.
+
+Orçamento monetário: `TBD`. Não é congelado aqui. Registrado apenas o que
+domina a conta: o custo é linear em `analyst_count` e em `decision_frequency`, e
+as janelas sequenciais — Sequential Development e VALIDATION — custam por sessão
+elegível, não por âncora, e por isso dominam o total.
+
+#### Disjunção obrigatória
+
+Invariantes verificáveis, que substituem qualquer embargo temporal (seção 25):
+
+```text
+CORE = CAL-A ∪ CAL-B
+CAL-A ∩ CAL-B = ∅
+
+STRESS ∩ CAL-B = ∅
+CAL-B ∩ SequentialDevelopmentWindow = ∅
+
+DevelopmentWindow ∩ VALIDATION = ∅
+DevelopmentWindow ∩ FINAL TEST  = ∅
+VALIDATION ∩ FINAL TEST = ∅
+
+toda a CALIBRATION ocorre temporalmente antes da VALIDATION
+a VALIDATION ocorre antes do FINAL TEST
+```
+
+`DevelopmentWindow` inclui Diagnostic Hardening, CAL-A, Sequential Development e
+Stress. **Stress pertence a development.**
+
+A armadilha concreta a verificar ao escolher as datas: a janela de Sequential
+Development é um *intervalo*, não um conjunto de datas isoladas. Se ela contiver
+uma âncora de CAL-B, o holdout deixou de existir sem que ninguém tenha tomado
+essa decisão.
 
 ## 6. Walk-Forward
 
@@ -592,28 +1224,37 @@ Para cada decisão em `t`, o sistema deve ter acesso a pelo menos
 aproximadamente dois anos de histórico de mercado causalmente disponível até
 `t`. É o contexto base mínimo da decisão.
 
-O que **não** foi congelado e permanece `TBD — EXPERIMENT PROTOCOL v1`:
+Parametrização, agora resolvida (seção 5.11), ainda pendente do ato formal de
+congelamento:
 
 ```text
-exatamente 2 anos calendários?        TBD
-exatamente 504 pregões?               TBD
-2 anos como máximo ou só mínimo?      TBD
-política exata para sessões faltantes TBD
+gate contado em SESSÕES do calendário comum        DECIDIDO
+minimum_history_sessions = 504                     DECIDIDO
+504 = 503 sessões anteriores + a sessão de decisão DECIDIDO
+mínimo, nunca máximo (history mode = expanding)    DECIDIDO
+sessões faltantes                                  resolvido pela definição
+                                                   canônica do calendário
+                                                   comum (seção 5.11)
+equivalência em dias corridos                      não é requisito; publicada
+                                                   como evidência
 ```
 
-A decisão congelada agora é apenas esta: o sistema deve trabalhar com uma janela
-recente de mercado de pelo menos dois anos para formar o contexto base da
-decisão.
+A decisão conceitual permanece a mesma — o sistema deve trabalhar com uma janela
+recente de pelo menos dois anos para formar o contexto base da decisão — e 504
+sessões é a sua parametrização aprovada.
 
-**Estado técnico verificado, que não congela nada acima.** Hoje a arena entrega
-ao participante o recorte `history` do início do snapshot até `session`, isto é,
-uma janela **expansiva**, e a `ExperimentSpec` não possui campo de período: o
-intervalo experimental é a cobertura efetiva do snapshot. Consequência prática a
-resolver no congelamento: garantir a janela base de dois anos em `t` é hoje
-responsabilidade de **escolher a cobertura do snapshot** de modo que as datas de
-decisão comecem pelo menos dois anos após o início da série. Não existe, no
-código atual, parâmetro de janela mínima nem gate que recuse decidir antes disso
-— é lacuna conhecida, não capacidade existente.
+**Estado técnico verificado, que não congela nada acima.** A arena entrega ao
+participante o recorte `history` do início do snapshot até `session`, isto é,
+uma janela **expansiva**.
+
+> Correção de um registro anterior desta seção. Chegou a ser afirmado aqui que
+> "não existe, no código atual, parâmetro de janela mínima nem gate que recuse
+> decidir antes disso". A afirmação está **obsoleta e retirada**:
+> `minimum_history_sessions` é campo obrigatório e sem default da
+> `EvaluationSpec`, e o gate recusa a janela antes de construir o participante
+> e antes de qualquer chamada paga. A definição canônica da contagem está na
+> seção 5.11; o que continua sendo decisão da dupla é o **valor**, hoje
+> recomendado em 504 e ainda não congelado.
 
 ### 7.3 Informação disponível não é prompt bruto
 
@@ -652,6 +1293,13 @@ na abertura da próxima sessão válida `t+1`.
 - Política de short: `TBD`.
 
 As mesmas regras serão aplicadas a todos os participantes.
+
+Consequência direta deste contrato sobre o **alvo** da decisão, formalizada na
+seção 17.1: uma entrada nova decidida em `close(t)` e executada em `open(t+1)`
+não recebe o movimento overnight. O trecho que ela efetivamente captura é
+`open(t+1) -> close(t+1)`. Por isso `close(t) -> close(t+1)` não é o alvo do
+experimento, ainda que seja o alvo natural de uma tarefa de previsão de preço —
+que o v1 não possui.
 
 Consequência da semântica de peso alvo, registrada explicitamente: no agente,
 `COMPRA` passa a significar **desejar exposição long no peso alvo configurado**,
@@ -753,6 +1401,38 @@ número a ignorar depois. `confidence` continua sendo produzida, registrada no
 trace e enviada aos agentes seguintes como contexto qualitativo — se ela deve
 ou não influenciar *qualitativamente* a decisão é uma ablation futura, não
 objeto desta decisão.
+
+### `long_target_weight` não é parâmetro de calibração por desempenho
+
+Decisão metodológica aprovada, complementar às duas acima:
+
+```text
+long_target_weight = DECISÃO DECLARADA de política de exposição
+                     NÃO é parâmetro de Performance Calibration
+                     NÃO é otimizado por CAL-A
+```
+
+Motivo estrutural, e não apenas de preferência. Sob sizing determinístico e
+âncoras que começam com a carteira zerada, a exposição entra como multiplicador
+escalar do resultado de cada âncora:
+
+```text
+P&L da âncora  ≈  w × retorno capturado  −  custos
+```
+
+Otimizar `w` por P&L agregado é, portanto, monótono em `w`: o procedimento
+devolve o maior valor permitido quando o agregado é positivo e tende a zero
+quando é negativo. Não é seleção, é solução de canto determinada pelo sinal do
+agregado. Além disso, misturaria duas coisas distintas — **qualidade da
+decisão** e **quantidade de exposição assumida** —, de modo que a configuração
+mais agressiva venceria a mais acertada. Há ainda o acoplamento duro já
+validado no código, `long_target_weight <= risk_max_concentration`, que faria a
+calibração de `w` empurrar contra um limite de risco pertencente a outra
+subfase (seção 5.12).
+
+Análise de sensibilidade em `w` continua permitida como análise de
+development, ou como análise secundária **pré-declarada**, nunca como seleção
+disfarçada.
 
 ### O que continua NÃO congelado
 
@@ -903,6 +1583,27 @@ Falha de infraestrutura não vira decisão de investimento. O retry legitimament
 configurado hoje (`RetryingLLMClient`) continua valendo: só falha **não
 recuperada** derruba o run.
 
+**Precisão sobre a camada em que cada coisa acontece**, para que o protocolo não
+descreva o fallback interno como se fosse comportamento científico:
+
+```text
+tentativa recuperada pelo retry
+        -> NÃO é falha; aparece apenas como attempt_count > 1
+
+falha após o retry
+        -> registrada no limite do provedor, antes de o nó engoli-la
+        -> o nó do grafo degrada para MANTER / VETADO
+           ISTO É FALLBACK INTERNO DO GRAFO
+
+o participante observa a falha registrada
+        -> levanta LLMDecisionError -> O RUN FALHA
+           ESTE É O COMPORTAMENTO CIENTÍFICO
+```
+
+Portanto o `MANTER` defensivo do grafo **nunca chega a existir como decisão de
+investimento** no caminho da arena; o sizing sequer é consultado quando há
+falha. O `MANTER` legítimo é outro: todos os votos válidos, sem supermaioria.
+
 ## 14. Models/providers
 
 - Modelo local: `TBD`.
@@ -984,6 +1685,46 @@ opções solicitadas, schema, papel, analista, sessão ou ordem diferentes
 levantam `ReplayMismatchError`, e sobra ou falta de registro também. Relógio e
 duração não entram nessa identidade.
 
+### Repetições da VALIDATION
+
+Proposta registrada, **não congelada**:
+
+```text
+2–3 independent live LLM runs
+```
+
+Enquanto a `seed` não for transmitida ao provedor, o protocolo **não** descreve
+essas repetições como "seeds distintas": elas não são replicações controladas
+por seed. Cada repetição mantém idênticos a `ExperimentSpec`, o snapshot, o
+provider/model solicitado e os parâmetros de geração, e difere apenas em
+`run_id` e trace.
+
+O que elas medem é a **variabilidade operacional residual do provedor e do
+modelo** — amostragem com temperatura maior que zero, não determinismo do lado
+do provedor, retries e eventual atualização silenciosa do modelo por trás do
+identificador solicitado (seção 14).
+
+Invariantes já aprovados:
+
+```text
+todos os runs publicados
+nenhum run desfavorável escondido
+nunca escolher o melhor run post-hoc
+mesma spec, mesmo snapshot, mesma configuração
+run_ids e traces independentes
+```
+
+Ainda `TBD`, e dependente da definição da métrica primária (seção 17.3):
+
+```text
+regra de síntese entre os runs
+   primeiro run · mediana · média · outra
+```
+
+Restrição que vale mesmo com o valor em aberto: a regra de síntese precisa ser
+declarada **antes** de executar os runs da VALIDATION. Declará-la depois de ver
+os resultados é escolher o melhor run por outro nome.
+
 **Nada aqui congela modelo, prompt, quorum ou seed.** O mecanismo de evidência
 existe; as escolhas científicas continuam `TBD`.
 
@@ -1044,18 +1785,117 @@ seja convertida na outra.
 
 ### 17.1 Decision diagnostics
 
-Diagnóstico do comportamento decisório, por decisão:
+#### Quatro resultados possíveis, e o papel de cada um
 
-- direção prevista;
-- direção observada;
-- taxa de acerto direcional;
-- comportamento de COMPRA/VENDA/MANTER;
-- `confidence` reportada;
-- consenso e divergência do quorum.
+O contrato de execução (`close(t) -> decisão -> open(t+1)`) torna estes quatro
+resultados distintos, e misturá-los é o erro que esta subseção existe para
+impedir:
 
-Servem para explicar *como* o sistema decide. Acurácia direcional **não** é,
-por conta disto, objetivo principal do TCC, e não pode ser promovida a métrica
-primária sem decisão explícita registrada aqui.
+```text
+A  overnight            close(t)   -> open(t+1)
+B  intradiário seguinte open(t+1)  -> close(t+1)
+C  close-to-close       close(t)   -> close(t+1)
+D  P&L realizado        o que a Arena efetivamente obteve
+```
+
+| | o que mede | capturável por uma entrada nova | papel |
+|---|---|---|---|
+| **A** | o trecho que o contrato de execução doa ao mercado | **não** | diagnóstico do efeito overnight |
+| **B** | o movimento negociável depois da execução | **sim** | diagnóstico da decisão |
+| **C** | "o mercado subiu amanhã?" — alvo natural de uma tarefa de previsão | não | descritivo |
+| **D** | o resultado, com custos, lote inteiro e estado de carteira | é o resultado | resultado científico |
+
+Para uma Calibration Anchor, que começa com a carteira zerada,
+`D ≈ w × B − custos`: o termo `A` **não aparece**. Numa janela sequencial a
+composição muda com o estado — posição mantida através da noite recebe `C`,
+posição liquidada na abertura recebe `A`, entrada nova recebe `B`. Ou seja,
+`A` e `C` não são inacionáveis em geral: são inacionáveis para **entradas
+novas**, que é o caso de toda âncora.
+
+Exemplo mínimo do porquê isto importa:
+
+```text
+close(t) = 100 · COMPRA · open(t+1) = 110 · close(t+1) = 105
+
+C = +5,00%   "acertou a direção"
+B = −4,55%   o que a operação realmente viveu
+```
+
+A decisão contaria como acerto sob `C` e perde dinheiro sob `D`. Usar `C` como
+objetivo otimizaria uma quantidade que a estratégia não pode receber.
+
+#### O v1 não tem tarefa de previsão de preço
+
+O sistema emite `COMPRA / VENDA / MANTER` e um peso alvo. Ele **não** emite
+probabilidade, magnitude ou intervalo. Por isso:
+
+```text
+MANTER não tem conteúdo direcional: é a decisão de não alterar exposição,
+       não a previsão de que o preço ficará estável
+VENDA sobre carteira zerada é no-op num participante long-only
+COMPRA é estado desejado de exposição, não o sinal do próximo retorno
+não existe probabilidade -> Brier, log-score e curva de calibração
+       são impossíveis, e confidence está proibida de virar probabilidade
+       (seção 11)
+```
+
+Separação formal adotada, para não converter uma coisa na outra:
+
+```text
+INVESTMENT DECISION QUALITY     primário
+   unidade: decisão -> contribuição de P&L líquido realizado (D)
+
+ACTION–OUTCOME CONCORDANCE      descritivo (substitui "acurácia direcional")
+   definida APENAS para Calibration Anchors e novas entradas em janela
+   sequencial, avaliada contra B
+   NÃO se aplica a posição mantida, a saída de posição existente
+   nem a MANTER com exposição zero, que é abstenção e é reportada
+   separadamente como cobertura
+
+PRICE FORECAST ACCURACY         não existe no v1
+   exigiria emissão explícita de previsão probabilística sobre evento
+   declarado; é extensão de protocolo, não releitura da saída atual
+```
+
+Em VALIDATION e FINAL TEST **não se cria pseudo-acurácia de ação**: a evidência
+correta é P&L de carteira, curva de patrimônio e a família canônica da seção
+17.2. Medir uma decisão de manter contra `B` seria avaliar o desempenho de uma
+operação que não foi feita.
+
+#### Decomposição descritiva em janela sequencial
+
+Permitida como análise descritiva, nunca como objetivo de tuning:
+
+```text
+resultado da carteira na sessão, decomposto em
+   componente overnight   (sobre posição já carregada)
+ + componente intradiário (sobre posição após execução)
+ + custos
+```
+
+Responde a uma pergunta legítima — quanto do resultado veio de gap sobre posição
+já existente — sem transformar isso em alvo.
+
+#### Tabela de diagnósticos e seus papéis
+
+| diagnóstico | descritivo | pode orientar Performance Calibration | resultado científico |
+|---|:--:|:--:|:--:|
+| `overnight_return` (A) | sim | não | não |
+| `intraday_return` (B) | sim | sim, só em CAL-A e agregado | não |
+| `close_to_close_return` (C) | sim | não | não |
+| `realized_portfolio_pnl` (D) | sim | sim, agregado | sim |
+| `action_outcome_concordance` (âncoras e novas entradas) | sim | não | não |
+| decomposição overnight/intradiário | sim | não | não |
+| cobertura / taxa de abstenção | sim | não | não |
+| `confidence`, consenso e divergência do quorum | sim | não | não |
+| defeitos, vetos e falhas de schema | sim | sim, via Diagnostic Hardening | não |
+| família da seção 17.2 | — | só como development, no Sequential Development | sim, em VALIDATION e FINAL TEST |
+
+Manter vários diagnósticos simultâneos é deliberado; transformá-los todos em
+objetivo, não. Exatamente **uma** quantidade agregada é o critério de seleção em
+CAL-A (seção 5.12), e todas as demais linhas são descritivas. Sem essa regra, a
+coexistência de quatro retornos equivaleria a testes múltiplos implícitos:
+sempre haveria uma métrica que melhorou.
 
 ### 17.2 Portfolio performance
 
@@ -1076,6 +1916,23 @@ Família canônica, sobre a curva líquida:
 
 ```text
 MÉTRICA PRIMÁRIA DO TCC = TBD
+```
+
+O que já está decidido é o **objeto** que ela mede:
+
+```text
+resultado científico = P&L realizado pela Arena (D)
+                     + curva líquida
+                     + métricas canônicas da seção 17.2
+```
+
+Falta escolher qual função desse objeto é a métrica primária. Duas quantidades
+distintas, que não devem ser confundidas e que continuam ambas `TBD`:
+
+```text
+MÉTRICA PRIMÁRIA          resultado do TCC, sobre VALIDATION e FINAL TEST
+CRITÉRIO AGREGADO CAL-A   seleção entre configurações, evidência de
+                          desenvolvimento, restrições na seção 5.12
 ```
 
 Taxa livre de risco, convenções de anualização, tratamento de dias sem posição e
@@ -1266,7 +2123,8 @@ endpoint sanitizado).
 ## 21. Freeze procedure
 
 O freeze encerra a SYSTEM CALIBRATION (seção 5.7) e abre a PSEUDO-LIVE
-VALIDATION. Antes dele, dupla e orientador deverão aprovar e registrar:
+VALIDATION. Ele só ocorre **depois de CAL-B aprovado** (seção 5.12). Antes dele,
+dupla e orientador deverão aprovar e registrar:
 
 1. pergunta e hipóteses;
 2. universo e snapshot;
@@ -1279,7 +2137,13 @@ VALIDATION. Antes dele, dupla e orientador deverão aprovar e registrar:
 7. janela base de mercado (parametrização exata da seção 7.2);
 8. política de Historical Memory, se houver alguma ativa;
 9. métricas, métrica primária, análise estatística e ablations;
-10. versão do código e do manifest.
+10. versão do código e do manifest;
+11. o change log completo da calibração — versões de Diagnostic Hardening,
+    configurações avaliadas em CAL-A (`N` e `R` realizados), seleções do
+    Sequential Development, comparações invalidadas por mudança de classe de
+    comparabilidade e o resultado do CAL-B;
+12. a declaração explícita de todo parâmetro material na `ParticipantSpec`,
+    inclusive quando o valor coincidir com o default técnico (seção 5.7).
 
 Forma de aprovação, responsáveis e registro imutável: `TBD`. Até essa aprovação,
 o status deste documento permanece **DRAFT — NÃO CONGELADO**.
@@ -1297,6 +2161,13 @@ o status deste documento permanece **DRAFT — NÃO CONGELADO**.
 - Alterar o sistema depois de observar a VALIDATION devolve aquela janela à
   condição de development/calibration (seção 5.8); ela deixa de servir como
   evidência out-of-sample.
+- CAL-B é aberto uma única vez por versão da calibração. Um run que produziu
+  decisão, trace e reasoning utilizáveis consome o holdout, qualquer que tenha
+  sido o comportamento observado; corrigir o sistema com base nele exige nova
+  versão metodológica e novo pré-registro (seção 5.12).
+- Correção comportamental de classe A ou B durante a Performance Calibration
+  invalida as comparações do baseline anterior, que permanecem registradas em
+  vez de apagadas (seção 5.12).
 - Exceções a estas regras: `TBD` e dependem de aprovação antes do congelamento.
 
 ## 23. Historical Memory — extensão planejada
@@ -1458,9 +2329,41 @@ Quatro vazamentos distintos, com controles distintos.
 4. researcher overfitting
    ajustar o sistema repetidamente sobre o mesmo período observado
    -> separação obrigatória calibration / freeze / validation / final test
-   -> seções 5.6 a 5.9 e regras da seção 22
+   -> governança de subfases, espaço de busca finito, critério declarado
+      antes, change log e autoridade por parâmetro
+   -> seções 5.6 a 5.9, seção 5.12 e regras da seção 22
 ```
 
 Os três primeiros são controles sobre o que o **sistema** vê. O quarto é controle
 sobre o que os **pesquisadores** fazem, e nenhum mecanismo técnico do repositório
-o impede sozinho: ele depende do procedimento das seções 5.7 e 22.
+o impede sozinho: ele depende do procedimento das seções 5.7, 5.12 e 22.
+
+### Embargo temporal — decisão aprovada
+
+```text
+NENHUM embargo temporal obrigatório no v1
+```
+
+Um intervalo fixo entre fases — 21 sessões ou qualquer outro número — foi
+considerado e **não** foi adotado. O instrumento existe, na literatura de
+validação cruzada financeira, porque rótulos abrangem várias barras e amostras
+de treino se sobrepõem às de teste. Aqui não há rótulo nem treino: o LLM chega
+pré-treinado, e a decisão em `t` usa histórico expansivo que legitimamente
+inclui o período de calibração, o que é causal e correto. Contra o vazamento de
+mercado, os controles 1 a 3 já respondem; contra o overfitting do pesquisador,
+um intervalo não ajuda — conhecimento do pesquisador não é local no tempo e não
+decai em algumas sessões.
+
+O controle real de separação é verificável:
+
+```text
+ordem cronológica entre as fases
+janelas e conjuntos de âncoras disjuntos (invariantes da seção 5.12)
+CAL-B isolado de todo development
+freeze antes da VALIDATION
+pré-registro do espaço de busca e do critério
+```
+
+Um gap natural de calendário pode existir por conveniência de seleção de datas,
+mas **não é apresentado como controle de leakage** e não tem número científico
+associado.

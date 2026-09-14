@@ -1,7 +1,7 @@
 # Estado atual do Hedge-Fund-Lab
 
 Documento vivo, descrito sobre o estado versionado da branch `#1-Update` no
-commit `d9be5b9` (13/09/2026). A baseline original foi auditada em **10/09/2026**
+commit `139a0a9` (13/09/2026). A baseline original foi auditada em **10/09/2026**
 e desde então o documento incorpora os fatos introduzidos pelos commits
 seguintes — motor experimental comum para o participante LLM, trace/replay
 auditável, desacoplamento entre decisão do LLM e sizing científico e a
@@ -492,10 +492,19 @@ SYSTEM CALIBRATION -> FREEZE -> PSEUDO-LIVE VALIDATION -> FINAL TEST -> LIVE/SHA
 
 Motivo: o LLM chega pré-treinado e o experimento v1 não faz fine-tuning nem
 estima pesos sobre período algum. O que se ajusta retrospectivamente é o
-**sistema** — prompts, papéis, quorum, consenso, temperaturas, limites de risco,
-`long_target_weight`, `decision_frequency` —, e o risco metodológico a conter
-passa a ser o overfitting dos próprios pesquisadores sobre os períodos
-observados.
+**sistema** — prompts, papéis, quorum, consenso, temperaturas, limites de risco
+e `decision_frequency` —, e o risco metodológico a conter passa a ser o
+overfitting dos próprios pesquisadores sobre os períodos observados.
+`long_target_weight` deixou de pertencer a esse conjunto: passou a ser decisão
+declarada de política de exposição, não parâmetro de calibração por desempenho.
+
+A governança dessa calibração também passou a ser documental: o protocolo
+descreve subfases com autoridades distintas — Diagnostic Hardening, CAL-A,
+Sequential Development, Stress e CAL-B —, a quantidade de âncoras
+(`CORE = 30 = CAL-A 20 + CAL-B 10`, mais até 8 âncoras de stress fora do CORE),
+quais parâmetros cada subfase pode alterar e a regra one-shot do CAL-B. **Nada
+disso foi executado**, nenhuma data foi escolhida e nenhum critério de seleção
+foi definido.
 
 Estado factual de cada item:
 
@@ -503,9 +512,11 @@ Estado factual de cada item:
 |---|---|
 | Desenho pseudo-live (decisão em `close(t)`, execução em `open(t+1)`, relógio avançando uma sessão por vez) | Documentado; o mecanismo de execução já existe na arena e no `AgentBacktestEngine` |
 | Calibração retrospectiva do sistema como etapa declarada | Documentada; nunca executada como fase formal |
-| Janela base de mercado `>= 2 anos` | Aprovada conceitualmente; **mecanismo implementado, valor `TBD`**. `minimum_history_sessions` é campo obrigatório da `EvaluationSpec` e o gate falha antes de construir o participante; o número científico não foi escolhido. A janela continua expansiva (`snapshot[:t]`), agora por decisão registrada |
+| Janela base de mercado `>= 2 anos` | Aprovada conceitualmente; **mecanismo implementado**. `minimum_history_sessions` é campo obrigatório da `EvaluationSpec` e o gate falha antes de construir o participante. O valor recomendado passou a ser 504 sessões disponíveis até e incluindo `decision_start` (503 anteriores + a sessão de decisão); recomendado e documentado, ainda não congelado. A janela continua expansiva (`snapshot[:t]`), por decisão registrada |
+| Governança da CALIBRATION (subfases, autoridade por parâmetro, CAL-B one-shot, disjunção de datas) | Documentada em `EXPERIMENT_PROTOCOL.md` §5.12. Nenhuma subfase executada; nenhum baseline `B0` existe |
 | Historical Memory | Não implementada. Nenhum corpus, retriever, embedding ou vector store |
-| Calibration Cases, Validation, Final Test | `TBD`. Nenhuma data selecionada |
+| Calibration Cases, Validation, Final Test | Quantidade de âncoras decidida (`CORE = 30`, `CAL-A = 20`, `CAL-B = 10`, stress `<= 8` fora do CORE); **nenhuma data selecionada** |
+| Critério agregado de CAL-A, janela e critério do Sequential Development, regra de síntese dos runs de Validation | `TBD`. Espaço de decisão delimitado no protocolo, valor não escolhido |
 | Métrica primária, universo final, provider/model, custos | `TBD` |
 
 Nada disso alterou código, schema ou configuração de execução: a formalização é
@@ -582,8 +593,13 @@ documental.
   contrário é `null`. Zero apresentado como medição seria estimativa disfarçada
   de fato.
 - O dry-run subestima rodadas quando existe previsão no último dia e trata
-  `analistas + 2` como número fixo, embora veto e `MANTER` evitem chamadas e cache
-  evite chamadas externas. Hoje ele não é uma estimativa confiável de gasto.
+  `analistas + 2` como número fixo. O número não é fixo: por decisão elegível o
+  grafo pede entre `N` e `N + 2` chamadas lógicas (`N = analyst_count`), porque o
+  veredito de risco resolve caminhos determinísticos antes de chamar o modelo e o
+  Portfolio Manager não é executado sob veto nem sob `MANTER`; cache evita
+  chamadas externas e retry pode multiplicar as tentativas físicas sobre a mesma
+  chamada lógica. Hoje o dry-run não é uma estimativa confiável de gasto — o
+  número confiável é o observado no trace (`attempt_count` por chamada).
 
 ### Participante LLM na arena — o que ficou dentro e o que ficou fora
 
