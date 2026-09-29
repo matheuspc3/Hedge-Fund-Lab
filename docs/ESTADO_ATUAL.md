@@ -431,8 +431,10 @@ o fechamento de `t` e execução na abertura de `t+1`.
 O que ainda impede tratar as execuções como uma competição científica:
 
 - **Protocolo ainda não congelado.** Hipóteses, prompts, modelo/provider,
-  parâmetros dos agentes, sizing, custos, métrica primária e plano estatístico
-  continuam `DRAFT` em `docs/EXPERIMENT_PROTOCOL.md`.
+  parâmetros calibráveis dos agentes, universo e plano estatístico continuam
+  abertos, e `docs/EXPERIMENT_PROTOCOL.md` continua `DRAFT`. Já estão fechados:
+  CostSpec, métrica primária, benchmarks primário/secundários, critério de
+  CAL-A, capital, `long_target_weight` e warm-up (tabela da seção 5).
 - **Janelas experimentais existem, mas nenhuma foi escolhida.** O mecanismo
   está implementado — `EvaluationSpec`, gate de warm-up, settlement explícito,
   `phase`/`case_id` no manifest — e nenhuma data de calibração, validação ou
@@ -444,7 +446,9 @@ O que ainda impede tratar as execuções como uma competição científica:
   mesma unidade experimental** — ver "3. Participantes diferentes" abaixo.
 - **Dashboard continua usando caminhos legados**, com engines e fluxos próprios
   e custo zero; ele não consome `ExperimentRunner`/`RunResult`.
-- **Custos científicos finais ainda `TBD`.**
+- **CostSpec científico congelado** (protocolo §10: `brokerage_fixed = 0.0`,
+  `tax_rate = 0.000320`, `spread_bps = 5.0`), mas só entra nos runs que declaram
+  esses valores na `ExperimentSpec`; o dashboard continua com custo zero.
 - **Análise estatística ainda não executada.**
 
 ### 2. Custos não comparáveis
@@ -452,8 +456,9 @@ O que ainda impede tratar as execuções como uma competição científica:
 O dashboard instancia todos os motores com `CostModel()` padrão, isto é, custo
 zero. Os motores agora calculam custos percentuais sobre
 `abs(quantity * execution_price)`, reservam esses custos antes da compra e não
-deixam o caixa negativo. Os valores científicos de corretagem, spread, slippage,
-taxas e lotes continuam `TBD`; logo, os resultados do dashboard ainda não são uma
+deixam o caixa negativo. Os valores científicos de corretagem, spread, slippage e
+taxas estão congelados na seção 10 do protocolo, mas o dashboard não os usa, e
+lote continua `TBD`; logo, os resultados do dashboard ainda não são uma
 comparação líquida congelada.
 
 O `allow_short=True` legado do single-asset agora é rejeitado explicitamente, e o
@@ -481,8 +486,9 @@ opera apenas um ticker. Essas unidades experimentais não são equivalentes.
 - O dashboard ainda não publica turnover, exposição, benchmark de mercado ou
   incerteza estatística. A definição legada de mudança média de pesos inclui
   drift e não foi promovida a turnover científico.
-- `252` sessões/ano, taxa livre de risco zero e MAR zero são defaults técnicos
-  configuráveis, não parâmetros experimentais congelados.
+- `risk_free_rate = 0` está fechado no protocolo (§17.3, junto com
+  `cash_return = 0`); `252` sessões/ano e MAR zero continuam defaults técnicos
+  configuráveis.
 
 ### 5. Protocolo experimental ainda não congelado
 
@@ -515,9 +521,9 @@ A governança dessa calibração também passou a ser documental: o protocolo
 descreve subfases com autoridades distintas — Diagnostic Hardening, CAL-A,
 Sequential Development, Stress e CAL-B —, a quantidade de âncoras
 (`CORE = 30 = CAL-A 20 + CAL-B 10`, mais até 8 âncoras de stress fora do CORE),
-quais parâmetros cada subfase pode alterar e a regra one-shot do CAL-B. **Nada
-disso foi executado**, nenhuma data foi escolhida e nenhum critério de seleção
-foi definido.
+quais parâmetros cada subfase pode alterar, a regra one-shot do CAL-B e o
+critério de seleção do CAL-A (`S1`). **Nada disso foi executado** e nenhuma data
+foi escolhida.
 
 Estado factual de cada item:
 
@@ -525,12 +531,15 @@ Estado factual de cada item:
 |---|---|
 | Desenho pseudo-live (decisão em `close(t)`, execução em `open(t+1)`, relógio avançando uma sessão por vez) | Documentado; o mecanismo de execução já existe na arena e no `AgentBacktestEngine` |
 | Calibração retrospectiva do sistema como etapa declarada | Documentada; nunca executada como fase formal |
-| Janela base de mercado `>= 2 anos` | Aprovada conceitualmente; **mecanismo implementado**. `minimum_history_sessions` é campo obrigatório da `EvaluationSpec` e o gate falha antes de construir o participante. O valor recomendado passou a ser 504 sessões disponíveis até e incluindo `decision_start` (503 anteriores + a sessão de decisão); recomendado e documentado, ainda não congelado. A janela continua expansiva (`snapshot[:t]`), por decisão registrada |
+| Janela base de mercado `>= 2 anos` | Aprovada conceitualmente; **mecanismo implementado**. `minimum_history_sessions` é campo obrigatório da `EvaluationSpec` e o gate falha antes de construir o participante. Valor **fechado**: `minimum_history_sessions = 504` sessões disponíveis até e incluindo `decision_start` (503 sessões comuns anteriores + a sessão de decisão). A janela continua expansiva (`snapshot[:t]`), por decisão registrada |
 | Governança da CALIBRATION (subfases, autoridade por parâmetro, CAL-B one-shot, disjunção de datas) | Documentada em `EXPERIMENT_PROTOCOL.md` §5.12. Nenhuma subfase executada; nenhum baseline `B0` existe |
 | Historical Memory | Não implementada. Nenhum corpus, retriever, embedding ou vector store |
 | Calibration Cases, Validation, Final Test | Quantidade de âncoras decidida (`CORE = 30`, `CAL-A = 20`, `CAL-B = 10`, stress `<= 8` fora do CORE); **nenhuma data selecionada** |
-| Critério agregado de CAL-A, janela e critério do Sequential Development, regra de síntese dos runs de Validation | `TBD`. Espaço de decisão delimitado no protocolo, valor não escolhido |
-| Métrica primária, universo final, provider/model, custos | `TBD` |
+| Decisões fechadas | `CAL_A_SELECTION_SCORE = S1` (média do retorno líquido realizado nas 20 âncoras); `long_target_weight = 1.0`; `minimum_history_sessions = 504`; `cash_return = 0` e `risk_free_rate = 0`; métrica primária = Sharpe anualizado líquido; benchmark primário = Buy & Hold; secundários = SMA e Bollinger; capital inicial = R$ 100.000; `risk_max_concentration = 1.0` no single-asset v1 (sujeito só ao amendment de autoridade já registrado) |
+| Janela, duração e critério do Sequential Development, regra de síntese dos runs de Validation | `TBD`. Espaço de decisão delimitado no protocolo, valor não escolhido |
+| Universo final, provider/model | `TBD` |
+| Benchmark de mercado (índice) e escopo do amendment de benchmarks | `TBD_ORIENTADOR` — não reabre Buy & Hold nem SMA/Bollinger |
+| Custos | **CostSpec congelado** (protocolo §10): `brokerage_fixed = 0.0`, `tax_rate = 0.000320` (B3 v5.0, OC 037/2026-PRE), `spread_bps = 5.0` (premissa conservadora ex ante); ADV check nominal, pior caso WEGE3 0,21%, evidência versionada em `docs/evidence/costspec_liquidity_check.json` |
 
 Nada disso alterou código, schema ou configuração de execução: a formalização é
 documental.
@@ -722,11 +731,12 @@ entra no `spec_hash` e no manifest. O default técnico é `0.25`, herdado do ant
 teto `max_position_size` para manter API e testes convenientes:
 
 ```text
-technical default       = 0.25
-scientific frozen value = TBD  (EXPERIMENT PROTOCOL v1)
+technical default = 0.25
+scientific value  = 1.0   (EXPERIMENT_PROTOCOL.md §11, fechado)
 ```
 
-Nada nisso congela 25% como decisão metodológica.
+O default técnico não é o valor científico: toda spec científica declara
+`long_target_weight = 1.0` explicitamente.
 
 **`COMPRA` passou a significar exposição alvo, não ordem de compra.** Com a
 exposição corrente abaixo do alvo o executor compra; depois de um gap de alta

@@ -1326,8 +1326,7 @@ Para cada decisão em `t`, o sistema deve ter acesso a pelo menos
 aproximadamente dois anos de histórico de mercado causalmente disponível até
 `t`. É o contexto base mínimo da decisão.
 
-Parametrização, agora resolvida (seção 5.11), ainda pendente do ato formal de
-congelamento:
+Parametrização **FECHADA** (seções 5.11 e 11):
 
 ```text
 gate contado em SESSÕES do calendário comum        DECIDIDO
@@ -1355,8 +1354,7 @@ uma janela **expansiva**.
 > `minimum_history_sessions` é campo obrigatório e sem default da
 > `EvaluationSpec`, e o gate recusa a janela antes de construir o participante
 > e antes de qualquer chamada paga. A definição canônica da contagem está na
-> seção 5.11; o que continua sendo decisão da dupla é o **valor**, hoje
-> recomendado em 504 e ainda não congelado.
+> seção 5.11; o **valor** está fechado em 504 (seção 11).
 
 ### 7.3 Informação disponível não é prompt bruto
 
@@ -1461,7 +1459,8 @@ na abertura da próxima sessão válida `t+1`.
 - Tipo de ordem canônica: `TBD`.
 - Formação do preço de execução: **`OPENING_AUCTION_EXECUTION`** (decidido).
 - Lotes, arredondamento e liquidez: **não expressáveis no v1** (ver abaixo).
-- Slippage e spread: `TBD` — valor em `TBD_EXTERNAL_SOURCE`, semântica na seção 10.
+- Slippage e spread: `spread_bps = 5.0` como fricção de execução — **congelado**,
+  valor e semântica na seção 10.
 - Falta de barra, suspensão e execução parcial: `TBD`.
 - Política de short: `TBD`.
 
@@ -1597,16 +1596,28 @@ outro faria o Sharpe penalizar caixa parado duas vezes.
 
 ## 10. Transaction costs
 
-- Corretagem: **R$ 0,00 por ordem executada** — cenário-base de varejo.
-- Emolumentos e taxas: **0,0320% por perna** (ver composição abaixo).
-- Spread / fricção de execução: `TBD_EXTERNAL_SOURCE` — **bloqueador**.
-- Slippage: incorporado à semântica de `spread_bps` (abaixo).
-- Tributos do investidor: **excluídos do v1**, declaradamente.
-- Fonte e data de vigência: registradas abaixo.
+**COSTSPEC STATUS: CONGELADO** (2026-09-28), antes de qualquer execução do
+CAL-A. O CostSpec congelado **não** congela o protocolo: este documento continua
+**DRAFT — NÃO CONGELADO**, e os demais itens da seção 21 seguem pendentes.
 
-**STATUS: PENDENTE DE CONGELAMENTO** enquanto `spread_bps` não tiver valor.
+```text
+brokerage_fixed = 0.0        ASSUMED BASELINE
+tax_rate        = 0.000320   B3 OFFICIAL
+spread_bps      = 5.0        ASSUMED CONSERVATIVE BASELINE
+```
+
+- Corretagem: **R$ 0,00 por ordem executada** — premissa de cenário: canal
+  eletrônico de varejo com corretagem zero para ações (Inter, Itaú). Não é
+  medida do mercado inteiro.
+- Emolumentos e taxas: **0,0320% por perna** (ver composição abaixo).
+- Fricção de execução: **5,0 bps por perna** (ver `spread_bps` abaixo).
+- Slippage: incorporado à semântica de `spread_bps` (abaixo).
+- Tarifa sobre valor em custódia: **excluída do v1** (ver abaixo).
+- Tributos do investidor: **excluídos do v1**, declaradamente.
+
 Custos são calculados sobre o valor financeiro total e aplicados igualmente a
-todos os participantes.
+todos os participantes. `CostSpec` no código mantém defaults técnicos zero; toda
+`ExperimentSpec` científica declara os três valores acima explicitamente.
 
 ### Composição de `tax_rate` sob `OPENING_AUCTION_EXECUTION`
 
@@ -1622,18 +1633,24 @@ tax_rate = 0,03200% por perna  =  0.000320
 ```
 
 ```text
-fonte      B3 — Tarifas de Ações e Fundos de Investimento, Mercado à Vista
-           "As operações realizadas durante os leilões de abertura e
-            fechamento, o valor da tarifa de negociação será 0,007%,
-            desde que não sejam caracterizadas como day trade"
-documento  "Tarifação de Produtos de Renda Variável", versão 3.0
-vigência   15/08/2025 (Ofício Circular 097/2025-PRE); política em vigor
-           desde 01/08/2025 (CE 026/2025-VPC)
-investidor SEM distinção por tipo desde 01/08/2025 — a tarifa depende
-           apenas do ADTV mensal por CPF/CNPJ
+fonte      B3 — "Tarifação de Produtos de Renda Variável", versão 5.0
+           Ofício Circular 037/2026-PRE, vigência desde 01/09/2026
+           §1.2.3  negociação regular, ADTV R$0 a R$3 mi   0,00500%
+                   CCP, mesma faixa                        0,02240%
+           §1.2.5  TTA, faixa 0 a 13,2 bi                  0,00260%
+           §1.2.6  "As operações regulares (não caracterizadas como day
+                   trade) realizadas durante os leilões de abertura e de
+                   fechamento terão o valor da tarifa de negociação de
+                   0,0070% para todos os investidores."
+histórico  v4.0 (OC 120/2025-PRE, 02/01/2026 a 31/08/2026): valores acima
+           idênticos; mudou só a Central Depositária (IPCA nov/24–dez/25).
+           v5.0 mudou apenas o Programa HFT. v3.0 (OC 097/2025-PRE,
+           15/08/2025 a 31/12/2025): apenas histórico.
+investidor SEM distinção por tipo — a tarifa depende apenas do ADTV mensal
+           por CPF/CNPJ
 simetria   incide sobre comprador E vendedor; não há assimetria
            compra/venda, e o CostModel simétrico está correto
-consulta   2026-09-14 — conferência documental final pendente
+consulta   2026-09-28 — texto extraído dos PDFs oficiais v3.0, v4.0 e v5.0
 ```
 
 A tarifa do livro contínuo na mesma faixa seria 0,0300%; usá-la seria
@@ -1653,8 +1670,123 @@ spread_bps = effective_execution_friction_bps
            aplicada simetricamente a compra e venda
 ```
 
-Sem evidência externa, `TBD_EXTERNAL_SOURCE` é a resposta — nunca um número
-arbitrário.
+```text
+spread_bps = 5.0    ASSUMED CONSERVATIVE BASELINE
+```
+
+**5 bps NÃO é uma estimativa medida para a B3.** É uma premissa ex ante,
+escolhida antes de resultados experimentais, para representar fricção adicional
+de execução no leilão de abertura. A literatura internacional sustenta apenas a
+dependência do impacto com tamanho/liquidez e a ordem de grandeza geral; não
+identifica diretamente 5 bps para o nosso mercado. **Nenhuma evidência
+brasileira específica foi localizada.**
+
+| Fonte | O que sustenta | O que NÃO sustenta |
+|---|---|---|
+| Goyal, Jegadeesh & Wu | ordem de grandeza internacional; impacto cresce com tamanho relativo à liquidez. Os 17,7 bps @ 1% ADV são média de **leilão de FECHAMENTO**; o mesmo trabalho indica volume menor e impacto **maior** na abertura | qualquer estimativa para o leilão de abertura; qualquer valor para a B3 |
+| Salek, Challet & Muni Toke | evidência internacional de microestrutura de leilão (**Euronext Paris**), em especial a existência de região de impacto nulo para ordens pequenas em relação ao volume do leilão | qualquer evidência brasileira |
+
+Nenhum valor é derivado por escala (`17,7 × √(participação)`): essa derivação
+foi retirada porque transportava um número de fechamento para a abertura.
+
+#### ADV check — escala da ordem
+
+Verificação de que a ordem é pequena frente à liquidez, feita antes do CAL-A,
+sem participante e sem resultado. A regra foi declarada antes do primeiro
+cálculo e não foi trocada depois:
+
+```text
+série         LIQUIDITY DIAGNOSTIC SERIES — yfinance auto_adjust=False
+              (yfinance 1.5.1, download 2026-09-28), SEPARADA da série
+              científica; o Close nominal não entra no motor nem no snapshot
+FV diário     Close × Volume, excluídas sessões com volume zero
+sessões       elegíveis à execução: calendário comum a partir da 504ª sessão
+              (seção 7.2) → 2018-01-02 a 2026-08-04, n = 2135; nenhuma
+              estatística separada por Validation ou Final Test
+gate          PIOR mediana móvel de 252 sessões
+contexto      mediana do período elegível; mediana das últimas 252 sessões
+ordem         R$ 100.000 (capital inicial inteiro, pior caso de ordem única)
+```
+
+Semântica do provider verificada no desdobramento 2:1 de BBAS3 (16/04/2024):
+`Close` e `Volume` vêm ambos retroativamente ajustados por split e o `Close`
+não é ajustado por proventos; o produto é invariante ao evento (mediana de 20
+sessões com volume: R$409,4 mi antes, R$404,7 mi depois). Mesmo resultado em
+WEGE3 (2:1, 2021) e RENT3 (3:1, 2017). O critério automatizado só detecta
+inconsistência de escala: reprova quando a variação da mediana fica mais perto
+do fator do evento que de 1.
+
+| Ticker | Mediana elegível | Últimas 252 | Pior 252 | 100k / mediana | 100k / pior |
+|---|---:|---:|---:|---:|---:|
+| ABEV3 | R$344,2 mi | R$366,2 mi | R$279,3 mi | 0,029% | 0,036% |
+| BBAS3 | R$478,4 mi | R$515,8 mi | R$376,3 mi | 0,021% | 0,027% |
+| BBDC4 | R$599,8 mi | R$536,7 mi | R$405,8 mi | 0,017% | 0,025% |
+| CMIG4 | R$116,3 mi | R$125,1 mi | R$84,8 mi | 0,086% | 0,118% |
+| ITUB4 | R$790,3 mi | R$900,2 mi | R$577,1 mi | 0,013% | 0,017% |
+| PETR4 | R$1.445,0 mi | R$1.328,2 mi | R$970,2 mi | 0,007% | 0,010% |
+| RENT3 | R$293,6 mi | R$314,6 mi | R$108,2 mi | 0,034% | 0,092% |
+| SUZB3 | R$273,7 mi | R$258,8 mi | R$184,1 mi | 0,037% | 0,054% |
+| VALE3 | R$1.453,6 mi | R$1.379,5 mi | R$816,8 mi | 0,007% | 0,012% |
+| WEGE3 | R$232,1 mi | R$332,0 mi | R$46,9 mi | 0,043% | **0,213%** |
+
+```text
+pior caso   WEGE3, R$100k / R$46,9 mi = 0,21% ADV (janela terminada em 2019-01-10)
+```
+
+Classificação qualitativa, não gate rígido: `0,1% ADV` foi premissa auxiliar de
+uma justificativa anterior, não threshold validado para a B3. Participação da
+ordem de `0,5%–1% ADV` ou maior exigiria `COSTSPEC FREEZE REVIEW REQUIRED`, sem
+ajuste automático do spread. O pior caso observado (0,21%) fica abaixo dessa
+faixa; o valor é registrado como observado.
+
+A série ajustada por proventos (a científica) subestima o FV nominal histórico —
+de 1,1× (WEGE3) a 3,1× (PETR4) no pior ano — e por isso **não** é usada para
+liquidez. O ADV check vale para o universo candidato da seção 3; se o universo
+mudar, ele é refeito sob a mesma regra antes do freeze do universo.
+
+Evidência versionada, porque o provedor pode revisar o histórico e o script
+sozinho não congela o resultado:
+
+```text
+script     scripts/analyze_nominal_liquidity.py
+           method_version = costspec-nominal-liquidity-v1
+evidence   docs/evidence/costspec_liquidity_check.json
+           LIQUIDITY DIAGNOSTIC EVIDENCE — NOT SCIENTIFIC MARKET INPUT
+           registra provider/versão, símbolos e intervalo pedidos, commit
+           base, SHA-256 do script, sanity checks de split e content_sha256
+uso        NUNCA consumida pelo backtest, pela Arena ou por snapshot
+```
+
+Reexecutar o script em data posterior pode produzir números diferentes se o
+provedor revisar a série; o resultado ratificado é o do arquivo versionado.
+
+### Tarifa sobre valor em custódia — excluída do v1
+
+```text
+v5.0 §4.2.3 (idêntica à v4.0)
+isenção      contas com valor inferior a R$ 26.471,77
+cobrança     mensal, pro rata, progressiva, sobre o valor da carteira no
+             último dia útil do mês, por documento e custodiante
+faixas (ano) 0 – 115.000,00               0,0500%
+             115.000,01 – 230.000,00      0,0400%
+             230.000,01 – 345.000,00      0,0200%
+             345.000,01 – 1,95 mi         0,0130%
+             1,95 mi – 19,5 mi            0,0072%
+             19,5 mi – 195 mi             0,0032%
+             195 mi – 1,95 bi             0,0025%
+             1,95 bi – 19,5 bi            0,0020%
+             19,5 bi – 50 bi              0,0015%
+             acima de 50 bi               0,0005%
+```
+
+A tarifa incide sobre o valor dos **ativos** em custódia, não sobre o caixa. Ela
+**não é neutra** entre participantes: quem fica mais tempo investido pagaria
+mais que quem mantém fração relevante em caixa. A exclusão se justifica pela
+premissa de cenário — a instituição de varejo do cenário-base não repassa a
+tarifa ao cliente (Inter, Itaú) — e não por neutralidade.
+
+Limitação declarada: outra instituição pode repassá-la; nesse caso o v1
+favorece marginalmente participantes com maior `time_in_market`.
 
 ### Regime temporal de custo — cenário contrafactual
 
@@ -1670,9 +1802,18 @@ D2  é um cenário contrafactual reproduzível: todos os participantes são
 D3  o nível de custo PODE alterar o ranking, porque o turnover difere
 ```
 
-Análise de sensibilidade permitida apenas se **pré-declarada** e descritiva:
-multiplicador `m ∈ {0, 1, 2, 4}` sobre o `CostSpec` congelado. Nunca critério de
-seleção.
+### Sensibilidade de custo — pré-declarada e descritiva
+
+```text
+fixos       brokerage_fixed = 0.0 ; tax_rate = 0.000320
+variável    spread_bps ∈ {0, 5 (baseline), 10, 20}
+```
+
+Só a fricção de execução varia, porque é o único componente incerto; tarifa
+regulatória não é incerta. `0 bps` é o piso contrafactual sem fricção, **não** uma
+estimativa alternativa igualmente provável. A sensibilidade não seleciona
+configuração, não seleciona conclusão e não altera o CAL-A: é robustez
+descritiva.
 
 ### Simetria de custo NÃO é neutralidade de comparação
 
@@ -1705,7 +1846,7 @@ marginalmente participantes de alto giro.
 - Política de caixa residual e lote: `TBD`.
 - Política definitiva de Kelly: `TBD`.
 - Thresholds determinísticos de risco: `TBD`.
-- Valor definitivo de `long_target_weight`: `TBD`.
+- `long_target_weight = 1.0` — **FECHADO** ("Valores decididos", abaixo).
 
 ### Decisão metodológica APROVADA
 
@@ -1842,14 +1983,17 @@ congelar.
 
 ## 12. Benchmarks
 
-Candidatos atuais:
+```text
+BENCHMARK PRIMÁRIO      = Buy & Hold        FECHADO (seção 17.3)
+BENCHMARKS SECUNDÁRIOS  = SMA · Bollinger   FECHADO (seção 17.3)
+```
 
-- Buy and Hold;
-- SMA Cross;
-- Bollinger Bands;
-- Equal Weight;
-- Mínima Variância;
-- benchmark de mercado: `TBD`.
+Continuam implementados, sem papel de benchmark primário ou secundário: Equal
+Weight e Mínima Variância.
+
+Questão ainda aberta, **distinta** dos benchmarks acima: benchmark de mercado
+(índice) e o escopo do amendment de benchmarks — `TBD_ORIENTADOR`. Ela não
+reabre Buy & Hold como benchmark primário nem SMA/Bollinger como secundários.
 
 Parâmetros e frequência de cada benchmark: `TBD`. Todos serão congelados no
 FREEZE, **antes da PSEUDO-LIVE VALIDATION**, e executados pelo contrato comum.
@@ -2077,7 +2221,7 @@ mesma spec, mesmo snapshot, mesma configuração
 run_ids e traces independentes
 ```
 
-Ainda `TBD`, e dependente da definição da métrica primária (seção 17.3):
+Ainda `TBD` (a métrica primária já está fechada na seção 17.3):
 
 ```text
 regra de síntese entre os runs
@@ -2413,9 +2557,9 @@ assinatura de `LLMParticipant.__init__`:
 | Credencial do provedor | **Não, por desenho** | ambiente; nunca em spec, manifest, log ou artefato |
 | Texto dos prompts | Não | código-fonte, identificado no trace por SHA-256 |
 | Janela experimental (período avaliado) | **Sim** | `evaluation.decision_start` / `decision_end` |
-| Histórico mínimo exigido antes da primeira decisão | **Sim** | `evaluation.minimum_history_sessions` (valor científico `TBD`) |
+| Histórico mínimo exigido antes da primeira decisão | **Sim** | `evaluation.minimum_history_sessions` (valor científico `504`, seção 11) |
 | Fase do protocolo e `case_id` | **Não, por desenho** | manifest (`run_context`), declarados antes do run |
-| Benchmark de mercado de referência | Não | `TBD` |
+| Benchmark de mercado (índice) de referência | Não | `TBD_ORIENTADOR` (seção 12); benchmark primário Buy & Hold é participante, não campo |
 
 Distinção que o protocolo exige manter, porque as duas coisas costumam ser
 confundidas:
@@ -2503,7 +2647,8 @@ dupla e orientador deverão aprovar e registrar:
    Walk-Forward;
 4. participantes, parâmetros e benchmarks;
 5. modelos, prompts, papéis, quorum, temperaturas e seeds;
-6. capital, custos, execução e risco, incluindo `long_target_weight` e
+6. capital, custos (CostSpec já congelado na seção 10), execução e risco,
+   incluindo `long_target_weight` e
    `decision_frequency`;
 7. janela base de mercado (parametrização exata da seção 7.2);
 8. política de Historical Memory, se houver alguma ativa;

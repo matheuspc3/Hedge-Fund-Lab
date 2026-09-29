@@ -410,9 +410,10 @@ Três decisões desta camada merecem registro:
    em silêncio. O `LLMParticipant` força `sizing_mode="qualitative"` e não
    expõe parâmetro algum de Kelly.
 
-   **`long_target_weight` não está congelado.** O default técnico é `0.25` — o
-   antigo teto `max_position_size`, adotado só para manter a API conveniente. O
-   valor científico é `TBD` no protocolo experimental v1. Ele é validado
+   **O default técnico de `long_target_weight` não é o valor científico.** O
+   default é `0.25` — o antigo teto `max_position_size`, adotado só para manter
+   a API conveniente. O valor científico está fechado em `1.0` no protocolo
+   experimental v1 (§11) e é declarado na spec. Ele é validado
    (`0 < w <= 1`, e `w <= risk_max_concentration`, porque um alvo acima do
    limite duro mandaria construir exatamente a exposição que o gestor de risco
    existe para vetar), entra na `ParticipantSpec`, no `spec_hash` e no manifest.
@@ -746,7 +747,7 @@ O que **ainda não existe** no contrato, comprovado no repositório:
 
 | Lacuna | Estado no código |
 |---|---|
-| Escolha das janelas e âncoras experimentais | **A representação existe** (`EvaluationSpec`, `phase`, `case_id`, gate de warm-up, settlement). O que falta é metodológico: nenhuma data, âncora ou `minimum_history_sessions` científico foi escolhido |
+| Escolha das janelas e âncoras experimentais | **A representação existe** (`EvaluationSpec`, `phase`, `case_id`, gate de warm-up, settlement). O que falta é metodológico: nenhuma data ou âncora foi escolhida (`minimum_history_sessions = 504` está fechado) |
 | Participante LLM multi-ativo | `LLMParticipant.decide` recusa universo com mais de um ticker; `AgentState` descreve um ativo |
 | Integração do modo diário à Arena | `DailyAgentRunner` continua em caminho próprio, sem `ExperimentRunner` nem manifest canônico |
 | Freeze científico | Mecanismo de proveniência existe (`git commit`, `spec_hash`, `snapshot_id`, manifest, trace); o ato metodológico de congelar não aconteceu |

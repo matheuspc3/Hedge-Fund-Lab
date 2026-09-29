@@ -35,17 +35,17 @@ está em [`ESTADO_ATUAL.md`](ESTADO_ATUAL.md).
 | Análises secundárias | PETR4 e WEGE3, sem substituir a comparação principal | **STATUS: proposta / pendente de congelamento** |
 | Informação e execução | Features disponíveis no fechamento de `t`; execução na abertura de `t+1` | **STATUS: proposta / pendente de congelamento** |
 | Desenho experimental | Calibração retrospectiva do sistema -> freeze -> validação pseudo-live -> teste final -> live/shadow, em vez de TRAIN/TEST clássico | **STATUS: decisão metodológica aprovada** (datas e períodos continuam `TBD`) |
-| Janela base de mercado | O sistema decide em `t` com pelo menos ~2 anos de histórico causalmente disponível | **STATUS: decisão metodológica aprovada**; gate implementado como `minimum_history_sessions`, valor recomendado 504 (503 sessões anteriores + a sessão de decisão), pendente de congelamento |
+| Janela base de mercado | O sistema decide em `t` com pelo menos ~2 anos de histórico causalmente disponível | **STATUS: decisão metodológica aprovada**; gate implementado como `minimum_history_sessions`, valor **fechado em 504** (503 sessões comuns anteriores + a sessão de decisão) |
 | Governança da CALIBRATION | Subfases com autoridades distintas — Diagnostic Hardening, CAL-A (20 âncoras), Sequential Development, Stress (`<= 8`, fora do CORE) e CAL-B (10 âncoras, one-shot) | **STATUS: decisão metodológica aprovada**; datas, critérios e valores continuam `TBD` |
 | Embargo temporal | Nenhum embargo obrigatório; separação garantida por ordem cronológica, disjunção, freeze e pré-registro | **STATUS: decisão metodológica aprovada** |
-| Alvo científico | Resultado é o P&L realizado pela Arena e a curva líquida; `open(t+1) -> close(t+1)` é diagnóstico de decisão; `close(t) -> close(t+1)` é descritivo; não há tarefa de previsão probabilística no v1 | **STATUS: decisão metodológica aprovada** (métrica primária continua `TBD`) |
+| Alvo científico | Resultado é o P&L realizado pela Arena e a curva líquida; `open(t+1) -> close(t+1)` é diagnóstico de decisão; `close(t) -> close(t+1)` é descritivo; não há tarefa de previsão probabilística no v1 | **STATUS: decisão metodológica aprovada**; métrica primária fechada: Sharpe anualizado líquido, benchmark primário Buy & Hold, secundários SMA e Bollinger |
 | Modo de histórico | `expanding`: a decisão em `t` enxerga todo o histórico causal até `t` | **STATUS: decisão metodológica aprovada para o v1**; rolling fica como ablation futura |
 | Historical Memory | Recuperação seletiva de episódios antigos, sob `available_at <= decision_time` | **STATUS: extensão planejada, não implementada** |
-| Custos | Uma especificação versionada e idêntica para todos | **STATUS: proposta / pendente de congelamento** |
+| Custos | Uma especificação versionada e idêntica para todos: `brokerage_fixed = 0.0`, `tax_rate = 0.000320` (B3 v5.0), `spread_bps = 5.0` (premissa conservadora ex ante) | **COSTSPEC STATUS: CONGELADO** (protocolo §10) |
 | Resultado | `RunResult` e manifest canônicos, identificados por `run_id` | **STATUS: proposta / pendente de congelamento** |
 | Risco | Regras determinísticas obrigatórias; LLM apenas complementa | **STATUS: proposta / pendente de congelamento** |
-| Kelly | Confiança textual do LLM não é `P(win)`; sizing científico é determinístico | **STATUS: decisão metodológica aprovada** (o valor de `long_target_weight` continua `TBD`) |
-| Exposição | `long_target_weight` é decisão declarada de política de exposição, não parâmetro de calibração por desempenho; não é otimizado em CAL-A | **STATUS: decisão metodológica aprovada** (valor `TBD`) |
+| Kelly | Confiança textual do LLM não é `P(win)`; sizing científico é determinístico | **STATUS: decisão metodológica aprovada** (`long_target_weight = 1.0`, fechado) |
+| Exposição | `long_target_weight` é decisão declarada de política de exposição, não parâmetro de calibração por desempenho; não é otimizado em CAL-A | **STATUS: decisão metodológica aprovada**; valor fechado em `1.0` |
 | Tempo real | Fora do caminho crítico até a arena histórica ser válida | **STATUS: proposta / pendente de congelamento** |
 
 Quorum, modelos, prompts, thresholds, janelas experimentais, custos e demais
@@ -336,15 +336,38 @@ DESENHADO / DOCUMENTADO
    CAL-B one-shot e regra de consumo do holdout
    classe de comparabilidade e change log
    alvo científico e diagnostics
-   warm-up = 504 · sem embargo obrigatório
+   sem embargo obrigatório
 
-AINDA FALTA ESCOLHER
-   critério agregado de CAL-A
-   janela, duração, critério e tetos do Sequential Development
-   long_target_weight (política de exposição)
-   métrica primária e regra de síntese dos runs de Validation
-   universo final, provider/model e custos
-   datas: âncoras de calibração, stress, CAL-B, Validation e Final Test
+FECHADO (não reabrir)
+   CAL_A_SELECTION_SCORE = S1(c) = média do retorno líquido realizado
+                           nas 20 Calibration Anchors
+   long_target_weight    = 1.0
+   minimum_history_sessions = 504 = 503 sessões comuns anteriores + decision_start
+   cash_return = 0 · MetricSpec.risk_free_rate = 0
+   métrica primária      = Sharpe anualizado líquido
+   benchmark primário    = Buy & Hold
+   benchmarks secundários = SMA · Bollinger
+   initial_capital       = R$ 100.000
+   risk_max_concentration = 1.0 no single-asset v1 (sujeito só ao amendment
+                           de autoridade já registrado)
+   CostSpec              = CONGELADO (protocolo §10)
+
+BLOQUEADORES REAIS ANTES DO CAL-A
+   B0 / baseline do Diagnostic Hardening
+   universo final / ticker científico
+   DatasetSnapshot oficial com scientific_ready = true
+   20 âncoras de CAL-A · 10 de CAL-B · <= 8 de Stress
+   Sequential Development: janela, duração, critério, N_seq / R_seq
+   espaço de candidatos do CAL-A: N <= 8, config_id e valores explícitos
+   provider/model fixos
+   política final de stochastic runs: K e regra do run primário
+   amendments acadêmicos ainda sob autoridade do orientador
+     (inclui benchmark de mercado/índice e escopo do amendment de
+      benchmarks = TBD_ORIENTADOR; não reabre Buy & Hold nem SMA/Bollinger)
+
+ANTES DO FREEZE (não bloqueiam o CAL-A)
+   períodos de Validation e Final Test, compatíveis com os invariantes
+   de disjunção da seção 5.12; Walk-Forward; hipóteses e análise estatística
 ```
 
 O desenho aprovado é calibração retrospectiva do sistema seguida de avaliação
@@ -376,11 +399,12 @@ overfitting dos pesquisadores. Ele se subdivide nas decisões pendentes abaixo.
 
 ### 7.2 Parâmetros a congelar
 
-- [ ] Definir `long_target_weight` (hoje apenas default técnico `0.25`) como
-  política declarada de exposição — não por calibração em CAL-A — e congelar a
-  política de sizing do experimento v1.
-- [ ] Definir o critério agregado único de seleção de CAL-A, dentro das
-  restrições da seção 5.12 (candidatos `C1`–`C4` registrados lá).
+- [x] Definir `long_target_weight = 1.0` como política declarada de exposição —
+  não por calibração em CAL-A (default técnico do código continua `0.25`).
+- [x] Definir o critério agregado único de seleção de CAL-A:
+  `CAL_A_SELECTION_SCORE = S1` (seção 5.12).
+- [ ] Definir o espaço de candidatos do CAL-A (`N <= 8`, `config_id`, valores
+  explícitos dos parâmetros candidatos).
 - [ ] Definir o critério de seleção e os tetos `N_seq`/`R_seq` do Sequential
   Development, antes de executá-lo.
 - [ ] Congelar `decision_frequency` (selecionado no Sequential Development, não
@@ -395,10 +419,16 @@ overfitting dos pesquisadores. Ele se subdivide nas decisões pendentes abaixo.
 - [ ] Congelar universo, snapshot, dados e features.
 - [x] Parametrizar a janela base de mercado `>= 2 anos`:
   `minimum_history_sessions = 504`, contado em sessões do calendário comum,
-  como mínimo e não máximo — pendente apenas do ato formal de congelamento.
-- [ ] Congelar custos, taxa livre de risco e benchmark de mercado.
-- [ ] Definir a métrica primária e separar diagnóstico de decisão de performance
-  de carteira.
+  como mínimo e não máximo — fechado.
+- [x] Congelar custos: CostSpec congelado na seção 10 do protocolo
+  (`brokerage_fixed = 0.0`, `tax_rate = 0.000320`, `spread_bps = 5.0`), com
+  evidência de liquidez em `docs/evidence/costspec_liquidity_check.json`.
+- [x] Fechar `risk_free_rate = 0` (com `cash_return = 0`).
+- [x] Fechar benchmarks: primário Buy & Hold; secundários SMA e Bollinger.
+- [ ] Benchmark de mercado (índice) e escopo do amendment de benchmarks —
+  `TBD_ORIENTADOR`; não reabre os benchmarks primário/secundários.
+- [x] Definir a métrica primária (Sharpe anualizado líquido) e separar
+  diagnóstico de decisão de performance de carteira.
 - [ ] Aprovar ablations e análise estatística antes de observar o FINAL TEST.
 - [ ] Versionar prompts e snapshots.
 
@@ -510,7 +540,7 @@ Sem datas até existir cronograma confirmado.
 | M1 — Scientific Core | Dados, execução, custos e métricas canônicos e validados |
 | M2 — Common Arena | Participantes sob o mesmo contrato, motor e `ExperimentSpec` |
 | M3 — LLM Hardened | Concorrência, telemetria, custo e fail-closed confiáveis |
-| M4 — Experimental Protocol Frozen | `Freeze EXPERIMENT PROTOCOL v1`. Governança da CALIBRATION **desenhada e documentada** (subfases, autoridade por parâmetro, CAL-B one-shot, disjunção, warm-up 504, sem embargo). Falta escolher: critério agregado de CAL-A, parâmetros e janela do Sequential Development, `long_target_weight`, métrica primária, universo/model/custos e as fronteiras temporais reais — tudo aprovado antes da validação pseudo-live |
+| M4 — Experimental Protocol Frozen | `Freeze EXPERIMENT PROTOCOL v1`. Governança da CALIBRATION **desenhada e documentada** (subfases, autoridade por parâmetro, CAL-B one-shot, disjunção, warm-up 504, sem embargo). Fechados: critério de CAL-A (`S1`), `long_target_weight = 1.0`, métrica primária, benchmarks, capital, `risk_free_rate`, warm-up e CostSpec. Falta escolher: parâmetros e janela do Sequential Development, espaço de candidatos do CAL-A, universo/model, política de stochastic runs e as fronteiras temporais reais — tudo aprovado antes da validação pseudo-live |
 | M5 — Ablations Executed | Variantes executadas e rastreadas por manifest |
 | M6 — OOS Scientific Results | Validação pseudo-live, FINAL TEST, Walk-Forward e análises concluídos |
 | M7 — TCC Final | Código, evidências, monografia e defesa alinhados |
