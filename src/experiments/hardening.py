@@ -120,6 +120,13 @@ H2_FREEZE_V1_PARAMS: Mapping[str, Any] = MappingProxyType(
 H2_THINKING_LADDER: tuple[str, ...] = ("low", "medium", "high")
 
 
+#: Resultado mecânico da escada: ``low`` passou em G-A, G-T, G-I e G-F no
+#: Diagnostic Hardening de 2026-10-04 e fica congelado para o H2 v1.
+#: ``medium`` e ``high`` nunca foram testados, como a regra manda.
+H2_FROZEN_THINKING_LEVEL = "low"
+H2_FROZEN_THINKING_EVIDENCE = "docs/evidence/h2/hardening_low_20261004T194849Z/manifest.json"
+
+
 def h2_freeze_v1_params(thinking_level: str) -> dict[str, Any]:
     """Spec congelada com o nível de thinking da escada."""
     if thinking_level not in H2_THINKING_LADDER:

@@ -340,3 +340,21 @@ Este texto de freeze nunca é editado em silêncio.
 ### Amendments
 
 Nenhum.
+
+### Registro de execução (append-only)
+
+Resultados das regras predeclaradas acima. Não são amendments: nenhuma regra
+mudou.
+
+```text
+2026-10-04  Diagnostic Hardening, thinking_level = low
+            commit f1b903932119ee030354c24d12f7b018f50a4ec2 (freeze)
+            evidência docs/evidence/h2/hardening_low_20261004T194849Z/
+            G-A 0 falhas finais            PASS
+            G-T 0 truncamentos             PASS
+            G-I total_hold_rate 0.667      PASS (< 0.90)
+            G-F same_state_flip_rate 0.0   PASS (<= 0.10)
+            1 HTTP 503 recuperado por retry (fora de G-A)
+            -> LOW FROZEN para o H2 v1 (H2_FROZEN_THINKING_LEVEL);
+               MEDIUM e HIGH não testados
+```
