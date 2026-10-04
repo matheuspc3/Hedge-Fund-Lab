@@ -442,6 +442,111 @@ Os índices são os mesmos. As datas de q = 0.20 e 0.40 andam uma sessão
 porque a barra de preenchimento de 2018-01-25 deixou de existir em E. Todos os
 payloads mudam porque o preço bruto agora é o oficial.
 
+#### PROTOCOL AMENDMENT 2 — ÂNCORAS CAL-A/CAL-B E GRADE DE CAL-A
+
+```text
+DATA              2026-10-04
+TIPO              preenchimento de itens TBD do protocolo por regra mecânica
+                  predeclarada pelos autores; nenhuma regra existente muda
+OBSERVADO ANTES   Hardening e B0 (outcome-blind, só gates); NENHUM resultado
+                  de âncora, nenhum retorno, nenhuma volatilidade de âncora
+IMPACTO           CAL-A e CAL-B passam a ter datas; a seção 14 deixa de ser
+                  CAL_A_CANDIDATE_GRID_UNRESOLVED; nada anterior é invalidado
+```
+
+**Domínio.**
+- Sessões PETR4.SA do snapshot corrigido (sessão oficial B3 com barra
+  observada), de 2018-01-12 a 2024-02-28, com
+  `available_history_sessions >= 504` e contrato causal satisfeito, menos as
+  4 sessões de H_real.
+- Total: 1515 sessões; sha256 `9dd54e3fdf8e377429e0d87b431600df569ee6cab00f0f30297ac8a289828827`.
+
+**Estratos.**
+- 30 blocos cronológicos contíguos, tamanhos tão iguais quanto possível
+  (`numpy.array_split`: os primeiros `len % 30` estratos têm uma sessão a mais).
+- A âncora é a sessão mediana, de índice `(k - 1) // 2` em base 0, ou seja, a
+  mediana inferior quando `k` é par.
+- CAL-B = estratos 3, 6, …, 30; CAL-A = os demais.
+
+| estrato | primeira | última | sessões | âncora | conjunto |
+|---:|---|---|---:|---|---|
+| 1 | 2018-01-12 | 2018-03-28 | 51 | 2018-02-21 | CAL-A |
+| 2 | 2018-03-29 | 2018-06-12 | 51 | 2018-05-07 | CAL-A |
+| 3 | 2018-06-13 | 2018-08-23 | 51 | 2018-07-19 | CAL-B |
+| 4 | 2018-08-24 | 2018-11-07 | 51 | 2018-10-01 | CAL-A |
+| 5 | 2018-11-08 | 2019-01-28 | 51 | 2018-12-17 | CAL-A |
+| 6 | 2019-01-29 | 2019-04-12 | 51 | 2019-03-07 | CAL-B |
+| 7 | 2019-04-15 | 2019-06-27 | 51 | 2019-05-22 | CAL-A |
+| 8 | 2019-06-28 | 2019-09-09 | 51 | 2019-08-05 | CAL-A |
+| 9 | 2019-09-10 | 2019-11-21 | 51 | 2019-10-15 | CAL-B |
+| 10 | 2019-11-22 | 2020-02-06 | 51 | 2020-01-02 | CAL-A |
+| 11 | 2020-02-07 | 2020-04-23 | 51 | 2020-03-17 | CAL-A |
+| 12 | 2020-04-24 | 2020-07-08 | 51 | 2020-06-01 | CAL-B |
+| 13 | 2020-07-09 | 2020-09-18 | 51 | 2020-08-13 | CAL-A |
+| 14 | 2020-09-21 | 2020-12-02 | 51 | 2020-10-27 | CAL-A |
+| 15 | 2020-12-03 | 2021-02-22 | 51 | 2021-01-13 | CAL-B |
+| 16 | 2021-02-23 | 2021-05-05 | 50 | 2021-03-29 | CAL-A |
+| 17 | 2021-05-06 | 2021-07-16 | 50 | 2021-06-10 | CAL-A |
+| 18 | 2021-07-19 | 2021-09-28 | 50 | 2021-08-20 | CAL-B |
+| 19 | 2021-09-29 | 2021-12-10 | 50 | 2021-11-04 | CAL-A |
+| 20 | 2021-12-13 | 2022-02-22 | 50 | 2022-01-18 | CAL-A |
+| 21 | 2022-02-23 | 2022-05-09 | 50 | 2022-03-31 | CAL-B |
+| 22 | 2022-05-10 | 2022-07-19 | 50 | 2022-06-13 | CAL-A |
+| 23 | 2022-07-20 | 2022-09-28 | 50 | 2022-08-23 | CAL-A |
+| 24 | 2022-09-29 | 2022-12-13 | 50 | 2022-11-04 | CAL-B |
+| 25 | 2022-12-14 | 2023-02-24 | 50 | 2023-01-18 | CAL-A |
+| 26 | 2023-02-27 | 2023-05-10 | 50 | 2023-03-31 | CAL-A |
+| 27 | 2023-05-11 | 2023-07-20 | 50 | 2023-06-15 | CAL-B |
+| 28 | 2023-07-21 | 2023-09-29 | 50 | 2023-08-24 | CAL-A |
+| 29 | 2023-10-02 | 2023-12-13 | 50 | 2023-11-07 | CAL-A |
+| 30 | 2023-12-14 | 2024-02-28 | 50 | 2024-01-22 | CAL-B |
+
+```text
+CAL-A (20)  2018-02-21, 2018-05-07, 2018-10-01, 2018-12-17, 2019-05-22, 2019-08-05, 2020-01-02, 2020-03-17, 2020-08-13, 2020-10-27, 2021-03-29, 2021-06-10, 2021-11-04, 2022-01-18, 2022-06-13, 2022-08-23, 2023-01-18, 2023-03-31, 2023-08-24, 2023-11-07
+            commitment sha256 253308eaf069bbeb085e79aa1fe36cf510eecfc3d4cd5b5f6762a77bce36a36f
+CAL-B (10)  commitment sha256 51d73b2285d4e0e103bfb3fc4f5cd26892a6b96fe7dbe8d43cd1e429937f38c0
+            (datas em src/experiments/anchors.py; trancadas no runner por
+             CAL_B_AUTHORIZED = False até a fase autorizada; Stress Probing
+             não pode usar nenhum estrato de CAL-B)
+```
+
+**Auditoria de unidade da volatilidade de risco.**
+
+| item | valor |
+|---|---|
+| fórmula | desvio-padrão amostral (ddof = 1) dos retornos simples diários close-to-close |
+| janela | últimos `volatility_window` retornos até `t` |
+| frequência | diária |
+| anualização | multiplicada por √252 |
+| unidade | decimal (0.50 = 50%) |
+| regra | arredondada a 6 casas, veta se `vol > risk_max_volatility` |
+
+É volatilidade anualizada em decimal, como a hipótese de grade supunha.
+
+**Grade de CAL-A congelada** (produto cartesiano, nada pode ser acrescentado):
+
+| config_id | volatility_window | risk_max_volatility | |
+|---:|---:|---:|---|
+| 1 | 21 | 0.40 | |
+| 2 | 21 | 0.50 | baseline |
+| 3 | 21 | 0.60 | |
+| 4 | 63 | 0.40 | |
+| 5 | 63 | 0.50 | |
+| 6 | 63 | 0.60 | |
+
+**Justificativa ex ante.**
+- 21 sessões ≈ horizonte mensal; 63 sessões ≈ horizonte trimestral.
+- 0.50 é o baseline preexistente; 0.40 e 0.60 são perturbações simétricas em
+  torno dele.
+
+**Gate de identificabilidade** (regra da seção 14):
+- Para cada configuração e cada âncora de CAL-A, calcular a volatilidade só
+  com informação até `t` e o veto que ela produziria.
+- `distinguishing_anchors` = âncoras em que ao menos duas configurações
+  diferem no veto.
+- Se `distinguishing_anchors < 3`, `CAL-A = REMOVED`; se `>= 3`,
+  `CAL-A = REDUCED`.
+
 ### Registro de execução (append-only)
 
 Resultados das regras predeclaradas acima. Não são amendments: nenhuma regra

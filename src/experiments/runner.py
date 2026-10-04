@@ -32,6 +32,7 @@ from src.backtesting.arena import (
 from src.backtesting.engine import BacktestResult
 from src.backtesting.metrics import performance_metrics, total_transaction_cost
 from src.config import settings
+from src.experiments.anchors import require_cal_b_locked
 from src.experiments.context import RunContext
 from src.experiments.participants import (
     build_participant,
@@ -233,6 +234,10 @@ class ExperimentRunner:
         # custar uma única chamada paga ao provedor. Mesmo motivo pelo qual o
         # guard de proveniência roda antes de carregar dados.
         evaluation = self._resolve_evaluation(frames)
+        if self.spec.evaluation is not None:
+            # CAL-B é holdout one-shot: nenhuma janela declarada a toca antes da
+            # fase autorizada (``anchors.CAL_B_AUTHORIZED``).
+            require_cal_b_locked(evaluation.decision_start, evaluation.decision_end)
         self._require_scientific_execution()
         # Capacidade do provedor e contrato de entrada conferidos localmente,
         # ainda antes de construir o participante: incompatibilidade
