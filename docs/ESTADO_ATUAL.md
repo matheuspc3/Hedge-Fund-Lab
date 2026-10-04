@@ -49,7 +49,7 @@ técnicas, não evidência de que uma abordagem venceu outra.
 | Backtest clássico | Bloqueado para ciência | Single e multi-asset decidem com dados até o fechamento de `t`, executam na abertura observada de `t+1`, calculam custos sobre o notional e preservam caixa não negativo. Retorno, risco, drawdown e custo total agora vêm do módulo canônico. O motor comum existe na **camada experimental** (`ExperimentRunner`/`ExecutionEngine`), mas o **dashboard e os demais caminhos legados** ainda instanciam engines próprios com custo zero e não passam por ele. |
 | Sistema de agentes | Parcial | Quorum técnico -> risco -> portfólio em LangGraph, com contratos Pydantic e regras duras. Opera um ticker por execução. |
 | Quorum de 30 | Implementado com ressalvas | Faz 30 chamadas concorrentes do mesmo papel e cliente, variando temperatura (faixa 0.2–0.8, se `temperature` não for declarada) e seed registrado. No caminho causal o prompt é idêntico entre analistas; o rótulo "analista n de N" só sobrevive no caminho legado de níveis brutos. Exige 25/30 por padrão e todos os votos válidos. |
-| Cliente LLM real | Parcial | Cliente HTTP OpenAI-compatible e cliente nativo da Gemini API (`provider="gemini"`), ambos com retry e telemetria. Erro HTTP é tipado: 400/401/402/403/404 e chave ausente são recusa não repetida (`PROVIDER_REQUEST_REJECTED`); 408/409/429/5xx, rede, timeout, corpo truncado ou não-JSON são transitórios, repetidos (respeitando `Retry-After`/`RetryInfo`) e, esgotados, `PROVIDER_FAILURE`. Nenhum provedor ou modelo foi escolhido nem exercitado contra a rede: Gemini está `DECLARED_UNQUALIFIED` (STATICALLY READY / LIVE_SMOKE REQUIRED), `PENDING_ADVISOR_RATIFICATION`. |
+| Cliente LLM real | Parcial | Cliente HTTP OpenAI-compatible e cliente nativo da Gemini API (`provider="gemini"`), ambos com retry e telemetria. Erro HTTP é tipado: 400/401/402/403/404 e chave ausente são recusa não repetida (`PROVIDER_REQUEST_REJECTED`); 408/409/429/5xx, rede, timeout, corpo truncado ou não-JSON são transitórios, repetidos (respeitando `Retry-After`/`RetryInfo`) e, esgotados, `PROVIDER_FAILURE`. `gemini-3.8-flash` (API nativa v1beta) está TECHNICALLY QUALIFIED pelo DEV_SMOKE de 2026-10-04 para `temperature`, `max_output_tokens` e `thinking_level=low` (evidência em `docs/evidence/provider_runtime/`); `medium`/`high` e outros modelos seguem não qualificados. Escolha de provedor, modelo e nível continua `PENDING_ADVISOR_RATIFICATION`. |
 | Backtest LLM legado | Implementado com lacunas | `AgentBacktestEngine` decide no fechamento de `t`, executa na próxima abertura observada e registra ciclo, votos, trades e curva em JSON. A última previsão fica pendente. Continua disponível como caminho operacional; a parte de execução financeira dele **não** foi reutilizada pela arena. |
 | Runner diário | Parcial | `DailyAgentRunner` persiste estado, reconcilia a previsão pendente na abertura esperada e avança uma sessão por execução. Ainda não integra a arena nem um manifest canônico. |
 | Calendário B3 | Parcial | `B3Calendar` resolve fins de semana, feriados recorrentes e exceções explícitas sem dependência externa; ainda precisa de validação/versionamento contra calendário oficial. |
@@ -888,9 +888,9 @@ Validation ou Final Test, e sem usar resultado financeiro:
   `decisions`, nunca exceção de transporte crua nem `MANTER`.
 - **Preflight científico** antes de construir o participante (protocolo,
   seção 14): todo parâmetro material escrito na spec, sem default
-  invisível, e qualificação empírica do modelo — que hoje não existe para
-  nenhum modelo, então nenhuma fase científica com provedor real roda antes
-  de um LIVE_SMOKE registrado.
+  invisível, e qualificação empírica do modelo — hoje só
+  `gemini / gemini-3.8-flash` com `thinking_level=low`, por DEV_SMOKE
+  técnico; isso não autoriza fase científica antes do freeze metodológico.
 - **RSI canônico de Wilder** e `LLM_FEATURE_SCHEMA_VERSION = 2`, verificado
   contra a planilha primária `cs-rsi.xls` da StockCharts em 2026-10-04.
   NaN no preço é recusado. `0/0 → 50` é convenção local.

@@ -8,6 +8,7 @@ preflight de capacidades. Tudo com mock: nenhuma rede, nenhum resultado.
 """
 
 import json
+from pathlib import Path
 from types import MappingProxyType
 from typing import Any, cast
 
@@ -648,7 +649,7 @@ def test_fase_cientifica_exige_qualificacao_empirica_do_modelo() -> None:
 
 
 def test_qualificacao_e_por_modelo_nao_por_provedor(monkeypatch: pytest.MonkeyPatch) -> None:
-    every = frozenset({"temperature", "thinking_level", "max_output_tokens"})
+    every = frozenset({"temperature", "thinking_level:low", "max_output_tokens"})
     monkeypatch.setattr(
         participant_module,
         "EMPIRICALLY_QUALIFIED",
@@ -656,9 +657,55 @@ def test_qualificacao_e_por_modelo_nao_por_provedor(monkeypatch: pytest.MonkeyPa
     )
     report = LLMParticipant.preflight(gemini_params(), scientific=True)
     assert report.status == CAPABILITY_QUALIFIED
-    assert report.qualified == tuple(sorted(every))
+    assert report.qualified == ("max_output_tokens", "temperature", "thinking_level")
     with pytest.raises(ValueError, match="DECLARED_UNQUALIFIED"):
         LLMParticipant.preflight(gemini_params(model="outro-modelo"), scientific=True)
+
+
+QUALIFIED_MODEL = "gemini-3.8-flash"
+
+
+def test_gemini_38_flash_esta_qualificado_so_no_que_o_smoke_observou() -> None:
+    """Qualificação real do DEV_SMOKE: modelo exato e só o nível ``low``."""
+    report = LLMParticipant.preflight(gemini_params(model=QUALIFIED_MODEL), scientific=True)
+    assert report.status == CAPABILITY_QUALIFIED
+    # Aceitar ``low`` não prova ``medium`` nem ``high``: esses seguem recusados.
+    for level in ("medium", "high"):
+        with pytest.raises(ValueError, match="DECLARED_UNQUALIFIED.*thinking_level"):
+            LLMParticipant.preflight(
+                gemini_params(model=QUALIFIED_MODEL, thinking_level=level), scientific=True
+            )
+    # Outro modelo do mesmo provedor não herda nada.
+    with pytest.raises(ValueError, match="DECLARED_UNQUALIFIED"):
+        LLMParticipant.preflight(gemini_params(model="gemini-3.7-flash"), scientific=True)
+
+
+def test_qualificacao_aponta_para_evidencia_versionada_do_smoke() -> None:
+    root = Path(__file__).resolve().parents[2]
+    assert set(participant_module.EMPIRICAL_QUALIFICATION_EVIDENCE) == set(
+        participant_module.EMPIRICALLY_QUALIFIED
+    )
+    for (provider, model), paths in participant_module.EMPIRICAL_QUALIFICATION_EVIDENCE.items():
+        documents = [json.loads((root / path).read_text(encoding="utf-8")) for path in paths]
+        assert all(doc["provider"] == provider for doc in documents)
+        assert all(doc["requested_model"] == model for doc in documents)
+        assert all(doc["scientific"] is False for doc in documents)
+        smokes = [doc for doc in documents if doc["kind"] == "DEV_SMOKE"]
+        assert smokes
+        for smoke in smokes:
+            for role in ("technical_analyst", "risk_manager", "portfolio_manager"):
+                result = smoke["roles"][role]
+                assert result["status"] == "ok" and result["validated"]
+                assert result["finish_reason"] == "STOP"
+                assert result["resolved_model"] == model
+                assert result["provider_response_id"]
+                assert result["sent_generation_config"]["thinkingConfig"] == {
+                    "thinkingLevel": "LOW"
+                }
+        # Nenhum arquivo de evidência carrega credencial.
+        for path in paths:
+            text = (root / path).read_text(encoding="utf-8")
+            assert "x-goog-api-key" not in text and "AIza" not in text
 
 
 @pytest.mark.parametrize(

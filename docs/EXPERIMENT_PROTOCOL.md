@@ -2210,11 +2210,27 @@ para provedor real, `model`, `max_output_tokens` e `thinking_level` (quando o
 cliente tem níveis de thinking). Omitido não vira default: vira spec recusada —
 sem isso o quorum voltaria à faixa 0.2–0.8 e risco/portfólio herdariam o
 default do modelo, que o run não registra. Provedor real também precisa estar
-`QUALIFIED` para o modelo. **Estado atual: nenhum modelo está qualificado;
-Gemini é `DECLARED_UNQUALIFIED` (STATICALLY READY / LIVE_SMOKE REQUIRED)**, e
-o formato `thinkingConfig.thinkingLevel` de `generateContent` segue pendente
-de LIVE_SMOKE. Consequência declarada: o cliente OpenAI-compatible não é
-elegível para fase científica.
+`QUALIFIED` para o modelo. Consequência declarada: o cliente
+OpenAI-compatible não é elegível para fase científica.
+
+**Estado atual (DEV_SMOKE de 2026-10-04): `gemini / gemini-3.8-flash`,
+API nativa `v1beta` `generateContent`, está TECHNICALLY QUALIFIED** para
+`temperature`, `max_output_tokens` e `thinking_level=low` — e só isso.
+Uma chamada real por papel (técnico, risco, portfólio) sobre o estado
+sintético `syn-v1:steady_uptrend` devolveu HTTP 200, `finishReason=STOP`,
+`responseId`, `modelVersion` e `usageMetadata`, com resposta validada pelo
+schema Pydantic de cada papel; o risco foi pelo ramo LLM e o portfólio
+respeitou a direção. Um controle negativo mostrou que a API valida
+`generationConfig` (campo desconhecido e enum de thinking inválido → 400),
+o que confirma o formato `generation_config.thinking_config.thinking_level`.
+Os 503 "high demand" observados foram repetidos e recuperados como
+`ProviderTransportError`. Evidência sanitizada em `docs/evidence/provider_runtime/`.
+
+Qualificação técnica **não** é escolha científica: `thinking_level=low` foi
+valor de transporte; `medium` e `high` seguem não qualificados; outros
+modelos não herdam nada; nenhum B0, CAL ou Hardening foi rodado. Nenhum
+`thoughtsTokenCount` apareceu em `usageMetadata` em `low`, então o efeito
+do nível sobre o raciocínio não foi medido — só a aceitação do parâmetro.
 
 **Proveniência registrável hoje, sem congelar escolha.** A `ParticipantSpec` do
 `llm_agent` grava `provider` e `model` no `spec_hash` e no manifest, e o

@@ -440,11 +440,43 @@ CAPABILITY_DECLARED_UNQUALIFIED = "DECLARED_UNQUALIFIED"
 CAPABILITY_QUALIFIED = "QUALIFIED"
 
 #: Qualificação **empírica** por ``(provider, model)``: as opções que um
-#: LIVE_SMOKE registrado (trace commitado, data, modelo resolvido) mostrou
-#: serem honradas por aquele modelo. Vazio de propósito: nenhuma API real foi
-#: chamada, então nada está qualificado. Uma entrada nova é decisão
+#: LIVE_SMOKE registrado (evidência versionada, data, modelo resolvido)
+#: mostrou serem aceitas por aquele modelo. Uma entrada nova é decisão
 #: registrada com evidência, nunca inferência de ``DECLARED_OPTIONS``.
-EMPIRICALLY_QUALIFIED: Mapping[tuple[str, str], frozenset[str]] = MappingProxyType({})
+#:
+#: ``thinking_level`` é qualificado **por nível** (``thinking_level:<nível>``):
+#: aceitar ``low`` não prova ``medium`` nem ``high``. Qualificação técnica de
+#: transporte não é escolha científica de nível.
+EMPIRICALLY_QUALIFIED: Mapping[tuple[str, str], frozenset[str]] = MappingProxyType(
+    {
+        # DEV_SMOKE 2026-10-04, API nativa v1beta generateContent: técnico,
+        # risco e portfólio com HTTP 200, finishReason STOP e schema validado;
+        # thinkingLevel validado pelo controle negativo. Arquivos em
+        # EMPIRICAL_QUALIFICATION_EVIDENCE.
+        ("gemini", "gemini-3.8-flash"): frozenset(
+            {"temperature", "max_output_tokens", "thinking_level:low"}
+        ),
+    }
+)
+
+#: Evidência sanitizada que sustenta cada entrada de
+#: :data:`EMPIRICALLY_QUALIFIED`, relativa à raiz do repositório.
+EMPIRICAL_QUALIFICATION_EVIDENCE: Mapping[tuple[str, str], tuple[str, ...]] = MappingProxyType(
+    {
+        ("gemini", "gemini-3.8-flash"): (
+            "docs/evidence/provider_runtime/gemini-3.8-flash_dev_smoke_20261004T191655Z.json",
+            "docs/evidence/provider_runtime/gemini-3.8-flash_dev_smoke_20261004T191834Z.json",
+            "docs/evidence/provider_runtime/gemini-3.8-flash_negative_control_20261004T191935Z.json",
+        ),
+    }
+)
+
+
+def _qualification_key(option: str, generation: Mapping[str, Any]) -> str:
+    """Chave de qualificação de uma opção pedida; thinking é por nível."""
+    if option == "thinking_level":
+        return f"thinking_level:{generation['thinking_level']}"
+    return option
 
 
 @dataclass(frozen=True)
@@ -538,7 +570,8 @@ def capability_report(
             f"thinking_level {level!r} is not declared for provider "
             f"{provider!r}; declared levels: {', '.join(levels)}"
         )
-    qualified = wanted & EMPIRICALLY_QUALIFIED.get((provider, model), frozenset())
+    entries = EMPIRICALLY_QUALIFIED.get((provider, model), frozenset())
+    qualified = {name for name in wanted if _qualification_key(name, generation) in entries}
     return CapabilityReport(
         provider,
         model,
