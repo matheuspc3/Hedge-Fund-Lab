@@ -46,17 +46,43 @@ substituir a origem dos pesos.
 import asyncio
 import math
 from dataclasses import dataclass
-from typing import Any, Iterable, Mapping, cast
+from types import MappingProxyType
+from typing import Any, Iterable, Mapping, Sequence, cast
 
 import pandas as pd
 from pydantic import BaseModel
 
-from src.agents.features import dimensionless_features
+from src.agents.features import FEATURE_KEYS, canonical_number, dimensionless_features
 from src.agents.graph import build_graph
-from src.agents.llm_client import LLMCallMetadata, LLMClient, MockLLMClient
-from src.agents.llm_trace import LLMCallRecord, RecordingLLMClient
-from src.agents.portfolio_manager import SIZING_MODE_QUALITATIVE, PortfolioConfig
-from src.agents.risk_manager import RiskConfig
+from src.agents.llm_client import (
+    METADATA_ONLY_OPTIONS,
+    AgentRouterLLMClient,
+    GeminiLLMClient,
+    LLMCallMetadata,
+    LLMClient,
+    MockLLMClient,
+    ProviderRequestRejected,
+    RetryingLLMClient,
+)
+from src.agents.llm_trace import LLMCallRecord, RecordingLLMClient, session_key
+from src.agents.portfolio_manager import (
+    PORTFOLIO_RULE_DIRECTION_INVERSION,
+    PORTFOLIO_RULE_INVALID_RESPONSE,
+    PORTFOLIO_RULE_MISSING_INPUT,
+    PORTFOLIO_SOURCE_LLM,
+    SIZING_MODE_QUALITATIVE,
+    PortfolioConfig,
+)
+from src.agents.risk_manager import (
+    RISK_RULE_CONCENTRATION,
+    RISK_RULE_DRAWDOWN,
+    RISK_RULE_INVALID_RESPONSE,
+    RISK_RULE_MISSING_METRICS,
+    RISK_RULE_MISSING_SIGNAL,
+    RISK_RULE_VOLATILITY,
+    RISK_SOURCE_LLM,
+    RiskConfig,
+)
 from src.agents.state import (
     AgentState,
     PortfolioAction,
@@ -65,7 +91,7 @@ from src.agents.state import (
     TechnicalSignal,
 )
 from src.agents.technical_analyst import INDICATOR_KEYS, AnalystEnsembleConfig
-from src.artifacts import RunArtifact
+from src.artifacts import RunArtifact, canonical_json
 from src.backtesting.arena import (
     WEIGHT_TOLERANCE,
     MarketObservation,
@@ -77,8 +103,96 @@ from src.pipeline.transform import DataTransformer
 #: Provedores que o participante sabe construir a partir de uma spec.
 #: ``mock`` não faz rede e existe para teste e demonstração; ele aparece na
 #: ``ParticipantSpec`` e, portanto, no manifest, de modo que um run mock nunca
-#: se confunde com um run científico.
-SUPPORTED_PROVIDERS = ("mock", "agent_router")
+#: se confunde com um run científico. ``gemini`` é a Gemini API nativa, runtime
+#: científico recomendado (escolha de provedor/modelo:
+#: ``PENDING_ADVISOR_RATIFICATION``).
+SUPPORTED_PROVIDERS = ("mock", "agent_router", "gemini")
+
+#: Cliente concreto de cada provedor real, consultado pelo preflight de
+#: capacidades **sem** instanciar nada nem fazer rede. ``mock`` não está aqui:
+#: dublê de teste não faz afirmação semântica sobre opção alguma.
+PROVIDER_CLIENTS: Mapping[str, type[LLMClient]] = {
+    "agent_router": AgentRouterLLMClient,
+    "gemini": GeminiLLMClient,
+}
+
+#: Vocabulário de ``thinking_level`` aceito na spec. Quais níveis um provedor
+#: honra é capacidade do cliente concreto, conferida no preflight.
+THINKING_LEVEL_VOCABULARY = ("minimal", "low", "medium", "high")
+
+#: O que fazer quando o gestor de portfólio devolve a direção oposta ao sinal
+#: aprovado. Nos dois casos a sessão é classificada ``INVALID_RESPONSE``, nunca
+#: ``PORTFOLIO_HOLD``. ``flag`` mantém o comportamento herdado (nenhuma
+#: intenção, run segue); ``fail`` derruba o run. Qual vale no H2 é
+#: ``PENDING_ADVISOR_RATIFICATION``.
+PORTFOLIO_INVERSION_POLICIES = ("flag", "fail")
+
+#: Parâmetros que uma spec científica de ``llm_agent`` precisa escrever,
+#: qualquer que seja o provedor. Os dependentes do provedor (``model``,
+#: ``max_output_tokens``, ``thinking_level``) são acrescentados no preflight.
+#: Omitido não significa "default": significa spec recusada.
+SCIENTIFIC_REQUIRED_PARAMS = (
+    "provider",
+    "temperature",
+    "analyst_count",
+    "consensus_threshold",
+    "require_all_votes",
+    "decision_frequency",
+    "strict_inputs",
+    "portfolio_inversion_policy",
+)
+
+# ── Causa final de uma sessão consultada ─────────────────────────
+#
+# Código estruturado, derivado dos campos que cada etapa devolve — nunca de
+# texto livre. Falha técnica (``INVALID_*``, ``PROVIDER_*``) não é decisão
+# de investimento e nunca é contada como prudência.
+
+LLM_DECISION_ARTIFACT_SCHEMA_VERSION = 1
+LLM_DECISION_ARTIFACT = "llm_decisions"
+LLM_DECISION_FILENAME = "decisions.jsonl"
+
+ACTION_BUY = "ACTION_BUY"
+ACTION_SELL = "ACTION_SELL"
+NOT_ELIGIBLE = "NOT_ELIGIBLE"
+TECH_EXPLICIT_HOLD = "TECH_EXPLICIT_HOLD"
+TECH_NO_MAJORITY = "TECH_NO_MAJORITY"
+#: COMPRA com a carteira já no alvo: não há exposição a construir. Precede o
+#: veto de risco porque, com ``long_target_weight = risk_max_concentration``,
+#: a regra de concentração veta exatamente este caso — e vetar um no-op não é
+#: prudência.
+BUY_AT_TARGET_NOOP = "BUY_AT_TARGET_NOOP"
+RISK_VETO_VOLATILITY = "RISK_VETO_VOLATILITY"
+RISK_VETO_DRAWDOWN = "RISK_VETO_DRAWDOWN"
+RISK_VETO_CONCENTRATION = "RISK_VETO_CONCENTRATION"
+RISK_VETO_LLM = "RISK_VETO_LLM"
+PORTFOLIO_HOLD = "PORTFOLIO_HOLD"
+INVALID_INPUT = "INVALID_INPUT"
+INVALID_RESPONSE = "INVALID_RESPONSE"
+#: Falha transitória do provedor (rede, timeout, 429/5xx) que sobreviveu ao
+#: retry. Não é a mesma coisa que a recusa abaixo.
+PROVIDER_FAILURE = "PROVIDER_FAILURE"
+#: Recusa determinística da requisição (HTTP 400/401/402/403/404, chave
+#: ausente, opção não suportada): erro de contrato ou de configuração, não
+#: queda do provedor, e nunca repetida.
+PROVIDER_REQUEST_REJECTED = "PROVIDER_REQUEST_REJECTED"
+
+FAILURE_CAUSES = frozenset(
+    {INVALID_INPUT, INVALID_RESPONSE, PROVIDER_FAILURE, PROVIDER_REQUEST_REJECTED}
+)
+RISK_VETO_CAUSES = frozenset(
+    {RISK_VETO_VOLATILITY, RISK_VETO_DRAWDOWN, RISK_VETO_CONCENTRATION, RISK_VETO_LLM}
+)
+_HARD_RULE_VETOES = {
+    RISK_RULE_VOLATILITY: RISK_VETO_VOLATILITY,
+    RISK_RULE_DRAWDOWN: RISK_VETO_DRAWDOWN,
+    RISK_RULE_CONCENTRATION: RISK_VETO_CONCENTRATION,
+}
+
+#: Resultado técnico quando o quorum não ficou completo — só acontece junto
+#: de falha, e falha derruba o run.
+TECH_OUTCOME_INCOMPLETE = "INCOMPLETE"
+TECH_OUTCOME_NO_MAJORITY = "NO_MAJORITY"
 
 #: Fator de anualização da volatilidade, herdado do motor legado de agentes.
 TRADING_DAYS_PER_YEAR = 252
@@ -160,19 +274,27 @@ def _validate_long_target_weight(value: Any, risk_max_concentration: float) -> f
 class LLMDecisionError(ValueError):
     """A decisão do LLM não pode ser publicada como intenção de investimento.
 
-    Cobre falha não recuperada no limite do provedor e saída que viola o
-    contrato de carteira-alvo. Nunca vira ``MANTER``: infraestrutura quebrada e
-    decisão de investimento são coisas diferentes.
+    Cobre falha não recuperada no limite do provedor, resposta que viola o
+    contrato, entrada científica incompleta e saída que viola o contrato de
+    carteira-alvo. Nunca vira ``MANTER``: infraestrutura quebrada e decisão de
+    investimento são coisas diferentes. ``reason`` carrega a causa estruturada
+    (``INVALID_INPUT``, ``INVALID_RESPONSE``, ``PROVIDER_FAILURE``,
+    ``PROVIDER_REQUEST_REJECTED``) quando há.
     """
+
+    def __init__(self, message: str, reason: str | None = None) -> None:
+        super().__init__(message)
+        self.reason = reason
 
 
 @dataclass(frozen=True)
 class LLMDecisionRecord:
-    """Trilha mínima de uma decisão, suficiente para reconstruí-la em teste.
+    """Trilha de uma decisão consultada, publicada em ``decisions.jsonl``.
 
-    ponytail: integrar estes registros ao ``RunResult``/manifest exige mudança
-    de schema e ficou como hardening seguinte; hoje eles vivem na instância do
-    participante, que é nova a cada run.
+    Os campos estruturados (``final_cause``, fontes e regras de risco e de
+    portfólio, ``observed_weight``) bastam para dizer *por que* a sessão
+    terminou como terminou sem ler texto livre; ``errors`` e ``llm_failures``
+    ficam como evidência, nunca como insumo de classificação.
     """
 
     session: pd.Timestamp
@@ -183,6 +305,250 @@ class LLMDecisionRecord:
     target_weight: float | None
     errors: tuple[str, ...] = ()
     llm_failures: tuple[str, ...] = ()
+    final_cause: str | None = None
+    risk_source: str | None = None
+    risk_rule: str | None = None
+    portfolio_source: str | None = None
+    portfolio_rule: str | None = None
+    #: Peso do ativo no fechamento de ``t``, antes da decisão.
+    observed_weight: float | None = None
+    input_violations: tuple[str, ...] = ()
+
+    @property
+    def technical_outcome(self) -> str | None:
+        """``COMPRA``/``VENDA``/``MANTER`` com maioria, ou o motivo de não ter."""
+        consensus = self.consensus
+        if consensus is None:
+            return None
+        if consensus.valid_votes < consensus.total_analysts:
+            return TECH_OUTCOME_INCOMPLETE
+        if not consensus.consensus_reached:
+            return TECH_OUTCOME_NO_MAJORITY
+        return consensus.winning_signal
+
+    @property
+    def portfolio_called(self) -> bool:
+        return self.portfolio_source == PORTFOLIO_SOURCE_LLM
+
+    def to_json_dict(self, ticker: str) -> dict[str, Any]:
+        consensus = self.consensus
+        return {
+            "schema_version": LLM_DECISION_ARTIFACT_SCHEMA_VERSION,
+            "decision_session": session_key(self.session),
+            "ticker": ticker,
+            "eligible": True,
+            "vote_counts": None if consensus is None else dict(consensus.counts),
+            "valid_votes": None if consensus is None else consensus.valid_votes,
+            "analyst_count": None if consensus is None else consensus.total_analysts,
+            "consensus_threshold": None if consensus is None else consensus.threshold,
+            "consensus_reached": None
+            if consensus is None
+            else consensus.consensus_reached,
+            "technical_outcome": self.technical_outcome,
+            "risk_verdict": None
+            if self.risk_verdict is None
+            else self.risk_verdict.verdict,
+            "risk_source": self.risk_source,
+            "risk_rule": self.risk_rule,
+            "portfolio_called": self.portfolio_called,
+            "portfolio_source": self.portfolio_source,
+            "portfolio_rule": self.portfolio_rule,
+            "portfolio_decision": (
+                None if self.portfolio_action is None else self.portfolio_action.decision
+            ),
+            "observed_weight": self.observed_weight,
+            "target_weight": self.target_weight,
+            "final_cause": self.final_cause,
+            "input_violations": list(self.input_violations),
+            "errors": list(self.errors),
+            "failures": list(self.llm_failures),
+        }
+
+
+def classify_decision(
+    *,
+    consensus: TechnicalConsensus | None,
+    risk_verdict: RiskVerdict | None,
+    risk_source: str | None,
+    risk_rule: str | None,
+    portfolio_action: PortfolioAction | None,
+    portfolio_rule: str | None,
+    observed_weight: float | None,
+    long_target_weight: float,
+    input_violations: Sequence[str] = (),
+    failures: Sequence[BaseException] = (),
+) -> str:
+    """Causa final de uma sessão consultada, só a partir de campos estruturados.
+
+    A ordem é a precedência: falha técnica antes de qualquer decisão, e
+    ``BUY_AT_TARGET_NOOP`` antes do veto de risco. Falha é classificada pelo
+    **tipo**: :class:`ProviderRequestRejected` (recusa determinística, nunca
+    repetida) é ``PROVIDER_REQUEST_REJECTED``; ``OSError`` — que cobre
+    ``ProviderTransportError``, ``ConnectionError`` e ``TimeoutError``, já
+    esgotado o retry — é ``PROVIDER_FAILURE``; qualquer outra falha registrada
+    é resposta inválida.
+
+    ``BUY_AT_TARGET_NOOP`` exige duas coisas: o peso observado igual ao alvo
+    **na mesma representação canônica que a regra de concentração usa** e
+    nenhuma intenção executável. Uma COMPRA aprovada no alvo ainda vira
+    ``OrderIntent``; com caixa na carteira o peso deriva até a abertura e o
+    executor rebalanceia — isso é ``ACTION_BUY``, não no-op.
+    """
+    if (
+        input_violations
+        or risk_rule in (RISK_RULE_MISSING_SIGNAL, RISK_RULE_MISSING_METRICS)
+        or portfolio_rule == PORTFOLIO_RULE_MISSING_INPUT
+    ):
+        return INVALID_INPUT
+    if any(isinstance(failure, ProviderRequestRejected) for failure in failures):
+        return PROVIDER_REQUEST_REJECTED
+    if any(isinstance(failure, OSError) for failure in failures):
+        return PROVIDER_FAILURE
+    if (
+        failures
+        or consensus is None
+        or consensus.valid_votes < consensus.total_analysts
+        or risk_rule == RISK_RULE_INVALID_RESPONSE
+        or portfolio_rule
+        in (PORTFOLIO_RULE_INVALID_RESPONSE, PORTFOLIO_RULE_DIRECTION_INVERSION)
+    ):
+        return INVALID_RESPONSE
+    if not consensus.consensus_reached:
+        return TECH_NO_MAJORITY
+    if consensus.winning_signal == "MANTER":
+        return TECH_EXPLICIT_HOLD
+    at_target = observed_weight is not None and canonical_number(
+        observed_weight
+    ) == canonical_number(long_target_weight)
+    emits_buy = portfolio_action is not None and portfolio_action.decision == "COMPRA"
+    if consensus.winning_signal == "COMPRA" and at_target and not emits_buy:
+        return BUY_AT_TARGET_NOOP
+    if risk_verdict is not None and risk_verdict.verdict == "VETADO":
+        if risk_source == RISK_SOURCE_LLM:
+            return RISK_VETO_LLM
+        return _HARD_RULE_VETOES.get(cast(str, risk_rule), INVALID_RESPONSE)
+    if portfolio_action is None:
+        return INVALID_RESPONSE
+    if portfolio_action.decision == "MANTER":
+        return PORTFOLIO_HOLD
+    return ACTION_BUY if portfolio_action.decision == "COMPRA" else ACTION_SELL
+
+
+#: Status de capacidade de um par (provedor, modelo).
+CAPABILITY_NOT_APPLICABLE = "NOT_APPLICABLE"
+CAPABILITY_DECLARED_UNQUALIFIED = "DECLARED_UNQUALIFIED"
+CAPABILITY_QUALIFIED = "QUALIFIED"
+
+#: Qualificação **empírica** por ``(provider, model)``: as opções que um
+#: LIVE_SMOKE registrado (trace commitado, data, modelo resolvido) mostrou
+#: serem honradas por aquele modelo. Vazio de propósito: nenhuma API real foi
+#: chamada, então nada está qualificado. Uma entrada nova é decisão
+#: registrada com evidência, nunca inferência de ``DECLARED_OPTIONS``.
+EMPIRICALLY_QUALIFIED: Mapping[tuple[str, str], frozenset[str]] = MappingProxyType({})
+
+
+@dataclass(frozen=True)
+class CapabilityReport:
+    """O que a spec pede ao provedor, em conjuntos que não se implicam.
+
+    ``requested``      tudo o que o pipeline coloca em ``options``
+    ``transported``    o que o cliente concreto sabe colocar no corpo HTTP
+    ``declared``       o que o código do cliente afirma que o provedor honra
+    ``qualified``      o que um LIVE_SMOKE mostrou ser honrado por ``model``
+    ``metadata_only``  pedido, registrado no trace e nunca transmitido
+
+    ``transported`` não implica ``declared``, e ``declared`` não implica
+    ``qualified``. ``status`` é ``NOT_APPLICABLE`` para o ``mock`` (dublê que
+    não faz afirmação semântica), ``QUALIFIED`` quando todo o pedido está
+    qualificado para o modelo e ``DECLARED_UNQUALIFIED`` no resto.
+    """
+
+    provider: str
+    model: str
+    requested: tuple[str, ...]
+    transported: tuple[str, ...]
+    declared: tuple[str, ...]
+    qualified: tuple[str, ...]
+    metadata_only: tuple[str, ...]
+    status: str
+
+
+def generation_options(
+    temperature: Any = None,
+    thinking_level: Any = None,
+    max_output_tokens: Any = None,
+) -> dict[str, Any]:
+    """Opções de geração declaradas, sem as ausentes."""
+    declared = {
+        "temperature": temperature,
+        "thinking_level": thinking_level,
+        "max_output_tokens": max_output_tokens,
+    }
+    return {key: value for key, value in declared.items() if value is not None}
+
+
+def capability_report(
+    provider: str, generation: Mapping[str, Any], model: str = ""
+) -> CapabilityReport:
+    """Confere localmente, sem rede, se o cliente declara o que a spec pede.
+
+    Levanta ``ValueError`` em incompatibilidade: opção de geração pedida e não
+    declarada (ou não transportada), opção de metadado que o cliente
+    transmitiria, ou ``thinking_level`` fora dos níveis declarados. A
+    qualificação empírica por modelo é só reportada aqui; quem a exige é o
+    preflight científico.
+    """
+    # O quorum sempre pede temperatura, seed e analyst_id; risco e portfólio
+    # pedem as opções de geração declaradas.
+    if provider not in SUPPORTED_PROVIDERS:
+        supported = ", ".join(SUPPORTED_PROVIDERS)
+        raise ValueError(
+            f"unsupported llm provider: {provider!r}; supported: {supported}"
+        )
+    requested = tuple(sorted({"temperature", *METADATA_ONLY_OPTIONS, *generation}))
+    metadata_only = tuple(sorted(METADATA_ONLY_OPTIONS))
+    client = PROVIDER_CLIENTS.get(provider)
+    if client is None:
+        return CapabilityReport(
+            provider, model, requested, (), (), (), metadata_only,
+            CAPABILITY_NOT_APPLICABLE,
+        )
+
+    transmitted = set(getattr(client, "TRANSMITTED_OPTION_KEYS", ()))
+    declared = set(client.DECLARED_OPTIONS)
+    leaked = sorted(METADATA_ONLY_OPTIONS & transmitted)
+    if leaked:
+        raise ValueError(
+            f"provider {provider!r} would transmit metadata-only option(s) "
+            f"{', '.join(leaked)}; seed and analyst_id never reach the provider"
+        )
+    wanted = set(requested) - METADATA_ONLY_OPTIONS
+    missing = sorted(wanted - (declared & transmitted))
+    if missing:
+        raise ValueError(
+            f"provider {provider!r} does not declare option(s) "
+            f"{', '.join(missing)}; requested options would be dropped or "
+            "misread instead of honored. Use a provider that declares them or "
+            "remove the option from the spec"
+        )
+    levels = getattr(client, "THINKING_LEVELS", None)
+    level = generation.get("thinking_level")
+    if level is not None and levels is not None and level not in levels:
+        raise ValueError(
+            f"thinking_level {level!r} is not declared for provider "
+            f"{provider!r}; declared levels: {', '.join(levels)}"
+        )
+    qualified = wanted & EMPIRICALLY_QUALIFIED.get((provider, model), frozenset())
+    return CapabilityReport(
+        provider,
+        model,
+        requested,
+        tuple(sorted(wanted & transmitted)),
+        tuple(sorted(wanted & declared)),
+        tuple(sorted(qualified)),
+        metadata_only,
+        CAPABILITY_QUALIFIED if qualified == wanted else CAPABILITY_DECLARED_UNQUALIFIED,
+    )
 
 
 @dataclass(frozen=True)
@@ -421,6 +787,22 @@ class LLMParticipant:
     provedor e levantam :class:`LLMDecisionError`; o run falha. Quorum sem
     supermaioria com todos os votos válidos continua sendo ``MANTER``, porque
     aí não houve falha nenhuma: é a regra de agregação da metodologia atual.
+
+    **Entrada científica é fail-closed com ``strict_inputs=True``.** As oito
+    features do contrato e a volatilidade sobre a janela inteira são
+    obrigatórias; faltando qualquer uma, a sessão é ``INVALID_INPUT`` e o run
+    falha antes de qualquer chamada ao provedor. O default ``False`` preserva
+    os caminhos de teste e desenvolvimento com histórico curto — e o runner
+    recusa fase científica sem ``strict_inputs=True``, pelo mesmo padrão com
+    que recusa ``integer_shares``. Mesmo sem ``strict_inputs`` a sessão é
+    classificada ``INVALID_INPUT``, nunca como prudência.
+
+    **Opções de geração explícitas.** ``temperature``, ``thinking_level`` e
+    ``max_output_tokens`` declarados chegam aos três papéis; ``temperature``
+    fixa a temperatura de todos os analistas e exclui ``temperature_min`` /
+    ``temperature_max``. Sem nenhuma delas, risco e portfólio continuam
+    chamando sem opção, como antes. Nenhuma é calibrável no CAL-A, e ``seed``
+    continua só metadado.
     """
 
     def __init__(
@@ -434,8 +816,8 @@ class LLMParticipant:
         analyst_count: int = 30,
         consensus_threshold: float = 5 / 6,
         require_all_votes: bool = True,
-        temperature_min: float = 0.2,
-        temperature_max: float = 0.8,
+        temperature_min: float | None = None,
+        temperature_max: float | None = None,
         seed_base: int = 10_000,
         risk_max_volatility: float = 0.50,
         risk_max_drawdown: float = 0.25,
@@ -443,6 +825,11 @@ class LLMParticipant:
         long_target_weight: float = DEFAULT_LONG_TARGET_WEIGHT,
         volatility_window: int = 21,
         decision_frequency: int = 1,
+        temperature: float | None = None,
+        thinking_level: str | None = None,
+        max_output_tokens: int | None = None,
+        strict_inputs: bool = False,
+        portfolio_inversion_policy: str = "flag",
         llm_client: LLMClient | None = None,
     ) -> None:
         if not ticker.strip():
@@ -461,6 +848,33 @@ class LLMParticipant:
         long_target_weight = _validate_long_target_weight(
             long_target_weight, risk_max_concentration
         )
+        if temperature is not None:
+            if temperature_min is not None or temperature_max is not None:
+                raise ValueError(
+                    "declare either temperature or temperature_min/temperature_max; "
+                    "two declarations of the same setting cannot both be material"
+                )
+            if isinstance(temperature, bool) or not isinstance(temperature, (int, float)):
+                raise ValueError("temperature must be a number")
+            temperature = float(temperature)
+            if not math.isfinite(temperature) or not 0.0 <= temperature <= 2.0:
+                raise ValueError("temperature must be finite and between 0 and 2")
+            temperature_min = temperature_max = temperature
+        if thinking_level is not None and thinking_level not in THINKING_LEVEL_VOCABULARY:
+            raise ValueError(
+                f"thinking_level must be one of {', '.join(THINKING_LEVEL_VOCABULARY)}"
+            )
+        if max_output_tokens is not None:
+            max_output_tokens = _require_int(
+                "max_output_tokens", max_output_tokens, minimum=1
+            )
+        if not isinstance(strict_inputs, bool):
+            raise ValueError("strict_inputs must be a boolean")
+        if portfolio_inversion_policy not in PORTFOLIO_INVERSION_POLICIES:
+            raise ValueError(
+                "portfolio_inversion_policy must be one of "
+                f"{', '.join(PORTFOLIO_INVERSION_POLICIES)}"
+            )
 
         self.ticker = ticker.strip()
         self.provider = provider
@@ -471,13 +885,23 @@ class LLMParticipant:
         self.decision_frequency = decision_frequency
         self.long_target_weight = long_target_weight
         self.sizing = FixedTargetSizing(long_target_weight)
+        self.strict_inputs = strict_inputs
+        self.portfolio_inversion_policy = portfolio_inversion_policy
+        self.generation_options = generation_options(
+            temperature, thinking_level, max_output_tokens
+        )
+        # Antes de construir cliente, grafo ou qualquer coisa que fale com a
+        # rede: incompatibilidade detectável localmente não custa chamada.
+        self.capabilities = capability_report(
+            provider, self.generation_options, model.strip()
+        )
 
         self.ensemble_config = AnalystEnsembleConfig(
             analyst_count=analyst_count,
             consensus_threshold=consensus_threshold,
             require_all_votes=require_all_votes,
-            temperature_min=temperature_min,
-            temperature_max=temperature_max,
+            temperature_min=0.2 if temperature_min is None else temperature_min,
+            temperature_max=0.8 if temperature_max is None else temperature_max,
             seed_base=seed_base,
         )
         self.risk_config = RiskConfig(
@@ -504,11 +928,16 @@ class LLMParticipant:
             risk_config=self.risk_config,
             portfolio_config=self.portfolio_config,
             ensemble_config=self.ensemble_config,
+            generation_options=self.generation_options or None,
         )
         self.transformer = DataTransformer()
         # Estado interno de uma execução, nunca compartilhado entre runs: a
         # factory do registry devolve instância nova a cada run.
         self.decisions: list[LLMDecisionRecord] = []
+        #: Sessões consultadas fora da grade de ``decision_frequency``: não
+        #: chamam o grafo, mas aparecem em ``decisions.jsonl`` como
+        #: ``NOT_ELIGIBLE``.
+        self.skipped_sessions: list[pd.Timestamp] = []
         self._peak_equity: float | None = None
         self._session_index = 0
         # Relógio da execução: ``None`` até a primeira decisão, que a arena
@@ -521,16 +950,15 @@ class LLMParticipant:
         """Resolve o provedor declarado na spec; credencial vem do ambiente."""
         if self.provider == "mock":
             return _mock_client()
-        if self.provider == "agent_router":
+        if self.provider in PROVIDER_CLIENTS:
             if not self.model.strip():
                 raise ValueError(
-                    "provider 'agent_router' requires an explicit model; the "
+                    f"provider {self.provider!r} requires an explicit model; the "
                     "requested model is provenance and must appear in the spec"
                 )
-            # Import local: o cliente HTTP só é necessário no caminho real.
-            from src.agents.llm_client import AgentRouterLLMClient, RetryingLLMClient
-
-            client: LLMClient = AgentRouterLLMClient(model=self.model)
+            client: LLMClient = cast(Any, PROVIDER_CLIENTS[self.provider])(
+                model=self.model
+            )
             if self.retry_attempts > 1:
                 client = RetryingLLMClient(
                     client,
@@ -600,29 +1028,68 @@ class LLMParticipant:
             # Sessão não elegível: nenhuma chamada ao provedor e nenhuma
             # intenção nova. A posição corrente segue pela semântica normal da
             # arena, que mantém quem não recebe intent.
+            self.skipped_sessions.append(observation.session)
             return []
 
         close = float(cast(pd.Series, history["fechamento"]).iloc[-1])
+        position = float(observation.positions[self.ticker])
+        observed_weight = position * close / equity
         state = self._agent_state(observation, history, equity, close)
+        violations = self._input_violations(state, history)
+        if violations and self.strict_inputs:
+            # Fail-closed antes de qualquer chamada: entrada científica
+            # incompleta não é pergunta que se faça ao provedor.
+            self.decisions.append(
+                LLMDecisionRecord(
+                    session=observation.session,
+                    technical_signal=None,
+                    consensus=None,
+                    risk_verdict=None,
+                    portfolio_action=None,
+                    target_weight=None,
+                    final_cause=INVALID_INPUT,
+                    observed_weight=observed_weight,
+                    input_violations=violations,
+                )
+            )
+            raise LLMDecisionError(
+                f"invalid scientific input at {observation.session.date()}: "
+                f"{', '.join(violations)}",
+                reason=INVALID_INPUT,
+            )
+
         # A sessão de decisão é declarada pelo participante, que é quem a
         # conhece; nenhuma camada abaixo a deduz da ordem das chamadas.
         self.trace.begin_session(observation.session)
         self.client.reset()
-        output = cast(dict, asyncio.run(self.graph.ainvoke(state)))
-        failures = tuple(
-            f"{type(error).__name__}: {error}" for error in self.client.failures
-        )
+        output = asyncio.run(self._run_graph(state))
+        failures = tuple(self.client.failures)
 
         action = output.get("portfolio_action")
-        errors = tuple(str(error) for error in output.get("errors", []))
+        portfolio_rule = output.get("portfolio_rule")
+        final_cause = classify_decision(
+            consensus=output.get("technical_consensus"),
+            risk_verdict=output.get("risk_verdict"),
+            risk_source=output.get("risk_source"),
+            risk_rule=output.get("risk_rule"),
+            portfolio_action=action,
+            portfolio_rule=portfolio_rule,
+            observed_weight=observed_weight,
+            long_target_weight=self.long_target_weight,
+            input_violations=violations,
+            failures=failures,
+        )
         # Sizing só é consultado quando existe decisão qualitativa e nenhuma
-        # falha: veto de risco e ``MANTER`` sequer chegam até aqui com ação
-        # acionável, e falha de infraestrutura não vira decisão.
+        # resposta inválida ou falha de provedor: veto de risco e ``MANTER``
+        # sequer chegam até aqui com ação acionável, e falha não vira decisão.
         weight = (
             self.sizing.target_weight(action.decision)
-            if action is not None and not failures
+            if action is not None
+            and final_cause
+            not in (INVALID_RESPONSE, PROVIDER_FAILURE, PROVIDER_REQUEST_REJECTED)
             else None
         )
+        failure_text = tuple(f"{type(error).__name__}: {error}" for error in failures)
         self.decisions.append(
             LLMDecisionRecord(
                 session=observation.session,
@@ -631,19 +1098,57 @@ class LLMParticipant:
                 risk_verdict=output.get("risk_verdict"),
                 portfolio_action=action,
                 target_weight=weight,
-                errors=errors,
-                llm_failures=failures,
+                errors=tuple(str(error) for error in output.get("errors", [])),
+                llm_failures=failure_text,
+                final_cause=final_cause,
+                risk_source=output.get("risk_source"),
+                risk_rule=output.get("risk_rule"),
+                portfolio_source=output.get("portfolio_source"),
+                portfolio_rule=portfolio_rule,
+                observed_weight=observed_weight,
+                input_violations=violations,
             )
         )
 
-        if failures:
+        tolerated_inversion = (
+            portfolio_rule == PORTFOLIO_RULE_DIRECTION_INVERSION
+            and self.portfolio_inversion_policy == "flag"
+        )
+        if failure_text or (final_cause == INVALID_RESPONSE and not tolerated_inversion):
+            detail = "; ".join(failure_text) or "response violates the stage contract"
             raise LLMDecisionError(
                 f"unrecovered LLM failure while deciding "
-                f"{observation.session.date()}: {'; '.join(failures)}"
+                f"{observation.session.date()}: {detail}",
+                reason=final_cause,
+            )
+        if final_cause == INVALID_INPUT and self.strict_inputs:
+            raise LLMDecisionError(
+                f"invalid scientific input at {observation.session.date()}",
+                reason=INVALID_INPUT,
             )
         if weight is None:
             return []
         return target_portfolio_to_intents(observation, {self.ticker: weight})
+
+    async def _run_graph(self, state: AgentState) -> dict[str, Any]:
+        """Executa o grafo e devolve o último estado, mesmo se o provedor cair.
+
+        Risco e portfólio só capturam ``TypeError``/``ValueError``: uma falha
+        de transporte esgotada no retry (ou uma recusa da requisição) atravessa
+        o nó e aborta o grafo. Essa exceção já foi registrada pelo
+        ``FailureRecordingClient`` e gravada no trace; aqui ela deixa de ser
+        exceção crua e vira o estado parcial — votos e parecer já obtidos —, que
+        ``decide`` classifica e transforma em ``LLMDecisionError``. Qualquer
+        exceção que **não** veio do limite do provedor é bug e sobe intacta.
+        """
+        last: dict[str, Any] = dict(state)
+        try:
+            async for snapshot in self.graph.astream(state, stream_mode="values"):
+                last = snapshot
+        except Exception as exc:
+            if not any(exc is failure for failure in self.client.failures):
+                raise
+        return last
 
     # ── Evidência do run ─────────────────────────────────────────
 
@@ -652,15 +1157,115 @@ class LLMParticipant:
         """Trace desta execução, em ordem de emissão."""
         return self.trace.records
 
+    def decision_lines(self) -> list[dict[str, Any]]:
+        """Uma linha por sessão consultada, em ordem de sessão."""
+        lines = [
+            (record.session, record.to_json_dict(self.ticker))
+            for record in self.decisions
+        ]
+        lines += [
+            (
+                session,
+                {
+                    "schema_version": LLM_DECISION_ARTIFACT_SCHEMA_VERSION,
+                    "decision_session": session_key(session),
+                    "ticker": self.ticker,
+                    "eligible": False,
+                    "final_cause": NOT_ELIGIBLE,
+                },
+            )
+            for session in self.skipped_sessions
+        ]
+        return [line for _, line in sorted(lines, key=lambda item: item[0])]
+
+    def decisions_artifact(self) -> RunArtifact:
+        """``decisions.jsonl``: a causa estruturada de cada sessão consultada."""
+        lines = [canonical_json(line) for line in self.decision_lines()]
+        return RunArtifact(
+            name=LLM_DECISION_ARTIFACT,
+            filename=LLM_DECISION_FILENAME,
+            schema_version=LLM_DECISION_ARTIFACT_SCHEMA_VERSION,
+            content=("\n".join(lines) + "\n" if lines else "").encode("utf-8"),
+            summary={
+                "decision_count": len(self.decisions),
+                "not_eligible_count": len(self.skipped_sessions),
+            },
+        )
+
     def run_artifacts(self) -> tuple[RunArtifact, ...]:
-        """Congela o trace para publicação junto do run.
+        """Congela trace e decisões para publicação junto do run.
 
         Satisfaz ``RunArtifactProvider`` estruturalmente: a camada
         experimental publica esta evidência sem conhecer este tipo. Os bytes
         saem daqui prontos — publicar o run não reconsulta provedor, cliente
         nem estado externo, pela mesma razão que ``SnapshotEvidence`` existe.
+        O trace continua sendo o primeiro artefato.
         """
-        return (self.trace.artifact(),)
+        return (self.trace.artifact(), self.decisions_artifact())
+
+    # ── Gate local, antes de construir ───────────────────────────
+
+    @classmethod
+    def preflight(
+        cls, params: Mapping[str, Any], *, scientific: bool
+    ) -> CapabilityReport:
+        """Confere a spec sem construir o participante e sem tocar a rede.
+
+        Em qualquer fase, o provedor precisa **declarar** as opções de geração
+        pedidas — ``transport_options`` sozinho não prova suporte semântico.
+
+        Em fase científica, nada material pode vir de default invisível:
+
+        - todo parâmetro de :data:`SCIENTIFIC_REQUIRED_PARAMS` precisa estar
+          escrito na spec — sem ``temperature`` o quorum voltaria à faixa
+          0.2-0.8 e risco/portfólio herdariam o default do provedor; sem
+          ``portfolio_inversion_policy`` a inversão viraria ``flag`` implícito;
+        - provedor real também precisa de ``model``, ``max_output_tokens`` e,
+          se o cliente tem níveis de thinking, ``thinking_level`` — senão
+          valeriam os defaults do modelo, que o run não registra;
+        - ``strict_inputs`` precisa ser ``True``;
+        - provedor real precisa estar **empiricamente qualificado** para
+          ``(provider, model)`` (:data:`EMPIRICALLY_QUALIFIED`): declaração de
+          código não substitui LIVE_SMOKE.
+        """
+        provider = str(params.get("provider", "mock"))
+        if scientific:
+            required = list(SCIENTIFIC_REQUIRED_PARAMS)
+            client = PROVIDER_CLIENTS.get(provider)
+            if client is not None:
+                required += ["model", "max_output_tokens"]
+                if getattr(client, "THINKING_LEVELS", None) is not None:
+                    required.append("thinking_level")
+            missing = sorted(key for key in required if params.get(key) is None)
+            if missing:
+                raise ValueError(
+                    "a scientific llm_agent spec must declare every material "
+                    f"setting explicitly; missing: {', '.join(missing)}"
+                )
+            if params.get("strict_inputs") is not True:
+                raise ValueError(
+                    "a scientific phase requires strict_inputs=True for llm_agent; "
+                    "missing features or risk metrics must fail the run instead "
+                    "of becoming a silent MANTER"
+                )
+        report = capability_report(
+            provider,
+            generation_options(
+                params.get("temperature"),
+                params.get("thinking_level"),
+                params.get("max_output_tokens"),
+            ),
+            str(params.get("model", "")).strip(),
+        )
+        if scientific and report.status == CAPABILITY_DECLARED_UNQUALIFIED:
+            unqualified = sorted(set(report.declared) - set(report.qualified))
+            raise ValueError(
+                f"provider {provider!r} model {report.model!r} is "
+                f"{CAPABILITY_DECLARED_UNQUALIFIED} for {', '.join(unqualified)}; "
+                "a scientific phase requires a recorded LIVE_SMOKE qualification "
+                "for this model (EMPIRICALLY_QUALIFIED)"
+            )
+        return report
 
     # ── Estado observável ────────────────────────────────────────
 
@@ -718,3 +1323,25 @@ class LLMParticipant:
         if volatility is not None:
             state["recent_volatility"] = volatility
         return state
+
+    def _input_violations(
+        self, state: AgentState, history: pd.DataFrame
+    ) -> tuple[str, ...]:
+        """Violações do contrato científico de entrada, como códigos.
+
+        As oito features do contrato e a volatilidade sobre a janela
+        **inteira** são obrigatórias. Com ``strict_inputs`` qualquer violação
+        derruba a sessão antes de chamar o provedor; sem ele, a sessão segue
+        como antes e é classificada ``INVALID_INPUT``.
+        """
+        features = state.get("features", {})
+        violations = [
+            f"missing_feature:{key}" for key in FEATURE_KEYS if key not in features
+        ]
+        # ``pct_change`` perde só a primeira barra: o OHLCV validado não tem NaN.
+        if len(history) - 1 < self.volatility_window:
+            violations.append("volatility_window_incomplete")
+        volatility = state.get("recent_volatility")
+        if volatility is None or not math.isfinite(volatility):
+            violations.append("volatility_unavailable")
+        return tuple(violations)

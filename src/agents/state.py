@@ -104,6 +104,15 @@ class AgentState(TypedDict, total=False):
     technical_consensus: TechnicalConsensus
     technical_signal: TechnicalSignal | None
     risk_verdict: RiskVerdict | None
+    #: Quem decidiu o veredito e por qual regra, como código estruturado.
+    #: Vivem fora de ``RiskVerdict`` de propósito: aquele modelo é o schema de
+    #: resposta do LLM, e mudá-lo mudaria ``response_schema_sha256`` e a
+    #: identidade de replay das chamadas de risco.
+    risk_source: str
+    risk_rule: str | None
     final_decision: FinalDecision | None
     portfolio_action: PortfolioAction | None
+    #: Mesmo par para o gestor de portfólio (modo qualitativo).
+    portfolio_source: str
+    portfolio_rule: str | None
     errors: Annotated[list[str], operator.add]

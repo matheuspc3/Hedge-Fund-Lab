@@ -33,7 +33,11 @@ from src.backtesting.engine import BacktestResult
 from src.backtesting.metrics import performance_metrics, total_transaction_cost
 from src.config import settings
 from src.experiments.context import RunContext
-from src.experiments.participants import build_participant, required_tickers
+from src.experiments.participants import (
+    build_participant,
+    preflight_participant,
+    required_tickers,
+)
 from src.experiments.spec import ExperimentSpec
 from src.pipeline.snapshot import (
     PRICE_REPRESENTATION,
@@ -230,6 +234,10 @@ class ExperimentRunner:
         # guard de proveniência roda antes de carregar dados.
         evaluation = self._resolve_evaluation(frames)
         self._require_scientific_execution()
+        # Capacidade do provedor e contrato de entrada conferidos localmente,
+        # ainda antes de construir o participante: incompatibilidade
+        # detectável sem rede não pode custar uma chamada paga.
+        preflight_participant(self.spec.participant, scientific=self.context is not None)
 
         # Instância nova a cada run: participantes clássicos carregam estado
         # entre sessões e não podem atravessar execuções.

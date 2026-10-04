@@ -1,6 +1,7 @@
 """Compilação do fluxo multiagente linear da primeira versão."""
 
-from typing import Literal
+from collections.abc import Mapping
+from typing import Any, Literal
 
 from langgraph.graph import END, START, StateGraph
 
@@ -24,16 +25,29 @@ def build_graph(
     risk_config: RiskConfig | None = None,
     portfolio_config: PortfolioConfig | None = None,
     ensemble_config: AnalystEnsembleConfig | None = None,
+    *,
+    generation_options: Mapping[str, Any] | None = None,
 ):
+    """Grafo técnico -> risco -> portfólio.
+
+    ``generation_options`` chega explicitamente aos três papéis. ``None`` é o
+    comportamento legado: risco e portfólio chamam o provedor sem opção
+    nenhuma e herdam o default dele.
+    """
     builder = StateGraph(AgentState)
     builder.add_node(
         "technical_analyst",
-        create_technical_analyst_ensemble_node(llm_client, ensemble_config),
+        create_technical_analyst_ensemble_node(
+            llm_client, ensemble_config, generation_options
+        ),
     )
-    builder.add_node("risk_manager", create_risk_manager_node(llm_client, risk_config))
+    builder.add_node(
+        "risk_manager",
+        create_risk_manager_node(llm_client, risk_config, generation_options),
+    )
     builder.add_node(
         "portfolio_manager",
-        create_portfolio_manager_node(llm_client, portfolio_config),
+        create_portfolio_manager_node(llm_client, portfolio_config, generation_options),
     )
     builder.add_edge(START, "technical_analyst")
     builder.add_edge("technical_analyst", "risk_manager")

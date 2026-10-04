@@ -92,6 +92,7 @@ def test_run_llm_publica_o_trace_ao_lado_da_curva_e_dos_trades(
     ).run_and_persist()
 
     assert sorted(item.name for item in path.iterdir()) == [
+        "decisions.jsonl",
         "equity.csv",
         LLM_TRACE_FILENAME,
         "manifest.json",
@@ -173,8 +174,8 @@ def test_trace_e_congelado_na_execucao_e_nao_reconsultado_ao_publicar(
     """
     runner = runner_for(snapshot, snapshot_dir, runs_dir, tmp_path)
     result = runner.run()
-    (artifact,) = result.artifacts
-    frozen = artifact.content
+    # O trace é sempre o primeiro artefato; o segundo é ``decisions.jsonl``.
+    frozen = result.artifacts[0].content
 
     path = runner.persist(result)
     manifest = json.loads((path / "manifest.json").read_text(encoding="utf-8"))

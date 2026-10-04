@@ -24,7 +24,8 @@ uma versão calibrada futura — não porque seja o sizing científico v1.
 """
 
 import json
-from typing import Literal
+from collections.abc import Mapping
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -39,6 +40,21 @@ SIZING_MODE_LEGACY = "legacy_confidence_kelly"
 SIZING_MODE_QUALITATIVE = "qualitative"
 
 SIZING_MODES = (SIZING_MODE_LEGACY, SIZING_MODE_QUALITATIVE)
+
+#: Origem e regra da ação qualitativa, como código estruturado. ``LLM`` com
+#: regra ``None`` é a única decisão de portfólio de fato; o resto é atalho
+#: determinístico (``RULE``) ou resposta que viola o contrato.
+PORTFOLIO_SOURCE_RULE = "RULE"
+PORTFOLIO_SOURCE_LLM = "LLM"
+
+PORTFOLIO_RULE_MISSING_INPUT = "MISSING_INPUT"
+PORTFOLIO_RULE_VETOED_UPSTREAM = "VETOED_UPSTREAM"
+PORTFOLIO_RULE_TECH_HOLD = "TECH_HOLD"
+#: O LLM devolveu a direção oposta ao sinal aprovado. O nó continua
+#: convertendo em ``MANTER`` (comportamento herdado); quem consome o código
+#: decide se isso é falha (ver ``LLMParticipant.portfolio_inversion_policy``).
+PORTFOLIO_RULE_DIRECTION_INVERSION = "DIRECTION_INVERSION"
+PORTFOLIO_RULE_INVALID_RESPONSE = "INVALID_RESPONSE"
 
 SYSTEM_PROMPT = """Você é o gestor de portfólio do Hedge-fund-lab.
 Consolide o sinal aprovado sem inverter sua direção. O tamanho solicitado deve
@@ -96,18 +112,37 @@ def _hold_action(reason: str) -> PortfolioAction:
     return PortfolioAction(decision="MANTER", reasoning=reason)
 
 
+def _qualitative_result(
+    action: PortfolioAction,
+    source: str,
+    rule: str | None,
+    errors: list[str] | None = None,
+) -> dict:
+    return {
+        "portfolio_action": action,
+        "portfolio_source": source,
+        "portfolio_rule": rule,
+        "errors": errors or [],
+    }
+
+
 def create_portfolio_manager_node(
     llm: LLMClient,
     config: PortfolioConfig | None = None,
+    options: Mapping[str, Any] | None = None,
 ):
-    """Nó do gestor de portfólio no modo declarado por ``config``."""
+    """Nó do gestor de portfólio no modo declarado por ``config``.
+
+    ``options`` (opções de geração declaradas) só valem no modo qualitativo, o
+    caminho científico; o legado continua chamando sem opção nenhuma.
+    """
     config = config or PortfolioConfig()
     if config.sizing_mode == SIZING_MODE_QUALITATIVE:
-        return _qualitative_node(llm)
+        return _qualitative_node(llm, options)
     return _legacy_kelly_node(llm, config)
 
 
-def _qualitative_node(llm: LLMClient):
+def _qualitative_node(llm: LLMClient, options: Mapping[str, Any] | None = None):
     """Decisão de direção, sem autoridade de dimensionamento.
 
     O que este nó **não** faz é a parte metodologicamente relevante: não chama
@@ -122,27 +157,33 @@ def _qualitative_node(llm: LLMClient):
     satisfeito. Se sobra caixa para chegar ao alvo é pergunta do executor.
     """
 
+    generation = dict(options) if options else None
+
     async def node(state: AgentState) -> dict:
         signal = state.get("technical_signal")
         verdict = state.get("risk_verdict")
         if signal is None or verdict is None:
             message = "portfolio_manager: parecer anterior ausente"
-            return {"portfolio_action": _hold_action(message), "errors": [message]}
+            return _qualitative_result(
+                _hold_action(message), PORTFOLIO_SOURCE_RULE,
+                PORTFOLIO_RULE_MISSING_INPUT, [message],
+            )
         if verdict.verdict == "VETADO":
-            return {
-                "portfolio_action": _hold_action(
-                    "Operação vetada pelo gestor de risco"
-                ),
-                "errors": [],
-            }
+            return _qualitative_result(
+                _hold_action("Operação vetada pelo gestor de risco"),
+                PORTFOLIO_SOURCE_RULE, PORTFOLIO_RULE_VETOED_UPSTREAM,
+            )
         if signal.signal == "MANTER":
-            return {
-                "portfolio_action": _hold_action("Analista recomendou manter"),
-                "errors": [],
-            }
+            return _qualitative_result(
+                _hold_action("Analista recomendou manter"),
+                PORTFOLIO_SOURCE_RULE, PORTFOLIO_RULE_TECH_HOLD,
+            )
         if state.get("current_price", 0.0) <= 0:
             message = "portfolio_manager: preço atual ausente ou inválido"
-            return {"portfolio_action": _hold_action(message), "errors": [message]}
+            return _qualitative_result(
+                _hold_action(message), PORTFOLIO_SOURCE_RULE,
+                PORTFOLIO_RULE_MISSING_INPUT, [message],
+            )
 
         # Canonicalização também aqui: o parecer de risco carrega as métricas
         # escalares e o sinal técnico carrega ``confidence``. Um único estágio
@@ -159,17 +200,24 @@ def _qualitative_node(llm: LLMClient):
                 QUALITATIVE_SYSTEM_PROMPT,
                 prompt,
                 PortfolioAction,
+                generation,
                 metadata=LLMCallMetadata(stage=STAGE_PORTFOLIO_MANAGER),
             )
             if not isinstance(response, PortfolioAction):
                 raise TypeError("resposta não segue PortfolioAction")
             if response.decision not in {signal.signal, "MANTER"}:
                 message = "portfolio_manager: decisão inverteu o sinal técnico"
-                return {"portfolio_action": _hold_action(message), "errors": [message]}
-            return {"portfolio_action": response, "errors": []}
+                return _qualitative_result(
+                    _hold_action(message), PORTFOLIO_SOURCE_LLM,
+                    PORTFOLIO_RULE_DIRECTION_INVERSION, [message],
+                )
+            return _qualitative_result(response, PORTFOLIO_SOURCE_LLM, None)
         except (TypeError, ValueError) as exc:
             message = f"portfolio_manager: resposta inválida: {exc}"
-            return {"portfolio_action": _hold_action(message), "errors": [message]}
+            return _qualitative_result(
+                _hold_action(message), PORTFOLIO_SOURCE_LLM,
+                PORTFOLIO_RULE_INVALID_RESPONSE, [message],
+            )
 
     return node
 

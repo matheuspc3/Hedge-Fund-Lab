@@ -599,6 +599,218 @@ class AgentRouterLLMClient(LLMClient):
         return response_schema.model_validate(message_content)
 
 
+class GeminiLLMClient(LLMClient):
+    """Cliente first-party da Gemini API nativa (``models.generateContent``).
+
+    Runtime científico recomendado pelo H2 Treatment Design Memo — provedor e
+    modelo continuam ``PENDING_ADVISOR_RATIFICATION``. Fala o contrato nativo:
+    ``systemInstruction``, ``generationConfig.temperature``,
+    ``generationConfig.maxOutputTokens``,
+    ``generationConfig.thinkingConfig.thinkingLevel`` e saída estruturada por
+    ``responseMimeType`` + ``responseJsonSchema``.
+
+    **Prompt lógico == prompt de transporte.** O schema viaja em
+    ``generationConfig``, não no texto; o system prompt vai literal e o
+    ``response_schema_sha256`` da identidade cobre o resto. O schema enviado é
+    orientação ao provedor: o contrato continua sendo a validação Pydantic
+    local, a mesma do replay.
+
+    Proveniência nativa (``responseId``, ``modelVersion``,
+    ``candidates[0].finishReason`` e ``usageMetadata``) é entregue ao rascunho
+    de telemetria e gravada no trace como evidência observada.
+    """
+
+    #: Opções do pipeline que este cliente coloca em ``generationConfig``.
+    #: ``seed`` não está aqui de propósito: fora do caminho científico H2 v1.
+    TRANSMITTED_OPTION_KEYS: tuple[str, ...] = (
+        "temperature",
+        "thinking_level",
+        "max_output_tokens",
+    )
+    #: **Declarado**, não qualificado: o formato
+    #: ``thinkingConfig.thinkingLevel`` e a aceitação de ``responseJsonSchema``
+    #: só ficam qualificados por modelo depois de um LIVE_SMOKE registrado.
+    DECLARED_OPTIONS: frozenset[str] = frozenset(TRANSMITTED_OPTION_KEYS)
+    #: Vocabulário do protocolo -> enum nativo ``ThinkingLevel``. Só os níveis
+    #: documentados para os Flash GA candidatos (``gemini-3.8-flash`` e
+    #: ``gemini-3.7-flash``), que recusam ``MINIMAL``.
+    #: ponytail: tabela por modelo apenas se um modelo com outro conjunto de
+    #: níveis vier a ser qualificado.
+    THINKING_LEVELS: Mapping[str, str] = {"low": "LOW", "medium": "MEDIUM", "high": "HIGH"}
+    DEFAULT_BASE_URL = "https://generativelanguage.googleapis.com/v1beta"
+
+    def __init__(
+        self,
+        api_key: str | None = None,
+        base_url: str | None = None,
+        model: str = "",
+        transport: Any | None = None,
+        timeout: float | None = None,
+    ):
+        super().__init__()
+        from src.config import settings
+
+        if not model.strip():
+            raise ValueError("GeminiLLMClient requires an explicit model id")
+        self.api_key = api_key if api_key is not None else (os.getenv("GEMINI_API_KEY") or "")
+        self.base_url = (
+            base_url or os.getenv("GEMINI_BASE_URL") or self.DEFAULT_BASE_URL
+        ).rstrip("/")
+        self.model = model.strip()
+        self.timeout = settings.llm_timeout if timeout is None else timeout
+        self.transport = transport or self._default_transport
+
+    def _default_transport(self, method: str, url: str, headers: dict[str, str], body: dict[str, Any]):
+        return _http_json_transport(method, url, headers, body, self.timeout)
+
+    def _endpoint_url(self) -> str:
+        # O id pode vir como ``gemini-x`` ou já como recurso ``models/gemini-x``.
+        return f"{self.base_url}/models/{self.model.removeprefix('models/')}:generateContent"
+
+    def transport_options(self, options: Mapping[str, Any] | None) -> dict[str, Any]:
+        if not options:
+            return {}
+        return {
+            key: options[key]
+            for key in self.TRANSMITTED_OPTION_KEYS
+            if options.get(key) is not None
+        }
+
+    def provider_endpoint(self) -> str | None:
+        """Endpoint sanitizado; a credencial vai no cabeçalho, nunca na URL."""
+        return _sanitized_endpoint(self._endpoint_url())
+
+    def _generation_config(
+        self,
+        options: Mapping[str, Any] | None,
+        response_schema: type[BaseModel] | None,
+    ) -> dict[str, Any]:
+        sent = self.transport_options(options)
+        config: dict[str, Any] = {}
+        if "temperature" in sent:
+            config["temperature"] = sent["temperature"]
+        if "max_output_tokens" in sent:
+            config["maxOutputTokens"] = sent["max_output_tokens"]
+        if "thinking_level" in sent:
+            level = sent["thinking_level"]
+            if level not in self.THINKING_LEVELS:
+                supported = ", ".join(self.THINKING_LEVELS)
+                raise ProviderRequestRejected(
+                    f"thinking_level {level!r} is not declared for this client; "
+                    f"supported: {supported}"
+                )
+            config["thinkingConfig"] = {"thinkingLevel": self.THINKING_LEVELS[level]}
+        if response_schema is not None:
+            config["responseMimeType"] = "application/json"
+            config["responseJsonSchema"] = response_schema.model_json_schema()
+        return config
+
+    async def generate(
+        self,
+        system_prompt: str,
+        user_prompt: str,
+        response_schema: type[BaseModel] | None = None,
+        options: dict[str, Any] | None = None,
+        *,
+        metadata: LLMCallMetadata | None = None,
+    ) -> BaseModel | str:
+        if not self.api_key:
+            # Configuração local: recusada antes de qualquer tentativa de rede
+            # e nunca repetida pelo ``RetryingLLMClient``.
+            raise ProviderRequestRejected("GEMINI_API_KEY não configurada")
+
+        body: dict[str, Any] = {
+            "systemInstruction": {"parts": [{"text": system_prompt}]},
+            "contents": [{"role": "user", "parts": [{"text": user_prompt}]}],
+        }
+        config = self._generation_config(options, response_schema)
+        if config:
+            body["generationConfig"] = config
+
+        slot = current_call_telemetry()
+        if slot is not None:
+            slot.transport_system_prompt = system_prompt
+
+        headers = {
+            "x-goog-api-key": self.api_key,
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
+        start_time = time.time()
+        raw = await asyncio.to_thread(self.transport, "POST", self._endpoint_url(), headers, body)
+        latency_ms = (time.time() - start_time) * 1000.0
+        payload = _decode_json_body(raw)
+
+        usage = payload.get("usageMetadata")
+        usage = usage if isinstance(usage, dict) else {}
+        attempts = slot.attempts if slot is not None else 1
+        self.telemetry_logs.append(
+            LLMTelemetry(
+                prompt_tokens=usage.get("promptTokenCount", 0),
+                completion_tokens=usage.get("candidatesTokenCount", 0),
+                total_tokens=usage.get("totalTokenCount", 0),
+                latency_ms=latency_ms,
+                retries=attempts - 1,
+                model=self.model,
+            )
+        )
+        candidates = payload.get("candidates") or []
+        if not isinstance(candidates, list):
+            candidates = [candidates]
+        candidate = candidates[0] if candidates and isinstance(candidates[0], dict) else {}
+        finish_reason = candidate.get("finishReason")
+        content = candidate.get("content")
+        parts = content.get("parts") if isinstance(content, dict) else None
+        parts = parts if isinstance(parts, list) else []
+        # Partes de raciocínio (``thought``) não são resposta.
+        text = "".join(
+            str(part.get("text", ""))
+            for part in parts
+            if isinstance(part, dict) and not part.get("thought")
+        )
+        if slot is not None:
+            slot.provider_response_id = payload.get("responseId")
+            slot.resolved_model = payload.get("modelVersion")
+            slot.finish_reason = finish_reason
+            slot.raw_response = text
+            if usage:
+                slot.usage = {
+                    "prompt_tokens": usage.get("promptTokenCount"),
+                    "completion_tokens": usage.get("candidatesTokenCount"),
+                    "thoughts_tokens": usage.get("thoughtsTokenCount"),
+                    "total_tokens": usage.get("totalTokenCount"),
+                    "source": "provider",
+                }
+
+        # Ausência estrutural nunca é aceita em silêncio: a resposta existe,
+        # então cada caso abaixo é ``INVALID_RESPONSE`` com a causa no texto.
+        if not candidates:
+            feedback = payload.get("promptFeedback")
+            block = feedback.get("blockReason") if isinstance(feedback, dict) else None
+            raise ValueError(f"resposta sem candidato (blockReason={block!r})")
+        # ``candidateCount`` nunca é enviado: o contrato é um candidato só.
+        if len(candidates) != 1:
+            raise ValueError(f"esperado 1 candidato, recebidos {len(candidates)}")
+        if not candidate:
+            raise ValueError("candidato não é um objeto")
+        # ``finishReason`` é proveniência obrigatória: sem ele não há como saber
+        # se a saída terminou ou foi truncada.
+        if finish_reason is None:
+            raise ValueError("candidato sem finishReason")
+        # Saída truncada ou bloqueada não é JSON confiável, mesmo que parseie.
+        if finish_reason != "STOP":
+            raise ValueError(f"geração não terminou em STOP: finishReason={finish_reason}")
+        if not parts:
+            raise ValueError("candidato sem content.parts")
+        if response_schema is None:
+            return text
+        try:
+            parsed = json.loads(text)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"resposta não é JSON válido: {text!r}") from exc
+        return response_schema.model_validate(parsed)
+
+
 class CachedLLMClient(LLMClient):
     """Cache JSON persistente por prompt e schema, sem dependência externa.
 

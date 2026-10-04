@@ -3,6 +3,8 @@
 import asyncio
 import json
 from collections import Counter
+from collections.abc import Mapping
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -173,13 +175,40 @@ def _no_consensus(
     }
 
 
+def ensemble_user_prompt(state: AgentState, analyst_number: int, analyst_count: int) -> str:
+    """Prompt de usuário de um analista do quorum.
+
+    No caminho científico (features causais) o prompt é **idêntico** para todos
+    os analistas: Self-Consistency pede amostras independentes da mesma
+    pergunta, e um rótulo "analista n de N" seria uma perturbação de prompt por
+    amostra. Quem é o analista continua declarado em ``analyst_id``, como
+    metadado e na identidade do trace — nunca no texto.
+
+    O caminho legado (níveis brutos) mantém o rótulo, para não trocar em
+    silêncio o prompt, o cache e os replays dos runners operacionais.
+    """
+    if parse_features_from_state(state):
+        return build_prompt(state)
+    return (
+        f"Você é o analista {analyst_number} de {analyst_count}. "
+        "Avalie de forma independente.\n" + build_prompt(state)
+    )
+
+
 def create_technical_analyst_ensemble_node(
     llm: LLMClient,
     config: AnalystEnsembleConfig | None = None,
+    options: Mapping[str, Any] | None = None,
 ):
-    """Executa todos os analistas em paralelo e agrega por supermaioria."""
+    """Executa todos os analistas em paralelo e agrega por supermaioria.
+
+    ``options`` são as opções de geração declaradas (``thinking_level``,
+    ``max_output_tokens``…), repassadas a cada analista. A temperatura de cada
+    analista continua vindo do ``config``: ela é parte do desenho do quorum.
+    """
 
     config = config or AnalystEnsembleConfig()
+    generation = dict(options or {})
 
     async def ask(state: AgentState, analyst_number: int):
         denominator = max(1, config.analyst_count - 1)
@@ -189,15 +218,16 @@ def create_technical_analyst_ensemble_node(
             / denominator
         )
         seed = config.seed_base + analyst_number
-        prompt = (
-            f"Você é o analista {analyst_number} de {config.analyst_count}. "
-            "Avalie de forma independente.\n" + build_prompt(state)
-        )
         response = await llm.generate(
             system_prompt_for(state),
-            prompt,
+            ensemble_user_prompt(state, analyst_number, config.analyst_count),
             TechnicalSignal,
-            {"temperature": temperature, "seed": seed, "analyst_id": analyst_number},
+            {
+                **generation,
+                "temperature": temperature,
+                "seed": seed,
+                "analyst_id": analyst_number,
+            },
             # Quem é o analista é metadado técnico declarado pela chamada, não
             # algo a ser deduzido depois lendo o texto do prompt.
             metadata=LLMCallMetadata(

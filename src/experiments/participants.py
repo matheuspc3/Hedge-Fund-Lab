@@ -38,14 +38,31 @@ PARTICIPANT_REGISTRY: Mapping[str, Callable[..., Participant]] = {
 TICKER_PARAM = "ticker"
 
 
-def build_participant(spec: ParticipantSpec) -> Participant:
-    """Constrói uma instância nova a partir da descrição serializável."""
+def _factory(spec: ParticipantSpec) -> Callable[..., Participant]:
     factory = PARTICIPANT_REGISTRY.get(spec.kind)
     if factory is None:
         supported = ", ".join(sorted(PARTICIPANT_REGISTRY))
         raise ValueError(
             f"unsupported participant kind: {spec.kind!r}; supported: {supported}"
         )
+    return factory
+
+
+def preflight_participant(spec: ParticipantSpec, *, scientific: bool) -> object | None:
+    """Gate local do participante, **antes** de construí-lo.
+
+    Participante que declara ``preflight(params, *, scientific)`` confere a
+    própria spec sem rede e sem instanciar nada — hoje só o ``llm_agent``,
+    para capacidade do provedor e entrada científica estrita. Os demais não
+    declaram nada e passam. O runner continua sem conhecer participante algum.
+    """
+    preflight = getattr(_factory(spec), "preflight", None)
+    return None if preflight is None else preflight(spec.params, scientific=scientific)
+
+
+def build_participant(spec: ParticipantSpec) -> Participant:
+    """Constrói uma instância nova a partir da descrição serializável."""
+    factory = _factory(spec)
     try:
         inspect.signature(factory).bind(**spec.params)
     except TypeError as exc:
