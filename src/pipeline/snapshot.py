@@ -495,6 +495,13 @@ def create_dataset_snapshot(
                 "currency": currency,
                 "exchange_timezone": exchange_timezone,
                 "corporate_actions_captured": bool(capture_actions),
+                # Extrator que declara a própria fonte (ex.: OHLCV oficial da
+                # B3 + fator do yfinance) sobrescreve nome e proveniência.
+                **(
+                    extractor.source_description()
+                    if hasattr(extractor, "source_description")
+                    else {}
+                ),
             },
             "requested_start": requested_start.date().isoformat(),
             "requested_end": requested_end.date().isoformat(),
