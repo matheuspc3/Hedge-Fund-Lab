@@ -339,7 +339,81 @@ Este texto de freeze nunca é editado em silêncio.
 
 ### Amendments
 
-Nenhum.
+#### PROTOCOL AMENDMENT 1 — OBJECTIVE HISTORICAL_B3_CALENDAR / DATA_QUALITY CORRECTION
+
+```text
+DATA              2026-10-04
+TIPO              correção objetiva de calendário e de qualidade de dados
+DESCOBERTO        depois do Hardening e do B0 iniciais, antes de qualquer
+                  CAL-A; nenhuma performance financeira foi consultada
+NÃO MUDA          tratamento, modelo, geração, N, limiar, gates, escada de
+                  thinking, política de retry, H_syn, regra de H_real, regras
+                  de decisão
+```
+
+**Defeitos encontrados (fatos verificáveis).**
+
+1. O `B3Calendar` v1 era uma lista fixa de feriados. Contra os arquivos
+   oficiais COTAHIST da B3 (2016-01-04 a 2026-08-31, 2649 sessões) ele errava
+   14 datas:
+   - abria nos feriados de São Paulo (25/jan, 9/jul) até 2021;
+   - abria no último dia útil do ano;
+   - fechava 20/nov em 2020 e 2023, anos em que a B3 operou.
+
+   Por isso o snapshot científico ficava `attention_required`. Evidência em
+   `docs/evidence/calendar/`.
+2. O OHLCV bruto do yfinance diverge do oficial da B3 no PETR4:
+   - fechamento diferente em 45 sessões (até 4,6%);
+   - abertura diferente em 22 (até 16,8%);
+   - máxima/mínima diferentes em cerca de 22 sessões;
+   - nenhuma barra válida em 2 sessões oficiais (2017-05-29 com barra
+     preenchida de volume zero, 2020-11-20 sem barra);
+   - 10 barras de preenchimento em dias de bolsa fechada.
+
+**Correções.**
+
+1. `B3Calendar` v2 com as regras históricas, equivalente às 2649 sessões
+   oficiais por teste (commit `41a40e8`).
+2. **Fonte de preço científica**, por decisão dos autores em 2026-10-04: o
+   OHLCV bruto oficial da B3 (COTAHIST, mercado à vista, lote padrão)
+   multiplicado pelo fator de ajuste por sessão do yfinance (`Adj Close /
+   Close`). A representação de preço continua "retorno total ajustado pelo
+   fator do yfinance" (protocolo, seção 4); muda só a origem do preço bruto.
+3. **Semântica de sessão científica:**
+   - sessão científica = sessão oficial da B3 em que o PETR4 negociou;
+   - barra de preenchimento nunca existe no snapshot, nunca conta para
+     `minimum_history_sessions` e nunca alimenta indicador;
+   - sessão oficial sem negócio do ativo é lacuna de dado e falha fechado,
+     salvo evidência objetiva de suspensão;
+   - fator ausente só é herdado da sessão anterior se coincidir (até 1e-6)
+     com o da seguinte.
+4. A tolerância numérica de 1e-12 do gate OHLC fica como está. É correção
+   numérica, não de dado: nenhuma barra é alterada, e inconsistências reais
+   (1e-9 ou mais) continuam recusadas.
+
+**Evidência já observada antes deste amendment.**
+- A seleção de H_real v1.
+- O primeiro Hardening com LOW: gates passaram; só métricas outcome-blind.
+- O primeiro B0: PASS.
+
+Nada disso influenciou as correções acima, que são verificáveis contra fonte
+oficial.
+
+**Impacto sobre comparabilidade.**
+- O snapshot muda, então os payloads de H_real e o histórico de todo estado
+  real mudam.
+- O Hardening e o B0 iniciais ficam
+  **SUPERSEDED BY CALENDAR-CORRECTED REBASELINE**. Eles são preservados (não
+  apagados) como evidência de processo, mas deixam de ser o baseline.
+- A regra congelada de H_real é reaplicada sem mudança sobre o snapshot
+  corrigido.
+- O Hardening roda de novo do zero, com a mesma configuração e começando em
+  LOW, e o B0 de novo.
+- O snapshot anterior (`20261004T193839031891Z-6f5e2439…`) é mantido
+  localmente, com identidade registrada na seção 7.
+
+**Única causa da repetição:** correção objetiva de calendário e de qualidade
+de dados.
 
 ### Registro de execução (append-only)
 

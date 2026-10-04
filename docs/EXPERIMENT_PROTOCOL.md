@@ -121,6 +121,13 @@ PROVEDOR             = yfinance com auto_adjust=True EXPLÍCITO
 SÉRIE                = única; sinal e execução usam a mesma
 ```
 
+> **PROTOCOL AMENDMENT 1 (2026-10-04):** o preço **bruto** passa a ser o
+> OHLCV oficial da B3 (COTAHIST); o yfinance fornece só o fator de ajuste
+> por sessão (`Adj Close / Close`). A representação (retorno total ajustado
+> pelo fator do yfinance) não muda. Sessão científica = sessão oficial da B3
+> com negócio do ativo; barra de preenchimento não existe. Ver
+> `docs/H2_METHODOLOGICAL_FREEZE_V1.md`.
+
 `auto_adjust` deixou de depender do default da versão instalada: a restrição
 `yfinance >= 0.2.0` atravessa a virada em que esse default passou de `False`
 para `True`, de modo que a semântica de preço variava com a versão resolvida. O
