@@ -171,11 +171,11 @@ class TestDataTransformerIndicators:
         assert result["rsi"].iloc[-1] < 1.0
 
     def test_rsi_constant(self):
-        """Série constante → sem variação → RSI = 100 (sem perdas)."""
+        """Série constante → nem ganho nem perda → RSI neutro (50), declarado."""
         series = pd.Series(np.full(100, 100.0))
         df = pd.DataFrame({"fechamento": series})
         result = DataTransformer().calculate_indicators(df)
-        assert result["rsi"].iloc[-1] == 100.0
+        assert result["rsi"].iloc[-1] == 50.0
 
     def test_macd_constant(self):
         """Série constante → MACD = 0, signal = 0."""
@@ -207,11 +207,11 @@ class TestDataTransformerIndicators:
         assert bool(cast(pd.Series, result["sma_200"]).isna().all())
 
     def test_rsi_insufficient_data(self):
-        """Menos de 14 pontos → RSI = 100 (fillna para série sem perdas)."""
+        """Menos de 14 variações → warm-up NaN, nenhum valor inventado."""
         series = pd.Series(np.arange(1, 10, dtype=float))
         df = pd.DataFrame({"fechamento": series})
         result = DataTransformer().calculate_indicators(df)
-        assert (result["rsi"] == 100.0).all()
+        assert result["rsi"].isna().all()
 
     def test_missing_close_column(self):
         """Sem coluna 'fechamento' → KeyError."""

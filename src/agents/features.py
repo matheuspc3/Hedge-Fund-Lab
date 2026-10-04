@@ -34,7 +34,11 @@ from typing import Any, Mapping
 
 #: Versão do contrato de features. Muda quando o conjunto de campos ou uma
 #: fórmula muda — ou seja, quando a classe de comparabilidade muda.
-LLM_FEATURE_SCHEMA_VERSION = 1
+#:
+#: Versão 2: ``rsi`` passa a ser o RSI canônico de Wilder (semente simples +
+#: recursão ``1/14``). A versão 1 usava média móvel simples de ganhos e perdas
+#: e preenchia o warm-up com 100, embora documentada como Wilder.
+LLM_FEATURE_SCHEMA_VERSION = 2
 
 #: Casas decimais de todo número científico enviado ao provedor. Ver o item 2
 #: do docstring do módulo: é o que torna a invariância de escala verificável em
