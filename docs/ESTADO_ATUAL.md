@@ -44,12 +44,12 @@ técnicas, não evidência de que uma abordagem venceu outra.
 |---|---|---|
 | Dados | Implementado com lacunas | Baixa OHLCV diário pelo `yfinance`, mantém cache CSV mutável por ticker, valida estrutura, finitude e consistência OHLCV e pode materializar `DatasetSnapshot` imutável com identidade verificável do manifest, hashes por arquivo, proveniência e cobertura pelo calendário local. |
 | Persistência | Implementado | Tabelas de ativos, cotações e indicadores, com unicidade por ativo/data e atualização em conflito nos caminhos principais. |
-| Indicadores | Implementado | SMA 50/200, Bollinger 20/2, RSI 14 e MACD 12/26/9. |
+| Indicadores | Implementado | SMA 50/200, Bollinger 20/2, RSI 14 (Wilder canônico desde `LLM_FEATURE_SCHEMA_VERSION = 2`) e MACD 12/26/9. |
 | Estratégias clássicas | Implementado | Buy & Hold, SMA Cross e Bollinger single-asset; Equal Weight e Mínima Variância multi-ativo. |
 | Backtest clássico | Bloqueado para ciência | Single e multi-asset decidem com dados até o fechamento de `t`, executam na abertura observada de `t+1`, calculam custos sobre o notional e preservam caixa não negativo. Retorno, risco, drawdown e custo total agora vêm do módulo canônico. O motor comum existe na **camada experimental** (`ExperimentRunner`/`ExecutionEngine`), mas o **dashboard e os demais caminhos legados** ainda instanciam engines próprios com custo zero e não passam por ele. |
 | Sistema de agentes | Parcial | Quorum técnico -> risco -> portfólio em LangGraph, com contratos Pydantic e regras duras. Opera um ticker por execução. |
-| Quorum de 30 | Implementado com ressalvas | Faz 30 chamadas concorrentes do mesmo papel e cliente, variando prompt, temperatura e seed registrado. Exige 25/30 por padrão e todos os votos válidos. |
-| Cliente LLM real | Parcial | Cliente HTTP OpenAI-compatible, retry, cache e telemetria básica. A integração específica chamada de OmniRouter/Agent Router não está isolada nem comprovada no repositório. |
+| Quorum de 30 | Implementado com ressalvas | Faz 30 chamadas concorrentes do mesmo papel e cliente, variando temperatura (faixa 0.2–0.8, se `temperature` não for declarada) e seed registrado. No caminho causal o prompt é idêntico entre analistas; o rótulo "analista n de N" só sobrevive no caminho legado de níveis brutos. Exige 25/30 por padrão e todos os votos válidos. |
+| Cliente LLM real | Parcial | Cliente HTTP OpenAI-compatible e cliente nativo da Gemini API (`provider="gemini"`), ambos com retry e telemetria. Erro HTTP é tipado: 400/401/402/403/404 e chave ausente são recusa não repetida (`PROVIDER_REQUEST_REJECTED`); 408/409/429/5xx, rede, timeout, corpo truncado ou não-JSON são transitórios, repetidos (respeitando `Retry-After`/`RetryInfo`) e, esgotados, `PROVIDER_FAILURE`. Nenhum provedor ou modelo foi escolhido nem exercitado contra a rede: Gemini está `DECLARED_UNQUALIFIED` (STATICALLY READY / LIVE_SMOKE REQUIRED), `PENDING_ADVISOR_RATIFICATION`. |
 | Backtest LLM legado | Implementado com lacunas | `AgentBacktestEngine` decide no fechamento de `t`, executa na próxima abertura observada e registra ciclo, votos, trades e curva em JSON. A última previsão fica pendente. Continua disponível como caminho operacional; a parte de execução financeira dele **não** foi reutilizada pela arena. |
 | Runner diário | Parcial | `DailyAgentRunner` persiste estado, reconcilia a previsão pendente na abertura esperada e avança uma sessão por execução. Ainda não integra a arena nem um manifest canônico. |
 | Calendário B3 | Parcial | `B3Calendar` resolve fins de semana, feriados recorrentes e exceções explícitas sem dependência externa; ainda precisa de validação/versionamento contra calendário oficial. |
@@ -859,7 +859,57 @@ informação sobre a inferência.
 **Run que falha continua não sendo publicado.** `run_and_persist()` mantém o
 comportamento anterior — uma falha do participante impede a publicação do run,
 e nada foi alterado em silêncio. Persistir diretórios de run falho é proposta
-registrada, não implementada.
+registrada, não implementada; o harness de Diagnostic Hardening preserva o
+trace da tentativa que falhou — inclusive quando o provedor cai no risco ou
+no portfólio — e continua o lote; exceção fora do contrato (bug) interrompe
+o lote como `HardeningAbortedError`, levando os outcomes já obtidos.
+
+### Hardening pré-B0 — suporte implementado, nada congelado
+
+Implementado como engenharia, sem rodar CAL-A, CAL-B, Stress científico,
+Validation ou Final Test, e sem usar resultado financeiro:
+
+- **Self-Consistency suportado.** No caminho causal o prompt lógico é idêntico
+  entre os analistas; `analyst_id` fica só em metadado e na identidade do trace.
+  `temperature`, `thinking_level` e `max_output_tokens` declarados chegam
+  explicitamente a técnico, risco e portfólio. A configuração provisória
+  (`analyst_count=5`, `consensus_threshold=0.6`, `temperature=1.0`,
+  `decision_frequency=1`, `strict_inputs=True`,
+  `portfolio_inversion_policy="fail"`) está em
+  `src/experiments/hardening.py` como `H2_SC_PROVISIONAL_PARAMS` —
+  `PENDING_ADVISOR_RATIFICATION`.
+- **`decisions.jsonl`**, causas finais estruturadas e `BUY_AT_TARGET_NOOP`
+  (protocolo, seção 13). O no-op só é usado quando nenhuma intenção é
+  emitida e compara o peso na mesma representação canônica da regra de
+  concentração.
+- **Fail-closed** com `strict_inputs=True`, exigido pelo runner em fase
+  científica. Falha do provedor em qualquer papel — técnico, risco ou
+  portfólio — vira `LLMDecisionError` com causa estruturada e registro em
+  `decisions`, nunca exceção de transporte crua nem `MANTER`.
+- **Preflight científico** antes de construir o participante (protocolo,
+  seção 14): todo parâmetro material escrito na spec, sem default
+  invisível, e qualificação empírica do modelo — que hoje não existe para
+  nenhum modelo, então nenhuma fase científica com provedor real roda antes
+  de um LIVE_SMOKE registrado.
+- **RSI canônico de Wilder** e `LLM_FEATURE_SCHEMA_VERSION = 2`, verificado
+  contra a planilha primária `cs-rsi.xls` da StockCharts em 2026-10-04.
+  NaN no preço é recusado. `0/0 → 50` é convenção local.
+- **`indicator_family_control`**: indicator-family-matched classical control
+  (SMA 50/200 + Bollinger 20/2 + RSI 14 + MACD 12/26/9, soma com pesos iguais).
+  A direção da regra de RSI é `PENDING_ADVISOR_RATIFICATION`.
+- **Conjunto H dedicado** (`src/experiments/hardening.py`): oito geradores
+  sintéticos determinísticos versionados (`H_SYN_VERSION = 1`), infraestrutura
+  para estados reais reservados (`H_REAL_SESSIONS` vazio; `real_state` exige
+  os conjuntos reservados e recusa sobreposição), harness que decide sem
+  liquidar, diagnósticos de inatividade e de instabilidade no mesmo estado
+  e gates propostos 0,90 / 0,10 marcados `PENDING_ADVISOR_RATIFICATION`.
+  H_syn v1 está congelado por digest do payload canônico de cada estado
+  (`H_SYN_PAYLOAD_DIGESTS`). Limitação declarada: todo estado de H parte de
+  carteira zerada, então concentração, drawdown e `BUY_AT_TARGET_NOOP` não
+  são exercitados por H_syn — só por fixtures unitárias separadas.
+
+Nenhum probe científico foi executado, nenhum `thinking_level` ou modelo foi
+escolhido e nenhum B0 foi gerado.
 
 ### Dashboard e operação
 

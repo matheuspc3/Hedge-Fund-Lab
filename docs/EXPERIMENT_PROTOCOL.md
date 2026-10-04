@@ -1388,7 +1388,7 @@ IDENTIDADE  ticker e data abrem um canal independente: memorização do próprio
             modelo sobre o que aquele ativo fez naquela data.
 ```
 
-Contrato transmitido (`LLM_FEATURE_SCHEMA_VERSION = 1`):
+Contrato transmitido (`LLM_FEATURE_SCHEMA_VERSION = 2`):
 
 ```text
 sma50_gap           = close / sma_50   − 1
@@ -1400,6 +1400,22 @@ rsi                 = rsi
 macd_ratio          = macd       / close
 macd_signal_ratio   = macd_sinal / close
 ```
+
+A versão 2 troca apenas a fórmula de `rsi`: agora é o RSI canônico de Wilder
+— média inicial simples dos primeiros 14 ganhos e perdas, depois
+`avg_t = (13·avg_{t−1} + x_t)/14` —, com warm-up `NaN` e `50` quando não há
+ganho nem perda. A versão 1 usava média móvel simples e preenchia o warm-up com
+100, embora documentada como Wilder. Preço ausente (NaN) é recusado em vez de
+encolher a semente ou repetir o RSI anterior.
+
+**Fonte verificada em 2026-10-04.** A implementação reproduz, com diferença
+máxima de 1,4·10⁻¹⁴ (tolerância do teste 10⁻⁹), os 19 valores de RSI(14) da
+planilha primária `cs-rsi.xls` anexada à página "Relative Strength Index
+(RSI)" da StockCharts ChartSchool (autor Art Hill, salva em 2010-06-22,
+SHA-256 `20c0d922…bcec61a5`), lidos célula a célula junto dos 33 fechamentos
+(`tests/indicators/test_rsi.py`). A mesma planilha define `avg_loss = 0 → 100`
+e `avg_gain = 0 → 0`; o `0/0 → 50` é **convenção local** do projeto, não de
+Wilder nem da StockCharts.
 
 Uma única orientação (`close / referência − 1`) para todos os níveis. Não há
 `bb_middle_gap` porque `bb_middle ≡ (bb_upper + bb_lower)/2` o torna
@@ -2090,6 +2106,49 @@ Falha de infraestrutura não vira decisão de investimento. O retry legitimament
 configurado hoje (`RetryingLLMClient`) continua valendo: só falha **não
 recuperada** derruba o run.
 
+**Causa final estruturada (estado técnico pré-B0).** Cada sessão consultada
+recebe um código derivado de campos estruturados — nunca de texto livre — e
+publicado em `decisions.jsonl` (`LLM_DECISION_ARTIFACT_SCHEMA_VERSION = 1`):
+
+```text
+decisão   ACTION_BUY · ACTION_SELL · TECH_EXPLICIT_HOLD · TECH_NO_MAJORITY
+          RISK_VETO_VOLATILITY · RISK_VETO_DRAWDOWN · RISK_VETO_CONCENTRATION
+          RISK_VETO_LLM · PORTFOLIO_HOLD · BUY_AT_TARGET_NOOP · NOT_ELIGIBLE
+falha     INVALID_INPUT · INVALID_RESPONSE · PROVIDER_FAILURE
+          PROVIDER_REQUEST_REJECTED
+```
+
+A falha é classificada pelo **tipo** da exceção registrada no limite do
+provedor, nunca pelo texto:
+
+```text
+PROVIDER_REQUEST_REJECTED  HTTP 400/401/402/403/404/501…, chave ausente,
+                           opção não declarada — determinístico, 1 tentativa
+PROVIDER_FAILURE           408/409/429/500/502/503/504, rede, timeout,
+                           conexão encerrada, corpo truncado ou não-JSON —
+                           repetido (Retry-After/RetryInfo respeitados) e
+                           esgotado
+INVALID_RESPONSE           resposta HTTP íntegra, mas do modelo: sem
+                           candidato, >1 candidato, sem finishReason,
+                           finishReason ≠ STOP, JSON inválido ou fora do schema
+```
+
+`BUY_AT_TARGET_NOOP` precede o veto de risco: com
+`long_target_weight = risk_max_concentration = 1.0`, a regra de concentração
+veta exatamente a COMPRA com a carteira já no alvo, e vetar um no-op não é
+prudência. Ele exige duas condições: peso observado igual ao alvo **na mesma
+representação canônica (6 casas) da regra de concentração**, e **nenhuma
+intenção executável** — uma COMPRA aprovada no alvo ainda vira `OrderIntent`,
+e com caixa na carteira o peso deriva até a abertura e o executor rebalanceia;
+isso é `ACTION_BUY`. O executor não mudou. Com `strict_inputs=True`, feature ausente ou
+volatilidade sem a janela inteira derrubam a sessão antes de qualquer chamada
+(`INVALID_INPUT`); o runner recusa fase científica de `llm_agent` sem
+`strict_inputs=True`. A inversão de direção pelo gestor de portfólio é sempre
+`INVALID_RESPONSE`; se ela derruba o run (`portfolio_inversion_policy="fail"`)
+ou só suprime a intenção (`"flag"`, default herdado fora de fase científica)
+é `PENDING_ADVISOR_RATIFICATION`. Em fase científica a política precisa estar
+escrita na spec; a configuração provisória do H2 declara `"fail"`.
+
 **Precisão sobre a camada em que cada coisa acontece**, para que o protocolo não
 descreva o fallback interno como se fosse comportamento científico:
 
@@ -2099,7 +2158,9 @@ tentativa recuperada pelo retry
 
 falha após o retry
         -> registrada no limite do provedor, antes de o nó engoli-la
-        -> o nó do grafo degrada para MANTER / VETADO
+        -> o nó do grafo degrada para MANTER / VETADO (ValueError/TypeError)
+           ou a falha atravessa o nó e aborta o grafo (transporte/recusa no
+           risco ou no portfólio); o participante guarda o estado parcial
            ISTO É FALLBACK INTERNO DO GRAFO
 
 o participante observa a falha registrada
@@ -2123,6 +2184,37 @@ falha. O `MANTER` legítimo é outro: todos os votos válidos, sem supermaioria.
 Compatibilidade será declarada apenas após validação documental e técnica. Cache
 hits e respostas mock serão identificados e não serão confundidos com chamadas
 reais.
+
+**Capacidade técnica pré-B0, sem escolha de provedor ou modelo
+(`PENDING_ADVISOR_RATIFICATION`).** Existe `provider="gemini"`: cliente
+first-party da Gemini API nativa (`models.generateContent`) atrás do mesmo
+`LLMClient`, com retry, gravação, replay e a separação pedido/transporte de
+sempre. Ele transporta `temperature`, `thinking_level` (mapeado para o enum
+nativo `LOW`/`MEDIUM`/`HIGH`) e `max_output_tokens`, pede saída estruturada por
+`responseMimeType` + `responseJsonSchema` e devolve `responseId`,
+`modelVersion` e `finishReason`. `seed` não é transmitida.
+
+Antes de construir o participante o runner faz um **preflight local**, sem
+rede. Cinco conjuntos são separados: opção pedida, opção transportada
+(`TRANSMITTED_OPTION_KEYS`), capacidade **declarada** pelo código do cliente
+(`DECLARED_OPTIONS`), capacidade **empiricamente qualificada** por
+`(provider, model)` (`EMPIRICALLY_QUALIFIED`, preenchido só com evidência de
+LIVE_SMOKE registrada) e opção só de metadado (`seed`, `analyst_id`). Em
+qualquer fase, opção pedida e não declarada é recusada — o cliente
+OpenAI-compatible não declara `thinking_level` nem `max_output_tokens`.
+
+Em fase científica o preflight também exige, escritos na spec, `provider`,
+`temperature`, `analyst_count`, `consensus_threshold`, `require_all_votes`,
+`decision_frequency`, `strict_inputs=True` e `portfolio_inversion_policy`; e,
+para provedor real, `model`, `max_output_tokens` e `thinking_level` (quando o
+cliente tem níveis de thinking). Omitido não vira default: vira spec recusada —
+sem isso o quorum voltaria à faixa 0.2–0.8 e risco/portfólio herdariam o
+default do modelo, que o run não registra. Provedor real também precisa estar
+`QUALIFIED` para o modelo. **Estado atual: nenhum modelo está qualificado;
+Gemini é `DECLARED_UNQUALIFIED` (STATICALLY READY / LIVE_SMOKE REQUIRED)**, e
+o formato `thinkingConfig.thinkingLevel` de `generateContent` segue pendente
+de LIVE_SMOKE. Consequência declarada: o cliente OpenAI-compatible não é
+elegível para fase científica.
 
 **Proveniência registrável hoje, sem congelar escolha.** A `ParticipantSpec` do
 `llm_agent` grava `provider` e `model` no `spec_hash` e no manifest, e o
@@ -2605,7 +2697,10 @@ pertencem ao caminho de sizing legado, que o participante científico nunca
 executa. Credencial não entra em spec, manifest, log nem artefato de auditoria.
 
 A partir do schema 3, o manifest também publica `participant_artifacts`, e um
-run `llm_agent` acompanha o arquivo `llm_calls.jsonl`:
+run `llm_agent` acompanha os arquivos `llm_calls.jsonl` e — desde o hardening
+pré-B0 — `decisions.jsonl` (uma linha por sessão consultada, com a causa final
+estruturada da seção 13). O manifest não mudou de schema: `participant_artifacts`
+já era um mapa genérico. Exemplo do trace:
 
 ```json
 "participant_artifacts": {
@@ -2630,10 +2725,16 @@ trace são o que *aconteceu*, não configuração pedida antes do run.
 Com isso, "eventos de telemetria, cache, retry e falha" da lista acima passa a
 ter cobertura por chamada — `attempt_count`, `retry_count`, `status`,
 `error_type`, `duration_ms` e `token_usage` quando o provedor o devolve. Seguem
-**não** registrados: custo monetário (sempre zero), versionamento de prompt
-(inexistente por decisão) e fingerprint de modelo devolvido pelo provedor (não
-é entregue no contrato atual — o manifest registra o modelo *solicitado* e o
-endpoint sanitizado).
+**não** registrados: custo monetário (sempre zero) e versionamento de prompt
+(inexistente por decisão). O modelo efetivamente resolvido passou a ser
+registrado **por chamada**, quando o provedor o devolve, como evidência
+observada no trace — `resolved_model`, ao lado de `provider_response_id` e
+`finish_reason` — fora da identidade da chamada e fora do `spec_hash`. Política
+escrita em `src/agents/llm_trace.py`: campo opcional de evidência fora da
+identidade não exige bump de `LLM_TRACE_SCHEMA_VERSION`; mudança de identidade,
+de campo obrigatório ou de semântica exige. O replay reemite essa evidência
+junto do registro reproduzido, de modo que um trace regravado sobre o replay
+não a apaga.
 
 ## 21. Freeze procedure
 
