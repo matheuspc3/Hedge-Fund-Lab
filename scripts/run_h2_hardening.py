@@ -223,6 +223,16 @@ def main() -> None:
         "logical_calls_by_stage": dict(Counter(r.request.stage for r in records)),
         "http_attempts": len(log.attempts),
         "recovered_retries": sum(r.attempt_count - 1 for r in records if r.status == "ok"),
+        # Backoff agendado pela política (base * 2^k por retry); um 429 com
+        # Retry-After/RetryInfo substitui o termo e aparece em attempts.jsonl.
+        "backoff_seconds_scheduled": sum(
+            params["retry_base_delay"] * 2**k
+            for r in records
+            for k in range(r.attempt_count - 1)
+        ),
+        "retry_after_seconds_requested": sum(
+            a["retry_after"] for a in log.attempts if a.get("retry_after")
+        ),
         "final_error_calls": sum(1 for r in records if r.status == "error"),
         "attempt_outcomes": dict(Counter(a["outcome"] for a in log.attempts)),
         "http_status_counts": dict(Counter(str(a.get("status")) for a in log.attempts if a.get("status"))),

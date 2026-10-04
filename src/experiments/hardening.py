@@ -323,27 +323,30 @@ H_REAL_TICKER = "PETR4.SA"
 #: reserva-se ``E[floor(q · (len(E) - 1))]``.
 H_REAL_WINDOW = ("2018-01-12", "2024-02-28")
 H_REAL_QUANTILES: tuple[float, ...] = (0.20, 0.40, 0.60, 0.80)
-H_REAL_SNAPSHOT_ID = "20261004T193839031891Z-6f5e24390ab2bca68131ecfc052b9d23"
+#: Snapshot corrigido pelo PROTOCOL AMENDMENT 1 (calendário B3 v2 + OHLCV
+#: oficial da B3 x fator do yfinance). O snapshot e a seleção v1 ficam
+#: registrados no freeze (seção 7 e Amendment 1).
+H_REAL_SNAPSHOT_ID = "20261004T201258177516Z-b4cf39fc761f251d2dd18e787008345a"
 H_REAL_SNAPSHOT_IDENTITY_DIGEST = (
-    "6f5e24390ab2bca68131ecfc052b9d2381411aaaad35f0e56640fffcd6e766db"
+    "b4cf39fc761f251d2dd18e787008345aaf02bd9e19f913390c510338b84ee7d4"
 )
 H_REAL_ELIGIBLE_COUNT = 1519
 #: SHA-256 da lista ordenada de ``E`` (datas ISO separadas por ``\n``).
 H_REAL_ELIGIBLE_SHA256 = (
-    "bada89626b03ca440c0e989fdf20bd4c3d4ea83be4faa66264cde655c9a46548"
+    "bad805ba20fdcc9364197a5690ae7cfcf0d83302124c8ea0271256659f013eae"
 )
 #: Sessões reais reservadas **exclusivamente** ao Hardening. Ficam excluídas
 #: de CAL-A, CAL-B, Stress, Sequential Development e qualquer outro conjunto.
-H_REAL_SESSIONS: tuple[str, ...] = ("2019-04-08", "2020-06-29", "2021-09-17", "2022-12-07")
+H_REAL_SESSIONS: tuple[str, ...] = ("2019-04-09", "2020-06-30", "2021-09-17", "2022-12-07")
 H_REAL_INDICES: tuple[int, ...] = (303, 607, 910, 1214)
 #: Payload científico canônico de cada estado real (mesma definição de
 #: :data:`H_SYN_PAYLOAD_DIGESTS`), conferido antes de qualquer chamada.
 H_REAL_PAYLOAD_DIGESTS: Mapping[str, str] = MappingProxyType(
     {
-        "2019-04-08": "20d95f5a7cf0cccfb74f9cc43330c38065578234b745f6e7984a958946fe5b0e",
-        "2020-06-29": "28065db7fc72b97e0098554bc273cae73219465d49ccaaaa85fcdd8a8060be0b",
-        "2021-09-17": "c16e53020d2fc6852b1256a664a5c71eeaab5b4e950d9f4c20bde57d3ff9163b",
-        "2022-12-07": "06976959d02c8dc0786ac206fe5b870493f712bbe6bace3df20dc98bdc34c744",
+        "2019-04-09": "0bd54bbfed6c1acb4952b8a014f45886bec6d65b18a501a892adc1e17b458392",
+        "2020-06-30": "67c37ce000f8a770a68ed6aa965a909bc28fb09d76636b4aa121b9f841287522",
+        "2021-09-17": "03daed6627b7b1cdcaba0d1c0638f5592dc0770cc9aa189582191f9402d519be",
+        "2022-12-07": "99be89f0019d862c53ff955cad873042d31251e024a0a5ed2eb0e14b68b5a449",
     }
 )
 #: Conjuntos com que H_real precisa ser disjunto. Nenhum tem datas ainda

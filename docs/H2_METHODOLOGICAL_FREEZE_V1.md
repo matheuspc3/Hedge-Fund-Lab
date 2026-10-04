@@ -415,6 +415,33 @@ oficial.
 **Única causa da repetição:** correção objetiva de calendário e de qualidade
 de dados.
 
+**Reaplicação da regra congelada de H_real (sem mudança de regra).**
+
+```text
+snapshot     20261004T201258177516Z-b4cf39fc761f251d2dd18e787008345a
+identidade   b4cf39fc761f251d2dd18e787008345aaf02bd9e19f913390c510338b84ee7d4
+arquivo      data/PETR4.SA.csv sha256 7b6a0018191028ecea2ee66785c27f771a721aa4a96c4953ca87ac6d688c3ffa
+fonte        COTAHIST (OHLCV oficial) x fator yfinance; 2016-01-01..2026-08-31
+status       READY: 2649 barras = 2649 sessões oficiais, nenhuma faltando ou sobrando
+vs anterior  (até 2024-02-28) +1 sessão: 2020-11-20
+             -9 barras de preenchimento em bolsa fechada: 2017-06-15, 2017-09-07, 2017-10-12, 2017-11-02, 2017-11-15, 2017-11-20, 2017-12-25, 2017-12-29, 2018-01-25
+             2017-05-29 passa a ser a barra oficial (antes: preenchimento de volume zero)
+             0 barras de volume zero
+|E|          1519 (de 2018-01-12 a 2024-02-28; 2018-01-12 tem exatamente 504 sessões)
+sha256 de E  bad805ba20fdcc9364197a5690ae7cfcf0d83302124c8ea0271256659f013eae
+```
+
+| q | índice/sessão antigos | índice/sessão novos | mudou? | sha256 do payload novo |
+|---:|---|---|---|---|
+| 0.20 | 303 / 2019-04-08 | 303 / 2019-04-09 | sim | `0bd54bbfed6c1acb4952b8a014f45886bec6d65b18a501a892adc1e17b458392` |
+| 0.40 | 607 / 2020-06-29 | 607 / 2020-06-30 | sim | `67c37ce000f8a770a68ed6aa965a909bc28fb09d76636b4aa121b9f841287522` |
+| 0.60 | 910 / 2021-09-17 | 910 / 2021-09-17 | não (payload mudou) | `03daed6627b7b1cdcaba0d1c0638f5592dc0770cc9aa189582191f9402d519be` |
+| 0.80 | 1214 / 2022-12-07 | 1214 / 2022-12-07 | não (payload mudou) | `99be89f0019d862c53ff955cad873042d31251e024a0a5ed2eb0e14b68b5a449` |
+
+Os índices são os mesmos. As datas de q = 0.20 e 0.40 andam uma sessão
+porque a barra de preenchimento de 2018-01-25 deixou de existir em E. Todos os
+payloads mudam porque o preço bruto agora é o oficial.
+
 ### Registro de execução (append-only)
 
 Resultados das regras predeclaradas acima. Não são amendments: nenhuma regra
