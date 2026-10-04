@@ -2,7 +2,9 @@
 
 As funções retornam frações decimais, não percentuais. ``freq=252``, taxa livre
 de risco zero e MAR zero são defaults técnicos configuráveis; não representam
-parâmetros científicos congelados do experimento.
+parâmetros científicos congelados do experimento — exceto o Sharpe do H2,
+congelado como ``H2_SCIENTIFIC_SHARPE_DEFINITION_V1`` (rf = 0, 252, ddof = 1,
+convenção de escore 0.0 para < 2 retornos ou volatilidade praticamente nula).
 """
 
 import math
@@ -93,22 +95,73 @@ def annualized_volatility(returns: pd.Series, freq: int = 252) -> float:
     return float(vol * np.sqrt(freq))
 
 
-def sharpe_ratio(returns: pd.Series, rf: float = 0.0, freq: int = 252) -> float:
-    """Sharpe anualizado sobre excess returns.
+#: H2_SCIENTIFIC_SHARPE_DEFINITION_V1 (Amendment 5), única para Sequential
+#: Development, CAL-B, Validation, Final Test e toda comparação H2 por Sharpe:
+#:
+#:     r            todos os retornos líquidos diários da curva científica na
+#:                  janela; dias em caixa (retorno 0) permanecem na série
+#:     Sharpe     = mean(r - rf/252) / std(r, ddof=1) * sqrt(252),  rf = 0.0
+#:
+#: CONVENÇÃO DE ESCORE DO PROTOCOLO (não propriedade matemática do Sharpe):
+#: quando a razão não pode ser estimada de forma informativa — menos de 2
+#: retornos, ou desvio-padrão amostral < 1e-15 (inclusive série constante
+#: diferente de zero) ou NaN — o protocolo atribui 0.0, para que toda
+#: trajetória, inclusive a inativa, continue comparável e completa. Dado
+#: inválido (NaN/inf, curva corrompida) NÃO cai nesta convenção: falha fechado.
+SCIENTIFIC_SHARPE_DEFINITION = "H2_SCIENTIFIC_SHARPE_DEFINITION_V1"
+TRADING_PERIODS_PER_YEAR = 252
+SCIENTIFIC_RISK_FREE_RATE = 0.0
+SHARPE_MIN_STD = 1e-15
 
-    ``rf`` é uma taxa anual, convertida pelo default técnico ``rf / freq``.
-    Retorna zero quando não há volatilidade amostral.
+
+def sharpe_components(returns: pd.Series, rf: float = 0.0, freq: int = 252) -> dict[str, Any]:
+    """Partes do Sharpe anualizado, para o cálculo e para a evidência.
+
+    ``rf`` é taxa anual, convertida em ``rf / freq`` por período.
+    ``convention_zero`` indica que o 0.0 veio da convenção de escore.
     """
     clean = _validated_returns(returns)
     if freq <= 0:
         raise ValueError("freq must be > 0")
-    if len(clean) < 2:
-        return 0.0
-    vol = clean.std(ddof=1)
-    if vol < 1e-15 or np.isnan(vol):
-        return 0.0
-    excess = clean - rf / freq
-    return float(excess.mean() / vol * np.sqrt(freq))
+    parts: dict[str, Any] = {
+        "observations": int(len(clean)),
+        "mean_excess": float((clean - rf / freq).mean()),
+        "sample_std": float(clean.std(ddof=1)) if len(clean) >= 2 else None,
+        "annualization_factor": float(np.sqrt(freq)),
+        "convention_zero": True,
+        "sharpe": 0.0,
+    }
+    vol = parts["sample_std"]
+    if vol is None or np.isnan(vol) or vol < SHARPE_MIN_STD:
+        return parts
+    parts["convention_zero"] = False
+    parts["sharpe"] = float(parts["mean_excess"] / vol * np.sqrt(freq))
+    return parts
+
+
+def sharpe_ratio(returns: pd.Series, rf: float = 0.0, freq: int = 252) -> float:
+    """Sharpe anualizado sobre excess returns (definição científica v1).
+
+    ``rf`` é uma taxa anual, convertida por ``rf / freq``. Menos de 2 retornos
+    ou volatilidade amostral praticamente nula dão 0.0 por convenção de escore.
+    """
+    return sharpe_components(returns, rf=rf, freq=freq)["sharpe"]
+
+
+def scientific_sharpe(equity_curve: pd.Series) -> dict[str, Any]:
+    """Sharpe científico H2 v1 de uma curva de patrimônio líquida."""
+    returns = periodic_returns(equity_curve)
+    if returns.empty:
+        return {
+            "observations": 0, "mean_excess": None, "sample_std": None,
+            "annualization_factor": float(np.sqrt(TRADING_PERIODS_PER_YEAR)),
+            "convention_zero": True, "sharpe": 0.0,
+            "definition": SCIENTIFIC_SHARPE_DEFINITION,
+        }
+    parts = sharpe_components(
+        returns, rf=SCIENTIFIC_RISK_FREE_RATE, freq=TRADING_PERIODS_PER_YEAR
+    )
+    return {**parts, "definition": SCIENTIFIC_SHARPE_DEFINITION}
 
 
 def sortino_ratio(

@@ -671,6 +671,130 @@ A execução abortada fica preservada em
 descartado ficam lá, fora do escore. Nenhuma seleção foi feita com o conjunto
 incompleto.
 
+#### PROTOCOL AMENDMENT 5 — SEQUENTIAL DEVELOPMENT DO H2 E H2_SCIENTIFIC_SHARPE_DEFINITION_V1
+
+```text
+DATA              2026-10-04
+TIPO              registro pré-execução; decidido pelos autores ANTES de
+                  qualquer chamada ao provedor e de qualquer retorno da janela
+COMMIT            SEQUENTIAL_DEV_FREEZE_COMMIT = o commit que introduz este
+                  amendment (registrado no log de execução abaixo)
+```
+
+**H2_SCIENTIFIC_SHARPE_DEFINITION_V1** (`src/backtesting/metrics.py`,
+`scientific_sharpe`). Vale para Sequential Development, CAL-B, Validation,
+Final Test e toda comparação H2 por Sharpe.
+
+```text
+r_t     = equity_t / equity_{t-1} - 1, todos os retornos diários LÍQUIDOS
+          (CostSpec congelado) da curva científica da janela, inclusive o
+          da sessão de liquidação; dias em caixa (r_t = 0) PERMANECEM
+rf      = 0.0 ao ano  (rf_diário = rf / 252)
+Sharpe  = mean(r - rf/252) / std(r, ddof = 1) * sqrt(252)
+```
+
+Convenção de escore do protocolo (não é propriedade matemática do Sharpe):
+- menos de 2 retornos → 0.0;
+- desvio-padrão amostral NaN ou < 1e-15 → 0.0. Isso inclui trajetória toda em
+  caixa e série constante diferente de zero.
+
+Assim toda trajetória, inclusive a inativa, continua completa e comparável.
+Dado inválido (NaN/inf, curva corrompida) não cai na convenção: falha fechado.
+Um golden test (`tests/backtesting/test_scientific_sharpe.py`) impede mudança
+silenciosa da definição.
+
+**Janela da fase** (`src/experiments/phases.py`).
+
+```text
+SEQUENTIAL_DEVELOPMENT_START  2024-03-01  primeira sessão de decisão
+última sessão de decisão      2024-08-29  (127 sessões de decisão B3)
+SEQUENTIAL_DEVELOPMENT_END    2024-08-30  só liquidação e marcação final
+VALIDATION_START              2024-09-02
+CAL-A ∩ janela = CAL-B ∩ janela = ∅      (teste)
+```
+
+**Invariante `no_order_execution_may_cross_phase_boundary`.**
+- Decisão em close(t) executa em open(t+1), então a sessão de liquidação
+  precisa estar dentro da mesma fase da janela de decisão.
+- O runner recusa, antes de construir o participante, janela que atravessa a
+  fronteira ou cuja liquidação cairia na fase seguinte.
+- O runner recorta os dados de mercado em `phase.end`: nenhum preço posterior
+  a 2024-08-30 chega ao motor.
+- A regra vale para toda fronteira declarada em `PHASES`.
+
+**Candidatos.** Só `risk_max_drawdown` é selecionado.
+- Base: H2_FREEZE_V1_PARAMS com `thinking_level = low` e a configuração de
+  CAL-A (`volatility_window 21`, `risk_max_volatility 0.40`).
+- `decision_frequency = 1` e `risk_max_concentration = 1.0` seguem
+  congelados. Os autores fecham a proposta "N_seq ≤ 4, R_seq ≤ 2" da seção
+  de contenção do protocolo como abaixo.
+
+```text
+D01  config_id 1  risk_max_drawdown 0.25   (baseline)
+D02  config_id 2  risk_max_drawdown 0.15
+D03  config_id 3  risk_max_drawdown 0.35
+SEQUENTIAL_DEV_REPETITIONS = 3
+```
+
+**Semântica de drawdown** (auditada, não muda):
+- `current_drawdown = (peak − equity) / peak`, com equity marcada em
+  close(t).
+- O pico é interno ao run e começa no capital inicial em `decision_start`.
+- Há veto de risco só sobre COMPRA com drawdown canônico > limite.
+- O limite veta entrada; não é stop-loss. Já no alvo, uma COMPRA é
+  `BUY_AT_TARGET_NOOP`, sem ordem.
+- Propriedade de stop persistente: em caixa abaixo do pico a equity é
+  constante, então novas COMPRA continuam vetadas até o fim da janela.
+
+**Execução pareada.**
+
+```text
+for replicate in 1..3:
+    for config in D01, D02, D03:
+        run sequencial do ExperimentRunner, 2024-03-01..2024-08-29
+```
+
+- O banco de chamadas guarda cada chamada por
+  `(repetição, LLMCallRequest.identity_digest)`.
+- O Technical SC de cada (sessão, repetição) é chamado uma vez e reproduzido
+  byte a byte nas três configurações, porque o prompt técnico não depende da
+  grade.
+- Risk e Portfolio só reaproveitam resposta com identidade idêntica.
+- Os portfólios são independentes e dependentes do caminho: cada run parte de
+  R$100.000 em caixa.
+
+**Escore e seleção.**
+
+```text
+Sharpe[c, r]  = H2_SCIENTIFIC_SHARPE_DEFINITION_V1 da curva do run (c, r)
+S2[c]         = mean(Sharpe[c, 1..3])
+maior S2 vence; empate EXATO -> menor config_id
+S2 iguais nas três -> SEQUENTIAL_DEV_DISCRIMINATION = NONE,
+                      D01 selecionada, basis PROTOCOL_TIE_FALLBACK
+senão              -> SEQUENTIAL_DEV_DISCRIMINATION = YES, basis EMPIRICAL_S2
+```
+
+Retorno terminal, MDD, Sortino, turnover, trades, tempo em mercado e contagem
+de vetos são reportados como **NOT USED FOR SELECTION**. Todos os números da
+fase são development evidence, nunca resultado científico.
+
+**Falhas e retomada.**
+- Uma falha técnica final não vira retorno zero nem HOLD: interrompe a fase.
+- O bloco mínimo reaproveitável é a repetição completa (D01–D03), que
+  compartilha uma realização técnica.
+- Uma repetição interrompida é descartada inteira e refeita com Technical
+  novo.
+- Nenhuma seleção é feita com conjunto incompleto.
+
+**Proveniência de CAL-A.** `CAL_A_DISCRIMINATION = NONE` e
+`CAL_A_SELECTION_BASIS = PROTOCOL_TIE_FALLBACK`. A configuração
+`volatility_window 21 / risk_max_volatility 0.40` veio do desempate pelo
+config_id, não de desempenho superior; o protocolo não afirma que ela foi
+melhor.
+
+**CAL-B.** `CAL_B_AUTHORIZED = False` é exigido antes e depois. O banco
+recusa qualquer sessão de CAL-B.
+
 ### Registro de execução (append-only)
 
 Resultados das regras predeclaradas acima. Não são amendments: nenhuma regra

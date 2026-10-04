@@ -139,8 +139,8 @@ class BankedGeminiClient(GeminiLLMClient):
         )
         key = (BANK.replicate, request.identity_digest)
         slot = current_call_telemetry()
-        use = {**BANK.context, "stage": request.stage, "analyst_id": request.analyst_id,
-               "identity_digest": request.identity_digest}
+        use = {**BANK.context, "decision_session": self._session, "stage": request.stage,
+               "analyst_id": request.analyst_id, "identity_digest": request.identity_digest}
         hit = BANK.entries.get(key)
         if hit is not None:
             if slot is not None:

@@ -145,6 +145,9 @@ def test_selecao_de_cal_a_segue_a_regra_congelada_sobre_a_evidencia() -> None:
     assert selected["config_id"] == expected == summary["selected_config_id"]
     assert selected["S1"] == s1[expected]
     assert anchors.CAL_A_DISCRIMINATION == ("NONE" if len(set(s1.values())) == 1 else "YES")
+    assert anchors.CAL_A_SELECTION_BASIS == (
+        "PROTOCOL_TIE_FALLBACK" if anchors.CAL_A_DISCRIMINATION == "NONE" else "EMPIRICAL_S1"
+    )
     config = next(c for c in CAL_A_GRID if c["config_id"] == expected)
     assert (selected["volatility_window"], selected["risk_max_volatility"]) == (
         config["volatility_window"],

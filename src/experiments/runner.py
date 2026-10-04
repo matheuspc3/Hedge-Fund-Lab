@@ -39,6 +39,7 @@ from src.experiments.participants import (
     preflight_participant,
     required_tickers,
 )
+from src.experiments.phases import phase_of, require_execution_within_phase
 from src.experiments.spec import ExperimentSpec
 from src.pipeline.snapshot import (
     PRICE_REPRESENTATION,
@@ -238,6 +239,16 @@ class ExperimentRunner:
             # CAL-B é holdout one-shot: nenhuma janela declarada a toca antes da
             # fase autorizada (``anchors.CAL_B_AUTHORIZED``).
             require_cal_b_locked(evaluation.decision_start, evaluation.decision_end)
+            phase = phase_of(evaluation.decision_start, evaluation.decision_end)
+            if phase is not None:
+                # Nenhuma ordem executa na fase seguinte, e nenhum preço
+                # posterior ao fim da fase chega ao motor.
+                require_execution_within_phase(evaluation.settlement_session, phase)
+                frames = {
+                    ticker: frame.loc[: pd.Timestamp(phase.end)]
+                    for ticker, frame in frames.items()
+                }
+                evaluation = self._resolve_evaluation(frames)
         self._require_scientific_execution()
         # Capacidade do provedor e contrato de entrada conferidos localmente,
         # ainda antes de construir o participante: incompatibilidade

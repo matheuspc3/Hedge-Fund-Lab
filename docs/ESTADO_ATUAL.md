@@ -896,8 +896,15 @@ REDUCED.
 repetições × 6 configurações), CostSpec congelado. S1 idêntico nas seis
 configurações → `CAL_A_DISCRIMINATION = NONE` → configuração 1 pelo
 desempate (`volatility_window = 21`, `risk_max_volatility = 0.40`),
-congelada. CAL-B, Sequential Development, Stress, Validation e Final Test
-não foram executados.
+congelada (`CAL_A_SELECTION_BASIS = PROTOCOL_TIE_FALLBACK`: desempate, não
+desempenho superior). CAL-B, Stress, Validation e Final Test não foram
+executados.
+
+**Sequential Development (Amendment 5).** Congelados antes de qualquer
+chamada: `H2_SCIENTIFIC_SHARPE_DEFINITION_V1`, janela 2024-03-01..2024-08-29
+(liquidação 2024-08-30), invariante
+`no_order_execution_may_cross_phase_boundary` no runner, grade D01/D02/D03 =
+`risk_max_drawdown` 0.25/0.15/0.35, R = 3, escore S2.
 
 ### Hardening pré-B0 — suporte implementado
 

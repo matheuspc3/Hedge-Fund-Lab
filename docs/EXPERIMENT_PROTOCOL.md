@@ -1070,7 +1070,9 @@ nunca são resultado científico
 nunca são agregados aos resultados de VALIDATION ou FINAL TEST
 ```
 
-Contenção — proposta, ainda sujeita a aprovação final:
+Contenção — proposta original; para o H2 fechada no Amendment 5 de
+`docs/H2_METHODOLOGICAL_FREEZE_V1.md` (janela 2024-03-01..2024-08-30, D01–D03
+em `risk_max_drawdown`, R = 3, S2 = média do Sharpe científico v1):
 
 ```text
 uma única janela curta      datas TBD · duração TBD

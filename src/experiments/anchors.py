@@ -170,6 +170,8 @@ CAL_A_SCORE = "S1"
 #: Development).
 CAL_A_EVIDENCE = "docs/evidence/cal_a/run_20261004T231101Z/summary.json"
 CAL_A_DISCRIMINATION = "NONE"
+#: A configuração 1 veio do fallback de empate, não de desempenho superior.
+CAL_A_SELECTION_BASIS = "PROTOCOL_TIE_FALLBACK"
 CAL_A_SELECTED_CONFIG = {
     "config_id": 1,
     "volatility_window": 21,
