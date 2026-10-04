@@ -24,6 +24,9 @@ logger = logging.getLogger(__name__)
 OHLC_COLUMNS = ["abertura", "maxima", "minima", "fechamento"]
 OHLCV_COLUMNS = [*OHLC_COLUMNS, "volume"]
 
+#: Resíduo relativo de ponto flutuante tolerado nas relações máxima/mínima.
+OHLC_RELATIVE_TOLERANCE = 1e-12
+
 
 class DataQualityError(ValueError):
     """Dados OHLCV não atendem ao contrato mínimo de qualidade."""
@@ -105,10 +108,17 @@ def validate_ohlcv(df: pd.DataFrame) -> None:
         "volume deve ser não negativo",
         pd.Series(array[:, 4] < 0, index=df.index, dtype=bool),
     )
+    # Tolerância relativa técnica, não folga econômica: o ajuste por proventos
+    # multiplica O, H, L e C pelo mesmo fator em ponto flutuante e deixa
+    # resíduos de 1 ulp (~2e-16) em que a máxima fica "abaixo" do fechamento.
+    # 1e-12 é milhares de ulps e ainda ordens de grandeza abaixo de qualquer
+    # tick real; nada é corrigido, a barra só deixa de ser recusada.
+    high_floor = array[:, [0, 3, 2]] * (1 - OHLC_RELATIVE_TOLERANCE)
+    low_ceiling = array[:, [0, 3]] * (1 + OHLC_RELATIVE_TOLERANCE)
     _raise_for_rows(
         "máxima inconsistente com abertura, fechamento ou mínima",
         pd.Series(
-            (array[:, 1, None] < array[:, [0, 3, 2]]).any(axis=1),
+            (array[:, 1, None] < high_floor).any(axis=1),
             index=df.index,
             dtype=bool,
         ),
@@ -116,7 +126,7 @@ def validate_ohlcv(df: pd.DataFrame) -> None:
     _raise_for_rows(
         "mínima inconsistente com abertura ou fechamento",
         pd.Series(
-            (array[:, 2, None] > array[:, [0, 3]]).any(axis=1),
+            (array[:, 2, None] > low_ceiling).any(axis=1),
             index=df.index,
             dtype=bool,
         ),

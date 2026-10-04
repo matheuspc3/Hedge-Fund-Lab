@@ -69,6 +69,32 @@ class TestOHLCVQuality:
         with pytest.raises(DataQualityError, match="mínima inconsistente"):
             validate_ohlcv(source)
 
+    def test_accepts_one_ulp_residue_from_price_adjustment(self, synthetic_clean_data):
+        """Caso real do PETR4 ajustado: máxima 1 ulp abaixo do fechamento."""
+        source = synthetic_clean_data.copy()
+        close = float(source.iloc[0, source.columns.get_loc("fechamento")])
+        source.iloc[0, source.columns.get_loc("maxima")] = np.nextafter(close, 0.0)
+        source.iloc[0, source.columns.get_loc("abertura")] = close
+        source.iloc[0, source.columns.get_loc("minima")] = np.nextafter(close, np.inf)
+        validate_ohlcv(source)  # resíduo de ponto flutuante não é barra inválida
+
+    @pytest.mark.parametrize(
+        ("column", "factor", "rule"),
+        [("maxima", 1 - 1e-9, "máxima inconsistente"), ("minima", 1 + 1e-9, "mínima inconsistente")],
+    )
+    def test_tolerance_is_technical_not_economic(
+        self, synthetic_clean_data, column, factor, rule
+    ):
+        """1e-9 relativo já é inconsistência de dado, e continua recusado."""
+        source = synthetic_clean_data.copy()
+        close = float(source.iloc[0, source.columns.get_loc("fechamento")])
+        source.iloc[0, source.columns.get_loc("abertura")] = close
+        source.iloc[0, source.columns.get_loc("maxima")] = close * 1.01
+        source.iloc[0, source.columns.get_loc("minima")] = close * 0.99
+        source.iloc[0, source.columns.get_loc(column)] = close * factor
+        with pytest.raises(DataQualityError, match=rule):
+            validate_ohlcv(source)
+
     def test_rejects_duplicate_dates(self, synthetic_clean_data):
         source = pd.concat([synthetic_clean_data.iloc[:2], synthetic_clean_data.iloc[[1]]])
 
