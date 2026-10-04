@@ -881,6 +881,17 @@ passou G-A, G-T, G-I (0.667) e G-F (0.0) → **LOW congelado**; passada **B0
 PASS** (commit `4ec2ba9`). Evidência em `docs/evidence/h2/`. Nenhuma métrica
 financeira foi calculada; CAL-A não foi aberto.
 
+**Rebaseline (Amendment 1, 2026-10-04).** Calendário B3 v2 equivalente às
+2649 sessões oficiais do COTAHIST; preço bruto oficial da B3 × fator do
+yfinance; snapshot `20261004T201258177516Z-b4cf39fc…` READY. H_real
+reaplicado pela mesma regra (2019-04-09, 2020-06-30, 2021-09-17,
+2022-12-07). Hardening LOW passou de novo (G-I 0.633, G-F 0.0) → LOW
+FROZEN — REBASELINED; B0 PASS — REBASELINED. As execuções anteriores estão
+SUPERSEDED. Amendment 2: 30 estratos, CAL-A (20) e CAL-B (10, trancada no
+runner) comprometidas por hash; grade de CAL-A {21, 63} × {0.40, 0.50,
+0.60}; gate de identificabilidade: 7 âncoras distinguíveis → CAL-A
+REDUCED. Nenhuma performance de CAL-A, CAL-B, Validation ou Final Test.
+
 ### Hardening pré-B0 — suporte implementado
 
 Implementado como engenharia, sem rodar CAL-A, CAL-B, Stress científico,

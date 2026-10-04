@@ -584,4 +584,10 @@ mudou.
             -> B0 PASS — REBASELINED: baseline = commit 73db75b +
                H2_FREEZE_V1_PARAMS (thinking_level=low) + snapshot
                20261004T201258177516Z-b4cf39fc + prompts registrados no trace
+2026-10-04  Gate de identificabilidade de CAL-A (Amendment 2)
+            commit d3641af46bd3a63ddaa09ce8db4dff40aa0fe3a1
+            evidência docs/evidence/cal_a/identifiability.json
+            sem LLM, sem t+1, sem retorno; só volatilidade até t e veto
+            distinguishing_anchors = 7 (>= 3)  -> CAL-A REDUCED
+            nenhuma performance de CAL-A executada; CAL-B trancada
 ```
