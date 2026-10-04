@@ -5,6 +5,14 @@
 > Este documento é o contrato científico do experimento, não um roadmap. Valores
 > e políticas marcados como `TBD` ou `PENDENTE DE CONGELAMENTO` não foram
 > aprovados pela dupla/orientador e não podem ser tratados como decisão final.
+>
+> **H2 METHODOLOGICAL FREEZE V1 (2026-10-04)** — método, runtime, geração,
+> escada de thinking, conjunto H (H_syn v1 + H_real reservado), gates do
+> Hardening, B0, controle clássico, RSI, regra de identificabilidade do CAL-A
+> e enquadramento do TCC foram congelados pelos autores antes de qualquer
+> resultado experimental: `docs/H2_METHODOLOGICAL_FREEZE_V1.md`. Onde este
+> protocolo e o freeze divergirem, vale o freeze; mudanças posteriores são
+> PROTOCOL AMENDMENT registrado lá.
 
 ## 0. Desenho em uma página
 
@@ -811,6 +819,11 @@ respeitar um contador seria falha metodológica pior do que a que o contador
 tenta evitar. Ultrapassar `H` significa que o sistema não está pronto para ser
 congelado, e a decisão de continuar sobe para dupla e orientador com o change
 log. O número de versões de hardening é reportado.
+
+> **Substituído pelo H2 METHODOLOGICAL FREEZE V1:** o Diagnostic Hardening
+> do H2 roda sobre o conjunto dedicado `H = 8 H_syn + 4 H_real`, com gates
+> G-A/G-T/G-I/G-F congelados, e não sobre as âncoras de CAL-A (que não têm
+> datas). Ver `docs/H2_METHODOLOGICAL_FREEZE_V1.md`.
 
 O hardening roda sobre as âncoras de CAL-A e sobre o Stress Probing. **Nunca
 sobre CAL-B.**

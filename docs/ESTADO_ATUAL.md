@@ -864,7 +864,19 @@ trace da tentativa que falhou — inclusive quando o provedor cai no risco ou
 no portfólio — e continua o lote; exceção fora do contrato (bug) interrompe
 o lote como `HardeningAbortedError`, levando os outcomes já obtidos.
 
-### Hardening pré-B0 — suporte implementado, nada congelado
+### H2 Methodological Freeze v1
+
+Congelado pelos autores em 2026-10-04, antes de qualquer chamada de
+Hardening: `docs/H2_METHODOLOGICAL_FREEZE_V1.md`. Spec do H2 em
+`H2_FREEZE_V1_PARAMS` (gemini-3.8-flash nativo, SC 5 × 0.6, temperatura
+1.0, 8192 tokens, `portfolio_inversion_policy="fail"`), escada de thinking
+LOW → MEDIUM → HIGH, gates G-A/G-T/G-I/G-F e H_real reservado
+(2019-04-08, 2020-06-29, 2021-09-17, 2022-12-07, PETR4.SA) a partir do
+snapshot `20261004T193839031891Z-6f5e2439…`, que segue
+`attention_required` por divergência do `B3Calendar` local (ver o freeze,
+seção 7). CAL-A: `CAL_A_CANDIDATE_GRID_UNRESOLVED`.
+
+### Hardening pré-B0 — suporte implementado
 
 Implementado como engenharia, sem rodar CAL-A, CAL-B, Stress científico,
 Validation ou Final Test, e sem usar resultado financeiro:

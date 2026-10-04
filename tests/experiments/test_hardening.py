@@ -15,7 +15,6 @@ import pytest
 
 from src.agents.features import (
     FEATURE_KEYS,
-    canonical_prompt_json,
     dimensionless_features,
 )
 from src.agents.llm_client import LLMClient, MockLLMClient
@@ -44,10 +43,23 @@ from src.artifacts import RunArtifact
 from src.experiments import runner as runner_module
 from src.experiments.context import RunContext
 from src.experiments.hardening import (
+    H2_FREEZE_STATUS,
+    H2_FREEZE_V1_GATES,
     H2_SC_PROVISIONAL_PARAMS,
     H2_SC_PROVISIONAL_STATUS,
+    H2_THINKING_LADDER,
+    H_REAL_ELIGIBLE_COUNT,
+    H_REAL_ELIGIBLE_SHA256,
+    H_REAL_INDICES,
+    H_REAL_PAYLOAD_DIGESTS,
+    H_REAL_QUANTILES,
+    H_REAL_RESERVED_AT_FREEZE,
     H_REAL_SESSIONS,
+    H_REAL_SNAPSHOT_ID,
+    H_REAL_SNAPSHOT_IDENTITY_DIGEST,
+    H_REAL_STATUS,
     H_REAL_TICKER,
+    H_REAL_WINDOW,
     H_SYN_ARCHETYPES,
     H_SYN_PAYLOAD_DIGESTS,
     H_SYN_SESSIONS,
@@ -60,9 +72,12 @@ from src.experiments.hardening import (
     diagnostic_metrics,
     frozen_observation,
     gate_flags,
+    h2_freeze_v1_params,
+    h_real_states,
     real_state,
     require_disjoint,
     run_hardening,
+    scientific_payload_digest,
     synthetic_frame,
     synthetic_states,
 )
@@ -74,7 +89,12 @@ from src.experiments.spec import (
     ExperimentSpec,
     ParticipantSpec,
 )
-from src.pipeline.snapshot import DatasetSnapshot, load_snapshot_frames
+from src.pipeline.snapshot import (
+    DatasetSnapshot,
+    load_dataset_snapshot,
+    load_snapshot_frames,
+    verify_snapshot_integrity,
+)
 from src.pipeline.transform import DataTransformer, validate_ohlcv
 
 # ── H_syn ────────────────────────────────────────────────────────
@@ -125,29 +145,9 @@ def test_cada_arquetipo_cobre_o_estado_de_contrato_declarado(archetype) -> None:
 # ── Congelamento de H_syn (H_SYN_VERSION = 1) ────────────────────
 
 
-def scientific_payload(history: pd.DataFrame) -> str:
-    """Payload canônico que o provedor recebe para este estado.
-
-    Montado pelo próprio participante (mesmo ``_agent_state`` da decisão
-    real): as oito features e a volatilidade, quantizadas e serializadas por
-    ``canonical_prompt_json``.
-    """
-    participant = LLMParticipant("SYN", llm_client=MockLLMClient())
-    state = HardeningState("probe", "SYN", history)
-    close = float(history["fechamento"].iloc[-1])
-    agent_state = participant._agent_state(
-        frozen_observation(state, 100_000.0), history, 100_000.0, close
-    )
-    return canonical_prompt_json(
-        {
-            "features": agent_state["features"],
-            "recent_volatility": agent_state["recent_volatility"],
-        }
-    )
-
-
 def digest(history: pd.DataFrame) -> str:
-    return hashlib.sha256(scientific_payload(history).encode("utf-8")).hexdigest()
+    """Digest do payload canônico pelo mesmo caminho que o harness usa."""
+    return scientific_payload_digest(HardeningState("probe", "SYN", history))
 
 
 def test_h_syn_v1_esta_congelado_no_payload_publicado() -> None:
@@ -178,9 +178,61 @@ def test_ruido_abaixo_da_quantizacao_nao_muda_o_digest_e_mudanca_material_muda()
 # ── H_real: só infraestrutura ────────────────────────────────────
 
 
-def test_nenhum_estado_real_esta_escolhido() -> None:
-    assert H_REAL_SESSIONS == ()
+def test_h_real_reservado_pela_regra_mecanica_de_quantis() -> None:
+    """As quatro datas são exatamente ``E[floor(q·(len(E)-1))]``."""
     assert H_REAL_TICKER == "PETR4.SA"
+    assert H_REAL_STATUS == H2_FREEZE_STATUS
+    assert len(H_REAL_SESSIONS) == len(H_REAL_QUANTILES) == 4
+    assert list(H_REAL_SESSIONS) == sorted(H_REAL_SESSIONS)
+    assert H_REAL_INDICES == tuple(
+        math.floor(q * (H_REAL_ELIGIBLE_COUNT - 1)) for q in H_REAL_QUANTILES
+    )
+    assert set(H_REAL_PAYLOAD_DIGESTS) == set(H_REAL_SESSIONS)
+    low, high = H_REAL_WINDOW
+    assert all(low <= session <= high for session in H_REAL_SESSIONS)
+
+
+SNAPSHOT_DIR = Path(__file__).resolve().parents[2] / "data" / "snapshots" / H_REAL_SNAPSHOT_ID
+
+
+@pytest.mark.skipif(not SNAPSHOT_DIR.exists(), reason="H_real snapshot is local (git-ignored)")
+def test_h_real_e_reproduzivel_a_partir_do_snapshot_congelado() -> None:
+    """Refaz ``E``, a seleção e os payloads a partir do snapshot imutável."""
+    snapshot = load_dataset_snapshot(SNAPSHOT_DIR)
+    verify_snapshot_integrity(snapshot)
+    assert snapshot.identity_digest == H_REAL_SNAPSHOT_IDENTITY_DIGEST
+    frame = load_snapshot_frames(snapshot, (H_REAL_TICKER,))[H_REAL_TICKER]
+    position = {session: i for i, session in enumerate(frame.index)}
+    low, high = (pd.Timestamp(day) for day in H_REAL_WINDOW)
+    eligible = [
+        session
+        for session in frame.index
+        if low <= session <= high and position[session] + 1 >= 504
+    ]
+    assert len(eligible) == H_REAL_ELIGIBLE_COUNT
+    listing = "\n".join(str(session.date()) for session in eligible)
+    assert hashlib.sha256(listing.encode()).hexdigest() == H_REAL_ELIGIBLE_SHA256
+    selected = tuple(str(eligible[i].date()) for i in H_REAL_INDICES)
+    assert selected == H_REAL_SESSIONS
+    # h_real_states confere cada payload contra o digest congelado.
+    states = h_real_states(frame, H_REAL_RESERVED_AT_FREEZE)
+    assert [state.history.index[-1] for state in states] == [
+        pd.Timestamp(day) for day in H_REAL_SESSIONS
+    ]
+
+
+def test_spec_congelada_v1_passa_o_preflight_cientifico_so_com_low() -> None:
+    """``low`` está qualificado; ``medium``/``high`` exigem DEV_SMOKE antes."""
+    report = LLMParticipant.preflight(h2_freeze_v1_params("low"), scientific=True)
+    assert report.status == "QUALIFIED"
+    for level in H2_THINKING_LADDER[1:]:
+        with pytest.raises(ValueError, match="DECLARED_UNQUALIFIED"):
+            LLMParticipant.preflight(h2_freeze_v1_params(level), scientific=True)
+    assert H2_THINKING_LADDER == ("low", "medium", "high")
+    # seed nunca é transmitida: não existe como parâmetro do freeze.
+    assert "seed" not in h2_freeze_v1_params("low")
+    assert H2_FREEZE_V1_GATES.max_total_hold_rate == 0.90
+    assert H2_FREEZE_V1_GATES.max_same_state_flip_rate == 0.10
 
 
 RESERVED = MappingProxyType({"CAL-A": ["2001-01-02"], "VALIDATION": []})

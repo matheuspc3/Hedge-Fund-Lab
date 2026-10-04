@@ -1,16 +1,19 @@
 """Diagnostic Hardening: conjunto H dedicado, harness de decisão e diagnósticos.
 
-Nada aqui produz resultado científico, B0 ou freeze. Tudo o que é proposta do
-H2 Treatment Design Memo está marcado ``PENDING_ADVISOR_RATIFICATION``.
+A configuração do H2, o conjunto H, os gates e a escada de thinking estão
+congelados pelo **H2 METHODOLOGICAL FREEZE V1**
+(``docs/H2_METHODOLOGICAL_FREEZE_V1.md``). Nada aqui produz resultado
+financeiro; o harness decide estados congelados sem liquidar.
 
 **Conjunto H, disjunto por construção.** ``H = H_syn + H_real``:
 
 - ``H_syn`` são séries sintéticas determinísticas, sem data real, sem ativo
   real e sem ``t+1``: não podem coincidir com CAL-A, CAL-B, Stress, Validation
   ou Final Test, nem abrir canal de memorização;
-- ``H_real`` é só infraestrutura: nenhum estado real está escolhido. Datas
-  entram por pré-registro, nunca olhando comportamento ou desempenho, e
-  :func:`require_disjoint` recusa sobreposição com os demais conjuntos.
+- ``H_real`` são quatro sessões reais de PETR4 reservadas por regra mecânica
+  de quantis (:data:`H_REAL_SESSIONS`), sem olhar comportamento ou
+  desempenho; :func:`require_disjoint` recusa sobreposição com os demais
+  conjuntos, que precisam excluí-las.
 
 **Outcome-blind por construção.** O harness chama ``participant.decide()``
 sobre o estado congelado e nunca liquida: não existe sessão seguinte, então
@@ -18,6 +21,7 @@ nenhum retorno, P&L ou métrica financeira pode ser calculado aqui. Os
 diagnósticos leem apenas causas estruturadas (``decisions``) e o trace.
 """
 
+import hashlib
 import math
 from collections import Counter, defaultdict
 from collections.abc import Callable, Iterable, Mapping, Sequence
@@ -29,6 +33,8 @@ from typing import Any, cast
 import numpy as np
 import pandas as pd
 
+from src.agents.features import canonical_prompt_json
+from src.agents.llm_client import MockLLMClient
 from src.agents.llm_trace import load_trace
 from src.agents.participant import (
     BUY_AT_TARGET_NOOP,
@@ -67,6 +73,58 @@ H2_SC_PROVISIONAL_PARAMS: Mapping[str, Any] = MappingProxyType(
     }
 )
 H2_SC_PROVISIONAL_STATUS = PENDING_ADVISOR_RATIFICATION
+
+# ── H2 METHODOLOGICAL FREEZE V1 ──────────────────────────────────
+
+H2_FREEZE_VERSION = "H2_METHODOLOGICAL_FREEZE_V1"
+H2_FREEZE_STATUS = "FROZEN_BY_AUTHORS"
+
+#: Spec científica congelada do ``llm_agent`` no H2 v1, sem ``ticker`` e sem
+#: ``thinking_level`` — este sai da escada abaixo, nunca de escolha livre.
+#: Todo parâmetro material está escrito, inclusive os que coincidem com o
+#: default do código (protocolo, seção 5.7):
+#:
+#: - geração, ensemble e políticas: decisões do freeze;
+#: - ``long_target_weight`` e ``risk_max_concentration``: já DECIDIDOS (seção 11);
+#: - ``risk_max_volatility``, ``volatility_window`` e ``risk_max_drawdown``:
+#:   valores técnicos existentes adotados como baseline B0 ex ante; a
+#:   autoridade de mudá-los continua em CAL-A / Sequential Development;
+#: - ``retry_attempts``/``retry_base_delay``: operacionais (autoridade do
+#:   Hardening, seção 5.12), fixados antes da primeira chamada a partir dos 503
+#:   observados no DEV_SMOKE; não mudam conteúdo de decisão.
+H2_FREEZE_V1_PARAMS: Mapping[str, Any] = MappingProxyType(
+    {
+        "provider": "gemini",
+        "model": "gemini-3.8-flash",
+        "temperature": 1.0,
+        "max_output_tokens": 8192,
+        "analyst_count": 5,
+        "consensus_threshold": 0.6,
+        "require_all_votes": True,
+        "decision_frequency": 1,
+        "strict_inputs": True,
+        "portfolio_inversion_policy": "fail",
+        "long_target_weight": 1.0,
+        "risk_max_concentration": 1.0,
+        "risk_max_volatility": 0.5,
+        "risk_max_drawdown": 0.25,
+        "volatility_window": 21,
+        "retry_attempts": 6,
+        "retry_base_delay": 2.0,
+    }
+)
+
+#: Escada predeclarada de menor custo, nunca competição: começa em ``low``;
+#: só sobe se o nível falhar exclusivamente por G-I ou G-F, depois de um
+#: DEV_SMOKE técnico do próximo nível e de rodar H inteiro de novo.
+H2_THINKING_LADDER: tuple[str, ...] = ("low", "medium", "high")
+
+
+def h2_freeze_v1_params(thinking_level: str) -> dict[str, Any]:
+    """Spec congelada com o nível de thinking da escada."""
+    if thinking_level not in H2_THINKING_LADDER:
+        raise ValueError(f"thinking_level must be one of {H2_THINKING_LADDER}")
+    return {**H2_FREEZE_V1_PARAMS, "thinking_level": thinking_level}
 
 # ── H_syn ────────────────────────────────────────────────────────
 
@@ -245,16 +303,90 @@ def synthetic_states() -> tuple[HardeningState, ...]:
     )
 
 
-# ── H_real: só infraestrutura ────────────────────────────────────
+# ── H_real: reservado pelo freeze v1 ─────────────────────────────
 
-#: Ativo científico esperado do H2, que é single-asset. O universo não é
-#: ampliado aqui.
+#: Ativo científico do H2, que é single-asset. O universo não é ampliado aqui.
 H_REAL_TICKER = "PETR4.SA"
-#: Sessões reais reservadas **exclusivamente** ao Hardening. Vazio de
-#: propósito: entram por pré-registro, junto de CAL-A, CAL-B, Stress,
-#: Validation e Final Test, por regra mecânica declarada antes.
-H_REAL_SESSIONS: tuple[str, ...] = ()
-H_REAL_STATUS = PENDING_ADVISOR_RATIFICATION
+
+#: Regra mecânica de seleção, aplicada antes de qualquer chamada ao provedor
+#: e sem olhar retorno, regime, volatilidade, evento ou resposta de modelo:
+#: ``E`` = sessões do calendário comum do snapshot (protocolo, seção 5.11)
+#: entre 2018-01-12 e 2024-02-28, com ``available_history_sessions >= 504``
+#: e contrato causal estrito satisfeito; para ``q`` em ``H_REAL_QUANTILES``,
+#: reserva-se ``E[floor(q · (len(E) - 1))]``.
+H_REAL_WINDOW = ("2018-01-12", "2024-02-28")
+H_REAL_QUANTILES: tuple[float, ...] = (0.20, 0.40, 0.60, 0.80)
+H_REAL_SNAPSHOT_ID = "20261004T193839031891Z-6f5e24390ab2bca68131ecfc052b9d23"
+H_REAL_SNAPSHOT_IDENTITY_DIGEST = (
+    "6f5e24390ab2bca68131ecfc052b9d2381411aaaad35f0e56640fffcd6e766db"
+)
+H_REAL_ELIGIBLE_COUNT = 1519
+#: SHA-256 da lista ordenada de ``E`` (datas ISO separadas por ``\n``).
+H_REAL_ELIGIBLE_SHA256 = (
+    "bada89626b03ca440c0e989fdf20bd4c3d4ea83be4faa66264cde655c9a46548"
+)
+#: Sessões reais reservadas **exclusivamente** ao Hardening. Ficam excluídas
+#: de CAL-A, CAL-B, Stress, Sequential Development e qualquer outro conjunto.
+H_REAL_SESSIONS: tuple[str, ...] = ("2019-04-08", "2020-06-29", "2021-09-17", "2022-12-07")
+H_REAL_INDICES: tuple[int, ...] = (303, 607, 910, 1214)
+#: Payload científico canônico de cada estado real (mesma definição de
+#: :data:`H_SYN_PAYLOAD_DIGESTS`), conferido antes de qualquer chamada.
+H_REAL_PAYLOAD_DIGESTS: Mapping[str, str] = MappingProxyType(
+    {
+        "2019-04-08": "20d95f5a7cf0cccfb74f9cc43330c38065578234b745f6e7984a958946fe5b0e",
+        "2020-06-29": "28065db7fc72b97e0098554bc273cae73219465d49ccaaaa85fcdd8a8060be0b",
+        "2021-09-17": "c16e53020d2fc6852b1256a664a5c71eeaab5b4e950d9f4c20bde57d3ff9163b",
+        "2022-12-07": "06976959d02c8dc0786ac206fe5b870493f712bbe6bace3df20dc98bdc34c744",
+    }
+)
+#: Conjuntos com que H_real precisa ser disjunto. Nenhum tem datas ainda
+#: (todos ``TBD`` no protocolo): H_real foi reservado primeiro, e são eles que
+#: precisam excluí-lo quando forem definidos.
+H_REAL_RESERVED_AT_FREEZE: Mapping[str, tuple[str, ...]] = MappingProxyType(
+    {name: () for name in ("CAL-A", "CAL-B", "STRESS", "SEQUENTIAL_DEV", "VALIDATION", "FINAL_TEST")}
+)
+H_REAL_STATUS = H2_FREEZE_STATUS
+
+
+def scientific_payload(state: HardeningState) -> str:
+    """Payload canônico que o provedor recebe para o estado congelado.
+
+    Montado pelo próprio participante (``_agent_state``, o mesmo da decisão
+    real), sem rede: as oito features e a volatilidade, quantizadas e
+    serializadas por ``canonical_prompt_json``.
+    """
+    participant = LLMParticipant(state.ticker, llm_client=MockLLMClient())
+    history = state.history
+    close = float(history["fechamento"].iloc[-1])
+    capital = 100_000.0
+    agent_state = participant._agent_state(
+        frozen_observation(state, capital), history, capital, close
+    )
+    return canonical_prompt_json(
+        {
+            "features": agent_state["features"],
+            "recent_volatility": agent_state["recent_volatility"],
+        }
+    )
+
+
+def scientific_payload_digest(state: HardeningState) -> str:
+    return hashlib.sha256(scientific_payload(state).encode("utf-8")).hexdigest()
+
+
+def h_real_states(
+    frame: pd.DataFrame, reserved: Mapping[str, Iterable[Any]]
+) -> tuple[HardeningState, ...]:
+    """Os quatro estados reais reservados, conferidos contra o freeze."""
+    states = tuple(real_state(frame, session, reserved=reserved) for session in H_REAL_SESSIONS)
+    for session, state in zip(H_REAL_SESSIONS, states):
+        expected = H_REAL_PAYLOAD_DIGESTS.get(session)
+        if expected is not None and scientific_payload_digest(state) != expected:
+            raise ValueError(
+                f"H_real payload for {session} does not match the frozen digest; "
+                "the snapshot or the feature pipeline changed"
+            )
+    return states
 
 
 def real_state(
@@ -513,6 +645,11 @@ class ProposedGates:
 
 
 PROPOSED_GATES = ProposedGates()
+
+#: Gates G-I (0.90) e G-F (0.10) congelados pelo freeze v1, com os mesmos
+#: limiares propostos. G-A (zero falha final) e G-T (zero truncamento) são
+#: ``contract_failures`` e ``truncated_outputs`` de :func:`gate_flags`.
+H2_FREEZE_V1_GATES = ProposedGates(status="FROZEN_V1")
 
 
 def gate_flags(

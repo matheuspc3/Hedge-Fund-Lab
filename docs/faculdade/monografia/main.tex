@@ -31,7 +31,7 @@
 \makeapproval
 
 \begin{resumo}
-O mercado financeiro contemporâneo caracteriza-se por sua elevada complexidade e natureza não estacionária, em que o volume massivo de dados gerados diariamente desafia as capacidades de análise humana e de algoritmos estáticos tradicionais. Este trabalho apresenta o desenvolvimento do Hedge-fund-lab, um laboratório quantitativo escalável para backtesting de estratégias de investimento baseado em sistemas multiagentes. O objetivo principal é mitigar as limitações de estratégias clássicas e o risco de superajuste por meio da introdução de processos de debate e consenso na tomada de decisão financeira baseada em Inteligência Artificial. A solução proposta integra a modelagem de uma esteira de dados relacional orquestrada via Prefect e a coordenação de um comitê de agentes especializados utilizando o framework LangGraph. \verify{Espera-se demonstrar que a supervisão qualitativa e a deliberação adaptativa de modelos de linguagem reduzem os riscos operacionais em ativos de alta volatilidade do mercado brasileiro.}
+O mercado financeiro contemporâneo caracteriza-se por sua elevada complexidade e natureza não estacionária, em que o volume massivo de dados gerados diariamente desafia as capacidades de análise humana e de algoritmos estáticos tradicionais. Este trabalho apresenta o desenvolvimento do Hedge-fund-lab, um laboratório quantitativo escalável para backtesting de estratégias de investimento baseado em sistemas multiagentes. O objetivo principal é mitigar as limitações de estratégias clássicas e o risco de superajuste por meio da introdução de verificação sequencial entre papéis e de consenso entre amostras independentes na tomada de decisão financeira baseada em Inteligência Artificial. A solução proposta integra a modelagem de uma esteira de dados relacional orquestrada via Prefect e a coordenação de um comitê de agentes especializados utilizando o framework LangGraph. \verify{Espera-se demonstrar que a supervisão qualitativa e a deliberação adaptativa de modelos de linguagem reduzem os riscos operacionais em ativos de alta volatilidade do mercado brasileiro.}
 \palavraschave{Análise Quantitativa. Sistemas Multiagentes. Large Language Models. LangGraph. Backtesting.}
 \end{resumo}
 
@@ -43,7 +43,7 @@ O mercado financeiro contemporâneo apresenta desafios relevantes para a constru
 
 
 \begin{abstract}
-The contemporary financial market is characterized by extreme complexity and a non-stationary nature, where the massive volume of data generated daily challenges human analysis and traditional static algorithms. This work presents the development of the Hedge-fund-lab, a scalable quantitative laboratory for backtesting investment strategies based on multi-agent systems. The main objective is to mitigate the limitations of classic trading strategies and the risk of overfitting by introducing debate and consensus processes into financial decision-making driven by Artificial Intelligence. The proposed solution integrates a relational data pipeline orchestrated via Prefect and a committee of specialized agents coordinated through the LangGraph framework. It is expected to demonstrate that qualitative supervision and adaptive deliberation of large language models reduce operational risks in highly volatile assets within the Brazilian market.
+The contemporary financial market is characterized by extreme complexity and a non-stationary nature, where the massive volume of data generated daily challenges human analysis and traditional static algorithms. This work presents the development of the Hedge-fund-lab, a scalable quantitative laboratory for backtesting investment strategies based on multi-agent systems. The main objective is to mitigate the limitations of classic trading strategies and the risk of overfitting by introducing sequential cross-role verification and consensus across independent samples into financial decision-making driven by Artificial Intelligence. The proposed solution integrates a relational data pipeline orchestrated via Prefect and a committee of specialized agents coordinated through the LangGraph framework. It is expected to demonstrate that qualitative supervision and adaptive deliberation of large language models reduce operational risks in highly volatile assets within the Brazilian market.
 \keywords{Quantitative Analysis. Multi-Agent Systems. Large Language Models. LangGraph. Backtesting.}
 \end{abstract}
 \begin{abstract}
@@ -306,13 +306,13 @@ A lógica de decisão do Hedge-fund-lab afasta-se de modelos lineares ao impleme
 
 \subsection{Modelagem do Grafo de Decisão}
 
-O processo de investimento é estruturado como um debate cíclico ou sequencial, garantindo que nenhuma ordem de compra ou venda seja executada sem uma verificação multicritério. Os principais elementos do grafo incluem:
+O processo de investimento é estruturado como um fluxo sequencial e acíclico (analista técnico, gestor de risco, gestor de portfólio), sem memória entre sessões de decisão, garantindo que nenhuma ordem de compra ou venda seja executada sem uma verificação multicritério. Os principais elementos do grafo incluem:
 
 \begin{itemize}
     \item \textbf{Estado do Grafo (State):} Uma estrutura de dados compartilhada que armazena o histórico do pregão atual, os sinais gerados pelos analistas, o saldo em caixa e a decisão final.
-    \item \textbf{Nó Analista Técnico:} Este agente processa os indicadores quantitativos (Bandas de Bollinger e SMA) recuperados do banco de dados e emite uma recomendação inicial.
+    \item \textbf{Nó Analista Técnico:} Cinco amostras independentes do mesmo papel e do mesmo prompt (\textit{self-consistency}) avaliam oito \textit{features} adimensionais derivadas de SMA, Bandas de Bollinger, RSI e MACD, calculadas sobre o histórico disponível até $t$; a classe com ao menos 3 dos 5 votos é a recomendação, e sem essa maioria o resultado é manter.
     \item \textbf{Nó Gestor de Risco:} Atua como um filtro crítico, avaliando a volatilidade do ativo e o impacto da operação no patrimônio total, com autoridade para vetar decisões do analista.
-    \item \textbf{Nó Gestor de Portfólio:} Responsável por consolidar as análises e determinar o volume exato da operação, finalizando o estado do grafo para execução.
+    \item \textbf{Nó Gestor de Portfólio:} Responsável por consolidar as análises e decidir apenas a direção qualitativa (COMPRA, VENDA ou MANTER), sem poder inverter o sinal aprovado; o volume da operação não é decidido pelo modelo, e sim por uma política determinística de peso alvo, finalizando o estado do grafo para execução.
 \end{itemize}
 
 De forma simplificada, o estado decisório do sistema no instante \(t\) pode ser representado por:
@@ -333,11 +333,11 @@ onde \(x_t\) representa o conjunto de indicadores e informações observáveis d
 
 \subsection{Fluxo de Consenso e Raciocínio}
 
-Diferentemente de sistemas baseados em regras simples, esta arquitetura permite o raciocínio encadeado (\textit{Chain of Thought}). Ao encontrar uma anomalia nos dados da PETR4, por exemplo, o Gestor de Risco pode solicitar uma reavaliação ao Analista, simulando o comportamento de uma mesa de operações real. Essa abordagem visa mitigar falhas de modelos puramente matemáticos por meio da supervisão qualitativa do LLM.
+Diferentemente de sistemas baseados em regras simples, esta arquitetura permite o raciocínio encadeado (\textit{Chain of Thought}). O fluxo, porém, não possui ciclos: o Gestor de Risco não solicita reavaliação ao Analista --- ele aprova ou veta o sinal, depois de regras duras determinísticas aplicadas antes de qualquer chamada ao modelo. Essa abordagem visa mitigar falhas de modelos puramente matemáticos por meio da supervisão qualitativa do LLM.
 
-\section{ENGENHARIA DE PROMPT E DEFINIÇÃO DAS PERSONAS}
+\section{ENGENHARIA DE PROMPT E DEFINIÇÃO DOS PAPÉIS}
 
-A eficácia de um sistema multiagente baseado em Large Language Models (LLMs) depende diretamente da qualidade da Engenharia de Prompt (\textit{Prompt Engineering}). Para o \textit{Hedge-fund-lab}, desenvolve-se uma estrutura rigorosa de instruções para garantir que cada agente assuma uma "persona" específica e limite sua análise aos dados numéricos fornecidos, mitigando o risco de alucinações.
+A eficácia de um sistema multiagente baseado em Large Language Models (LLMs) depende diretamente da qualidade da Engenharia de Prompt (\textit{Prompt Engineering}). Para o \textit{Hedge-fund-lab}, desenvolve-se uma estrutura rigorosa de instruções para garantir que cada agente desempenhe um papel (\textit{role}) específico e limite sua análise aos dados numéricos fornecidos, mitigando o risco de alucinações.
 
 Mantêm-se os três agentes principais já apresentados na modelagem do grafo; a seguir, destacam-se as regras de instrução de cada um:
 
@@ -356,7 +356,7 @@ Mantêm-se os três agentes principais já apresentados na modelagem do grafo; a
 \subsection{Agente Gestor de Portfólio}
 \begin{itemize}
     \item \textbf{Função:} Consolidar as visões técnicas e de risco e executar a decisão final.
-    \item \textbf{Diretriz do Prompt:} Este agente opera como o árbitro final no grafo de decisão do LangGraph. Ele recebe o "estado" completo (o bloco de notas da reunião), pondera a confiança expressa pelos agentes anteriores e decide o dimensionamento da posição (\textit{Position Sizing}), determinando não apenas a direção da ordem, mas a quantidade de capital a ser alocada.
+    \item \textbf{Diretriz do Prompt:} Este agente opera como o árbitro final no grafo de decisão do LangGraph. Ele recebe o "estado" completo (o bloco de notas da reunião), e decide apenas a direção da ordem, sem autoridade de dimensionamento: o esquema de resposta não possui campo de tamanho, e a exposição resulta de uma política determinística externa ao modelo. A confiança textual dos agentes anteriores não é usada como probabilidade nem em fórmula de dimensionamento.
 \end{itemize}
 
 \chapter{Considerações Parciais e Metodologia}
