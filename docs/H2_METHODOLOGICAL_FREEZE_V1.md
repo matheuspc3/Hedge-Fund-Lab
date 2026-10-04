@@ -547,6 +547,99 @@ CAL-B (10)  commitment sha256 51d73b2285d4e0e103bfb3fc4f5cd26892a6b96fe7dbe8d43c
 - Se `distinguishing_anchors < 3`, `CAL-A = REMOVED`; se `>= 3`,
   `CAL-A = REDUCED`.
 
+#### PROTOCOL AMENDMENT 3 — EXECUÇÃO DE CAL-A (registrada antes da primeira execução)
+
+```text
+DATA              2026-10-04
+OBSERVADO ANTES   Hardening/B0 (outcome-blind) e o gate de identificabilidade
+                  (só vetos até t); NENHUM retorno de âncora
+NÃO MUDA          grade, âncoras, modelo, thinking, prompts, gates, custos,
+                  fonte de preço, regra de execução, tratamento
+```
+
+**Fonte científica conferida.**
+- Sessões e OHLCV bruto vêm da B3 (COTAHIST); o Yahoo fornece só o fator de
+  ajuste.
+- O Yahoo não cria sessão, não substitui OHLC bruto, não preenche barra e não
+  decide se houve pregão: o extrator parte do COTAHIST e falha fechado no
+  resto.
+- Snapshot `20261004T201258177516Z-b4cf39fc…`, identidade
+  `b4cf39fc761f251d2dd18e787008345aaf02bd9e19f913390c510338b84ee7d4`, com os
+  hashes COTAHIST no manifest.
+
+**Checagem causal do fator.**
+- Os proventos posteriores a `t` multiplicam todo o histórico causal
+  `[.., t]` pela mesma constante.
+- Gaps de SMA, gaps e largura de Bollinger, RSI, razões de MACD e a
+  volatilidade de risco são invariantes a esse fator comum:
+  - bit a bit para fatores potência de dois;
+  - payload canônico idêntico para fatores reais do PETR4.
+- Só proventos anteriores a `t` (informação passada legítima) mudam as
+  features.
+- Teste: `tests/agents/test_causal_adjustment.py`. Nenhum leakage encontrado.
+
+**Configurações.** Os `config_id` 1–6 já congelados no Amendment 2 são usados
+como estão (produto `{21, 63} × {0.40, 0.50, 0.60}`, nesta ordem):
+
+| config_id | window | max_vol |
+|---:|---:|---:|
+| 1 | 21 | 0.40 |
+| 2 | 21 | 0.50 (baseline) |
+| 3 | 21 | 0.60 |
+| 4 | 63 | 0.40 |
+| 5 | 63 | 0.50 |
+| 6 | 63 | 0.60 |
+
+Consequência declarada: o desempate por menor `config_id` aponta para 1, não
+para o baseline. Fixos em todas: `risk_max_drawdown = 0.25`,
+`risk_max_concentration = 1.0`, `long_target_weight = 1.0` e todo o freeze v1
+com LOW.
+
+**Repetições.** `CAL_A_REPETITIONS = 3`, dentro de R <= 3. O tratamento tem
+inferência estocástica sem seed; uma realização favorável ao acaso não pode
+escolher configuração.
+
+**Realizações pareadas e banco de chamadas.**
+- Dentro de cada repetição, toda chamada é guardada por
+  `(repetição, LLMCallRequest.identity_digest)`.
+- A primeira chamada com uma identidade vai ao provedor; as seguintes com a
+  mesma identidade reproduzem a resposta e a evidência guardadas.
+- O prompt técnico não depende da grade, então as 6 configurações de cada
+  (âncora, repetição) usam a mesma realização técnica de 5 chamadas: 300
+  chamadas técnicas ao vivo, não 1.800.
+- Risco e portfólio só compartilham resposta quando a identidade é
+  exatamente igual. Janelas diferentes mudam `recent_volatility` no prompt do
+  risco e fazem chamadas próprias, por consequência legítima do candidato.
+
+**Ordem.**
+
+```text
+for anchor in CAL_A_ANCHORS (cronológica):
+    for replicate in 1..3:
+        for config_id in 1..6:
+            run de âncora do ExperimentRunner com o banco compartilhado
+```
+
+São 360 avaliações. Nenhum resultado parcial para, pula, reordena ou muda
+nada. Cada avaliação parte do capital inicial em caixa e posição zero e não
+herda estado de outra.
+
+**Escore e seleção.**
+- `anchor_score[c,a]` = média aritmética do retorno líquido realizado
+  (`final_equity / initial_capital − 1`, CostSpec congelado) nas 3
+  repetições.
+- `S1[c]` = média de `anchor_score[c,a]` nas 20 âncoras.
+- Maior S1 vence. Empate exato → menor `config_id`. Todos iguais →
+  `CAL_A_DISCRIMINATION = NONE` e o mesmo fallback.
+- Sharpe, Sortino, MDD, turnover e win rate não entram na seleção.
+
+**Falhas.** Uma falha técnica final não vira retorno zero nem HOLD: é
+registrada e interrompe CAL-A. Nenhuma seleção é feita com conjunto
+incompleto. Erro transitório recuperado é só registrado.
+
+**CAL-B.** `CAL_B_AUTHORIZED = False` é exigido antes e depois da execução. O
+banco recusa qualquer sessão de CAL-B; o runner recusa janela que a contenha.
+
 ### Registro de execução (append-only)
 
 Resultados das regras predeclaradas acima. Não são amendments: nenhuma regra

@@ -141,3 +141,20 @@ CAL_A_GRID: tuple[dict[str, Any], ...] = tuple(
 #: Regra de identificabilidade congelada: menos de 3 âncoras distinguíveis
 #: remove CAL-A; 3 ou mais a mantém REDUCED.
 IDENTIFIABILITY_MIN_DISTINGUISHING = 3
+
+
+# ── Execução de CAL-A (Amendment 3), registrada antes da primeira execução ──
+
+#: Repetições independentes por âncora. O tratamento tem inferência estocástica
+#: sem seed; R = 3 (dentro do teto R <= 3 do protocolo) evita escolher uma
+#: configuração por uma realização técnica favorável ao acaso.
+CAL_A_REPETITIONS = 3
+#: Contrato de âncora: capital em caixa, posição zero, decisão em close(t),
+#: execução em open(t+1), CostSpec congelado (protocolo, seção 10).
+CAL_A_INITIAL_CAPITAL = 100_000.0
+CAL_A_MINIMUM_HISTORY_SESSIONS = 504
+CAL_A_COST_SPEC = {"brokerage_fixed": 0.0, "spread_bps": 5.0, "tax_rate": 0.00032}
+#: anchor_score[c, a] = média dos retornos líquidos realizados das R repetições;
+#: S1[c] = média de anchor_score[c, a] sobre as 20 âncoras. Maior S1 vence;
+#: empate exato -> menor config_id; todos iguais -> CAL_A_DISCRIMINATION = NONE.
+CAL_A_SCORE = "S1"
