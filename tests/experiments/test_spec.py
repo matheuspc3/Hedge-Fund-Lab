@@ -155,6 +155,7 @@ def test_registry_cobre_os_cinco_classicos_e_o_participante_llm() -> None:
         "bollinger",
         "buy_and_hold",
         "equal_weight",
+        "indicator_family_control",
         "llm_agent",
         "min_variance",
         "sma_cross",

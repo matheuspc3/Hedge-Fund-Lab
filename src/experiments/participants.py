@@ -20,12 +20,14 @@ from src.backtesting.portfolio import EqualWeightParticipant, MinVariancePartici
 from src.experiments.spec import ParticipantSpec
 from src.strategies.bollinger_bands import BollingerParticipant
 from src.strategies.buy_and_hold import BuyAndHoldParticipant
+from src.strategies.indicator_family_control import IndicatorFamilyControlParticipant
 from src.strategies.sma_cross import SMACrossParticipant
 
 PARTICIPANT_REGISTRY: Mapping[str, Callable[..., Participant]] = {
     "bollinger": BollingerParticipant,
     "buy_and_hold": BuyAndHoldParticipant,
     "equal_weight": EqualWeightParticipant,
+    "indicator_family_control": IndicatorFamilyControlParticipant,
     "llm_agent": LLMParticipant,
     "min_variance": MinVarianceParticipant,
     "sma_cross": SMACrossParticipant,
