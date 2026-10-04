@@ -472,4 +472,11 @@ mudou.
             G-A 0 · G-T 0 · G-I 0.633 · G-F 0.0 -> todos PASS
             2 erros transitórios recuperados por retry (fora de G-A)
             -> LOW FROZEN — REBASELINED; MEDIUM e HIGH não testados
+2026-10-04  B0 REBASELINED, uma passada completa sobre o H corrigido (R = 1)
+            commit 73db75b5127f97327a6bc86d5d3f31feb5fe26d8
+            evidência docs/evidence/h2/b0_low_20261004T202013Z/
+            0 falhas finais, 0 truncamentos, 67 chamadas lógicas, 0 retries
+            -> B0 PASS — REBASELINED: baseline = commit 73db75b +
+               H2_FREEZE_V1_PARAMS (thinking_level=low) + snapshot
+               20261004T201258177516Z-b4cf39fc + prompts registrados no trace
 ```
