@@ -106,8 +106,35 @@ class SanitizedTransport:
         config["responseJsonSchema_sha256"] = (
             None if schema is None else sha256(canonical_prompt_json(schema))
         )
-        self.sent.append(config)
-        return _http_json_transport(method, url, headers, body, self.timeout)
+        attempt: dict[str, Any] = {"generation_config": config}
+        self.sent.append(attempt)
+        try:
+            raw = _http_json_transport(method, url, headers, body, self.timeout)
+        except Exception as exc:
+            # Tipo, status e começo da mensagem do provedor: o corpo de erro
+            # da Gemini não carrega credencial, e cabeçalhos nunca são lidos.
+            attempt["outcome"] = {
+                "type": type(exc).__name__,
+                "status": getattr(exc, "status", None),
+                "retry_after": getattr(exc, "retry_after", None),
+                "message": str(exc)[:300],
+            }
+            raise
+        try:
+            payload = json.loads(raw)
+        except ValueError:
+            attempt["outcome"] = {"type": "http_200", "body_json": False}
+        else:
+            usage = payload.get("usageMetadata") if isinstance(payload, dict) else None
+            attempt["outcome"] = {
+                "type": "http_200",
+                "body_json": True,
+                "candidate_count": len(payload.get("candidates") or [])
+                if isinstance(payload, dict)
+                else None,
+                "usage_keys": sorted(usage) if isinstance(usage, dict) else None,
+            }
+        return raw
 
 
 def frozen_state():
@@ -221,7 +248,8 @@ def main() -> None:
             "http_attempts": len(sent),
             "schema": schema.__qualname__,
             "schema_sha256": schema_digest(schema),
-            "sent_generation_config": sent[-1] if sent else None,
+            "sent_generation_config": sent[-1]["generation_config"] if sent else None,
+            "http_attempt_outcomes": [attempt.get("outcome") for attempt in sent],
             "exception": None if exc is None else {"type": type(exc).__name__, "cause": cause},
         }
         if record is not None:
