@@ -876,6 +876,11 @@ snapshot `20261004T193839031891Z-6f5e2439…`, que segue
 `attention_required` por divergência do `B3Calendar` local (ver o freeze,
 seção 7). CAL-A: `CAL_A_CANDIDATE_GRID_UNRESOLVED`.
 
+Executado em 2026-10-04: Diagnostic Hardening com `thinking_level=low`
+passou G-A, G-T, G-I (0.667) e G-F (0.0) → **LOW congelado**; passada **B0
+PASS** (commit `4ec2ba9`). Evidência em `docs/evidence/h2/`. Nenhuma métrica
+financeira foi calculada; CAL-A não foi aberto.
+
 ### Hardening pré-B0 — suporte implementado
 
 Implementado como engenharia, sem rodar CAL-A, CAL-B, Stress científico,

@@ -357,4 +357,10 @@ mudou.
             1 HTTP 503 recuperado por retry (fora de G-A)
             -> LOW FROZEN para o H2 v1 (H2_FROZEN_THINKING_LEVEL);
                MEDIUM e HIGH não testados
+2026-10-04  B0, uma passada completa sobre H (R = 1), thinking_level = low
+            commit 4ec2ba9857d569cfaabbbf7e59d7b13c771edd57
+            evidência docs/evidence/h2/b0_low_20261004T195254Z/
+            0 falhas finais, 0 truncamentos, 65 chamadas lógicas, 0 retries
+            -> B0 PASS: baseline = commit 4ec2ba9 + H2_FREEZE_V1_PARAMS
+               (thinking_level=low) + prompts registrados no trace
 ```
