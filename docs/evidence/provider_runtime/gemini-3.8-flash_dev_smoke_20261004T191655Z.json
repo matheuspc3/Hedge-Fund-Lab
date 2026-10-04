@@ -1,0 +1,183 @@
+{
+  "kind": "DEV_SMOKE",
+  "scientific": false,
+  "statement": "Technical smoke of the native Gemini runtime. Not a scientific run, not B0, no thinking_level selection, no financial performance used.",
+  "timestamp_utc": "2026-10-04T19:16:55Z",
+  "git_commit": "5bf197a6a9414a45d22096badfa2b4d745bef8cc",
+  "python": "3.13.9",
+  "provider": "gemini",
+  "requested_model": "gemini-3.8-flash",
+  "runtime": "gemini-native models.generateContent",
+  "api_version": "v1beta",
+  "provider_endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
+  "requested_generation_options": {
+    "temperature": 1.0,
+    "thinking_level": "low",
+    "max_output_tokens": 8192
+  },
+  "seed": null,
+  "input": {
+    "H_SYN_VERSION": 1,
+    "state_id": "syn-v1:steady_uptrend",
+    "payload_sha256": "4f7eed9707fadf2876256376355098acf0ea8707e49a5acfad4b54cbb4781971",
+    "fixtures": {
+      "risk_and_portfolio_technical_signal": "COMPRA",
+      "portfolio_risk_verdict": "APROVADO"
+    }
+  },
+  "roles": {
+    "technical_analyst": {
+      "llm_call_count": 1,
+      "http_attempts": 2,
+      "schema": "TechnicalSignal",
+      "schema_sha256": "ad99ffcfb2e940f7e6ee68833d78eb60ad0a799827d3d6cd4c922e7c3ffca9b0",
+      "sent_generation_config": {
+        "temperature": 1.0,
+        "maxOutputTokens": 8192,
+        "thinkingConfig": {
+          "thinkingLevel": "LOW"
+        },
+        "responseMimeType": "application/json",
+        "responseJsonSchema_sha256": "22b0c1dd0b18fd7a56657480d776ddd5af917d001bd3b593b91f083f83ccc5ce"
+      },
+      "exception": null,
+      "status": "ok",
+      "attempt_count": 2,
+      "error_type": null,
+      "error_message": null,
+      "requested_options": {
+        "temperature": 1.0,
+        "thinking_level": "low",
+        "max_output_tokens": 8192,
+        "seed": 10001,
+        "analyst_id": 1
+      },
+      "transport_options": {
+        "temperature": 1.0,
+        "thinking_level": "low",
+        "max_output_tokens": 8192
+      },
+      "provider_endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
+      "provider_response_id": "N6bCatW1I-Prz7IP5e-z-Qc",
+      "resolved_model": "gemini-3.8-flash",
+      "finish_reason": "STOP",
+      "token_usage": {
+        "prompt_tokens": 242,
+        "completion_tokens": 102,
+        "thoughts_tokens": null,
+        "total_tokens": 344,
+        "source": "provider"
+      },
+      "raw_response_sha256": "0bb2c9a5a995b82e0f041fa30e70d7218583321c816bc9611ca26b7ad9e733e9",
+      "validated": true,
+      "duration_ms": 12156.5,
+      "user_prompt_sha256": "d6ea75f90544fc5725889f2be9fda2324d160057c8d44f05a715fe83cd97511b",
+      "system_prompt_sha256": "8659143336bdb7ca20200d0b38701140facd52e9b3ff08dfb65a2109466bf426",
+      "branch": {
+        "valid_votes": 1
+      }
+    },
+    "risk_manager": {
+      "llm_call_count": 1,
+      "http_attempts": 3,
+      "schema": "RiskVerdict",
+      "schema_sha256": "482b3eaee55f3d6dbce991e5f72bf340d5841ed6542a8aa9691ab8052e0e9c53",
+      "sent_generation_config": {
+        "temperature": 1.0,
+        "maxOutputTokens": 8192,
+        "thinkingConfig": {
+          "thinkingLevel": "LOW"
+        },
+        "responseMimeType": "application/json",
+        "responseJsonSchema_sha256": "8c0631dc4c8cdb5d73562e4af72702eb5d6c7e61729b95e6311990e01735deb9"
+      },
+      "exception": null,
+      "status": "ok",
+      "attempt_count": 3,
+      "error_type": null,
+      "error_message": null,
+      "requested_options": {
+        "temperature": 1.0,
+        "thinking_level": "low",
+        "max_output_tokens": 8192
+      },
+      "transport_options": {
+        "temperature": 1.0,
+        "thinking_level": "low",
+        "max_output_tokens": 8192
+      },
+      "provider_endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
+      "provider_response_id": "QqbCar_jH4qwqtsPncnFqAI",
+      "resolved_model": "gemini-3.8-flash",
+      "finish_reason": "STOP",
+      "token_usage": {
+        "prompt_tokens": 128,
+        "completion_tokens": 163,
+        "thoughts_tokens": null,
+        "total_tokens": 291,
+        "source": "provider"
+      },
+      "raw_response_sha256": "977a05d2958478ec772047cc3546d85f24ed7b410fbf6be1e676ad0e30e0af5a",
+      "validated": true,
+      "duration_ms": 34214.0,
+      "user_prompt_sha256": "a6762b9717ceb9576beede4e21e1bf52aeae7766d01a9d1fc6770e715490a305",
+      "system_prompt_sha256": "57ee8505ad8f6549d0c7c9a6e307bce1b5d6d7f5d4b3eeb165faeb7c330ad114",
+      "branch": {
+        "risk_source": "LLM",
+        "risk_rule": null
+      }
+    },
+    "portfolio_manager": {
+      "llm_call_count": 1,
+      "http_attempts": 2,
+      "schema": "PortfolioAction",
+      "schema_sha256": "5fda582a11b128eb75c91758ae380f8eecfb999d277a36cd6f6b4ddda0ad9ad4",
+      "sent_generation_config": {
+        "temperature": 1.0,
+        "maxOutputTokens": 8192,
+        "thinkingConfig": {
+          "thinkingLevel": "LOW"
+        },
+        "responseMimeType": "application/json",
+        "responseJsonSchema_sha256": "8d3c07e508e85b25fd8ae8311d691e292f27f56dc26c800854756c3eb1191732"
+      },
+      "exception": null,
+      "status": "ok",
+      "attempt_count": 2,
+      "error_type": null,
+      "error_message": null,
+      "requested_options": {
+        "temperature": 1.0,
+        "thinking_level": "low",
+        "max_output_tokens": 8192
+      },
+      "transport_options": {
+        "temperature": 1.0,
+        "thinking_level": "low",
+        "max_output_tokens": 8192
+      },
+      "provider_endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
+      "provider_response_id": "X6bCapCMJNWsqtsPpLKImAI",
+      "resolved_model": "gemini-3.8-flash",
+      "finish_reason": "STOP",
+      "token_usage": {
+        "prompt_tokens": 164,
+        "completion_tokens": 46,
+        "thoughts_tokens": null,
+        "total_tokens": 210,
+        "source": "provider"
+      },
+      "raw_response_sha256": "fad6c86ddf52f4061d0cb0ee4a4f8e88b579d44a8ea8a0eaf3c8409d2f7fc74f",
+      "validated": true,
+      "duration_ms": 8482.4,
+      "user_prompt_sha256": "2a0f0c5c54ff95d966faab7f39e3bf1091009cb2f785089dee72da5c01fb7cca",
+      "system_prompt_sha256": "497b56e89f1f2fc193f999e6bc23c88cccb7a2c6da96de5c11f09417482ae68a",
+      "branch": {
+        "portfolio_source": "LLM",
+        "portfolio_rule": null,
+        "decision": "COMPRA",
+        "direction_respected": true
+      }
+    }
+  }
+}

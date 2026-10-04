@@ -1,0 +1,39 @@
+{
+  "kind": "DEV_SMOKE_NEGATIVE_CONTROL",
+  "scientific": false,
+  "purpose": "Show that generateContent validates generationConfig, so HTTP 200 with thinkingConfig.thinkingLevel=LOW in the role smokes means the field was read and accepted, not ignored.",
+  "timestamp_utc": "2026-10-04T19:19:35Z",
+  "git_commit": "dab0b20a47d013a20eb56045ae1080cbf34b46ac",
+  "provider": "gemini",
+  "requested_model": "gemini-3.8-flash",
+  "api_version": "v1beta",
+  "provider_endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
+  "request_contents": "single user part 'ping' (no project data)",
+  "cases": {
+    "unknown_generation_config_field": {
+      "generationConfig": {
+        "temperature": 1.0,
+        "maxOutputTokens": 64,
+        "thinkingConfig": {
+          "thinkingLevel": "LOW"
+        },
+        "notARealField": 1
+      },
+      "outcome": "ProviderRequestRejected",
+      "status": 400,
+      "message": "HTTP 400: Bad Request - {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Invalid JSON payload received. Unknown name \\\"notARealField\\\" at 'generation_config': Cannot find field.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.BadRequest\",\n        \"fieldViolations\": [\n          {\n            \"field\": \"generation_config\",\n            \"desc"
+    },
+    "invalid_thinking_level_enum": {
+      "generationConfig": {
+        "temperature": 1.0,
+        "maxOutputTokens": 64,
+        "thinkingConfig": {
+          "thinkingLevel": "NOT_A_LEVEL"
+        }
+      },
+      "outcome": "ProviderRequestRejected",
+      "status": 400,
+      "message": "HTTP 400: Bad Request - {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Invalid value at 'generation_config.thinking_config.thinking_level' (type.googleapis.com/google.ai.generativelanguage.v1beta.ThinkingConfig.ThinkingLevel), \\\"NOT_A_LEVEL\\\"\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.BadRequest\",\n        \"fieldViolations\": [\n    "
+    }
+  }
+}
