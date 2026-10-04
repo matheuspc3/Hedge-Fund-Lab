@@ -640,6 +640,37 @@ incompleto. Erro transitório recuperado é só registrado.
 **CAL-B.** `CAL_B_AUTHORIZED = False` é exigido antes e depois da execução. O
 banco recusa qualquer sessão de CAL-B; o runner recusa janela que a contenha.
 
+#### PROTOCOL AMENDMENT 4 — FALHA DE INFRAESTRUTURA NA PERSISTÊNCIA DA CAL-A (técnico)
+
+```text
+DATA              2026-10-04
+TIPO              bug objetivo de infraestrutura; nenhuma regra científica muda
+O QUE ACONTECEU   a CAL-A parou na avaliação 184/360 (2021-03-29, r1, config 4):
+                  o Windows recusou (PermissionError, WinError 5) o rename
+                  atômico que publica o diretório do run; tipicamente
+                  antivírus/indexador segurando um handle por instantes
+CORREÇÃO          rename_with_retry (src/artifacts.py): repete só
+                  PermissionError, com espera crescente (até ~64 s), em todo
+                  rename atômico (runner e snapshot); outros erros sobem na
+                  hora. Não toca decisão, identidade, trace nem resultado
+COMPARABILIDADE   a correção é só de persistência: a classe de
+                  comparabilidade não muda
+```
+
+**Bloco afetado e reexecução** (regra "reexecutar o bloco afetado"):
+- No desenho pareado, o bloco é o par (âncora, repetição): as 6
+  configurações compartilham uma realização técnica.
+- Os 30 blocos completos da execução abortada (180 avaliações, âncoras 1–10)
+  continuam válidos e são reaproveitados como estão.
+- O bloco parcial (2021-03-29, r1; configurações 1–3 concluídas) é descartado
+  inteiro e reexecutado com as 6 configurações.
+- As demais avaliações seguem na ordem congelada.
+
+A execução abortada fica preservada em
+`docs/evidence/cal_a/run_20261004T203435Z/`, e as 3 avaliações do bloco
+descartado ficam lá, fora do escore. Nenhuma seleção foi feita com o conjunto
+incompleto.
+
 ### Registro de execução (append-only)
 
 Resultados das regras predeclaradas acima. Não são amendments: nenhuma regra

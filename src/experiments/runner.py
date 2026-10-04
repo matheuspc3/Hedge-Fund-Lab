@@ -20,7 +20,7 @@ from uuid import uuid4
 import pandas as pd
 
 from src.agents.features import LLM_FEATURE_SCHEMA_VERSION, LLM_NUMERIC_PRECISION
-from src.artifacts import RunArtifact, RunArtifactProvider
+from src.artifacts import RunArtifact, RunArtifactProvider, rename_with_retry
 from src.backtesting.arena import (
     EXECUTION_SEMANTICS,
     QUANTITY_MODE_FRACTIONAL_NOTIONAL,
@@ -430,7 +430,7 @@ class ExperimentRunner:
             target = self.runs_dir / result.run_id
             if target.exists():
                 raise FileExistsError(f"run already exists: {target}")
-            staging.rename(target)
+            rename_with_retry(staging, target)
         except BaseException:
             if staging.exists():
                 shutil.rmtree(staging)

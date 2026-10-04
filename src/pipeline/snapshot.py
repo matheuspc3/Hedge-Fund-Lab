@@ -18,6 +18,7 @@ from uuid import uuid4
 
 import pandas as pd
 
+from src.artifacts import rename_with_retry
 from src.backtesting.b3_calendar import B3Calendar
 from src.config import settings
 from src.pipeline.extract import PRICE_ADJUSTMENT, DataExtractor
@@ -533,7 +534,7 @@ def create_dataset_snapshot(
             encoding="utf-8",
             newline="\n",
         )
-        staging.rename(target)
+        rename_with_retry(staging, target)
     except BaseException:
         if staging.exists():
             shutil.rmtree(staging)

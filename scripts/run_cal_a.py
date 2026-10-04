@@ -197,7 +197,45 @@ def spec_for(anchor: str, config: dict[str, Any]) -> ExperimentSpec:
     )
 
 
+def carried_blocks(previous: Path | None) -> tuple[list[dict], list[dict], list[dict]]:
+    """Blocos (âncora, repetição) COMPLETOS de uma execução abortada (Amendment 4).
+
+    Um bloco pareado só é aproveitado com as seis configurações: as seis
+    compartilham a mesma realização técnica. Bloco parcial é descartado e
+    reexecutado inteiro.
+    """
+    if previous is None:
+        return [], [], []
+    summary = json.loads((previous / "summary.json").read_text(encoding="utf-8"))
+    if summary["git_commit"] is None or summary["complete"]:
+        sys.exit("--resume needs an aborted CAL-A run")
+    counts = Counter((e["anchor"], e["replicate"]) for e in summary["evaluations"])
+    kept = {block for block, n in counts.items() if n == len(CAL_A_GRID)}
+    root = previous.relative_to(ROOT).as_posix() + "/runs"
+    evaluations = [
+        {**e, "runs_root": root, "carried_from": previous.name}
+        for e in summary["evaluations"]
+        if (e["anchor"], e["replicate"]) in kept
+    ]
+    uses = [
+        json.loads(line)
+        for line in (previous / "call_bank.jsonl").read_text(encoding="utf-8").splitlines()
+    ]
+    uses = [u for u in uses if (u["anchor"], u["replicate"]) in kept]
+    attempts = [
+        json.loads(line)
+        for line in (previous / "attempts.jsonl").read_text(encoding="utf-8").splitlines()
+    ]
+    return evaluations, uses, attempts
+
+
 def main() -> None:
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--resume", type=Path, default=None)
+    args = parser.parse_args()
+    previous = None if args.resume is None else (ROOT / args.resume).resolve()
     if git("status", "--porcelain"):
         sys.exit("working tree is not clean: commit before CAL-A")
     if anchors.CAL_B_AUTHORIZED is not False:
@@ -213,13 +251,18 @@ def main() -> None:
     # entra no lugar do cliente nativo, por baixo do retry e da gravação.
     participant_module.PROVIDER_CLIENTS["gemini"] = BankedGeminiClient  # type: ignore[index]
 
-    evaluations: list[dict[str, Any]] = []
+    evaluations, carried_uses, prior_attempts = carried_blocks(previous)
+    BANK.uses.extend(carried_uses)
+    carried = {(e["anchor"], e["replicate"]) for e in evaluations}
+    new_root = f"docs/evidence/cal_a/run_{stamp}/runs"
     failure: str | None = None
     total = len(CAL_A_ANCHORS) * CAL_A_REPETITIONS * len(CAL_A_GRID)
     clock = time.perf_counter()
     try:
         for a_index, anchor in enumerate(CAL_A_ANCHORS, 1):
             for replicate in range(1, CAL_A_REPETITIONS + 1):
+                if (anchor, replicate) in carried:
+                    continue
                 for config in sorted(CAL_A_GRID, key=lambda item: item["config_id"]):
                     BANK.context = {"anchor": anchor, "replicate": replicate, "config_id": config["config_id"]}
                     spec = spec_for(anchor, config)
@@ -235,6 +278,7 @@ def main() -> None:
                         "spec_hash": result.spec_hash,
                         "run_id": result.run_id,
                         "run_dir": path.name,
+                        "runs_root": new_root,
                         "net_return": result.final_equity / result.initial_capital - 1.0,
                         "trade_count": len(result.trades),
                         "total_transaction_cost": result.total_transaction_cost,
@@ -251,8 +295,12 @@ def main() -> None:
     if runs_dir.exists():
         shutil.copytree(runs_dir, out / "runs")
 
+    order = {anchor: i for i, anchor in enumerate(CAL_A_ANCHORS)}
+    evaluations.sort(key=lambda e: (order[e["anchor"]], e["replicate"], e["config_id"]))
     complete = failure is None and len(evaluations) == total
     summary: dict[str, Any] = {
+        "resumed_from": None if previous is None else previous.name,
+        "carried_evaluations": sum(1 for e in evaluations if e.get("carried_from")),
         "kind": "CAL_A",
         "started_utc": started.isoformat(timespec="seconds").replace("+00:00", "Z"),
         "finished_utc": finished.isoformat(timespec="seconds").replace("+00:00", "Z"),
@@ -298,7 +346,7 @@ def main() -> None:
                 tokens[k] += v
     traces = []
     for item in evaluations:
-        traces.extend((item, r) for r in load_trace((runs_dir / item["run_dir"] / "llm_calls.jsonl").read_bytes()))
+        traces.extend((item, r) for r in load_trace((ROOT / item["runs_root"] / item["run_dir"] / "llm_calls.jsonl").read_bytes()))
     by_config = defaultdict(Counter)
     for item, record in traces:
         by_config[item["config_id"]][record.request.stage] += 1
@@ -312,16 +360,19 @@ def main() -> None:
     pairing_ok = all(
         len({(aid, rid, h) for _, aid, rid, h in rows}) == 5 for rows in paired.values()
     ) and all(len({c for c, *_ in rows}) == len(CAL_A_GRID) for rows in paired.values())
-    latencies = sorted(a["latency_ms"] for a in ATTEMPTS.attempts)
+    # Tentativas desta execução e as da execução abortada retomada (operacional).
+    all_attempts = prior_attempts + ATTEMPTS.attempts
+    latencies = sorted(a["latency_ms"] for a in all_attempts)
     summary["operational"] = {
         "logical_calls_in_traces": len(traces),
         "logical_calls_by_config_and_stage": {str(k): dict(v) for k, v in sorted(by_config.items())},
         "live_calls": len(live),
         "live_calls_by_stage": dict(Counter(u["stage"] for u in live)),
         "bank_hits": len(BANK.uses) - len(live),
-        "http_attempts": len(ATTEMPTS.attempts),
-        "attempt_outcomes": dict(Counter(a["outcome"] for a in ATTEMPTS.attempts)),
-        "http_status_counts": dict(Counter(str(a.get("status")) for a in ATTEMPTS.attempts if a.get("status"))),
+        "http_attempts": len(all_attempts),
+        "http_attempts_in_aborted_run": len(prior_attempts),
+        "attempt_outcomes": dict(Counter(a["outcome"] for a in all_attempts)),
+        "http_status_counts": dict(Counter(str(a.get("status")) for a in all_attempts if a.get("status"))),
         "attempt_latency_ms": {
             "p50": latencies[len(latencies) // 2] if latencies else None,
             "p90": latencies[int(len(latencies) * 0.9)] if latencies else None,

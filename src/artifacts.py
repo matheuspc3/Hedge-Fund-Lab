@@ -13,7 +13,9 @@ ciclo (``experiments.participants`` importa ``agents.participant``).
 
 import hashlib
 import json
+import time
 from dataclasses import dataclass, field
+from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Mapping, Protocol, runtime_checkable
 
@@ -108,3 +110,29 @@ class RunArtifactProvider(Protocol):
     def run_artifacts(self) -> tuple[RunArtifact, ...]:
         """Evidência congelada desta execução, pronta para ser escrita."""
         ...
+
+
+#: Tentativas de rename atômico antes de desistir. No Windows, antivírus ou
+#: indexador seguram por instantes um handle no diretório recém-escrito e o
+#: rename falha com ``PermissionError`` (WinError 5) sem nada estar errado.
+RENAME_ATTEMPTS = 8
+RENAME_BASE_DELAY = 0.25
+
+
+def rename_with_retry(source: Path, target: Path) -> None:
+    """``source.rename(target)`` tolerando bloqueio transitório do sistema.
+
+    Só ``PermissionError`` é repetido, com espera crescente; qualquer outro
+    erro sobe na hora, e o último ``PermissionError`` sobe se persistir.
+
+    ponytail: espera total máxima ~64 s (0.25 * (2^8 - 1)); se um bloqueio
+    durar mais que isso, é bloqueio real e precisa falhar.
+    """
+    for attempt in range(RENAME_ATTEMPTS):
+        try:
+            source.rename(target)
+            return
+        except PermissionError:
+            if attempt == RENAME_ATTEMPTS - 1:
+                raise
+            time.sleep(RENAME_BASE_DELAY * 2**attempt)
