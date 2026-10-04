@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 from pydantic import BaseModel
 
-from src.agents.llm_client import AgentRouterLLMClient
+from src.agents.llm_client import AgentRouterLLMClient, ProviderRequestRejected
 
 
 class MockSchema(BaseModel):
@@ -40,8 +40,8 @@ def test_agent_router_client_telemetry_and_parsing():
 
 
 def test_agent_router_client_missing_api_key():
-    """Testa se levanta erro de conexão sem API key configurada."""
+    """Sem API key configurada a requisição é recusada localmente."""
     client = AgentRouterLLMClient(api_key="")
     import asyncio
-    with pytest.raises(ConnectionError, match="LLM_API_KEY não configurada"):
+    with pytest.raises(ProviderRequestRejected, match="LLM_API_KEY não configurada"):
         asyncio.run(client.generate("sys", "user", MockSchema))

@@ -30,7 +30,10 @@ from src.agents.llm_client import (
     LLMCallMetadata,
     LLMCallTelemetry,
     LLMClient,
+    ProviderRequestRejected,
+    ProviderTransportError,
     call_telemetry_slot,
+    current_call_telemetry,
 )
 from src.artifacts import RunArtifact, canonical_json
 
@@ -42,6 +45,17 @@ from src.artifacts import RunArtifact, canonical_json
 #: ``response_schema_sha256``. Sem ele, dois schemas de mesmo nome e estrutura
 #: diferente produziam requisições HTTP diferentes e identidades iguais — o
 #: replay aceitava em silêncio. Traces versão 1 não são relidos por isso.
+#:
+#: **Política de versionamento** (escrita, não implícita):
+#:
+#: - campo novo de **evidência observada**, opcional, fora de
+#:   :meth:`LLMCallRequest.identity`, lido com ``.get`` e ``null`` quando o
+#:   provedor não o devolve **não** exige bump — é o caso de
+#:   ``provider_response_id``, ``resolved_model`` e ``finish_reason``;
+#: - mudança na identidade da chamada, em campo obrigatório ou na semântica
+#:   de um campo existente **exige** bump;
+#: - o replay reemite a evidência observada do registro reproduzido: um trace
+#:   regravado sobre o replay não a apaga.
 LLM_TRACE_SCHEMA_VERSION = 2
 
 #: Nome lógico e nome de arquivo do artefato publicado junto do run.
@@ -66,6 +80,8 @@ _REPLAYABLE_ERRORS: Mapping[str, type[BaseException]] = MappingProxyType(
     {
         "ConnectionError": ConnectionError,
         "OSError": OSError,
+        "ProviderRequestRejected": ProviderRequestRejected,
+        "ProviderTransportError": ProviderTransportError,
         "TimeoutError": TimeoutError,
         "TypeError": TypeError,
         "ValueError": ValueError,
@@ -230,6 +246,14 @@ class LLMCallRecord:
     #: HTTP, quando ele reporta isso. ``None`` para provedores que não
     #: transformam nada (mock) ou que não expõem o texto final.
     transport_system_prompt_sha256: str | None = None
+    #: Evidência observada devolvida pelo provedor — identificador da resposta,
+    #: modelo efetivamente resolvido e motivo de término. Fora da identidade:
+    #: o replay não pode falhar porque o provedor rotulou a resposta de outro
+    #: jeito, e ``resolved_model`` nunca entra no ``spec_hash`` — é o que o run
+    #: observou, não o que foi pedido antes dele.
+    provider_response_id: str | None = None
+    resolved_model: str | None = None
+    finish_reason: str | None = None
 
     @property
     def retry_count(self) -> int:
@@ -288,6 +312,9 @@ class LLMCallRecord:
             "validated_response": self.validated_response,
             "raw_response": self.raw_response,
             "token_usage": dict(self.token_usage) if self.token_usage else None,
+            "provider_response_id": self.provider_response_id,
+            "resolved_model": self.resolved_model,
+            "finish_reason": self.finish_reason,
         }
 
     @classmethod
@@ -326,6 +353,9 @@ class LLMCallRecord:
             provider_endpoint=payload.get("provider_endpoint"),
             transport_options=payload.get("transport_options") or {},
             transport_system_prompt_sha256=payload.get("transport_system_prompt_sha256"),
+            provider_response_id=payload.get("provider_response_id"),
+            resolved_model=payload.get("resolved_model"),
+            finish_reason=payload.get("finish_reason"),
         )
 
 
@@ -504,6 +534,7 @@ class RecordingLLMClient(LLMClient):
                     provider_endpoint=self.client.provider_endpoint(),
                     transport_options=self.client.transport_options(options),
                     transport_system_prompt_sha256=_transport_prompt_digest(slot),
+                    **_observed_evidence(slot),
                 )
                 raise
             self._records[sequence] = LLMCallRecord(
@@ -520,6 +551,7 @@ class RecordingLLMClient(LLMClient):
                 provider_endpoint=self.client.provider_endpoint(),
                 transport_options=self.client.transport_options(options),
                 transport_system_prompt_sha256=_transport_prompt_digest(slot),
+                **_observed_evidence(slot),
             )
         return response
 
@@ -625,6 +657,14 @@ class ReplayLLMClient(LLMClient):
             )
         self._cursor += 1
 
+        # Reemitir um registro é reemitir também a evidência observada que ele
+        # carrega; uma regravação por cima do replay não pode apagá-la.
+        slot = current_call_telemetry()
+        if slot is not None:
+            slot.provider_response_id = expected.provider_response_id
+            slot.resolved_model = expected.resolved_model
+            slot.finish_reason = expected.finish_reason
+
         if expected.status == STATUS_ERROR:
             raise _rebuild_error(expected)
         if response_schema is None:
@@ -634,6 +674,15 @@ class ReplayLLMClient(LLMClient):
         # satisfaz mais o contrato não é reproduzível em silêncio. Cada replay
         # devolve um objeto novo, nunca uma instância compartilhada.
         return response_schema.model_validate(expected.validated_response)
+
+
+def _observed_evidence(slot: LLMCallTelemetry) -> dict[str, str | None]:
+    """Proveniência devolvida pelo provedor, quando ele a devolveu."""
+    return {
+        "provider_response_id": slot.provider_response_id,
+        "resolved_model": slot.resolved_model,
+        "finish_reason": slot.finish_reason,
+    }
 
 
 def _transport_prompt_digest(slot: LLMCallTelemetry) -> str | None:

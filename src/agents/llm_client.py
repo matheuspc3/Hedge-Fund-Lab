@@ -9,6 +9,7 @@ from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from contextvars import ContextVar
 from dataclasses import dataclass, field
+from http.client import HTTPException
 from pathlib import Path
 from typing import Any, Iterator, Mapping
 from urllib import error, request
@@ -60,6 +61,12 @@ class LLMCallTelemetry:
     #: concreto transforma o prompt lógico antes de enviar. ``None`` quando não
     #: há transformação ou o cliente não a reporta.
     transport_system_prompt: str | None = None
+    #: Evidência **observada** devolvida pelo provedor, quando ele a devolve.
+    #: Nunca é configuração pedida: fica fora da identidade da chamada e fora
+    #: do ``spec_hash``.
+    provider_response_id: str | None = None
+    resolved_model: str | None = None
+    finish_reason: str | None = None
 
 
 _CALL_TELEMETRY: ContextVar[LLMCallTelemetry | None] = ContextVar(
@@ -92,7 +99,22 @@ class LLMCall:
     metadata: LLMCallMetadata | None = field(default=None)
 
 
+#: Opções que viajam pelo pipeline só como metadado de auditoria e nunca são
+#: transmitidas ao provedor: ``analyst_id`` identifica o analista e ``seed``
+#: está fora do caminho científico H2 v1. Nenhum cliente pode transmiti-las.
+METADATA_ONLY_OPTIONS: frozenset[str] = frozenset({"analyst_id", "seed"})
+
+
 class LLMClient(ABC):
+    #: Opções cuja semântica este cliente **declara** suportar no provedor.
+    #: Declaração de código, não evidência: ``transport_options`` diz o que vai
+    #: no corpo, isto diz o que o código afirma que o provedor honra, e nenhum
+    #: dos dois prova que um *modelo* específico o honre — isso é qualificação
+    #: empírica, registrada à parte por modelo (ver
+    #: ``src.agents.participant.EMPIRICALLY_QUALIFIED``). Vazio por default:
+    #: wrappers e dublês de teste não declaram nada.
+    DECLARED_OPTIONS: frozenset[str] = frozenset()
+
     def __init__(self) -> None:
         self.telemetry_logs: list[LLMTelemetry] = []
 
@@ -193,8 +215,155 @@ class MockLLMClient(LLMClient):
         return response_schema.model_validate(response)
 
 
+class ProviderTransportError(ConnectionError):
+    """Falha transitória entre nós e o provedor: vale repetir.
+
+    É ``ConnectionError`` (logo ``OSError``) de propósito: é o que
+    ``RetryingLLMClient`` repete e o que a classificação do participante lê
+    como ``PROVIDER_FAILURE`` depois de esgotado o retry. ``retry_after`` é o
+    atraso pedido pelo provedor (``Retry-After`` ou ``RetryInfo``), em
+    segundos, quando ele pede um.
+    """
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        status: int | None = None,
+        retry_after: float | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.status = status
+        self.retry_after = retry_after
+
+
+class ProviderRequestRejected(RuntimeError):
+    """O provedor (ou a configuração local) recusou a requisição em si.
+
+    Determinístico: repetir a mesma requisição dá o mesmo erro. Nem
+    ``OSError`` (não é repetido nem lido como queda do provedor) nem
+    ``ValueError`` (os nós não o engolem como resposta inválida): é erro de
+    contrato ou de configuração, ``PROVIDER_REQUEST_REJECTED``.
+    """
+
+    def __init__(self, message: str, *, status: int | None = None) -> None:
+        super().__init__(message)
+        self.status = status
+
+
+#: Status HTTP documentados como transitórios pela Gemini API (409 ABORTED,
+#: 429, 5xx de servidor/indisponibilidade/deadline) e o 408 genérico. Todo o
+#: resto — 400, 401, 402, 403, 404, 501… — é recusa determinística.
+RETRYABLE_HTTP_STATUS = frozenset({408, 409, 429, 500, 502, 503, 504})
+
+
+def _retry_after_seconds(headers: Any, body: str) -> float | None:
+    """Atraso pedido pelo provedor: ``Retry-After`` ou ``RetryInfo.retryDelay``."""
+    header = headers.get("Retry-After") if headers is not None else None
+    if header is not None:
+        try:
+            return max(0.0, float(header))
+        except ValueError:
+            pass  # data HTTP em vez de segundos: cai no backoff
+    try:
+        details = json.loads(body).get("error", {}).get("details", [])
+    except (ValueError, AttributeError):
+        return None
+    for detail in details if isinstance(details, list) else []:
+        if not isinstance(detail, dict):
+            continue
+        delay = detail.get("retryDelay")
+        if str(detail.get("@type", "")).endswith("RetryInfo") and isinstance(delay, str):
+            try:
+                return max(0.0, float(delay.removesuffix("s")))
+            except ValueError:
+                return None
+    return None
+
+
+def _http_json_transport(
+    method: str,
+    url: str,
+    headers: dict[str, str],
+    body: dict[str, Any],
+    timeout: float,
+) -> bytes:
+    """POST de JSON via ``urllib``, com a taxonomia de erro do provedor.
+
+    Status em :data:`RETRYABLE_HTTP_STATUS`, rede, timeout e corpo truncado
+    viram :class:`ProviderTransportError` (repetível); qualquer outro status
+    de erro vira :class:`ProviderRequestRejected` (não repetível).
+    """
+    payload = json.dumps(body).encode("utf-8")
+    req = request.Request(url, data=payload, headers=headers, method=method)
+    try:
+        with request.urlopen(req, timeout=timeout) as response:
+            return response.read()
+    except error.HTTPError as exc:
+        err_body = exc.read().decode("utf-8", errors="replace") if exc.fp else ""
+        message = f"HTTP {exc.code}: {exc.reason} - {err_body}"
+        if exc.code in RETRYABLE_HTTP_STATUS:
+            raise ProviderTransportError(
+                message,
+                status=exc.code,
+                retry_after=_retry_after_seconds(exc.headers, err_body),
+            ) from exc
+        raise ProviderRequestRejected(message, status=exc.code) from exc
+    except error.URLError as exc:
+        raise ProviderTransportError(str(exc.reason)) from exc
+    except HTTPException as exc:
+        # ``IncompleteRead``, ``RemoteDisconnected``…: a resposta não chegou
+        # inteira, então não há o que validar — é transporte, não resposta.
+        raise ProviderTransportError(f"{type(exc).__name__}: {exc}") from exc
+
+
+def _decode_json_body(raw: Any) -> dict[str, Any]:
+    """Corpo de resposta do transporte (arquivo, bytes ou texto) como objeto JSON.
+
+    Corpo que não decodifica como objeto JSON é falha de transporte (proxy,
+    corpo corrompido ou truncado): ainda não existe resposta do modelo para
+    ser julgada inválida. JSON *do modelo* fora do schema é outra coisa, e
+    continua ``ValueError``.
+    """
+    if hasattr(raw, "read"):
+        raw = raw.read()
+    if isinstance(raw, bytearray):
+        raw = bytes(raw)
+    try:
+        body = json.loads(raw if isinstance(raw, str) else raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ProviderTransportError(f"corpo HTTP não é JSON: {exc}") from exc
+    if not isinstance(body, dict):
+        raise ProviderTransportError(
+            f"corpo HTTP não é um objeto JSON: {type(body).__name__}"
+        )
+    return body
+
+
+def _sanitized_endpoint(url: str) -> str | None:
+    """Esquema, host, porta e caminho — sem userinfo, query ou fragmento."""
+    parsed = urlsplit(url)
+    host = parsed.hostname or ""
+    if not host:
+        return None
+    if parsed.port:
+        host = f"{host}:{parsed.port}"
+    return f"{parsed.scheme}://{host}{parsed.path}"
+
+
 class RetryingLLMClient(LLMClient):
-    """Repete falhas transitórias de qualquer cliente concreto."""
+    """Repete falhas transitórias de qualquer cliente concreto.
+
+    Só tipos de ``retry_exceptions`` são repetidos — ``OSError`` cobre
+    :class:`ProviderTransportError`, timeout e conexão. Recusa determinística
+    (:class:`ProviderRequestRejected`) e resposta inválida (``ValueError``)
+    sobem na primeira tentativa. Quando o provedor pede um atraso
+    (``retry_after``), ele é respeitado; senão vale o backoff exponencial.
+
+    ponytail: ``retry_after`` é respeitado sem teto. Uma cota diária esgotada
+    pode pedir horas; se isso aparecer, o upgrade é um teto que transforma a
+    espera em falha imediata.
+    """
 
     def __init__(
         self,
@@ -235,8 +404,11 @@ class RetryingLLMClient(LLMClient):
                     system_prompt, user_prompt, response_schema, options,
                     metadata=metadata,
                 )
-            except self.retry_exceptions:
-                await asyncio.sleep(self.base_delay * (2**attempt))
+            except self.retry_exceptions as exc:
+                requested = getattr(exc, "retry_after", None)
+                await asyncio.sleep(
+                    requested if requested is not None else self.base_delay * (2**attempt)
+                )
 
         if slot is not None:
             slot.attempts = self.max_attempts
@@ -257,6 +429,11 @@ class AgentRouterLLMClient(LLMClient):
     #: Fonte única da verdade sobre o que é transmitido; o payload e
     #: ``transport_options`` leem daqui para não poderem divergir.
     TRANSMITTED_OPTION_KEYS: tuple[str, ...] = ("temperature", "top_p", "max_tokens")
+    #: Os nomes científicos ``thinking_level`` e ``max_output_tokens`` não são
+    #: declarados aqui: sob OpenAI compatibility eles dependem do provedor
+    #: por trás do roteador, e o preflight recusa em vez de descartá-los em
+    #: silêncio.
+    DECLARED_OPTIONS: frozenset[str] = frozenset(TRANSMITTED_OPTION_KEYS)
 
     def __init__(
         self,
@@ -280,16 +457,7 @@ class AgentRouterLLMClient(LLMClient):
         self.transport = transport or self._default_transport
 
     def _default_transport(self, method: str, url: str, headers: dict[str, str], body: dict[str, Any]):
-        payload = json.dumps(body).encode("utf-8")
-        req = request.Request(url, data=payload, headers=headers, method=method)
-        try:
-            with request.urlopen(req, timeout=self.timeout) as response:
-                return response.read()
-        except error.HTTPError as exc:
-            err_body = exc.read().decode("utf-8", errors="replace")
-            raise ConnectionError(f"HTTP {exc.code}: {exc.reason} - {err_body}") from exc
-        except error.URLError as exc:
-            raise ConnectionError(str(exc.reason)) from exc
+        return _http_json_transport(method, url, headers, body, self.timeout)
 
     def _endpoint_url(self) -> str:
         if self.base_url.endswith("/chat/completions"):
@@ -314,13 +482,7 @@ class AgentRouterLLMClient(LLMClient):
         ``provider="agent_router"`` pode apontar para endpoints diferentes.
         Registrar esta identidade fecha a lacuna sem levar credencial junto.
         """
-        parsed = urlsplit(self._endpoint_url())
-        host = parsed.hostname or ""
-        if not host:
-            return None
-        if parsed.port:
-            host = f"{host}:{parsed.port}"
-        return f"{parsed.scheme}://{host}{parsed.path}"
+        return _sanitized_endpoint(self._endpoint_url())
 
     async def generate(
         self,
@@ -332,7 +494,8 @@ class AgentRouterLLMClient(LLMClient):
         metadata: LLMCallMetadata | None = None,
     ) -> BaseModel | str:
         if not self.api_key:
-            raise ConnectionError("LLM_API_KEY não configurada")
+            # Configuração local, não queda do provedor: nunca é repetida.
+            raise ProviderRequestRejected("LLM_API_KEY não configurada")
 
         # O prompt lógico é transformado aqui: o JSON Schema do
         # ``response_schema`` entra no system prompt. É por isso que o trace não
@@ -373,14 +536,7 @@ class AgentRouterLLMClient(LLMClient):
         raw = await asyncio.to_thread(self.transport, "POST", self._endpoint_url(), headers, payload)
         latency_ms = (time.time() - start_time) * 1000.0
 
-        if hasattr(raw, "read"):
-            raw = raw.read()
-        if isinstance(raw, bytearray):
-            raw = bytes(raw)
-        if isinstance(raw, str):
-            body = json.loads(raw)
-        else:
-            body = json.loads(raw.decode("utf-8"))
+        body = _decode_json_body(raw)
 
         usage = body.get("usage", {})
         prompt_tokens = usage.get("prompt_tokens", 0)
@@ -410,7 +566,13 @@ class AgentRouterLLMClient(LLMClient):
                 "source": "provider",
             }
 
-        message_content = body["choices"][0]["message"]["content"]
+        choice = body["choices"][0]
+        if slot is not None:
+            # Proveniência observada no formato OpenAI-compatible, quando vem.
+            slot.provider_response_id = body.get("id")
+            slot.resolved_model = body.get("model")
+            slot.finish_reason = choice.get("finish_reason")
+        message_content = choice["message"]["content"]
         if isinstance(message_content, list):
             message_content = "".join(str(item) for item in message_content)
         if slot is not None:

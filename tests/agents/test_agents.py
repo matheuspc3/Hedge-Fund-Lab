@@ -13,6 +13,7 @@ from src.agents.llm_client import (
     CachedLLMClient,
     LLMClient,
     MockLLMClient,
+    ProviderRequestRejected,
     RetryingLLMClient,
 )
 from src.agents.portfolio_manager import (
@@ -207,7 +208,8 @@ def test_agent_router_client_uses_openai_compatible_payload_and_parses_json():
 def test_agent_router_client_missing_api_key_raises(monkeypatch):
     monkeypatch.delenv("LLM_API_KEY", raising=False)
     client = AgentRouterLLMClient(api_key="")
-    with pytest.raises(ConnectionError, match="LLM_API_KEY não configurada"):
+    # Configuração local ausente é recusa determinística, não queda de rede.
+    with pytest.raises(ProviderRequestRejected, match="LLM_API_KEY não configurada"):
         run(client.generate("sys", "user"))
 
 
@@ -294,7 +296,8 @@ def test_agent_router_client_default_transport(monkeypatch):
         raise error.HTTPError(req.full_url, 401, "Unauthorized", {}, None)
 
     monkeypatch.setattr("urllib.request.urlopen", fake_urlopen_http_err)
-    with pytest.raises(ConnectionError, match="HTTP 401: Unauthorized"):
+    # 401 é recusa determinística: não é ``ConnectionError`` e não é repetida.
+    with pytest.raises(ProviderRequestRejected, match="HTTP 401: Unauthorized"):
         run(client.generate("sys", "user", TechnicalSignal))
 
     # URLError
