@@ -464,4 +464,12 @@ mudou.
             0 falhas finais, 0 truncamentos, 65 chamadas lógicas, 0 retries
             -> B0 PASS: baseline = commit 4ec2ba9 + H2_FREEZE_V1_PARAMS
                (thinking_level=low) + prompts registrados no trace
+            [as duas entradas acima: SUPERSEDED BY CALENDAR-CORRECTED REBASELINE,
+             Amendment 1]
+2026-10-04  Diagnostic Hardening REBASELINED (Amendment 1), thinking_level = low
+            commit 62a0c5d93f5f8e15d4c030587864b918e170c8e1, snapshot corrigido
+            evidência docs/evidence/h2/hardening_low_20261004T201555Z/
+            G-A 0 · G-T 0 · G-I 0.633 · G-F 0.0 -> todos PASS
+            2 erros transitórios recuperados por retry (fora de G-A)
+            -> LOW FROZEN — REBASELINED; MEDIUM e HIGH não testados
 ```
