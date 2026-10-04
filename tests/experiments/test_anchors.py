@@ -127,3 +127,26 @@ def test_runner_recusa_janela_com_ancora_de_cal_b_antes_de_construir(
     )
     with pytest.raises(ValueError, match="locked CAL-B"):
         runner.run()
+
+
+def test_selecao_de_cal_a_segue_a_regra_congelada_sobre_a_evidencia() -> None:
+    """S1 iguais -> NONE e menor config_id; a constante bate com a evidência."""
+    import json
+
+    root = Path(__file__).resolve().parents[2]
+    summary = json.loads((root / anchors.CAL_A_EVIDENCE).read_text(encoding="utf-8"))
+    assert summary["complete"] and summary["repetitions"] == anchors.CAL_A_REPETITIONS == 3
+    assert summary["paired_technical_audit"]["same_five_technical_responses_in_all_configs"]
+    assert summary["cal_b_audit"]["cal_b_sessions_touched"] == []
+    s1 = {int(k): v for k, v in summary["S1"].items()}
+    best = max(s1.values())
+    expected = min(cid for cid, value in s1.items() if value == best)
+    selected = anchors.CAL_A_SELECTED_CONFIG
+    assert selected["config_id"] == expected == summary["selected_config_id"]
+    assert selected["S1"] == s1[expected]
+    assert anchors.CAL_A_DISCRIMINATION == ("NONE" if len(set(s1.values())) == 1 else "YES")
+    config = next(c for c in CAL_A_GRID if c["config_id"] == expected)
+    assert (selected["volatility_window"], selected["risk_max_volatility"]) == (
+        config["volatility_window"],
+        config["risk_max_volatility"],
+    )

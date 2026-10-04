@@ -714,4 +714,16 @@ mudou.
             sem LLM, sem t+1, sem retorno; só volatilidade até t e veto
             distinguishing_anchors = 7 (>= 3)  -> CAL-A REDUCED
             nenhuma performance de CAL-A executada; CAL-B trancada
+2026-10-04  CAL-A (Amendment 3), 20 âncoras x R=3 x 6 configurações, pareada
+            execução abortada em 184/360 por bloqueio de rename no Windows
+            (Amendment 4); retomada no commit 18fdc52 com os 30 blocos completos
+            evidência docs/evidence/cal_a/run_20261004T231101Z/ (+ abortada
+            run_20261004T203435Z/)
+            360/360 avaliações; auditoria de pareamento: true; CAL-B: 0 sessões
+            S1 = -0.00025157 nas seis configurações (exatamente iguais)
+            causas finais diferem só em 2023-01-18 (veto duro vs veto do LLM
+            de risco, ambos sem trade); retornos diferem em 0 blocos
+            -> CAL_A_DISCRIMINATION = NONE; desempate pelo menor config_id
+            -> CAL_A_SELECTED_CONFIG = 1 (volatility_window 21,
+               risk_max_volatility 0.40), congelado
 ```

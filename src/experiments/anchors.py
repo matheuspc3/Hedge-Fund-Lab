@@ -158,3 +158,23 @@ CAL_A_COST_SPEC = {"brokerage_fixed": 0.0, "spread_bps": 5.0, "tax_rate": 0.0003
 #: S1[c] = média de anchor_score[c, a] sobre as 20 âncoras. Maior S1 vence;
 #: empate exato -> menor config_id; todos iguais -> CAL_A_DISCRIMINATION = NONE.
 CAL_A_SCORE = "S1"
+
+
+# ── Resultado de CAL-A (congelado) ───────────────────────────────
+
+#: Seleção mecânica pela regra do Amendment 3. Os seis S1 foram exatamente
+#: iguais, então CAL_A_DISCRIMINATION = NONE e o desempate pelo menor
+#: config_id escolheu a configuração 1. ``volatility_window`` e
+#: ``risk_max_volatility`` ficam congelados e saem da autoridade das fases
+#: seguintes; ``risk_max_drawdown`` continua 0.25 (autoridade do Sequential
+#: Development).
+CAL_A_EVIDENCE = "docs/evidence/cal_a/run_20261004T231101Z/summary.json"
+CAL_A_DISCRIMINATION = "NONE"
+CAL_A_SELECTED_CONFIG = {
+    "config_id": 1,
+    "volatility_window": 21,
+    "risk_max_volatility": 0.40,
+    "S1": -0.00025157128306495897,
+    "ranking": (1, 2, 3, 4, 5, 6),
+    "tie": "ALL_SIX_EQUAL_FALLBACK_LOWEST_CONFIG_ID",
+}

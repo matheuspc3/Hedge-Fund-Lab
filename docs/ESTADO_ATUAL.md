@@ -890,7 +890,14 @@ FROZEN — REBASELINED; B0 PASS — REBASELINED. As execuções anteriores estã
 SUPERSEDED. Amendment 2: 30 estratos, CAL-A (20) e CAL-B (10, trancada no
 runner) comprometidas por hash; grade de CAL-A {21, 63} × {0.40, 0.50,
 0.60}; gate de identificabilidade: 7 âncoras distinguíveis → CAL-A
-REDUCED. Nenhuma performance de CAL-A, CAL-B, Validation ou Final Test.
+REDUCED.
+
+**CAL-A executada (Amendment 3/4).** 360 avaliações pareadas (20 âncoras × 3
+repetições × 6 configurações), CostSpec congelado. S1 idêntico nas seis
+configurações → `CAL_A_DISCRIMINATION = NONE` → configuração 1 pelo
+desempate (`volatility_window = 21`, `risk_max_volatility = 0.40`),
+congelada. CAL-B, Sequential Development, Stress, Validation e Final Test
+não foram executados.
 
 ### Hardening pré-B0 — suporte implementado
 
