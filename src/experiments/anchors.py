@@ -180,3 +180,47 @@ CAL_A_SELECTED_CONFIG = {
     "ranking": (1, 2, 3, 4, 5, 6),
     "tie": "ALL_SIX_EQUAL_FALLBACK_LOWEST_CONFIG_ID",
 }
+
+
+# ── CAL-B: autorização limitada (Amendment 7, CAL_B_PROTOCOL_FREEZE_V1) ──
+#
+# ``CAL_B_AUTHORIZED`` continua False: o ``ExperimentRunner`` (e qualquer
+# janela) segue recusando âncora de CAL-B. A única porta é esta autorização,
+# limitada à fase CAL-B, ao hash comprometido, às 10 datas exatas e a UMA
+# repetição por data. Depois da execução, ``CAL_B_STATUS = "CONSUMED"`` fecha a
+# porta para sempre nesta versão metodológica.
+
+CAL_B_PHASE = "CAL-B"
+CAL_B_REPETITIONS = 1
+CAL_B_STATUS = "SEALED"
+
+
+@dataclass(frozen=True)
+class CalBAuthorization:
+    phase: str
+    commitment_sha256: str
+    anchors: tuple[str, ...]
+    repetitions: int
+
+    def require_anchor(self, session: Any) -> str:
+        """Só as 10 datas comprometidas; qualquer outra continua recusada."""
+        day = str(pd.Timestamp(session).date())
+        if day not in self.anchors:
+            raise ValueError(f"{day} is not a committed CAL-B anchor; refused")
+        return day
+
+
+def authorize_cal_b(phase: str, commitment_sha256: str, dates: Sequence[str],
+                    repetitions: int) -> CalBAuthorization:
+    """Autorização one-shot; recusa qualquer desvio do compromisso."""
+    if CAL_B_STATUS != "SEALED":
+        raise ValueError(f"CAL-B is {CAL_B_STATUS}: the holdout cannot be opened again")
+    if phase != CAL_B_PHASE:
+        raise ValueError(f"CAL-B authorization requires phase {CAL_B_PHASE!r}, got {phase!r}")
+    if commitment_sha256 != CAL_B_COMMITMENT_SHA256 or digest(CAL_B_ANCHORS) != CAL_B_COMMITMENT_SHA256:
+        raise ValueError("CAL-B commitment hash does not match the frozen anchors")
+    if tuple(dates) != CAL_B_ANCHORS:
+        raise ValueError("CAL-B authorization requires exactly the 10 committed dates, in order")
+    if isinstance(repetitions, bool) or repetitions != CAL_B_REPETITIONS:
+        raise ValueError(f"CAL-B is one-shot: repetitions must be {CAL_B_REPETITIONS}")
+    return CalBAuthorization(phase, commitment_sha256, tuple(dates), repetitions)

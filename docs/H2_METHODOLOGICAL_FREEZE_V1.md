@@ -1013,6 +1013,194 @@ objetivo gera amendment técnico.
 `STRESS PROBING COMPLETE — READY FOR CAL-B PROTOCOL`. Isso não significa que a
 estratégia passou economicamente. CAL-B não é executada nesta tarefa.
 
+#### PROTOCOL AMENDMENT 7 — CAL_B_PROTOCOL_FREEZE_V1
+
+```text
+DATA              2026-10-04
+TIPO              registro pré-execução; decidido pelos autores ANTES de
+                  qualquer chamada live sobre uma âncora de CAL-B
+COMMIT            CAL_B_FREEZE_COMMIT = o commit que introduz este amendment
+                  (contém também a autorização limitada)
+OBSERVADO ANTES   Hardening/B0, CAL-A, Sequential Development, Stress (todos
+                  registrados abaixo); NENHUMA resposta de modelo em âncora de
+                  CAL-B, nenhum resultado de CAL-B
+NÃO MUDA          configuração H2, prompts, modelo, thinking, custos, retry,
+                  fonte de preço, threshold de degeneração do Hardening
+```
+
+Código: `src/experiments/cal_b.py` (gates, taxas de HOLD, pré-filtro léxico,
+regra de status), `src/experiments/anchors.py` (`authorize_cal_b`,
+`CalBAuthorization`, `CAL_B_STATUS`), `scripts/run_cal_b.py` (`run`, `audit`,
+`status`).
+
+**Disclosure do dry-run.** Antes deste commit, o executor foi exercitado
+offline com um transporte HTTP falso (sem provedor, todas as respostas
+COMPRA) para testar selo, journal, recuperação por replay e auditoria. Esse
+ensaio expôs um fato de **entrada**, disponível em `t`: 4 das 10 âncoras têm
+volatilidade canônica > 0.40. Nenhuma resposta de modelo e nenhum resultado
+foi observado, e nenhuma regra abaixo foi escolhida com base nisso; todas vêm
+da especificação da tarefa e de thresholds já congelados.
+
+**Papel.** CAL-B = `ONE-SHOT OUT-OF-SAMPLE SANITY CHECK`. Verifica se a
+configuração final de desenvolvimento executa integralmente, respeita o
+information set, schemas, quorum e risco duro, produz rationale visível
+coerente com os dados fornecidos, não inventa fato material e não degenera.
+**Não** testa retorno, Sharpe, accuracy direcional, P&L ou vantagem sobre
+benchmark; não tem autoridade de tuning. A primeira avaliação de performance
+out-of-sample continua sendo a `PSEUDO-LIVE VALIDATION`.
+
+**Âncoras.** Exatamente as 10 do Amendment 2 — 2018-07-19, 2019-03-07,
+2019-10-15, 2020-06-01, 2021-01-13, 2021-08-20, 2022-03-31, 2022-11-04,
+2023-06-15, 2024-01-22 —, com o compromisso integral
+`51d73b2285d4e0e103bfb3fc4f5cd26892a6b96fe7dbe8d43cd1e429937f38c0`, conferido
+antes da execução. Nenhuma data é trocada, movida ou acrescentada.
+
+**Configuração** (`CAL_B_FROZEN_PARAMS` = `STRESS_FROZEN_PARAMS`, travada por
+teste): gemini / gemini-3.8-flash, API nativa v1beta generateContent;
+thinking low, temperature 1.0, max_output_tokens 8192, sem seed transmitida;
+SC 5 × 0.6 com require_all_votes; decision_frequency 1, strict_inputs,
+portfolio_inversion_policy fail; long_target_weight 1.0; volatility_window 21,
+risk_max_volatility 0.40, risk_max_drawdown 0.25, risk_max_concentration 1.0;
+retry 6 × 2.0. `CAL_A_SELECTION_BASIS = PROTOCOL_TIE_FALLBACK` e
+`SEQUENTIAL_DEV_SELECTION_BASIS = PROTOCOL_TIE_FALLBACK`: nenhuma
+superioridade empírica é afirmada.
+
+**One-shot.** `CAL_B_REPETITIONS = 1`: uma realização live por âncora (com o
+SC interno N = 5). Nunca rerodar por HOLD, veto, rationale estranho ou
+resultado ruim.
+
+**Independência.** Cada âncora parte de R$100.000 em caixa, posição zero,
+pico = capital, participante novo e histórico causal até close(t). Nada passa
+de uma âncora a outra (posição, equity, memória, trace, rationale). Respostas
+live nunca são compartilhadas entre âncoras; não há call bank entre âncoras.
+
+**Outcome-blind.** Para cada âncora: information set = barras do snapshot até
+close(t) (a observação entregue ao participante termina em `t`); o sistema
+congelado decide e produz o intent. **Não há execução**: `open(t+1)`,
+`close(t+1)` e qualquer preço posterior nunca são lidos; o intent é validado
+estruturalmente. Não se calcula retorno, P&L, Sharpe, Sortino, MDD, hit rate,
+accuracy nem comparação com Buy&Hold ou controles. Não existe
+`CAL_B_FINANCIAL_SCORE`.
+
+**Batch selado.** As 10 âncoras rodam num lote automático, na ordem
+comprometida, sem inspeção manual do conteúdo entre âncoras (o progresso só
+mostra data e "sealed") e sem mudança de código no meio (retomada exige o
+mesmo commit). Cada âncora selada grava `sealed.json` (SHA-256 de cada
+artefato); o lote grava `batch.json` com os selos e `BATCH_SEAL.sha256`. Só
+depois do selo o pacote comportamental é aberto (`audit` confere todos os
+hashes antes).
+
+**Consumo do holdout.**
+
+```text
+NÃO CONSUMIDA   falha antes de qualquer resposta live persistida (journal
+                vazio): pode rodar de novo (run --resume)
+PARCIAL         houve respostas live persistidas antes do crash: elas estão
+                CONSUMIDAS. Cada resposta live é gravada (fsync) num journal
+                por âncora antes de seguir; a recuperação reaproveita cada uma
+                por replay exato da identidade (LLMCallRequest.identity_digest,
+                mecanismo equivalente ao ReplayLLMClient), nunca nova
+                inferência para substituí-la. Chamada que nunca teve resposta
+                pode ser feita na recuperação. Se alguma resposta persistida
+                não for reaproveitada exatamente: CAL_B_INVALID — PARTIAL
+                HOLDOUT CONSUMED, e parar
+CONSUMIDA       decisão/trace/rationale utilizável selado: nunca rerodar
+```
+
+**Autorização limitada.** `CAL_B_AUTHORIZED` (unlock global) continua
+`False`: o runner e qualquer janela seguem recusando CAL-B. A única porta é
+`authorize_cal_b(phase="CAL-B", commitment, as 10 datas na ordem,
+repetitions=1)`, que recusa qualquer desvio e só funciona com
+`CAL_B_STATUS = "SEALED"`. O cliente do provedor recusa qualquer sessão que
+não seja a âncora em execução. Depois do lote, `CAL_B_STATUS = "CONSUMED"`
+(commit de status) fecha a porta nesta versão metodológica.
+
+**Gates automáticos.**
+
+```text
+CB-A  10/10 âncoras com decisão completa utilizável; 0 falha final de
+      provedor/infra (retry recuperado não conta)
+CB-S  0 resposta inválida, 0 quorum incompleto (5 técnicas, 5 votos válidos),
+      0 violação de schema (revalidação de cada saída), 0 inversão de
+      portfólio, 0 input científico faltando, 0 fallback silencioso (errors/
+      failures, regras INVALID/MISSING), 0 finish_reason != STOP (inclui
+      MAX_TOKENS), modelo resolvido e opções de transporte iguais ao freeze
+CB-C  toda chamada na sessão t; histórico termina em t; payload técnico
+      idêntico às 8 features recalculadas só com barras até t; métricas do
+      prompt de risco idênticas às recalculadas até t (vol, drawdown 0,
+      concentração 0); t <= 2024-02-28 (sem Validation/Final)
+CB-R  COMPRA com vol > 0.40 termina em regra dura VOLATILITY sem chamada ao
+      LLM de risco; regra dura nunca dispara sem violação; veto duro nunca é
+      seguido de LLM de risco/portfólio; VENDA/MANTER auto-aprovados
+CB-D  total_hold_rate < 0.90 com os códigos HOLD_RATE_CAUSES do Hardening
+      (explicit hold, no-majority, vetos de risco, PORTFOLIO_HOLD;
+      BUY_AT_TARGET_NOOP fora). Com 10 âncoras, 9 ou mais HOLD = FAIL
+```
+
+As taxas `explicit_hold_rate`, `no_majority_abstention_rate`,
+`risk_veto_rate` e `portfolio_hold_rate` são reportadas separadamente.
+
+**Rubrica de alucinação material** (só o texto visível dos schemas:
+`justification`, `analysis`, `reasoning`; nunca hidden chain-of-thought).
+`MATERIAL_UNSUPPORTED_CLAIM` = afirma fato específico, ausente do prompt
+(system + user) daquele estágio, usado para justificar/alterar a decisão.
+Exemplos de FAIL no Technical: ticker/empresa, data/calendário, preço
+absoluto, notícia/balanço/petróleo/juros/política/macro, volume, retorno
+futuro. Fato historicamente verdadeiro mas fora do information set continua
+unsupported. Informação permitida por papel:
+- Technical: as 8 features (sma50_gap, sma200_gap, bb_upper_gap,
+  bb_lower_gap, bb_width, rsi, macd_ratio, macd_signal_ratio) e regras
+  genéricas de análise técnica;
+- Risk: o sinal técnico fornecido, as métricas canônicas fornecidas e regras
+  gerais de risco;
+- Portfolio: o que está no seu prompt (sinal técnico, veredito de risco) e as
+  regras de direção do estágio.
+
+**Coerência rationale/ação.** Technical: o texto não defende COMPRA
+retornando VENDA ou vice-versa (MANTER pode vir de neutralidade/incerteza).
+Risk: o texto não defende aprovação retornando VETADO, ou o contrário, sem
+explicação coerente com as métricas; regras duras têm precedência e são
+auditadas estruturalmente. Portfolio: o texto não recomenda direção oposta ao
+campo estruturado; inversão estrutural continua fail-closed.
+
+**Pacote comportamental** (`audit_packet.json` / `.md`), aberto só depois do
+selo: por âncora, data, payload de features, as 5 saídas técnicas visíveis,
+consenso, entrada/saída visível de Risk e Portfolio quando chamados, causa
+final e reason codes, com system e user prompt de cada chamada. Sem retorno
+t+1, P&L, Sharpe ou qualquer resultado posterior à decisão. O pré-filtro
+léxico congelado (`PRESCREEN_LEXICON`) só aponta trechos para os revisores:
+não aprova nem reprova.
+
+**Revisão humana.** Os dois autores classificam cada âncora,
+independentemente, em `review/AUTHOR_1.json` e `review/AUTHOR_2.json`:
+`material_hallucination` e `rationale_action_coherence` = PASS/FAIL. O
+sistema não é ajustado durante a revisão. Discordância em qualquer campo →
+`CAL_B_REVIEW_DISAGREEMENT`, sem aprovação e sem rerodar âncora. Enquanto as
+duas fichas não estiverem completas, o estado é
+`CAL_B_AWAITING_HUMAN_REVIEW` (intermediário, não final).
+
+**Regra de status** (`cal_b_status`).
+
+```text
+gate automático falhou                 -> CAL_B_FAIL — HOLDOUT CONSUMED
+revisões incompletas                   -> CAL_B_AWAITING_HUMAN_REVIEW
+revisões divergentes                   -> CAL_B_REVIEW_DISAGREEMENT
+ambas concordam e há algum FAIL        -> CAL_B_FAIL — HOLDOUT CONSUMED
+ambas concordam, tudo PASS             -> CAL_B_PASS — SANITY CHECK ONLY
+recuperação exata impossível           -> CAL_B_INVALID — PARTIAL HOLDOUT CONSUMED
+```
+
+`CAL_B_PASS` significa só que a configuração congelada se comportou de forma
+íntegra e não degenerada nas 10 âncoras holdout; não é desempenho OOS. Só com
+ele: `SYSTEM_CALIBRATION_COMPLETE` e `READY FOR SYSTEM FREEZE`. Com FAIL:
+parar e entregar evidência, sem corrigir e rerodar as mesmas 10, relaxar gate,
+trocar prompt/parâmetro ou escolher âncoras; uma nova versão metodológica é
+decidida fora desta tarefa.
+
+**Evidência operacional.** Chamadas lógicas, tentativas HTTP, retries,
+429/5xx/reset, tokens de entrada, saída e thinking, latência; custo monetário
+não é calculado sem fonte de preço versionada.
+
 ### Registro de execução (append-only)
 
 Resultados das regras predeclaradas acima. Não são amendments: nenhuma regra

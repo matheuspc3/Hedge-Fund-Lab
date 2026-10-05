@@ -927,6 +927,13 @@ regra de drawdown `NOT_EXERCISED` (drawdown máximo 0.179), limitação de
 cobertura empírica. Nenhum parâmetro mudou; CAL-B, Validation e Final Test
 não foram executados.
 
+**CAL-B (Amendment 7, `CAL_B_PROTOCOL_FREEZE_V1`).** Congelada antes de
+qualquer chamada: sanity check one-shot, sem performance e sem tuning; as 10
+âncoras comprometidas × R = 1, decisão só com dados até close(t) e sem
+execução em t+1; autorização limitada (fase, hash, datas, uma repetição) com
+`CAL_B_AUTHORIZED` global ainda False; gates CB-A/S/C/R/D, revisão humana
+independente dos dois autores e regra de status congelada.
+
 ### Hardening pré-B0 — suporte implementado
 
 Implementado como engenharia, sem rodar CAL-A, CAL-B, Stress científico,
