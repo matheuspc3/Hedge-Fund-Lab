@@ -78,3 +78,26 @@ SEQUENTIAL_DEV_REPETITIONS = 3
 #: S2[c] = média do Sharpe científico v1 nas 3 repetições; maior vence;
 #: empate exato -> menor config_id; três iguais -> DISCRIMINATION = NONE.
 SEQUENTIAL_DEV_SCORE = "S2"
+
+
+# ── Resultado do Sequential Development (congelado) ──────────────
+
+#: Seleção mecânica pela regra do Amendment 5. O drawdown canônico máximo
+#: (0.080) não chegou a nenhum limite da grade, as três trajetórias foram
+#: idênticas em cada repetição e os três S2 exatamente iguais: DISCRIMINATION
+#: = NONE, D01 pelo fallback do protocolo — não por desempenho superior.
+SEQUENTIAL_DEV_FREEZE_COMMIT = "2461952a4b1ee84a08aa63261f6a677d79cca3bb"
+SEQUENTIAL_DEV_EVIDENCE = "docs/evidence/sequential_dev/run_20261004T235634Z/summary.json"
+SEQUENTIAL_DEV_DISCRIMINATION = "NONE"
+SEQUENTIAL_DEV_SELECTION_BASIS = "PROTOCOL_TIE_FALLBACK"
+SEQUENTIAL_DEV_SELECTED_CONFIG = {
+    "config_id": 1,
+    "name": "D01",
+    "risk_max_drawdown": 0.25,
+    "S2": 1.8995241002787928,
+    "ranking": (1, 2, 3),
+    "discrimination": SEQUENTIAL_DEV_DISCRIMINATION,
+    "selection_basis": SEQUENTIAL_DEV_SELECTION_BASIS,
+    "freeze_commit": SEQUENTIAL_DEV_FREEZE_COMMIT,
+    "evidence": SEQUENTIAL_DEV_EVIDENCE,
+}

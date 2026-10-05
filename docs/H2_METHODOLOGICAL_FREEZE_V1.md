@@ -850,4 +850,20 @@ mudou.
             -> CAL_A_DISCRIMINATION = NONE; desempate pelo menor config_id
             -> CAL_A_SELECTED_CONFIG = 1 (volatility_window 21,
                risk_max_volatility 0.40), congelado
+            -> CAL_A_SELECTION_BASIS = PROTOCOL_TIE_FALLBACK (Amendment 5):
+               desempate, não desempenho superior
+2026-10-04  Sequential Development (Amendment 5), D01-D03 x R=3, pareado
+            SEQUENTIAL_DEV_FREEZE_COMMIT 2461952a4b1ee84a08aa63261f6a677d79cca3bb
+            evidência docs/evidence/sequential_dev/run_20261004T235634Z/
+            9/9 runs; 127 sessões de decisão 2024-03-01..2024-08-29,
+            liquidação 2024-08-30; 0 falhas finais; 9 erros transitórios
+            recuperados por retry; pareamento técnico 381/381; CAL-B: 0 sessões
+            drawdown canônico máximo 0.080 < 0.15: nenhum limite da grade
+            alcançado; trajetórias idênticas nas três configurações em cada
+            repetição (Risk/Portfolio 100% reaproveitados por identidade)
+            Sharpe v1 por repetição 1.8445 / 2.4484 / 1.4058 (iguais em D01-D03)
+            S2 = 1.8995241002787928 nas três (exatamente iguais)
+            -> SEQUENTIAL_DEV_DISCRIMINATION = NONE
+            -> SEQUENTIAL_DEV_SELECTED_CONFIG = D01 (risk_max_drawdown 0.25),
+               basis PROTOCOL_TIE_FALLBACK, congelado
 ```

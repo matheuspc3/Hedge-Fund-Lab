@@ -905,6 +905,11 @@ chamada: `H2_SCIENTIFIC_SHARPE_DEFINITION_V1`, janela 2024-03-01..2024-08-29
 (liquidação 2024-08-30), invariante
 `no_order_execution_may_cross_phase_boundary` no runner, grade D01/D02/D03 =
 `risk_max_drawdown` 0.25/0.15/0.35, R = 3, escore S2.
+Executado no commit `2461952`: 9/9 runs pareados, 0 falhas finais, CAL-B
+intocada. O drawdown máximo (0.080) não alcançou nenhum limite da grade e os
+três S2 foram exatamente iguais → `SEQUENTIAL_DEV_DISCRIMINATION = NONE` → D01
+(`risk_max_drawdown = 0.25`) pelo `PROTOCOL_TIE_FALLBACK`, congelada. Stress,
+Validation e Final Test não foram executados.
 
 ### Hardening pré-B0 — suporte implementado
 

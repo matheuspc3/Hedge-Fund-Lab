@@ -117,3 +117,29 @@ def test_runner_aplica_a_fronteira_e_nao_ve_dado_depois_da_fase(
     assert result.evaluation.settlement_session == sessions[30]
     assert result.evaluation.data_end <= sessions[30]  # nada depois da fase chega ao motor
     assert result.equity_curve.index[-1] == sessions[30]
+
+
+def test_selecao_congelada_bate_com_a_evidencia() -> None:
+    """SEQUENTIAL_DEV_SELECTED_CONFIG é a regra do Amendment 5 aplicada à evidência."""
+    import json
+
+    root = Path(__file__).resolve().parents[2]
+    summary = json.loads((root / phases.SEQUENTIAL_DEV_EVIDENCE).read_text(encoding="utf-8"))
+    assert summary["complete"] and summary["git_commit"] == phases.SEQUENTIAL_DEV_FREEZE_COMMIT
+    assert summary["paired_technical_audit"]["same_five_technical_responses_in_all_configs"]
+    assert summary["cal_b_audit"]["cal_b_sessions_touched"] == []
+    s2 = {int(k): v for k, v in summary["S2"].items()}
+    for cid, values in summary["sharpe_by_replicate"].items():
+        assert s2[int(cid)] == sum(values) / SEQUENTIAL_DEV_REPETITIONS
+    ranking = sorted(s2, key=lambda cid: (-s2[cid], cid))
+    discrimination = "NONE" if len(set(s2.values())) == 1 else "YES"
+    selected = phases.SEQUENTIAL_DEV_SELECTED_CONFIG
+    assert selected["config_id"] == ranking[0] == summary["selected_config_id"]
+    assert selected["ranking"] == tuple(ranking)
+    assert selected["S2"] == s2[ranking[0]]
+    assert phases.SEQUENTIAL_DEV_DISCRIMINATION == discrimination
+    assert phases.SEQUENTIAL_DEV_SELECTION_BASIS == (
+        "PROTOCOL_TIE_FALLBACK" if discrimination == "NONE" else "EMPIRICAL_S2"
+    )
+    config = next(c for c in SEQUENTIAL_DEV_GRID if c["config_id"] == ranking[0])
+    assert selected["risk_max_drawdown"] == config["risk_max_drawdown"]
