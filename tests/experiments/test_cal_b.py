@@ -26,6 +26,12 @@ def test_ancoras_e_hash_integral() -> None:
     assert anchors.CAL_B_REPETITIONS == 1
 
 
+def test_cal_b_consumida_nao_reabre() -> None:
+    assert anchors.CAL_B_STATUS == "CONSUMED"
+    with pytest.raises(ValueError, match="CONSUMED"):
+        authorize_cal_b("CAL-B", CAL_B_COMMITMENT_SHA256, DATES, 1)
+
+
 def test_autorizacao_limitada_recusa_qualquer_desvio(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(anchors, "CAL_B_STATUS", "SEALED")
     auth = authorize_cal_b("CAL-B", CAL_B_COMMITMENT_SHA256, DATES, 1)
@@ -127,3 +133,17 @@ def test_regra_de_status_sem_atalho() -> None:
     one_fail = {DATES[3]: {"material_hallucination": "FAIL", "rationale_action_coherence": "PASS"}}
     assert cal_b.cal_b_status(True, [review("PASS"), review("PASS", one_fail)], DATES) == cal_b.CAL_B_REVIEW_DISAGREEMENT
     assert cal_b.cal_b_status(True, [review("PASS", one_fail)] * 2, DATES) == cal_b.CAL_B_FAIL
+
+
+def test_status_registrado_bate_com_a_evidencia() -> None:
+    import json
+    from pathlib import Path
+
+    run = Path(__file__).resolve().parents[2] / cal_b.CAL_B_EVIDENCE
+    report = json.loads((run / "automatic_gates.json").read_text(encoding="utf-8"))
+    assert {g: v["pass"] for g, v in report["gates"].items()} == dict(cal_b.CAL_B_GATE_RESULTS)
+    assert report["hold_rates"]["total_holds"] == 9 and report["hold_rates"]["decisions"] == 10
+    assert report["batch_commit"].startswith(cal_b.CAL_B_FREEZE_COMMIT)
+    assert json.loads((run / "status.json").read_text(encoding="utf-8"))["status"] == cal_b.CAL_B_FINAL_STATUS
+    assert cal_b.cal_b_status(report["automatic_pass"], [], DATES) == cal_b.CAL_B_FINAL_STATUS == cal_b.CAL_B_FAIL
+    assert not cal_b.SYSTEM_CALIBRATION_COMPLETE

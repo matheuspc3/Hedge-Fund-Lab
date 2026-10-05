@@ -192,7 +192,9 @@ CAL_A_SELECTED_CONFIG = {
 
 CAL_B_PHASE = "CAL-B"
 CAL_B_REPETITIONS = 1
-CAL_B_STATUS = "SEALED"
+#: CONSUMED desde o lote one-shot (Amendment 7): ``authorize_cal_b`` recusa
+#: reabrir o holdout nesta versão metodológica.
+CAL_B_STATUS = "CONSUMED"
 
 
 @dataclass(frozen=True)

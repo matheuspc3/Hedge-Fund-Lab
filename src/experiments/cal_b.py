@@ -192,3 +192,16 @@ def cal_b_status(automatic_pass: bool, reviews: Sequence[Mapping[str, Any]], anc
     if verdicts[0] != verdicts[1]:
         return CAL_B_REVIEW_DISAGREEMENT
     return CAL_B_PASS if all(v == "PASS" for v in verdicts[0]) else CAL_B_FAIL
+
+
+# ── Resultado da CAL-B (registrado) ──────────────────────────────
+
+#: CB-D falhou (9/10 HOLD, total_hold_rate 0.90 >= 0.90): pela regra congelada,
+#: FAIL com o holdout consumido. Sem rerodar, sem relaxar gate, sem tuning.
+CAL_B_FREEZE_COMMIT = "02ab735"
+CAL_B_EVIDENCE = "docs/evidence/cal_b/run_20261005T021523Z"
+CAL_B_GATE_RESULTS: Mapping[str, bool] = MappingProxyType(
+    {"CB-A": True, "CB-S": True, "CB-C": True, "CB-R": True, "CB-D": False}
+)
+CAL_B_FINAL_STATUS = CAL_B_FAIL
+SYSTEM_CALIBRATION_COMPLETE = False

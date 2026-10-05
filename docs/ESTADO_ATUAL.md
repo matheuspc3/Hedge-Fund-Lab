@@ -933,6 +933,11 @@ qualquer chamada: sanity check one-shot, sem performance e sem tuning; as 10
 execução em t+1; autorização limitada (fase, hash, datas, uma repetição) com
 `CAL_B_AUTHORIZED` global ainda False; gates CB-A/S/C/R/D, revisão humana
 independente dos dois autores e regra de status congelada.
+Executada (`33785f9`): 10/10 âncoras seladas, CB-A/S/C/R PASS, **CB-D FAIL**
+(9/10 HOLD, `total_hold_rate` 0.90) → `CAL_B_FAIL — HOLDOUT CONSUMED`,
+`CAL_B_STATUS = CONSUMED`, `SYSTEM_CALIBRATION_COMPLETE = False`. Nenhuma
+métrica financeira calculada; nada rerodado ou ajustado; uma nova versão
+metodológica, se houver, é decisão fora desta fase.
 
 ### Hardening pré-B0 — suporte implementado
 

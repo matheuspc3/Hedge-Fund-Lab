@@ -1320,4 +1320,20 @@ mudou.
             -> STRESS PROBING COMPLETE — READY FOR CAL-B PROTOCOL
                (integridade/contratos; não é aprovação econômica);
                nenhum parâmetro alterado; CAL-B não executada
+2026-10-04  CAL-B one-shot (Amendment 7), 10 âncoras x R=1, outcome-blind
+            CAL_B_FREEZE_COMMIT 02ab735 (freeze + autorização limitada)
+            evidência docs/evidence/cal_b/run_20261005T021523Z/
+            selo bruto commitado antes do pacote (33785f9); selos conferidos
+            10/10 seladas na ordem comprometida; 51 chamadas lógicas, 51 HTTP
+            200, 0 retry, 0 recuperação; nenhum preço t+1 lido
+            CB-A PASS · CB-S PASS · CB-C PASS · CB-R PASS
+            CB-D FAIL: 9/10 HOLD (8 TECH_EXPLICIT_HOLD + 1
+                 RISK_VETO_VOLATILITY), total_hold_rate 0.90 >= 0.90
+            distribuição: técnico MANTER 8 · COMPRA 1 · VENDA 1; causas
+            TECH_EXPLICIT_HOLD 8 · RISK_VETO_VOLATILITY 1 · ACTION_SELL 1
+            (VENDA com carteira zerada: alvo 0, sem exposição)
+            pré-filtro léxico: 0 marcações; revisão humana não altera o status
+            -> CAL_B_FAIL — HOLDOUT CONSUMED; CAL_B_STATUS = CONSUMED;
+               SYSTEM_CALIBRATION_COMPLETE = False; nenhum rerun, nenhum gate
+               relaxado, nenhum parâmetro ou prompt alterado
 ```
