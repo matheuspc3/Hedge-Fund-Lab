@@ -140,7 +140,7 @@ def select() -> None:
         "inputs": "market data only (adjusted close/open inside each eligible stratum); no LLM response, "
                   "no treatment result; CAL-B strata never read for any metric",
         "snapshot": {"snapshot_id": snapshot.snapshot_id, "identity_digest": snapshot.identity_digest,
-                     "files": list(snapshot.files), "source": json.loads(snapshot.manifest_json)["source"],
+                     "files": [dict(f) for f in snapshot.files], "source": json.loads(snapshot.manifest_json)["source"],
                      "price_representation": PRICE_REPRESENTATION},
         "eligible_strata": [s.stratum_id for s in stress.STRESS_ELIGIBLE_STRATA],
         "excluded_cal_b_strata": list(CAL_B_STRATA),
@@ -189,8 +189,8 @@ def committed_windows() -> list[dict[str, Any]]:
                for w in selection["windows"]]
     if not stress.STRESS_SELECTED_WINDOWS or windows != [dict(w) for w in stress.STRESS_SELECTED_WINDOWS]:
         sys.exit("Stress windows are not committed or differ from selection.json")
-    if selection["git_commit"] != stress.STRESS_FREEZE_COMMIT:
-        sys.exit("selection.json was not computed on the Stress freeze commit")
+    if selection["git_commit"] != stress.STRESS_SELECTION_COMMIT:
+        sys.exit("selection.json was not computed on the committed selection commit")
     return windows
 
 

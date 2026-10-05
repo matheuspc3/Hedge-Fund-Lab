@@ -118,6 +118,8 @@ STRESS_GATES: Mapping[str, str] = MappingProxyType({
 #: ``docs/evidence/stress/selection.json`` calculado no commit do freeze. Vazio,
 #: ``scripts/run_stress.py run`` recusa qualquer chamada ao provedor.
 STRESS_FREEZE_COMMIT: str | None = None
+#: Commit em que select calculou selection.json (filho do freeze).
+STRESS_SELECTION_COMMIT: str | None = None
 STRESS_SELECTED_WINDOWS: tuple[Mapping[str, Any], ...] = ()
 
 
