@@ -1107,4 +1107,29 @@ mudou.
             estrato seguinte é CAL-B em S1, S2 e S3; nenhuma ordem pode entrar
             probes determinísticos de risco: 19/19 PASS
             -> STRESS_SELECTED_WINDOWS congeladas
+2026-10-04  Stress Probing (Amendment 6), S1-S4 x R=3, live independente
+            commit de execução 9f06b09 (janelas comprometidas)
+            evidência docs/evidence/stress/run_20261005T011248Z/
+            12/12 trajetórias; 3133 chamadas live, 0 do banco; 2
+            ConnectionResetError recuperados por retry; CAL-B: 0 sessões
+            S-A 0 falhas finais          PASS
+            S-T 0 truncamentos           PASS
+            S-C 0 violações causais/fronteira (inclui 0 divergência entre
+                métricas recalculadas e o prompt do LLM de risco)  PASS
+            S-R 0 violações do contrato duro  PASS
+            regra de volatilidade EXERCISED: 94 COMPRA com vol > 0.40
+              (S1 58, S2 27, S4 9), todas decididas pela regra dura antes do
+              LLM de risco (85 RISK_VETO_VOLATILITY, 9 BUY_AT_TARGET_NOOP)
+            regra de drawdown NOT_EXERCISED: drawdown canônico máximo 0.179
+              (S1, 2020) < 0.25 -> HISTORICAL_STRESS_DRAWDOWN_RULE_NOT_EXERCISED;
+              o contrato do limiar fica coberto só pelos probes determinísticos
+            financeiro (DESCRIPTIVE ONLY, sem autoridade):
+              S1 Sharpe -2.596 nas 3 (retorno -13.9%, MDD 17.9%; trajetórias
+                 idênticas)
+              S2 Sharpe 2.414 / 3.366 / 3.131 (retorno +11.1% / +16.9% / +14.0%)
+              S3 Sharpe -0.381 / -0.571 / -0.571 (retorno -1.3% / -1.8% / -1.8%)
+              S4 Sharpe 3.481 nas 3 (retorno +24.8%; trajetórias idênticas)
+            -> STRESS PROBING COMPLETE — READY FOR CAL-B PROTOCOL
+               (integridade/contratos; não é aprovação econômica);
+               nenhum parâmetro alterado; CAL-B não executada
 ```

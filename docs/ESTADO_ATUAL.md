@@ -918,6 +918,14 @@ janelas de um estrato completo cada, escolhidas por métricas só de mercado
 estratos não-CAL-B, R = 3, fronteira de janela no runner (`boundaries`),
 gates só de integridade (S-A, S-T, S-C, S-R) e probes determinísticos do
 contrato de risco. Nada financeiro tem autoridade de seleção.
+Janelas comprometidas (`9f06b09`): S1 estrato 11 (2020), S2 estrato 2 (2018),
+S3 estrato 29 (2023), S4 estrato 4 (2018). Executado: 12/12 trajetórias, 0
+falhas finais, 0 truncamentos, 0 violações causais/de fronteira, 0 violações
+do contrato duro de risco → `STRESS PROBING COMPLETE — READY FOR CAL-B
+PROTOCOL`. Regra de volatilidade exercitada (94 COMPRA vetadas antes do LLM);
+regra de drawdown `NOT_EXERCISED` (drawdown máximo 0.179), limitação de
+cobertura empírica. Nenhum parâmetro mudou; CAL-B, Validation e Final Test
+não foram executados.
 
 ### Hardening pré-B0 — suporte implementado
 

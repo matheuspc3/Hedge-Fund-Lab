@@ -190,3 +190,21 @@ def test_metricas_de_selecao_reproduziveis_do_snapshot() -> None:
     for w in stress.STRESS_SELECTED_WINDOWS:  # penúltima sessão do estrato = última decisão
         inside = frame.loc[w["start"]: w["end"]].index
         assert str(inside[-2].date()) == w["last_decision"]
+
+
+def test_status_registrado_bate_com_a_evidencia() -> None:
+    import json
+
+    from src.experiments import anchors
+
+    summary = json.loads((ROOT / stress.STRESS_EVIDENCE).read_text(encoding="utf-8"))
+    assert summary["complete"] and summary["failure"] is None
+    assert summary["git_commit"] == stress.STRESS_RUN_COMMIT
+    assert summary["frozen_params"] == dict(stress.STRESS_FROZEN_PARAMS)
+    assert summary["windows"] == [dict(w) for w in stress.STRESS_SELECTED_WINDOWS]
+    assert len(summary["trajectories"]) == stress.STRESS_WINDOW_COUNT * stress.STRESS_REPETITIONS
+    assert {k: g["pass"] for k, g in summary["gates"].items()} == dict(stress.STRESS_GATE_RESULTS)
+    assert summary["coverage"]["drawdown_rule"] == stress.STRESS_DRAWDOWN_RULE_COVERAGE
+    assert summary["coverage"]["volatility_rule"] == stress.STRESS_VOLATILITY_RULE_COVERAGE
+    assert summary["status"] == stress.STRESS_STATUS
+    assert summary["cal_b_authorized"] is False and anchors.CAL_B_AUTHORIZED is False

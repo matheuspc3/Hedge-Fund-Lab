@@ -269,3 +269,16 @@ def risk_contract_probes() -> list[dict[str, Any]]:
             "pass": ok,
         })
     return rows
+
+
+# ── Resultado do Stress Probing (registrado) ─────────────────────
+
+#: Só integridade/contrato. Nada financeiro foi usado; nenhum parâmetro mudou.
+STRESS_EVIDENCE = "docs/evidence/stress/run_20261005T011248Z/summary.json"
+STRESS_RUN_COMMIT = "9f06b09966c7b499c7626e07130fae46ccc1f75c"
+STRESS_GATE_RESULTS: Mapping[str, bool] = MappingProxyType(
+    {"S-A": True, "S-T": True, "S-C": True, "S-R": True}
+)
+STRESS_DRAWDOWN_RULE_COVERAGE = "NOT_EXERCISED"
+STRESS_VOLATILITY_RULE_COVERAGE = "EXERCISED"
+STRESS_STATUS = "STRESS PROBING COMPLETE — READY FOR CAL-B PROTOCOL"
