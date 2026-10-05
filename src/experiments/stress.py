@@ -117,10 +117,21 @@ STRESS_GATES: Mapping[str, str] = MappingProxyType({
 #: Preenchidos SÓ pelo commit de compromisso, a partir de
 #: ``docs/evidence/stress/selection.json`` calculado no commit do freeze. Vazio,
 #: ``scripts/run_stress.py run`` recusa qualquer chamada ao provedor.
-STRESS_FREEZE_COMMIT: str | None = None
-#: Commit em que select calculou selection.json (filho do freeze).
-STRESS_SELECTION_COMMIT: str | None = None
-STRESS_SELECTED_WINDOWS: tuple[Mapping[str, Any], ...] = ()
+STRESS_FREEZE_COMMIT: str | None = "6a64c34e23509ea080ba761421a6b0b91476b856"
+#: Commit em que ``select`` calculou ``selection.json`` (filho do freeze; só
+#: corrige a serialização da proveniência do snapshot).
+STRESS_SELECTION_COMMIT: str | None = "2b4f578439091636bd7b753c8ef4356b39fe6001"
+STRESS_SELECTION_EVIDENCE = "docs/evidence/stress/selection.json"
+STRESS_SELECTED_WINDOWS: tuple[Mapping[str, Any], ...] = (
+    MappingProxyType({"stress_id": "S1", "category": "MAX_DRAWDOWN", "stratum_id": 11,
+                      "start": "2020-02-07", "last_decision": "2020-04-22", "end": "2020-04-23"}),
+    MappingProxyType({"stress_id": "S2", "category": "MAX_REALIZED_VOLATILITY", "stratum_id": 2,
+                      "start": "2018-03-29", "last_decision": "2018-06-11", "end": "2018-06-12"}),
+    MappingProxyType({"stress_id": "S3", "category": "WORST_DAILY_RETURN", "stratum_id": 29,
+                      "start": "2023-10-02", "last_decision": "2023-12-12", "end": "2023-12-13"}),
+    MappingProxyType({"stress_id": "S4", "category": "MAX_ABS_OVERNIGHT_GAP", "stratum_id": 4,
+                      "start": "2018-08-24", "last_decision": "2018-11-06", "end": "2018-11-07"}),
+)
 
 
 # ── Seleção market-only ──────────────────────────────────────────

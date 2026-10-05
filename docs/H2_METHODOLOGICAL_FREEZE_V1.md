@@ -1084,4 +1084,27 @@ mudou.
             -> SEQUENTIAL_DEV_DISCRIMINATION = NONE
             -> SEQUENTIAL_DEV_SELECTED_CONFIG = D01 (risk_max_drawdown 0.25),
                basis PROTOCOL_TIE_FALLBACK, congelado
+2026-10-04  Stress Probing: compromisso das janelas (Amendment 6), ANTES de
+            qualquer chamada ao provedor
+            STRESS_FREEZE_COMMIT 6a64c34 (amendment); o primeiro select nele
+            falhou ao serializar a proveniência do snapshot (TypeError),
+            antes de gravar ou imprimir qualquer métrica; correção só de
+            script em 2b4f578 = STRESS_SELECTION_COMMIT, onde select rodou
+            evidência docs/evidence/stress/selection.json, risk_probes.json
+            só mercado, só barras dentro dos 20 estratos não-CAL-B
+            ranking (top 3)  M1 drawdown   11 0.630 · 2 0.442 · 22 0.191
+                             M2 vol        11 1.307 · 2 0.798 · 4 0.517
+                             M3 pior ret.  11 -0.297 · 2 -0.149 · 29 -0.066
+                             M4 gap        11 0.220 · 2 0.138 · 4 0.124
+            S1 MAX_DRAWDOWN            estrato 11  2020-02-07..2020-04-23
+                                       (decisão até 04-22)  0.6304418642835597
+            S2 MAX_REALIZED_VOLATILITY estrato 2   2018-03-29..2018-06-12
+                                       (11 já usado)        0.7984230364753621
+            S3 WORST_DAILY_RETURN      estrato 29  2023-10-02..2023-12-13
+                                       (11, 2 usados)      -0.06605042741788614
+            S4 MAX_ABS_OVERNIGHT_GAP   estrato 4   2018-08-24..2018-11-07
+                                       (11, 2 usados)       0.12437432848274144
+            estrato seguinte é CAL-B em S1, S2 e S3; nenhuma ordem pode entrar
+            probes determinísticos de risco: 19/19 PASS
+            -> STRESS_SELECTED_WINDOWS congeladas
 ```

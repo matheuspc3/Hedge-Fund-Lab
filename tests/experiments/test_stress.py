@@ -146,3 +146,47 @@ def test_runner_recusa_ordem_que_atravessa_a_janela_de_stress(
     assert result.evaluation.data_end == sessions[30]  # nada depois da janela chega ao motor
     assert result.equity_curve.index[-1] == sessions[30]
     assert all(pd.Timestamp(t.date) <= sessions[30] for t in result.trades)
+
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+def test_janelas_comprometidas_saem_da_regra_aplicada_a_evidencia() -> None:
+    import json
+
+    selection = json.loads((ROOT / stress.STRESS_SELECTION_EVIDENCE).read_text(encoding="utf-8"))
+    assert selection["git_commit"] == stress.STRESS_SELECTION_COMMIT
+    metrics = {int(k): v for k, v in selection["metrics_by_stratum"].items()}
+    assert sorted(metrics) == [s.stratum_id for s in stress.STRESS_ELIGIBLE_STRATA]
+    ranked = stress.rankings(metrics)
+    assert ranked == selection["rankings"]
+    for category, key, _ in stress.STRESS_CATEGORIES:
+        assert stress.ranking_digest(ranked[category], metrics, key) == selection["ranking_sha256"][category]
+    chosen = stress.select_stress_windows(ranked)
+    windows = [dict(w) for w in stress.STRESS_SELECTED_WINDOWS]
+    assert [(w["category"], w["stratum_id"]) for w in windows] == chosen
+    by_id = {s.stratum_id: s for s in STRATA}
+    for w in windows:
+        s = by_id[w["stratum_id"]]
+        assert (w["start"], w["end"]) == (s.first, s.last) and s.stratum_id not in CAL_B_STRATA
+    assert windows == [{k: w[k] for k in windows[0]} for w in selection["windows"]]
+
+
+SNAPSHOT_DIR = ROOT / "data" / "snapshots" / stress.STRESS_SNAPSHOT_ID
+
+
+@pytest.mark.skipif(not SNAPSHOT_DIR.exists(), reason="snapshot is local (git-ignored)")
+def test_metricas_de_selecao_reproduziveis_do_snapshot() -> None:
+    import json
+
+    from src.pipeline.snapshot import load_dataset_snapshot, verify_snapshot_integrity
+
+    snapshot = load_dataset_snapshot(SNAPSHOT_DIR)
+    verify_snapshot_integrity(snapshot)
+    frame = load_snapshot_frames(snapshot, (stress.STRESS_TICKER,))[stress.STRESS_TICKER]
+    selection = json.loads((ROOT / stress.STRESS_SELECTION_EVIDENCE).read_text(encoding="utf-8"))
+    for s in stress.STRESS_ELIGIBLE_STRATA:
+        assert stress.market_stress_metrics(stress.stratum_frame(frame, s)) == selection["metrics_by_stratum"][str(s.stratum_id)]
+    for w in stress.STRESS_SELECTED_WINDOWS:  # penúltima sessão do estrato = última decisão
+        inside = frame.loc[w["start"]: w["end"]].index
+        assert str(inside[-2].date()) == w["last_decision"]
