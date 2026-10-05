@@ -39,10 +39,16 @@ PHASES: tuple[PhaseWindow, ...] = (
 )
 
 
-def phase_of(decision_start: Any, decision_end: Any) -> PhaseWindow | None:
-    """A fase que contém a janela; recusa janela que atravessa uma fronteira."""
+def phase_of(
+    decision_start: Any, decision_end: Any, extra: tuple[PhaseWindow, ...] = ()
+) -> PhaseWindow | None:
+    """A fase que contém a janela; recusa janela que atravessa uma fronteira.
+
+    ``extra`` acrescenta fronteiras declaradas pelo run (ex.: uma janela de
+    Stress), com a mesma regra das fases globais.
+    """
     start, end = pd.Timestamp(decision_start), pd.Timestamp(decision_end)
-    for phase in PHASES:
+    for phase in (*PHASES, *extra):
         low, high = pd.Timestamp(phase.start), pd.Timestamp(phase.end)
         inside = (low <= start <= high, low <= end <= high)
         if all(inside):

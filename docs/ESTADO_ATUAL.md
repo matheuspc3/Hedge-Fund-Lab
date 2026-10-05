@@ -911,6 +911,14 @@ três S2 foram exatamente iguais → `SEQUENTIAL_DEV_DISCRIMINATION = NONE` → 
 (`risk_max_drawdown = 0.25`) pelo `PROTOCOL_TIE_FALLBACK`, congelada. Stress,
 Validation e Final Test não foram executados.
 
+**Stress Probing (Amendment 6, `STRESS_PROBING_FREEZE_V1`).** Congelado antes
+de qualquer seleção ou chamada: autoridade zero, H2 inteiro congelado, 4
+janelas de um estrato completo cada, escolhidas por métricas só de mercado
+(M1 drawdown, M2 volatilidade, M3 pior retorno, M4 gap overnight) entre os 20
+estratos não-CAL-B, R = 3, fronteira de janela no runner (`boundaries`),
+gates só de integridade (S-A, S-T, S-C, S-R) e probes determinísticos do
+contrato de risco. Nada financeiro tem autoridade de seleção.
+
 ### Hardening pré-B0 — suporte implementado
 
 Implementado como engenharia, sem rodar CAL-A, CAL-B, Stress científico,

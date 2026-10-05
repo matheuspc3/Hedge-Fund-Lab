@@ -39,7 +39,7 @@ from src.experiments.participants import (
     preflight_participant,
     required_tickers,
 )
-from src.experiments.phases import phase_of, require_execution_within_phase
+from src.experiments.phases import PhaseWindow, phase_of, require_execution_within_phase
 from src.experiments.spec import ExperimentSpec
 from src.pipeline.snapshot import (
     PRICE_REPRESENTATION,
@@ -196,6 +196,7 @@ class ExperimentRunner:
         runs_dir: str | Path | None = None,
         repository_dir: str | Path | None = None,
         allow_dirty: bool = False,
+        boundaries: tuple[PhaseWindow, ...] = (),
     ) -> None:
         # O contexto é congelado aqui, antes de qualquer execução: ``run()`` e
         # ``persist()`` apenas o leem. Não existe caminho que declare a fase
@@ -214,6 +215,9 @@ class ExperimentRunner:
         # Política operacional do runner, não parâmetro experimental: liberar
         # working tree suja não altera dados, custos, métricas nem spec_hash.
         self.allow_dirty = allow_dirty
+        # Fronteiras declaradas pelo run (ex.: janela de Stress), com a mesma
+        # regra de ``PHASES``: decisão e liquidação dentro, dados cortados no fim.
+        self.boundaries = tuple(boundaries)
 
     # ── Execução ─────────────────────────────────────────────────
 
@@ -239,7 +243,9 @@ class ExperimentRunner:
             # CAL-B é holdout one-shot: nenhuma janela declarada a toca antes da
             # fase autorizada (``anchors.CAL_B_AUTHORIZED``).
             require_cal_b_locked(evaluation.decision_start, evaluation.decision_end)
-            phase = phase_of(evaluation.decision_start, evaluation.decision_end)
+            phase = phase_of(
+                evaluation.decision_start, evaluation.decision_end, self.boundaries
+            )
             if phase is not None:
                 # Nenhuma ordem executa na fase seguinte, e nenhum preço
                 # posterior ao fim da fase chega ao motor.

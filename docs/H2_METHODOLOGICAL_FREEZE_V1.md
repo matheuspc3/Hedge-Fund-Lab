@@ -795,6 +795,224 @@ melhor.
 **CAL-B.** `CAL_B_AUTHORIZED = False` é exigido antes e depois. O banco
 recusa qualquer sessão de CAL-B.
 
+#### PROTOCOL AMENDMENT 6 — STRESS_PROBING_FREEZE_V1
+
+```text
+DATA              2026-10-04
+TIPO              registro pré-execução; decidido pelos autores ANTES de
+                  calcular qualquer métrica de mercado dos estratos, de
+                  selecionar qualquer janela e de qualquer chamada ao provedor
+COMMIT            STRESS_FREEZE_COMMIT = o commit que introduz este amendment
+OBSERVADO ANTES   Hardening/B0, CAL-A e Sequential Development (já registrados
+                  abaixo); nenhuma métrica de Stress, nenhuma resposta do LLM
+                  em janela de Stress
+NÃO MUDA          modelo, thinking, temperature, prompts, N, limiar, risco,
+                  janela de volatilidade, decision_frequency, custos, retry,
+                  fonte de preço, regra de execução, Sharpe v1
+```
+
+Código: `src/experiments/stress.py` (constantes, métricas, seleção, probes),
+`scripts/run_stress.py` (`select` e `run`) e `ExperimentRunner(boundaries=...)`.
+
+**Autoridade: nenhuma.** O Stress tenta falsificar o sistema congelado,
+exercita mercado adverso, confere contratos causais e de risco e mede robustez
+operacional e comportamental antes de CAL-B/Validation. Não escolhe
+`risk_max_drawdown` nem qualquer outro parâmetro, não reabre CAL-A, não altera
+modelo, thinking, temperature, prompt ou limiar. Todo resultado financeiro é
+`DIAGNOSTIC / DEVELOPMENT EVIDENCE ONLY` e nunca seleciona configuração.
+
+**Divergência registrada em relação ao protocolo (seções 5.5 e 5.12).** O
+protocolo previa "≤ 8 âncoras adicionais fora do CORE" e um Stress Probing
+durante o Diagnostic Hardening. Fica assim:
+- o Stress Probing durante o Hardening nunca rodou (o Hardening usou H, seção
+  8); esta é a única passagem de Stress e ocupa o lugar do Stress Report,
+  depois do Sequential Development e antes de CAL-B;
+- as janelas são **sequenciais** (um estrato completo cada), não âncoras
+  isoladas: mercado adverso precisa de caminho (drawdown, gaps, sequência de
+  decisões) para exercitar os contratos de risco e de execução;
+- são 4 janelas escolhidas mecanicamente **dentro** dos 20 estratos não-CAL-B.
+  CAL-A continua com 20 âncoras e já está fechada; as janelas contêm âncoras de
+  CAL-A, o que é legítimo porque o Stress pertence a development e não tem
+  autoridade;
+- `STRESS ∩ CAL-B = ∅` passa a valer no nível do **estrato inteiro**, mais
+  forte que no nível da âncora.
+
+**Configuração H2 congelada** (`STRESS_FROZEN_PARAMS`, travada por teste):
+
+```text
+runtime        gemini / gemini-3.8-flash, Gemini API nativa
+               thinking_level low · temperature 1.0 · max_output_tokens 8192
+               seed nenhuma (nunca transmitida)
+SC             analyst_count 5 · consensus_threshold 0.6 · require_all_votes true
+execução       decision_frequency 1 · strict_inputs true ·
+               portfolio_inversion_policy fail
+posição        long_target_weight 1.0
+risco          volatility_window 21 · risk_max_volatility 0.40 ·
+               risk_max_drawdown 0.25 · risk_max_concentration 1.0
+operacional    retry_attempts 6 · retry_base_delay 2.0 (inalterados)
+custos         CostSpec congelado (spread 5 bps, tax 0.00032) · R$100.000 ·
+               fractional_notional
+```
+
+**Proveniência das calibrações.**
+
+```text
+CAL_A_DISCRIMINATION = NONE             CAL_A_SELECTION_BASIS = PROTOCOL_TIE_FALLBACK
+SEQUENTIAL_DEV_DISCRIMINATION = NONE    SEQUENTIAL_DEV_SELECTION_BASIS = PROTOCOL_TIE_FALLBACK
+```
+
+`21 / 0.40` e `0.25` são parâmetros congelados por regra protocolar de
+desempate. O protocolo não afirma que tiveram desempenho superior.
+
+**Domínio e universo.**
+- Domínio: 2018-01-12..2024-02-28, snapshot corrigido
+  `20261004T201258177516Z-b4cf39fc…` (o do Amendment 1). Fora: janela do
+  Sequential Development, CAL-B, Validation e Final Test.
+- Universo de seleção: os 20 estratos não-CAL-B do Amendment 2, com as
+  fronteiras exatas daquela tabela (`STRESS_ELIGIBLE_STRATA`).
+- Estratos CAL-B (3, 6, …, 30) ficam fora: nenhuma métrica de seleção é
+  calculada sobre eles, e nenhuma sessão deles é decisão, liquidação ou
+  performance do Stress. Barras anteriores podem aparecer só como warm-up
+  causal de indicador. `CAL_B_AUTHORIZED = False` durante toda a tarefa.
+- As 4 sessões de H_real caem todas em estratos CAL-B; a seleção recusa estrato
+  cujo conjunto de sessões difira do domínio congelado.
+
+**Métricas market-only** (`market_stress_metrics`), só sobre as barras de
+**dentro** de cada estrato elegível, preço científico ajustado:
+
+```text
+M1 MAX_DRAWDOWN             max(1 - close / cummax(close)), magnitude >= 0
+M2 MAX_REALIZED_VOLATILITY  std(r, ddof=1) * sqrt(252), r = retorno simples
+                            close-to-close entre sessões do estrato
+M3 WORST_DAILY_RETURN       min(r)  (mais negativo = mais adverso)
+M4 MAX_ABS_OVERNIGHT_GAP    max |open_t / close_{t-1} - 1|, t da 2ª sessão em
+                            diante (testa close(t) -> open(t+1))
+```
+
+**Seleção mecânica.** Exatamente 4 janelas, uma por categoria, na ordem fixa
+M1, M2, M3, M4. Em cada categoria: ordenar pelo escore adverso (M1, M2 e M4
+decrescente; M3 crescente); empate → menor `stratum_id`; escolher o primeiro
+estrato ainda não escolhido. Resultado: 4 estratos distintos, sem substituição
+manual. Janela é sempre um estrato completo; nenhuma janela manual em torno de
+evento, nenhum ajuste de início/fim.
+
+**Compromisso** (commit separado, antes da primeira chamada):
+`docs/evidence/stress/selection.json` (métricas dos 20 estratos, rankings
+completos, SHA-256 de cada ranking, snapshot, proveniência de preço, regra de
+desempate e as 4 janelas), `docs/evidence/stress/risk_probes.json` e
+`STRESS_SELECTED_WINDOWS` / `STRESS_FREEZE_COMMIT` em `stress.py`. O `run`
+recusa executar se as constantes estiverem vazias, divergirem do arquivo ou se
+o arquivo não tiver sido calculado neste commit de freeze. Depois desse commit
+as quatro janelas ficam congeladas, mesmo que pareçam pouco estressantes.
+
+**Janela e fronteira.**
+
+```text
+decisões     primeira .. penúltima sessão do estrato
+liquidação   última sessão do estrato: executa o pendente em open, marca em close
+no_order_execution_may_cross_stress_window_boundary
+             a janela é passada ao runner como fronteira (boundaries); a regra
+             de fase recusa, ANTES de construir o participante, janela cuja
+             liquidação caia fora, e corta os dados de mercado na última
+             sessão: nenhum preço posterior chega ao motor, à equity, ao
+             Sharpe, ao MDD ou à liquidação
+             nenhuma ordem pode entrar no estrato seguinte (CAL-B ou não)
+```
+
+O cliente do provedor recusa qualquer sessão fora das sessões de decisão da
+janela corrente e qualquer sessão de estrato CAL-B.
+
+**Repetições e estado inicial.** `STRESS_REPETITIONS = 3`. Ordem:
+S1 r1..r3, S2 r1..r3, S3, S4 — 12 trajetórias, inferência live independente,
+sem seed. R não aumenta depois de observar resultado. Cada trajetória começa
+com R$100.000 em caixa, posição zero, pico = capital inicial, histórico causal
+só para features, mesmos custos e mesmo quantity mode. Nenhuma posição passa de
+uma janela ou repetição para outra.
+
+**Sharpe.** `H2_SCIENTIFIC_SHARPE_DEFINITION_V1`, sem mudança; no Stress é
+descritivo e não tem threshold.
+
+**Gates (só integridade/contrato).** Não existe threshold de retorno, Sharpe,
+Sortino, MDD ou turnover; perder dinheiro é evidência válida.
+
+```text
+S-A  falhas técnicas/provedor finais = 0 (retry recuperado não conta) e
+     12/12 trajetórias completas
+S-T  truncamentos MAX_TOKENS / length = 0
+S-C  0 ordem fora da janela, 0 sessão de decisão diferente da janela, curva de
+     first a last, liquidação e data_end = última sessão do estrato, 0 sessão de
+     trace fora das decisões, 0 sessão em estrato CAL-B, 0 dado >= 2024-03-01
+     (Validation/Final), 0 divergência entre drawdown/volatilidade recalculados
+     e os enviados ao LLM de risco
+S-R  toda COMPRA com volatilidade canônica > 0.40 termina em regra dura
+     VOLATILITY, e toda COMPRA com drawdown canônico > 0.25 (volatilidade
+     <= 0.40) em regra dura DRAWDOWN, sem chamada ao LLM de risco naquela
+     sessão; e nenhuma regra dura dispara sem a violação correspondente
+```
+
+Drawdown canônico em close(t) = `(pico − equity) / pico`, pico interno ao run
+começando no capital inicial; volatilidade = mesmo caminho do participante
+sobre o histórico até t; ambos quantizados a 6 casas (o valor que a regra vê).
+
+**Cobertura.**
+- Regra de volatilidade `EXERCISED` se ≥ 1 COMPRA nas 12 trajetórias tiver
+  volatilidade canônica > 0.40; senão `NOT_EXERCISED` e
+  `HISTORICAL_STRESS_VOLATILITY_RULE_NOT_EXERCISED`.
+- Regra de drawdown `EXERCISED` se ≥ 1 COMPRA tiver drawdown canônico > 0.25
+  com volatilidade ≤ 0.40 (ramo em que a regra de drawdown decide; a de
+  volatilidade vem antes). COMPRA com as duas violações é contada à parte,
+  como mascarada. Senão `NOT_EXERCISED` e
+  `HISTORICAL_STRESS_DRAWDOWN_RULE_NOT_EXERCISED`.
+- COMPRA já no alvo continua passando pela regra dura (fonte HARD_RULE) e é
+  classificada `BUY_AT_TARGET_NOOP` (sem ordem).
+
+Regra não exercitada é limitação de cobertura, não aprovação implícita, e não
+autoriza criar janela nova depois do resultado.
+
+**Probes determinísticos** (`risk_contract_probes`, sem performance e sem
+selecionar nada). Estado válido, sinal COMPRA, demais métricas abaixo dos
+limites, LLM de risco contável:
+
+```text
+drawdown 0.249999 / 0.250000 -> sem veto de drawdown (LLM consultado)
+drawdown 0.250001            -> veto duro DRAWDOWN, LLM não chamado
+volatilidade 0.399999 / 0.400000 -> sem veto (LLM consultado)
+volatilidade 0.400001            -> veto duro VOLATILITY, LLM não chamado
+quantização  0.2499996, 0.2500004 -> canônico 0.250000 -> sem veto
+             0.2500006            -> canônico 0.250001 -> veto
+             (idem 0.3999996 / 0.4000004 / 0.4000006 na volatilidade)
+precedência  COMPRA com as duas violações -> VOLATILITY
+VENDA/MANTER com drawdown > 0.25 e/ou volatilidade > 0.40
+             -> AUTO_APPROVE, sem LLM de risco (não aumentam exposição)
+```
+
+**Diagnósticos por trajetória** (DESCRIPTIVE ONLY): Sharpe científico, retorno
+líquido terminal, MDD, Sortino, turnover, trades, tempo em mercado, drawdown e
+volatilidade máximos vistos nas decisões, holds técnicos explícitos,
+no-majority, vetos duros de volatilidade e drawdown, vetos do LLM de risco,
+PORTFOLIO_HOLD, BUY_AT_TARGET_NOOP, retries, tokens e latência. Por janela,
+sensibilidade estocástica entre as 3 repetições: sessões com consenso técnico
+diferente, sessões com causa final diferente, primeira divergência de
+exposição, ação final por repetição e faixas de trades, Sharpe, retorno e MDD.
+Nenhum threshold novo.
+
+**Falhas.** Bug objetivo, corrupção de artefato, violação de fronteira ou run
+incompleto: parar, sem imputar. Correção técnica exige amendment, commit e a
+repetição das **12** trajetórias (nenhum checkpoint é predeclarado). As janelas
+não mudam. Erros transitórios (429/5xx/reset/timeout) recuperados pelo retry são
+registrados e a execução continua, sem trocar modelo nem política de retry;
+falha final é S-A FAIL.
+
+**Sem autoridade de parâmetro.** Depois do Stress é proibido alterar
+`risk_max_drawdown`, `risk_max_volatility`, `volatility_window`, N, limiar,
+thinking, temperature, modelo, prompts, `decision_frequency` ou custos.
+Comportamento economicamente ruim é registrado como resultado/limitação; só bug
+objetivo gera amendment técnico.
+
+**Status.** Se S-A, S-T, S-C e S-R passarem e `CAL_B_AUTHORIZED = False`:
+`STRESS PROBING COMPLETE — READY FOR CAL-B PROTOCOL`. Isso não significa que a
+estratégia passou economicamente. CAL-B não é executada nesta tarefa.
+
 ### Registro de execução (append-only)
 
 Resultados das regras predeclaradas acima. Não são amendments: nenhuma regra
