@@ -1510,4 +1510,21 @@ mudou.
             S1 = 0.00071857 nas seis configurações (exatamente iguais)
             -> CAL_A_V2_DISCRIMINATION = NONE -> config 1 (volatility_window 21,
                risk_max_volatility 0.40), basis PROTOCOL_TIE_FALLBACK
+2026-10-06  Sequential Development v2: mesma janela, D01-D03, R = 3, S2, fronteira
+            commit b0821b4; evidência docs/evidence/sequential_dev_v2/run_20261006T023608Z/
+            9/9 runs; base 21/0.40 (CAL-A v2); pareamento técnico 381/381;
+            CAL-B (B1/B2): 0 sessões; data_end máx. 2024-08-30; 1 reset recuperado
+            drawdown canônico máx. 0.144 / 0.166 / 0.220 por repetição: a regra
+            D02 (0.15) disparou em r2 (11 vetos) e r3 (27), todos acima do limite,
+            0 ordens de compra acima do limite
+            Sharpe v1 por repetição D01 0.9587 / 0.1994 / -1.2595
+                                    D02 0.9587 / -0.4917 / -0.4635
+                                    D03 = D01
+            S2 D01 -0.0338 · D02 +0.0012 · D03 -0.0338
+            -> SEQUENTIAL_DEV_V2_DISCRIMINATION = YES -> D02 (risk_max_drawdown
+               0.15), basis EMPIRICAL_S2 (regra do Amendment 5; R = 3, development
+               evidence, sem afirmação de superioridade robusta)
+            nota: a lista "manter" da tarefa v2 citava risk_max_drawdown 0.25 como
+            parte da mudança isolada (hardening dirigido); o Amendment 8 manteve a
+            autoridade do Sequential Development, cuja regra seleciona 0.15
 ```

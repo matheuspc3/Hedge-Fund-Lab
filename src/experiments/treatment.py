@@ -56,7 +56,16 @@ CAL_A_V2_SELECTED_CONFIG: Mapping[str, Any] | None = MappingProxyType({
     "discrimination": "NONE", "selection_basis": "PROTOCOL_TIE_FALLBACK",
     "evidence": "docs/evidence/cal_a_v2/run_20261006T022946Z/summary.json",
 })
-SEQUENTIAL_DEV_V2_SELECTED_CONFIG: Mapping[str, Any] | None = None
+#: Sequential Development v2: S2 discriminou (D02 > D01 = D03) -> D02
+#: (risk_max_drawdown 0.15), basis EMPIRICAL_S2 pela regra congelada do
+#: Amendment 5. R = 3; a diferença vem de duas repetições em que o drawdown
+#: passou de 0.15 — evidência de development, não afirmação de superioridade.
+SEQUENTIAL_DEV_V2_SELECTED_CONFIG: Mapping[str, Any] | None = MappingProxyType({
+    "config_id": 2, "name": "D02", "risk_max_drawdown": 0.15,
+    "S2": 0.001153585309757399, "ranking": (2, 1, 3),
+    "discrimination": "YES", "selection_basis": "EMPIRICAL_S2",
+    "evidence": "docs/evidence/sequential_dev_v2/run_20261006T023608Z/summary.json",
+})
 
 
 def stress_v2_params() -> dict[str, Any]:
