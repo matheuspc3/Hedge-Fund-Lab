@@ -34,3 +34,31 @@ def test_selecao_menor_digest_sem_excluidas() -> None:
     again = treatment.select_cal_b2(domain, excluded=excluded)
     assert again[0]["winner"] != rows[0]["winner"] and again[0]["candidates"] == 4
     assert again[1:] == rows[1:]  # excluir num estrato não mexe nos outros
+
+
+def test_cal_b2_comprometida_bate_com_a_regra_e_a_evidencia() -> None:
+    import json
+    from pathlib import Path
+
+    from src.experiments import anchors
+
+    root = Path(__file__).resolve().parents[2]
+    sel = json.loads((root / anchors.CAL_B2_SELECTION_EVIDENCE).read_text(encoding="utf-8"))
+    assert tuple(sel["cal_b2_anchors"]) == anchors.CAL_B2_ANCHORS
+    assert anchors.digest(anchors.CAL_B2_ANCHORS) == anchors.CAL_B2_COMMITMENT_SHA256 == sel["cal_b2_commitment_sha256"]
+    assert sel["seed"] == treatment.CAL_B2_SELECTION_SEED
+    assert not set(anchors.CAL_B2_ANCHORS) & set(anchors.CAL_B_ANCHORS)
+    for row in sel["strata"]:  # vencedor = menor digest, fora das exclusões
+        assert row["winner_digest"] == treatment.session_digest(row["stratum_id"], row["winner"])
+        assert row["winner"] not in row["excluded_sessions"]
+        s = next(x for x in anchors.STRATA if x.stratum_id == row["stratum_id"])
+        assert s.subset == "CAL-B" and s.first <= row["winner"] <= s.last
+    assert anchors.CAL_B2_STATUS == "SEALED"
+
+
+def test_runner_recusa_janela_com_ancora_cal_b2() -> None:
+    from src.experiments import anchors
+
+    for day in anchors.CAL_B2_ANCHORS:
+        with pytest.raises(ValueError, match="CAL-B"):
+            anchors.require_cal_b_locked(day, day)

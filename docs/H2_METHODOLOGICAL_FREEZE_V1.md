@@ -1475,4 +1475,16 @@ mudou.
             -> CAL_B_FAIL — HOLDOUT CONSUMED; CAL_B_STATUS = CONSUMED;
                SYSTEM_CALIBRATION_COMPLETE = False; nenhum rerun, nenhum gate
                relaxado, nenhum parâmetro ou prompt alterado
+2026-10-05  H2 v2 (Amendment 8): compromisso da CAL-B2, ANTES de qualquer chamada v2
+            seed SHA256("HEDGE-FUND-LAB|CAL-B2|" + 51d73b22...f38c0)
+            só calendário; excluídas CAL-B1, H_real (atual e pré-Amendment 1),
+            âncoras CAL-A e toda sessão de decisão em docs/evidence
+            evidência docs/evidence/cal_b2/selection.json
+            estrato 3  2018-07-19 -> 2018-08-16    estrato 18 2021-08-20 -> 2021-09-22
+            estrato 6  2019-03-07 -> 2019-04-05    estrato 21 2022-03-31 -> 2022-04-07
+            estrato 9  2019-10-15 -> 2019-10-07    estrato 24 2022-11-04 -> 2022-11-01
+            estrato 12 2020-06-01 -> 2020-07-01    estrato 27 2023-06-15 -> 2023-06-26
+            estrato 15 2021-01-13 -> 2021-01-21    estrato 30 2024-01-22 -> 2023-12-18
+            CAL_B2_COMMITMENT_SHA256 518dd9ddc132244726fc40b2939684876c6f69bf6bad67ea1f91a78fc4e9b167
+            -> CAL-B2 SELADA (runner e banco recusam as datas; não executada)
 ```

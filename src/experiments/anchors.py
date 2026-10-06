@@ -110,8 +110,14 @@ def strata_of(domain: Sequence[str]) -> tuple[Stratum, ...]:
 
 #: CAL-B2 (Amendment 8): novo holdout da v2, preenchido só pelo commit de
 #: compromisso, antes de qualquer chamada live v2. Selado como a CAL-B.
-CAL_B2_ANCHORS: tuple[str, ...] = ()
-CAL_B2_COMMITMENT_SHA256: str | None = None
+CAL_B2_ANCHORS: tuple[str, ...] = (
+    "2018-08-16", "2019-04-05", "2019-10-07", "2020-07-01", "2021-01-21",
+    "2021-09-22", "2022-04-07", "2022-11-01", "2023-06-26", "2023-12-18",
+)
+CAL_B2_COMMITMENT_SHA256: str | None = "518dd9ddc132244726fc40b2939684876c6f69bf6bad67ea1f91a78fc4e9b167"
+CAL_B2_SELECTION_EVIDENCE = "docs/evidence/cal_b2/selection.json"
+#: Selada: nenhuma execução, nenhuma autorização nesta versão até o protocolo da CAL-B2.
+CAL_B2_STATUS = "SEALED"
 
 
 def sealed_holdout_anchors() -> tuple[str, ...]:
