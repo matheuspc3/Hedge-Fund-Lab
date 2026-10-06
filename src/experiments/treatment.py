@@ -118,3 +118,9 @@ def select_cal_b2(domain: Sequence[str], excluded: set[str]) -> list[dict[str, A
     return rows
 
 
+
+
+# ── Resultado do hardening dirigido (registrado) ─────────────────
+
+H2_V2_DEFECT_EVIDENCE = "docs/evidence/h2_v2/defect_hardening_20261006T022111Z/manifest.json"
+H2_V2_DEFECT_STATUS = H2_V2_DEFECT_FIX_PASSED

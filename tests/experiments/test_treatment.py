@@ -62,3 +62,17 @@ def test_runner_recusa_janela_com_ancora_cal_b2() -> None:
     for day in anchors.CAL_B2_ANCHORS:
         with pytest.raises(ValueError, match="CAL-B"):
             anchors.require_cal_b_locked(day, day)
+
+
+def test_hardening_dirigido_registrado_bate_com_a_evidencia() -> None:
+    import json
+    from pathlib import Path
+
+    from src.agents.feature_semantics import TECHNICAL_SYSTEM_PROMPT_V2_SHA256
+
+    m = json.loads((Path(__file__).resolve().parents[2] / treatment.H2_V2_DEFECT_EVIDENCE).read_text(encoding="utf-8"))
+    assert m["status"] == treatment.H2_V2_DEFECT_STATUS == treatment.H2_V2_DEFECT_FIX_PASSED
+    assert all(g["pass"] for g in m["gates"].values())
+    assert m["technical_prompt_sha256"] == TECHNICAL_SYSTEM_PROMPT_V2_SHA256
+    assert m["participant_params"] == dict(treatment.H2_V2_DEFECT_PARAMS)
+    assert m["semantic_audit"]["technical_votes"] == 150

@@ -1487,4 +1487,14 @@ mudou.
             estrato 15 2021-01-13 -> 2021-01-21    estrato 30 2024-01-22 -> 2023-12-18
             CAL_B2_COMMITMENT_SHA256 518dd9ddc132244726fc40b2939684876c6f69bf6bad67ea1f91a78fc4e9b167
             -> CAL-B2 SELADA (runner e banco recusam as datas; não executada)
+2026-10-05  H2 v2 — hardening dirigido ao defeito (Amendment 8), CAL-B1 x R=3, N=5
+            commit a96d78c (CAL-B2 já comprometida); primeira chamada live v2
+            evidência docs/evidence/h2_v2/defect_hardening_20261006T022111Z/
+            V2-S1 contradições semânticas 0/150 votos   PASS (v1 CAL-B1: 32/50)
+            V2-S2 transições não suportadas 0/150       PASS (v1 CAL-B1: 33/50)
+            V2-A  0 falhas finais (1 HTTP 503 recuperado) PASS
+            V2-T  0 truncamentos                         PASS
+            V2-D  total_hold_rate 0.867 (26/30) < 0.90   PASS
+                  explicit hold 0.733 · vetos de risco 0.133 · flip 0.0
+            -> H2_V2 MINIMAL DEFECT FIX PASSED; segue a reexecução de development v2
 ```
