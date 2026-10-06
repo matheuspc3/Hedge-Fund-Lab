@@ -1545,6 +1545,232 @@ monetário (não há fonte de preço versionada).
 evidência bruta selada; (4) gates automáticos; (5) revisão humana; (6) status
 final. Evidência bruta nunca muda depois de selada.
 
+#### PROTOCOL AMENDMENT 10 — H2 TREATMENT VERSION 3 (contrato do Risk sem regra numérica inventada)
+
+```text
+DATA              2026-10-06
+TIPO              nova versão do tratamento, dirigida a defeito objetivo;
+                  registrada ANTES de qualquer chamada live v3 e antes da
+                  seleção da CAL-B3
+OBSERVADO ANTES   toda a evidência v1 e v2 de development, CAL-B1 consumida e
+                  a CAL-B2 consumida (lote selado, gates automáticos e pacote
+                  de auditoria); nenhum retorno t+1 da CAL-B2 foi calculado;
+                  Validation e Final Test intocados
+STATUS v2         CAL-B2 executada, os sete gates automáticos PASS, fichas
+                  humanas em branco: o status histórico continua
+                  CAL_B2_AWAITING_HUMAN_REVIEW (não é reescrito como PASS nem
+                  FAIL). A segunda revisão humana NÃO é aguardada nem pedida
+                  nesta tarefa; nenhuma ficha é preenchida, completada ou
+                  substituída
+```
+
+Código: `src/experiments/treatment.py` (`H2_TREATMENT_VERSION = 3`,
+`SCIENTIFIC_RISK_PROMPT_VERSION = 2`, governança da v2, regra da CAL-B3),
+`src/agents/risk_contract.py` (Risk prompt v2, semântica da confidence,
+checker), parâmetro `risk_prompt_version` do `LLMParticipant`.
+
+**Governança da v2.** O conteúdo observado da CAL-B2 passa a ser usado para
+corrigir o sistema. Por isso a v2 perde elegibilidade para System Freeze
+independentemente de qualquer revisão humana futura:
+
+```text
+CAL_B2_STATUS (histórico)              CAL_B2_AWAITING_HUMAN_REVIEW (preservado)
+H2_V2_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE   True
+razão                                  CAL_B2 CONSUMED AND USED AS DEVELOPMENT EVIDENCE
+```
+
+As 10 âncoras CAL-B2 são, daqui em diante, DEVELOPMENT EVIDENCE e nunca voltam
+a ser holdout.
+
+**Por quê (defeito objetivo, não performance).** Na âncora CAL-B2 2023-06-26 o
+Technical forneceu `confidence` agregada 0.462 (3/5 COMPRA) e o Risk vetou com
+"O sinal técnico apresenta uma confiança baixa de 0.462 (abaixo do limiar de
+50%)". Não existe limiar de confidence no protocolo nem configurado no Risk; o
+threshold foi criado pelo LLM e usado materialmente para justificar `VETADO`:
+`UNSUPPORTED NUMERIC DECISION RULE`. O padrão não é isolado: o mesmo checker
+(abaixo), aplicado às 158 respostas únicas do Risk LLM na evidência de
+development v1/v2 (+ CAL-B2), marca 22 dos 38 vetos — 15 com limiar de
+confidence inventado, 5 com limite de métrica inventado, 2 decididos só pela
+confidence — e 0 das 120 aprovações. A correção v3 não tem como objetivo aumentar performance, número
+de trades, fazer a CAL-B passar nem remover HOLDs: só impedir que o Risk
+invente thresholds ou regras quantitativas.
+
+**Changeset v2 → v3 (único).** O system prompt científico do Risk é trocado
+pelo Risk Prompt v2 (`risk_prompt_version = 2`, entra no `spec_hash`; o hash
+do prompt entra na identidade de cada chamada de risco). Ficam idênticos:
+Technical Prompt v2 (`technical_prompt_version = 2`, sha256 `a3dec11f…`,
+byte-idêntico), FEATURE_SEMANTICS, checker semântico, STATE NOT TRANSITION, as
+8 features e fórmulas (`LLM_FEATURE_SCHEMA_VERSION` 2), N = 5, limiar 0.6,
+require_all_votes; gemini · gemini-3.8-flash · API nativa · thinking low ·
+temperature 1.0 · max_output_tokens 8192 · sem seed transmitida;
+decision_frequency 1 · strict_inputs · portfolio_inversion_policy fail;
+long_target_weight 1.0; CostSpec, fonte científica B3, política de ajuste
+Yahoo, calendário, snapshot, quantity mode; payload, schema e regras duras do
+Risk; prompt e comportamento do Portfolio. Configuração de risco de entrada
+da v3 = a selecionada na v2: volatility_window 21 · risk_max_volatility 0.40 ·
+risk_max_drawdown 0.15 · risk_max_concentration 1.0. CAL-A v3 e Sequential
+Development v3 mantêm a autoridade de seleção que já tinham, sem grade nova.
+
+**Risk Prompt v2 (texto exato, `RISK_SYSTEM_PROMPT_V2`).**
+
+```text
+Você é o gestor de risco do Hedge-fund-lab.
+
+Avalie somente o sinal técnico e as métricas de risco explicitamente fornecidas no payload. Não use notícias, conhecimento externo, identidade do ativo, datas ou informação futura.
+
+As regras duras numéricas do sistema são aplicadas deterministicamente antes desta etapa. Se esta chamada foi alcançada, essas regras anteriores não vetaram a operação.
+
+Não invente, suponha nem aplique novos thresholds numéricos que não estejam explicitamente fornecidos no seu payload ou no seu contrato.
+
+O campo confidence do sinal técnico é metadado qualitativo. Não existe um limiar numérico de confidence configurado para aprovação ou veto. Nunca diga ou implique que uma confidence está acima ou abaixo de um threshold inexistente, e nunca aprove ou vete uma operação somente porque a confidence é baixa ou alta.
+
+Você pode considerar confidence qualitativamente em conjunto com as métricas efetivamente fornecidas, mas sem criar cortes numéricos ou regras ocultas.
+
+Você ainda pode retornar VETADO quando a combinação do sinal e das métricas fornecidas indicar risco inadequado. Nesse caso, a justificativa deve se apoiar somente nos valores e relações presentes no payload, sem inventar regras quantitativas externas.
+
+Preserve capital, não invente dados e retorne APROVADO ou VETADO com análise objetiva.
+```
+
+O Risk Prompt v1 (`risk_manager.SYSTEM_PROMPT`, sha256 `57ee8505…`) continua
+reproduzível com `risk_prompt_version = 1` (default).
+
+**`TECHNICAL_CONFIDENCE_SEMANTICS_V1`.** `confidence` ∈ [0, 1]; qualitativa;
+NÃO é probabilidade calibrada; NÃO representa probabilidade de retorno
+positivo; NÃO tem threshold de decisão; NÃO controla position sizing (o
+Portfolio científico é qualitativo e o alvo é `long_target_weight`); NÃO cria
+hard rule; NÃO pode ser base exclusiva de veto ou aprovação do Risk. Nada muda
+em como o Technical gera ou o consenso agrega `confidence`.
+
+**Checker do Risk** (`audit_risk_rationale`, determinístico, só o rationale
+VISÍVEL do Risk contra o payload que o Risk recebeu; nunca o raciocínio
+oculto; nunca reescreve decisão).
+
+```text
+UNSUPPORTED_CONFIDENCE_THRESHOLD  (V3-R1) confidence/convicção associada a
+          limiar, limite, mínimo, threshold, "nível/patamar/margem mínima",
+          "convicção mínima", "não atinge o mínimo", ou comparada (abaixo,
+          acima, inferior, menor, <, >…) a número que não está no payload.
+          Não existe limiar de confidence, nem acima nem abaixo
+UNSUPPORTED_NUMERIC_RULE          (V3-R2) métrica ou consenso comparado a um
+          número Y fora do payload ("0.37 excede o limite de 0.30"), ou
+          afirmado acima de/excedendo um limite ("excede os limites
+          prudenciais"): nenhum limite é fornecido ao Risk e as regras duras
+          já passaram. Citar o valor do payload ("volatilidade de 36.46%") e
+          qualificá-lo ("elevada", "nível crítico") é permitido
+CONFIDENCE_ONLY_DECISION          (V3-R3) veredito sem nenhuma métrica de risco
+          (volatilidade, drawdown, concentração) fora de oração concessiva
+          (apesar, embora, mesmo com…): decidido só pelo sinal técnico
+VERDICT_TEXT_CONTRADICTION        (V3-R3) o texto declara o veredito oposto
+```
+
+Português e inglês; números do payload conferidos na escala citada até o
+arredondamento citado (36.46% ≡ 0.364617); frações de votos (3/5) não são
+comparações. Calibração SÓ com development evidence já consumida (CAL-B1 —
+que não tem chamada de Risk LLM —, CAL-B2, Hardening/B0, CAL-A, Sequential,
+Stress, v1 e v2); a CAL-B3 nunca é usada. As regras exatas ficam congeladas no
+código e nos testes do commit do contrato, ANTES da primeira chamada live v3;
+os blobs git são registrados no manifest do hardening dirigido e não mudam
+até o fim do development v3.
+
+**CAL-B3 — novo holdout, comprometido antes de qualquer chamada live v3.**
+Os mesmos 10 estratos de CAL-B (3, 6, …, 30), uma sessão nova por estrato.
+
+```text
+seed       CAL_B3_SELECTION_SEED = SHA256("HEDGE-FUND-LAB|CAL-B3|" +
+           CAL_B2_COMMITMENT_HASH), hex
+candidatos sessões do estrato (domínio do Amendment 2) menos: CAL-B1,
+           CAL-B2, H_real (atuais e as do snapshot anterior), âncoras CAL-A,
+           sessões da Sequential Development, sessões de decisão do Stress e
+           toda sessão de decisão em qualquer evidência de development v1/v2
+           (varredura de docs/evidence)
+digest     SHA256(seed + "|" + stratum_id + "|" + ISO_DATE(d))
+vencedor   menor digest (ordem lexicográfica)
+persistido número de candidatos, hash do ranking, vencedor e
+           CAL_B3_COMMITMENT_HASH (SHA-256 das 10 datas)
+```
+
+Outcome-blind: nenhum retorno, volatilidade, feature, resposta de LLM ou
+regime. Depois do commit, CAL-B3 fica SELADA e inacessível ao development v3:
+o runner e o banco de chamadas recusam suas datas; não se calculam features
+nem retornos para revisá-las; nada é executado. CAL-B3 **não** é executada
+nesta tarefa.
+
+**FROZEN_COMPONENT_REPLAY = TECHNICAL_V2.** O Technical da v3 é byte-idêntico
+ao da v2. Em vez de gerar ruído estocástico novo, toda resposta Technical v2
+já observada é reaproveitada quando a requisição v3 for IDÊNTICA à v2 — mesma
+`LLMCallRequest.identity()`: sessão de decisão, analista, system prompt, user
+prompt (payload), provedor/modelo, opções de geração e schema — na evidência
+v2 da MESMA fase e da MESMA repetição (CAL-B2: a única realização selada,
+reaproveitada nas R = 3 repetições). Requisição sem par idêntico vai ao
+provedor (contada e reportada). Portfolio: replay só por identidade exata com
+a evidência v2 (ex.: VENDA auto-aprovada com as mesmas métricas); qualquer
+request novo (ex.: depois de um parecer de Risk v3) é live. Risk v3: sempre
+live, salvo o banco intra-repetição já usado na v1/v2 (mesma identidade, mesma
+repetição, entre configurações pareadas). Cada trajetória v3 tem carteira
+nova, Risk v3, spec v3, artefatos e equity v3; nenhuma performance v2 é
+misturada; só respostas do componente congelado (Technical, e Portfolio por
+identidade exata) são reaproveitadas. A prova de igualdade é registrada por
+chamada (identity digest, `provider_response_id`, hash do raw e da resposta
+validada contra o registro v2).
+
+**Hardening dirigido ao defeito (v3).** Depois do compromisso da CAL-B3.
+Estados: as 10 âncoras CAL-B2 consumidas, histórico até close(t), carteira
+zerada; configuração = final v2 (21 / 0.40 / 0.15 / 1.0) + Risk prompt v2.
+`R = 3`; Technical = replay das respostas CAL-B2 seladas (nenhuma chamada
+Technical nova); Risk v2 live quando a trajetória chega ao Risk; Portfolio
+replay/live pela regra acima. Nenhum retorno, nenhum preço `t+1`. A âncora
+2023-06-26 faz parte obrigatoriamente, com o mesmo Technical output e o mesmo
+payload lógico do Risk; não se exige que a decisão mude (pode continuar
+`VETADO`), só que a justificativa seja válida sob o novo contrato.
+
+```text
+V3-R1  UNSUPPORTED_CONFIDENCE_THRESHOLD = 0
+V3-R2  UNSUPPORTED_NUMERIC_RULE = 0
+V3-R3  contradições materiais rationale/veredito (CONFIDENCE_ONLY_DECISION +
+       VERDICT_TEXT_CONTRADICTION) = 0
+V3-S   0 falha de schema/resposta inválida, 0 truncamento, 0 falha final de
+       provedor, 0 inversão/fallback de Portfolio
+V3-D   total_hold_rate < 0.90 (mesmos códigos HOLD; threshold não muda)
+```
+
+Interpretação congelada: V3-S falha → `H2_V3_DEFECT_HARDENING TECHNICAL
+FAILURE`; V3-R1, V3-R2 ou V3-R3 falha → `H2_V3_RISK_CONTRACT_FIX FAILED`
+(parar; nenhuma outra variável muda); R passa e V3-D falha → `H2_V3 RISK
+CONTRACT FIXED — DEGENERACY PERSISTS` (parar); tudo passa → `H2_V3 MINIMAL
+DEFECT FIX PASSED`. Mudança de decisão não é critério; não se otimiza por
+APROVADO.
+
+**Reexecução de development v3 (só se o hardening dirigido passar).** Mesmos
+conjuntos, grades, R, escores, desempates, gates e fronteiras da v2, evidência
+em diretórios `*_v3` (v1/v2 nunca sobrescritas), Technical por replay v2:
+
+```text
+Diagnostic Hardening  H = 8 H_syn + 4 H_real, R = 5, mesma spec ex ante da v2
+                      (freeze v1, LOW, prompt técnico v2) + Risk prompt v2;
+                      gates G-A/G-T/G-I/G-F; replay da repetição v2 de mesmo índice
+B0                    H, R = 1, só se o Hardening v3 passar; replay do B0 v2
+CAL-A                 mesmas 20 âncoras, grade {21,63} x {0.40,0.50,0.60}, R = 3,
+                      S1, pareamento e desempate; pode reselecionar
+Sequential Dev        2024-03-01..2024-08-29 (liquidação 08-30), D01 0.25 /
+                      D02 0.15 / D03 0.35, R = 3,
+                      H2_SCIENTIFIC_SHARPE_DEFINITION_V1, S2, mesmo desempate e
+                      fronteiras; base = seleção da CAL-A v3; pode reselecionar
+Stress                as mesmas 4 janelas comprometidas (sem reseleção), R = 3,
+                      gates S-A/S-T/S-C/S-R; config = seleções v3
+```
+
+Em cada fase o checker do Risk é aplicado às respostas Risk v3 e reportado
+(descritivo; achados residuais vão para o resumo de development e para o
+desenho da CAL-B3). Ao fim, se tudo passar: `H2_V3 DEVELOPMENT COMPLETE —
+READY FOR CAL-B3 PROTOCOL`, e parar. CAL-B3 não é executada automaticamente.
+
+**Governança para a monografia.** A CAL-B2 passou os gates automáticos mas
+revelou, no rationale do Risk, uma regra numérica inexistente usada para
+vetar; a v2 ficou inelegível para System Freeze por ter seu holdout usado como
+development; a correção v3 é dirigida pelo contrato e não por performance;
+Validation e Final Test permaneceram intactos; a v3 é uma nova classe de
+comparabilidade.
+
 ### Registro de execução (append-only)
 
 Resultados das regras predeclaradas acima. Não são amendments: nenhuma regra

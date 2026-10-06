@@ -9,6 +9,11 @@ features, fórmulas, schema, N, quorum, geração, risco, custos, Risk prompt e
 Portfolio prompt ficam idênticos. A identidade muda pelo parâmetro
 ``technical_prompt_version`` (entra no ``spec_hash``) e pelo hash do prompt
 (entra na identidade de cada chamada no trace).
+
+v3 (Amendment 10): a CAL-B2 mostrou o Risk vetando por um "limiar de 50%" de
+confidence que não existe. A v3 muda SÓ o system prompt do Risk
+(``risk_prompt_version = 2``); o Technical v2 é byte-idêntico e suas respostas
+observadas são reaproveitadas por identidade exata (FROZEN_COMPONENT_REPLAY).
 """
 
 import hashlib
@@ -22,8 +27,9 @@ from src.experiments.anchors import CAL_B_COMMITMENT_SHA256, CAL_B_STRATA, STRAT
 from src.experiments.hardening import H2_FROZEN_THINKING_LEVEL, h2_freeze_v1_params
 from src.experiments.stress import STRESS_FROZEN_PARAMS
 
-H2_TREATMENT_VERSION = 2
+H2_TREATMENT_VERSION = 3
 SCIENTIFIC_TECHNICAL_PROMPT_VERSION = 2
+SCIENTIFIC_RISK_PROMPT_VERSION = 2
 H2_V1_STATUS = "H2 V1 FAILED CAL-B1 — CONSUMED"
 CAL_B1_STATUS = "CONSUMED — DEVELOPMENT EVIDENCE"
 
@@ -152,3 +158,15 @@ STRESS_V2_STATUS = "STRESS PROBING COMPLETE — READY FOR CAL-B PROTOCOL"
 
 H2_V2_DEVELOPMENT_SUMMARY = "docs/evidence/h2_v2/development_summary.json"
 H2_V2_DEVELOPMENT_STATUS = "H2_V2 DEVELOPMENT COMPLETE — READY FOR CAL-B2 PROTOCOL"
+
+
+# ── Governança da v2 (Amendment 10) ──────────────────────────────
+
+#: Status histórico da CAL-B2, preservado: fichas humanas em branco, segunda
+#: revisão não aguardada. Não é reescrito como PASS nem FAIL.
+CAL_B2_HISTORICAL_STATUS = "CAL_B2_AWAITING_HUMAN_REVIEW"
+CAL_B2_ROLE = "CONSUMED — DEVELOPMENT EVIDENCE"
+#: O conteúdo da CAL-B2 corrige o sistema (v3): a v2 não pode mais ir a System
+#: Freeze, qualquer que seja uma revisão humana futura.
+H2_V2_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE = True
+H2_V2_SYSTEM_FREEZE_INELIGIBILITY_REASON = "CAL_B2 CONSUMED AND USED AS DEVELOPMENT EVIDENCE"

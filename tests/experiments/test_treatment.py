@@ -9,7 +9,7 @@ from src.experiments.anchors import CAL_B_COMMITMENT_SHA256, CAL_B_STRATA
 
 
 def test_versao_e_parametros_v2() -> None:
-    assert treatment.H2_TREATMENT_VERSION == 2 and treatment.SCIENTIFIC_TECHNICAL_PROMPT_VERSION == 2
+    assert treatment.H2_TREATMENT_VERSION == 3 and treatment.SCIENTIFIC_TECHNICAL_PROMPT_VERSION == 2
     assert treatment.v2_params({"a": 1}) == {"a": 1, "technical_prompt_version": 2}
     with pytest.raises(ValueError):
         treatment.v2_params({"technical_prompt_version": 1})
@@ -144,3 +144,22 @@ def test_status_development_v2_e_seguranca_cal_b2() -> None:
     assert s["cal_b2_safety"]["v2_decision_sessions_in_cal_b2"] == [] and not s["cal_b2_safety"]["executed"]
     assert s["validation_final_safety"]["v2_sessions_at_or_after_validation"] == []
     assert anchors.CAL_B_AUTHORIZED is False
+
+
+def test_governanca_v2_preserva_status_historico_e_fichas_em_branco() -> None:
+    """Amendment 10: CAL-B2 continua AWAITING (fichas intocadas) e a v2 sai do System Freeze."""
+    import json
+    from pathlib import Path
+
+    from src.experiments import anchors, cal_b
+
+    run = Path(__file__).resolve().parents[2] / cal_b.CAL_B2_EVIDENCE / "review"
+    reviews = [json.loads((run / f"AUTHOR_{i}.json").read_text(encoding="utf-8")) for i in (1, 2)]
+    assert all(r["reviewer"] is None for r in reviews)
+    assert all(v["material_hallucination"] is None and v["rationale_action_coherence"] is None
+               for r in reviews for v in r["anchors"].values())
+    status = cal_b.cal_b2_status(all(cal_b.CAL_B2_GATE_RESULTS.values()), reviews, anchors.CAL_B2_ANCHORS)
+    assert status == treatment.CAL_B2_HISTORICAL_STATUS == cal_b.CAL_B2_AWAITING_HUMAN_REVIEW
+    assert treatment.H2_V2_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE is True
+    assert treatment.H2_V2_SYSTEM_FREEZE_INELIGIBILITY_REASON == "CAL_B2 CONSUMED AND USED AS DEVELOPMENT EVIDENCE"
+    assert cal_b.SYSTEM_CALIBRATION_COMPLETE is False and anchors.CAL_B2_STATUS == "CONSUMED"

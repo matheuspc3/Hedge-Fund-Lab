@@ -971,6 +971,16 @@ automáticos PASS (0 contradição semântica, 0 transição, 7/10 HOLD,
 `total_hold_rate` 0.70). `CAL_B2_STATUS = CONSUMED`. Estado:
 `CAL_B2_AWAITING_HUMAN_REVIEW` até as fichas dos dois autores.
 
+**H2 v3 (Amendment 10).** A CAL-B2 revelou um segundo defeito objetivo,
+independente do Technical: em 2023-06-26 o Risk vetou dizendo que a confidence
+0.462 estava "abaixo do limiar de 50%" — limiar que não existe no protocolo
+nem no Risk. O conteúdo da CAL-B2 passa a ser development evidence; o status
+histórico `CAL_B2_AWAITING_HUMAN_REVIEW` é preservado (fichas não preenchidas,
+segunda revisão não aguardada) e `H2_V2_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE = True`
+(razão: `CAL_B2 CONSUMED AND USED AS DEVELOPMENT EVIDENCE`). A v3 muda só o
+system prompt do Risk (`risk_prompt_version = 2`); Technical v2 byte-idêntico,
+reaproveitado por replay exato (`FROZEN_COMPONENT_REPLAY = TECHNICAL_V2`).
+
 ### Hardening pré-B0 — suporte implementado
 
 Implementado como engenharia, sem rodar CAL-A, CAL-B, Stress científico,
