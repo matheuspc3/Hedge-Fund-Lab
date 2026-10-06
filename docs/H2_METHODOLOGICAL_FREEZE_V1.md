@@ -1535,4 +1535,17 @@ mudou.
             Nenhum código muda. Pela política congelada do Stress (sem checkpoint
             predeclarado), as 12 trajetórias são refeitas do zero; o run abortado
             fica fora de qualquer análise
+2026-10-06  Stress v2 (reexecução completa): mesmas 4 janelas, R = 3, mesmos gates
+            commit e9fd332; evidência docs/evidence/stress_v2/run_20261006T030655Z/
+            config 21 / 0.40 / dd 0.15 (seleções v2) + prompt técnico v2
+            12/12 trajetórias; 3124 chamadas live, 0 do banco; 22 HTTP 503
+            recuperados por retry; CAL-B (B1/B2): 0 sessões
+            S-A 0 falhas finais · S-T 0 · S-C 0 violações · S-R 0 violações -> PASS
+            regra de volatilidade EXERCISED; regra de drawdown NOT_EXERCISED pela
+            definição congelada (COMPRA com dd > 0.15 só mascarada pela
+            volatilidade ou já no alvo); MDD de S2 0.381 > 0.15: o limite veta
+            entrada, não é stop-loss (limitação registrada)
+            financeiro (DESCRIPTIVE ONLY): Sharpe S1 -2.840 (x3), S2 -1.068/-1.068/
+            -0.601, S3 -0.793/-0.331/-0.793, S4 3.794 (x3)
+            -> STRESS PROBING COMPLETE — READY FOR CAL-B PROTOCOL (v2)
 ```

@@ -140,3 +140,9 @@ def select_cal_b2(domain: Sequence[str], excluded: set[str]) -> list[dict[str, A
 
 H2_V2_DEFECT_EVIDENCE = "docs/evidence/h2_v2/defect_hardening_20261006T022111Z/manifest.json"
 H2_V2_DEFECT_STATUS = H2_V2_DEFECT_FIX_PASSED
+
+
+# ── Resultado do Stress v2 (registrado) ──────────────────────────
+
+STRESS_V2_EVIDENCE = "docs/evidence/stress_v2/run_20261006T030655Z/summary.json"
+STRESS_V2_STATUS = "STRESS PROBING COMPLETE — READY FOR CAL-B PROTOCOL"
