@@ -273,3 +273,9 @@ def require_cal_b3_committed() -> None:
 
 H2_V3_DEFECT_EVIDENCE = "docs/evidence/h2_v3/defect_hardening_20261006T151527Z/manifest.json"
 H2_V3_DEFECT_STATUS = H2_V3_DEFECT_FIX_PASSED
+
+
+# ── Resultado do Stress v3 (registrado) ──────────────────────────
+
+STRESS_V3_EVIDENCE = "docs/evidence/stress_v3/run_20261006T152701Z/summary.json"
+STRESS_V3_STATUS = "STRESS PROBING COMPLETE — READY FOR CAL-B PROTOCOL"

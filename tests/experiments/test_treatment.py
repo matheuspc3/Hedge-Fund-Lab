@@ -258,3 +258,18 @@ def test_selecao_sequential_dev_v3_bate_com_a_evidencia() -> None:
     assert next(c for c in SEQUENTIAL_DEV_GRID if c["config_id"] == sel["config_id"])["risk_max_drawdown"] == sel["risk_max_drawdown"]
     assert treatment.stress_v3_params() == {**treatment.stress_v2_params(), "risk_max_volatility": 0.50,
                                             "risk_max_drawdown": 0.25, "risk_prompt_version": 2}
+
+
+def test_stress_v3_registrado_bate_com_a_evidencia() -> None:
+    import json
+    from pathlib import Path
+
+    from src.experiments.stress import STRESS_SELECTED_WINDOWS
+
+    s = json.loads((Path(__file__).resolve().parents[2] / treatment.STRESS_V3_EVIDENCE).read_text(encoding="utf-8"))
+    assert s["complete"] and s["treatment_version"] == 3 and s["status"] == treatment.STRESS_V3_STATUS
+    assert s["frozen_params"] == treatment.stress_v3_params()
+    assert s["windows"] == [dict(w) for w in STRESS_SELECTED_WINDOWS]  # mesmas janelas, sem reseleção
+    assert all(g["pass"] for g in s["gates"].values())
+    assert s["calibration_provenance"] == treatment.v3_calibration_provenance()
+    assert not s["frozen_component_replay"]["mismatch"] and "technical_analyst" not in s["frozen_component_replay"]["live"]

@@ -2088,4 +2088,20 @@ mudou.
             -> SEQUENTIAL_DEV_V3_DISCRIMINATION = YES, empate exato no topo (D01, D03) ->
                menor config_id -> D01 (risk_max_drawdown 0.25), basis EMPIRICAL_S2
                (R = 3, development evidence, sem afirmação de superioridade robusta)
+2026-10-06  Stress v3: mesmas 4 janelas comprometidas (sem reseleção), R = 3, mesmos gates
+            commit a19e26d; evidência docs/evidence/stress_v3/run_20261006T152701Z/
+            config 21 / 0.50 / dd 0.25 (seleções v3) + Risk prompt v2
+            12/12 trajetórias; Technical 2985/2985 replay do Stress v2 (mesma repetição),
+            0 mismatch; Portfolio 44 replay + 85 live; 102 chamadas live, 0 retry;
+            CAL-B (B1/B2/B3): 0 sessões
+            S-A 0 falhas finais · S-T 0 · S-C 0 violações · S-R 0 violações -> PASS
+            regra de volatilidade EXERCISED (S2, S4); regra de drawdown NOT_EXERCISED pela
+            definição congelada; MDD de S2 0.381 > 0.25: o limite veta entrada, não é
+            stop-loss (limitação registrada, igual à v2)
+            Risk v3: 17/17 APROVADO; checker V3-R1 0 · V3-R2 0 · V3-R3 1/17 — FALSO
+            POSITIVO conhecido ("sem violação de limites ou condições adversas que
+            justifiquem veto": negação fora da janela); checker congelado, não alterado
+            financeiro (DESCRIPTIVE ONLY): Sharpe S1 -1.899/-1.899/-1.599, S2 -1.068/
+            -1.068/-0.601, S3 -0.331/0.800/1.447, S4 4.266/4.266/4.536
+            -> STRESS PROBING COMPLETE — READY FOR CAL-B PROTOCOL (v3)
 ```
