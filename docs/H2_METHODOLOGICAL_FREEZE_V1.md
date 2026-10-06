@@ -1497,4 +1497,10 @@ mudou.
             V2-D  total_hold_rate 0.867 (26/30) < 0.90   PASS
                   explicit hold 0.733 · vetos de risco 0.133 · flip 0.0
             -> H2_V2 MINIMAL DEFECT FIX PASSED; segue a reexecução de development v2
+2026-10-05  Diagnostic Hardening v2 (H = 8 H_syn + 4 H_real, R = 5), thinking low
+            commit 312f0e7; evidência docs/evidence/h2_v2/hardening_low_20261006T022444Z/
+            G-A 0 · G-T 0 · G-I 0.383 (v1 rebaselined: 0.633) · G-F 0.0 -> PASS
+            348 chamadas lógicas, 0 retries
+2026-10-05  B0 v2 (H, R = 1); evidência docs/evidence/h2_v2/b0_low_20261006T022838Z/
+            G-A 0 · G-T 0 · G-I 0.50 -> B0 PASS (v2)
 ```
