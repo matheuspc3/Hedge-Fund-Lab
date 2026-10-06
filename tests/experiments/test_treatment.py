@@ -273,3 +273,23 @@ def test_stress_v3_registrado_bate_com_a_evidencia() -> None:
     assert all(g["pass"] for g in s["gates"].values())
     assert s["calibration_provenance"] == treatment.v3_calibration_provenance()
     assert not s["frozen_component_replay"]["mismatch"] and "technical_analyst" not in s["frozen_component_replay"]["live"]
+
+
+def test_status_development_v3_e_seguranca_cal_b3() -> None:
+    import json
+    from pathlib import Path
+
+    from src.experiments import anchors
+
+    s = json.loads((Path(__file__).resolve().parents[2] / treatment.H2_V3_DEVELOPMENT_SUMMARY).read_text(encoding="utf-8"))
+    assert s["status"] == treatment.H2_V3_DEVELOPMENT_STATUS
+    assert s["cal_b3_safety"]["v3_decision_sessions_in_cal_b3"] == [] and not s["cal_b3_safety"]["executed"]
+    assert s["cal_b3_safety"]["commitment"] == anchors.CAL_B3_COMMITMENT_SHA256 and anchors.CAL_B3_STATUS == "SEALED"
+    assert s["validation_final_safety"]["v3_sessions_at_or_after_validation"] == []
+    assert s["frozen_component_replay"]["mismatches"] == 0
+    assert "technical_analyst/live" not in s["frozen_component_replay"]["totals"]  # Technical 100% replay v2
+    totals = s["risk_checker_totals_v3_development"]
+    assert totals["V3-R1"] == 0 and totals["V3-R2"] == 0
+    assert s["final_v3_params"] == treatment.stress_v3_params()
+    assert s["v2_governance"]["H2_V2_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE"] is True
+    assert anchors.CAL_B_AUTHORIZED is False

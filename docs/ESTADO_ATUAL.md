@@ -980,6 +980,16 @@ segunda revisão não aguardada) e `H2_V2_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE = True`
 (razão: `CAL_B2 CONSUMED AND USED AS DEVELOPMENT EVIDENCE`). A v3 muda só o
 system prompt do Risk (`risk_prompt_version = 2`); Technical v2 byte-idêntico,
 reaproveitado por replay exato (`FROZEN_COMPONENT_REPLAY = TECHNICAL_V2`).
+CAL-B3 comprometida antes de qualquer chamada v3 (`a5cadecd…`; selada, não
+executada). Hardening dirigido nas âncoras CAL-B2 (R = 3): 0 limiar de
+confidence, 0 regra numérica e 0 contradição em 9 respostas do Risk v3 →
+`H2_V3 MINIMAL DEFECT FIX PASSED`. Development v3 refeito com as regras da v2:
+Hardening e B0 PASS; CAL-A v3 selecionou 21 / 0.50 (EMPIRICAL_S1, uma âncora);
+Sequential Dev v3 selecionou drawdown 0.25 (EMPIRICAL_S2); Stress v3 com todos
+os gates PASS. 11010 respostas Technical v2 reaproveitadas, 0 divergência.
+Observação: o Risk v3 aprovou 70/70 no development (v1 vetava 19/67, v2
+18/73). Status: `H2_V3 DEVELOPMENT COMPLETE — READY FOR CAL-B3 PROTOCOL`.
+Validation e Final Test intocados.
 
 ### Hardening pré-B0 — suporte implementado
 

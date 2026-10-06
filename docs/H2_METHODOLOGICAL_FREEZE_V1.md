@@ -2104,4 +2104,20 @@ mudou.
             financeiro (DESCRIPTIVE ONLY): Sharpe S1 -1.899/-1.899/-1.599, S2 -1.068/
             -1.068/-0.601, S3 -0.331/0.800/1.447, S4 4.266/4.266/4.536
             -> STRESS PROBING COMPLETE — READY FOR CAL-B PROTOCOL (v3)
+2026-10-06  Resumo de development v3 (descritivo; docs/evidence/h2_v3/development_summary.json)
+            respostas únicas do Risk LLM com limiar de confidence inventado (V3-R1):
+              v1 Hardening 0.067 · CAL-A 0.227 · Stress 0.200; v2 CAL-A 0.050 · Stress 0.200 ·
+              CAL-B2 0.333 -> v3 0.000 em todas as fases (0/70)
+            regra numérica inventada (V3-R2): v2 Sequential Dev 0.278 -> v3 0.000 (0/70)
+            V3-R3 v3: 2/70, ambos o falso positivo conhecido de negação distante
+            Technical: 11010 respostas v2 reaproveitadas por identidade exata, 0 live,
+              0 mismatch; Portfolio 173 replay + 206 live
+            OBSERVAÇÃO (sem autoridade): vereditos do Risk LLM v1 48 APROVADO / 19 VETADO,
+              v2 55 / 18, v3 70 / 0 — sem regra inventada, o Risk v3 não vetou nenhuma
+              entrada que passou pelas regras duras; vai para o desenho da CAL-B3
+            seleções v3: CAL-A config 2 (21 / 0.50, EMPIRICAL_S1, empate no topo 2/3/6);
+            Sequential Dev D01 (dd 0.25, EMPIRICAL_S2, empate no topo D01/D03)
+            configuração final v3: 21 / 0.50 / 0.25 / 1.0 + Technical prompt v2 + Risk prompt v2
+            CAL-B3: 0 sessões de decisão v3, selada, não executada; nenhuma sessão v3 >= 2024-09-02
+            -> H2_V3 DEVELOPMENT COMPLETE — READY FOR CAL-B3 PROTOCOL
 ```
