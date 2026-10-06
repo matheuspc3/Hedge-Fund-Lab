@@ -146,7 +146,8 @@ class BankedGeminiClient(GeminiLLMClient):
             if slot is not None:
                 for name, value in hit["evidence"].items():
                     setattr(slot, name, value)
-            BANK.uses.append({**use, "source": "bank", "first_use": hit["first_use"]})
+            BANK.uses.append({**use, "source": "frozen_v2" if hit.get("frozen") else "bank",
+                              "first_use": hit["first_use"]})
             if response_schema is None:
                 return hit["response"]
             # Objeto novo a cada uso: o nó de risco muta ``risk_metrics``.
@@ -171,8 +172,12 @@ class BankedGeminiClient(GeminiLLMClient):
         return response
 
 
-#: ``{}`` na v1; ``{"technical_prompt_version": 2}`` com ``--treatment 2`` (Amendment 8).
+#: ``{}`` na v1; ``{"technical_prompt_version": 2}`` com ``--treatment 2`` (Amendment 8); mais
+#: ``risk_prompt_version: 2`` com ``--treatment 3`` (Amendment 10).
 TREATMENT_EXTRA: dict[str, Any] = {}
+#: v3: respostas v2 do componente congelado por repetição (FROZEN_COMPONENT_REPLAY).
+FROZEN: dict[int, dict[str, Any]] = {}
+KINDS = {1: "CAL_A", 2: "CAL_A_V2", 3: "CAL_A_V3"}
 
 
 def git(*args: str) -> str:
@@ -239,11 +244,20 @@ def main() -> None:
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--resume", type=Path, default=None)
-    parser.add_argument("--treatment", type=int, choices=(1, 2), default=1)
+    parser.add_argument("--treatment", type=int, choices=(1, 2, 3), default=1)
     args = parser.parse_args()
-    if args.treatment == 2:
+    if args.treatment >= 2:
         TREATMENT_EXTRA["technical_prompt_version"] = 2
-    phase_dir = "cal_a" if args.treatment == 1 else "cal_a_v2"
+    phase_dir = {1: "cal_a", 2: "cal_a_v2", 3: "cal_a_v3"}[args.treatment]
+    if args.treatment == 3:
+        from h2_v3 import by_replicate, seed_bank
+
+        from src.experiments import treatment
+
+        treatment.require_cal_b3_committed()
+        TREATMENT_EXTRA["risk_prompt_version"] = treatment.SCIENTIFIC_RISK_PROMPT_VERSION
+        FROZEN.update(by_replicate(treatment.FROZEN_V2_EVIDENCE["cal_a"], "evaluations"))
+        seed_bank(BANK, FROZEN)
     previous = None if args.resume is None else (ROOT / args.resume).resolve()
     if git("status", "--porcelain"):
         sys.exit("working tree is not clean: commit before CAL-A")
@@ -310,7 +324,7 @@ def main() -> None:
     summary: dict[str, Any] = {
         "resumed_from": None if previous is None else previous.name,
         "carried_evaluations": sum(1 for e in evaluations if e.get("carried_from")),
-        "kind": "CAL_A" if args.treatment == 1 else "CAL_A_V2",
+        "kind": KINDS[args.treatment],
         "treatment_version": args.treatment,
         "started_utc": started.isoformat(timespec="seconds").replace("+00:00", "Z"),
         "finished_utc": finished.isoformat(timespec="seconds").replace("+00:00", "Z"),
@@ -379,6 +393,7 @@ def main() -> None:
         "live_calls": len(live),
         "live_calls_by_stage": dict(Counter(u["stage"] for u in live)),
         "bank_hits": len(BANK.uses) - len(live),
+        "frozen_v2_hits_by_stage": dict(Counter(u["stage"] for u in BANK.uses if u["source"] == "frozen_v2")),
         "http_attempts": len(all_attempts),
         "http_attempts_in_aborted_run": len(prior_attempts),
         "attempt_outcomes": dict(Counter(a["outcome"] for a in all_attempts)),
@@ -395,6 +410,11 @@ def main() -> None:
         "anchor_replicates": len(paired),
         "same_five_technical_responses_in_all_configs": pairing_ok,
     }
+    if args.treatment == 3:
+        from h2_v3 import replay_audit, risk_audit
+
+        summary["frozen_component_replay"] = replay_audit((r, FROZEN[item["replicate"]]) for item, r in traces)
+        summary["risk_audit"] = risk_audit(r for _, r in traces)
     summary["cal_b_audit"] = {
         "bank_sessions": sorted({u["anchor"] for u in BANK.uses}),
         "cal_b_sessions_touched": sorted({u["anchor"] for u in BANK.uses} & set(anchors.sealed_holdout_anchors())),

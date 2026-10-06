@@ -121,9 +121,17 @@ CAL_B2_SELECTION_EVIDENCE = "docs/evidence/cal_b2/selection.json"
 CAL_B2_STATUS = "CONSUMED"
 
 
+#: CAL-B3 (Amendment 10): novo holdout da v3, preenchido só pelo commit de
+#: compromisso, antes de qualquer chamada live v3. Selada; não executada.
+CAL_B3_ANCHORS: tuple[str, ...] = ()
+CAL_B3_COMMITMENT_SHA256: str | None = None
+CAL_B3_SELECTION_EVIDENCE = "docs/evidence/cal_b3/selection.json"
+CAL_B3_STATUS = "SEALED"
+
+
 def sealed_holdout_anchors() -> tuple[str, ...]:
-    """Datas que nenhuma janela de development pode tocar (CAL-B1 e CAL-B2)."""
-    return (*CAL_B_ANCHORS, *CAL_B2_ANCHORS)
+    """Datas que nenhuma janela de development pode tocar (CAL-B1, CAL-B2 e CAL-B3)."""
+    return (*CAL_B_ANCHORS, *CAL_B2_ANCHORS, *CAL_B3_ANCHORS)
 
 
 def require_cal_b_locked(decision_start: Any, decision_end: Any) -> None:

@@ -145,7 +145,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", choices=sorted(REPETITIONS), required=True)
     parser.add_argument("--thinking-level", required=True)
-    parser.add_argument("--treatment", type=int, choices=(1, 2), default=1)
+    parser.add_argument("--treatment", type=int, choices=(1, 2, 3), default=1)
     args = parser.parse_args()
 
     if git("status", "--porcelain", "--untracked-files=no"):
@@ -162,12 +162,26 @@ def main() -> None:
             sys.exit("H2 v2 keeps thinking_level fixed; the ladder does not move in v2")
         params = dict(treatment.H2_V2_HARDENING_PARAMS)
         evidence_root = ROOT / "docs" / "evidence" / "h2_v2"
+    frozen: dict = {}
+    uses: list[dict[str, Any]] = []
+    if args.treatment == 3:  # Amendment 10: spec da v2 + Risk prompt v2; Technical v2 por replay exato
+        from h2_v3 import by_state
+
+        from src.experiments import treatment
+
+        treatment.require_cal_b3_committed()
+        if args.thinking_level != treatment.H2_V3_HARDENING_PARAMS["thinking_level"]:
+            sys.exit("H2 v3 keeps thinking_level fixed; the ladder does not move in v3")
+        params = dict(treatment.H2_V3_HARDENING_PARAMS)
+        evidence_root = ROOT / "docs" / "evidence" / "h2_v3"
+        frozen = by_state(treatment.FROZEN_V2_EVIDENCE[args.mode])
     capability = LLMParticipant.preflight(params, scientific=True)
     states = build_states()
     repetitions = REPETITIONS[args.mode]
     log = AttemptLog(timeout=120.0)
     started = datetime.now(timezone.utc)
     counter = {"n": 0}
+    order = [(state.state_id, r) for state in states for r in range(repetitions)]  # ordem de run_hardening
 
     def factory(ticker: str) -> LLMParticipant:
         counter["n"] += 1
@@ -177,6 +191,13 @@ def main() -> None:
             max_attempts=params["retry_attempts"],
             base_delay=params["retry_base_delay"],
         )
+        if args.treatment == 3:
+            from h2_v3 import FrozenReplayClient
+
+            state_id, repetition = order[counter["n"] - 1]
+            client = FrozenReplayClient(client, frozen.get((state_id, repetition), {}), provider=params["provider"],
+                                        model=params["model"], uses=uses,
+                                        context={"state_id": state_id, "repetition": repetition})
         return LLMParticipant(ticker, llm_client=client, **params)
 
     aborted: HardeningAbortedError | None = None
@@ -262,7 +283,7 @@ def main() -> None:
         "wall_clock_seconds": round((finished - started).total_seconds(), 1),
     }
     manifest = {
-        "kind": f"H2_{args.mode.upper()}" + ("" if args.treatment == 1 else "_V2"),
+        "kind": f"H2_{args.mode.upper()}" + {1: "", 2: "_V2", 3: "_V3"}[args.treatment],
         "treatment_version": args.treatment,
         "freeze": H2_FREEZE_VERSION,
         "financial_metrics": "none computed (no settlement)",
@@ -300,6 +321,15 @@ def main() -> None:
         "gates_pass": all(item["pass"] for item in gates.values()) and aborted is None,
         "operational": operational,
     }
+    if args.treatment == 3:
+        from h2_v3 import replay_audit, risk_audit
+
+        pairs = [(r, frozen.get((o.state_id, o.repetition), {})) for o in outcomes for r in load_trace(o.trace.content)]
+        manifest["frozen_component_replay"] = replay_audit(pairs)
+        manifest["risk_audit"] = risk_audit(records)
+        manifest["calls_by_stage_and_source"] = {f"{st}/{src}": n for (st, src), n in
+                                                 sorted(Counter((u["stage"], u["source"]) for u in uses).items())}
+        (out / "replay_uses.jsonl").write_text("".join(canonical_json(u) + "\n" for u in uses), encoding="utf-8")
     (out / "manifest.json").write_text(
         json.dumps(manifest, indent=2, ensure_ascii=False, default=str) + "\n", encoding="utf-8"
     )

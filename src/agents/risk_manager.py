@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from src.agents.features import canonical_metrics, canonical_prompt_json
 from src.agents.llm_client import LLMCallMetadata, LLMClient
 from src.agents.llm_trace import STAGE_RISK_MANAGER
+from src.agents.risk_contract import RISK_SYSTEM_PROMPT_V2
 from src.agents.state import AgentState, RiskVerdict
 
 SYSTEM_PROMPT = """Você é o gestor de risco do Hedge-fund-lab.
@@ -37,6 +38,9 @@ class RiskConfig(BaseModel):
     max_volatility: float = Field(default=0.50, ge=0.0)
     max_drawdown: float = Field(default=0.25, ge=0.0, le=1.0)
     max_concentration: float = Field(default=0.30, gt=0.0, le=1.0)
+    #: Versão do system prompt do Risk (Amendment 10): 1 = prompt original;
+    #: 2 = contrato sem thresholds inventados e confidence qualitativa.
+    prompt_version: int = Field(default=1, ge=1, le=2)
 
 
 class RiskManager:
@@ -163,7 +167,7 @@ class RiskManager:
         )
         try:
             response = await self.llm.generate(
-                SYSTEM_PROMPT,
+                RISK_SYSTEM_PROMPT_V2 if self.config.prompt_version == 2 else SYSTEM_PROMPT,
                 prompt,
                 RiskVerdict,
                 self.options,

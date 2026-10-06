@@ -76,6 +76,8 @@ DESCRIPTIVE = "DESCRIPTIVE ONLY — NO SELECTION AUTHORITY"
 #: Config congelada do run; ``run --treatment 2`` (Amendment 8) troca pela v2.
 PARAMS: dict[str, Any] = dict(stress.STRESS_FROZEN_PARAMS)
 PROVENANCE: dict[str, str] = dict(stress.CALIBRATION_PROVENANCE)
+#: v3 (Amendment 10): respostas v2 do componente congelado por repetição.
+FROZEN: dict[int, dict[str, Any]] = {}
 
 
 def now() -> str:
@@ -221,7 +223,8 @@ def run(treatment_version: int = 1) -> None:
     started = datetime.now(timezone.utc)
     stamp = started.strftime("%Y%m%dT%H%M%SZ")
     runs_dir = ROOT / "data" / "runs" / f"stress_{stamp}"
-    out = (OUT if treatment_version == 1 else ROOT / "docs" / "evidence" / "stress_v2") / f"run_{stamp}"
+    out = {1: OUT, 2: ROOT / "docs" / "evidence" / "stress_v2", 3: ROOT / "docs" / "evidence" / "stress_v3"}[
+        treatment_version] / f"run_{stamp}"
     participant_module.PROVIDER_CLIENTS["gemini"] = StressGeminiClient  # type: ignore[index]
     trajectories: list[dict[str, Any]] = []
     failure: str | None = None
@@ -462,17 +465,27 @@ def summarize(out: Path, trajectories: list[dict], frame: pd.DataFrame, base: di
     for d in described.values():
         d.pop("_series")
     ok = all(g["pass"] for g in gates.values()) and anchors.CAL_B_AUTHORIZED is False
+    extra: dict[str, Any] = {}
+    if FROZEN:
+        from h2_v3 import replay_audit, risk_audit
+
+        traces = [(t, r) for t in trajectories
+                  for r in load_trace((ROOT / t["runs_root"] / t["run_dir"] / "llm_calls.jsonl").read_bytes())]
+        extra = {"frozen_component_replay": replay_audit((r, FROZEN[t["replicate"]]) for t, r in traces),
+                 "risk_audit": risk_audit(r for _, r in traces)}
     summary = {
         **base, "complete": complete, "trajectories": trajectories, "gates": gates, "coverage": coverage,
         "per_trajectory": described, "stochastic_robustness_" + DESCRIPTIVE: by_window,
         "operational": {
             "live_calls": len(live), "bank_hits": len(BANK.uses) - len(live),
             "every_call_live_and_independent": len(BANK.uses) == len(live),
+            "frozen_v2_hits_by_stage": dict(Counter(u["stage"] for u in BANK.uses if u["source"] == "frozen_v2")),
             "http_attempts": len(ATTEMPTS.attempts),
             "attempt_outcomes": dict(Counter(a["outcome"] for a in ATTEMPTS.attempts)),
             "http_status_counts": dict(Counter(str(a.get("status")) for a in ATTEMPTS.attempts if a.get("status"))),
             "cost": "not computed: no versioned API pricing source in the repository",
         },
+        **extra,
         "cal_b_authorized": anchors.CAL_B_AUTHORIZED,
         "status": "STRESS PROBING COMPLETE — READY FOR CAL-B PROTOCOL" if ok else "STRESS PROBING INCOMPLETE OR FAILED",
     }
@@ -494,5 +507,18 @@ if __name__ == "__main__":
         PROVENANCE.clear()
         PROVENANCE.update(treatment.v2_calibration_provenance())
         run(2)
+    elif sys.argv[1:] == ["run", "--treatment", "3"]:  # Amendment 10
+        from h2_v3 import by_replicate, seed_bank
+
+        from src.experiments import treatment
+
+        treatment.require_cal_b3_committed()
+        PARAMS.clear()
+        PARAMS.update(treatment.stress_v3_params())
+        PROVENANCE.clear()
+        PROVENANCE.update(treatment.v3_calibration_provenance())
+        FROZEN.update(by_replicate(treatment.FROZEN_V2_EVIDENCE["stress"], "trajectories"))
+        seed_bank(BANK, FROZEN)
+        run(3)
     else:
         {"select": select, "run": run}[sys.argv[1] if len(sys.argv) > 1 else ""]()

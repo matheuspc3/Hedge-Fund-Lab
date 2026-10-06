@@ -864,6 +864,7 @@ class LLMParticipant:
         strict_inputs: bool = False,
         portfolio_inversion_policy: str = "flag",
         technical_prompt_version: int = 1,
+        risk_prompt_version: int = 1,
         llm_client: LLMClient | None = None,
     ) -> None:
         if not ticker.strip():
@@ -880,6 +881,7 @@ class LLMParticipant:
         technical_prompt_version = _require_int(
             "technical_prompt_version", technical_prompt_version, minimum=1
         )
+        risk_prompt_version = _require_int("risk_prompt_version", risk_prompt_version, minimum=1)
         if retry_base_delay < 0 or not math.isfinite(retry_base_delay):
             raise ValueError("retry_base_delay must be finite and >= 0")
         long_target_weight = _validate_long_target_weight(
@@ -946,6 +948,7 @@ class LLMParticipant:
             max_volatility=risk_max_volatility,
             max_drawdown=risk_max_drawdown,
             max_concentration=risk_max_concentration,
+            prompt_version=risk_prompt_version,
         )
         # Modo científico, sempre: o participante da arena nunca executa o
         # caminho de Kelly sobre ``confidence``, nem por configuração.

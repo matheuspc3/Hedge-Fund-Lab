@@ -79,6 +79,8 @@ OUT_ROOT = ROOT / "docs" / "evidence" / "sequential_dev"
 #: troca pela seleção da CAL-A v2 e pelo prompt técnico v2.
 BASE_VOL: dict[str, Any] = {k: CAL_A_SELECTED_CONFIG[k] for k in ("volatility_window", "risk_max_volatility")}
 TREATMENT_EXTRA: dict[str, Any] = {}
+#: v3 (Amendment 10): respostas v2 do componente congelado por repetição.
+FROZEN: dict[int, dict[str, Any]] = {}
 HARD_VETOES = {"RISK_VETO_VOLATILITY", "RISK_VETO_DRAWDOWN", "RISK_VETO_CONCENTRATION"}
 
 
@@ -238,6 +240,12 @@ def summarize(out: Path, evaluations: list[dict], uses: list[dict], attempts: li
             f"{e['config_id']}-r{e['replicate']}": describe(e) for e in evaluations
         }
         summary["paired_technical_audit"] = paired_audit(evaluations)
+    if FROZEN:
+        from h2_v3 import replay_audit, risk_audit
+
+        traces = [(e, r) for e in evaluations for r in load_trace((run_dir(e) / "llm_calls.jsonl").read_bytes())]
+        summary["frozen_component_replay"] = replay_audit((r, FROZEN[e["replicate"]]) for e, r in traces)
+        summary["risk_audit"] = risk_audit(r for _, r in traces)
 
     live = [u for u in uses if u["source"] == "live"]
     tokens: Counter = Counter()
@@ -250,6 +258,7 @@ def summarize(out: Path, evaluations: list[dict], uses: list[dict], attempts: li
         "logical_calls": len(uses),
         "live_calls": len(live),
         "bank_hits": len(uses) - len(live),
+        "frozen_v2_hits_by_stage": dict(Counter(u["stage"] for u in uses if u["source"] == "frozen_v2")),
         "calls_by_config_stage_source": {
             f"{c}/{stage}/{source}": n
             for (c, stage, source), n in sorted(Counter((u["config_id"], u["stage"], u["source"]) for u in uses).items())
@@ -287,9 +296,22 @@ def main() -> None:
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--resume", type=Path, default=None)
-    parser.add_argument("--treatment", type=int, choices=(1, 2), default=1)
+    parser.add_argument("--treatment", type=int, choices=(1, 2, 3), default=1)
     args = parser.parse_args()
     out_root = OUT_ROOT
+    if args.treatment == 3:  # Amendment 10: base = CAL-A v3, Risk prompt v2, Technical v2 por replay
+        from h2_v3 import by_replicate, seed_bank
+
+        from src.experiments import treatment
+
+        treatment.require_cal_b3_committed()
+        if treatment.CAL_A_V3_SELECTED_CONFIG is None:
+            sys.exit("Sequential Development v3 needs the committed CAL-A v3 selection")
+        BASE_VOL.update({k: treatment.CAL_A_V3_SELECTED_CONFIG[k] for k in BASE_VOL})
+        TREATMENT_EXTRA.update(technical_prompt_version=2, risk_prompt_version=treatment.SCIENTIFIC_RISK_PROMPT_VERSION)
+        out_root = ROOT / "docs" / "evidence" / "sequential_dev_v3"
+        FROZEN.update(by_replicate(treatment.FROZEN_V2_EVIDENCE["sequential_dev"], "evaluations"))
+        seed_bank(BANK, FROZEN)
     if args.treatment == 2:
         from src.experiments import treatment
 
@@ -351,7 +373,8 @@ def main() -> None:
     if runs_dir.exists():
         shutil.copytree(runs_dir, out / "runs")
     base = {
-        "kind": "SEQUENTIAL_DEVELOPMENT" if args.treatment == 1 else "SEQUENTIAL_DEVELOPMENT_V2",
+        "kind": {1: "SEQUENTIAL_DEVELOPMENT", 2: "SEQUENTIAL_DEVELOPMENT_V2", 3: "SEQUENTIAL_DEVELOPMENT_V3"}[
+            args.treatment],
         "treatment_version": args.treatment,
         "base_volatility_config": dict(BASE_VOL),
         "resumed_from": None if previous is None else previous.name,
