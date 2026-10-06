@@ -2056,4 +2056,18 @@ mudou.
 2026-10-06  B0 v3 (H, R = 1); evidência docs/evidence/h2_v3/b0_low_20261006T151857Z/
             Technical 60/60 replay do B0 v2; Risk 2 live (2 APROVADO), 0 achado do checker
             G-A 0 · G-T 0 · G-I 0.50 -> B0 PASS (v3)
+2026-10-06  CAL-A v3: mesmas 20 âncoras, grade, R = 3, pareamento, S1 e desempate
+            commit e5c66d3; evidência docs/evidence/cal_a_v3/run_20261006T151945Z/
+            360/360 avaliações; pareamento técnico true; CAL-B (B1/B2/B3): 0 sessões
+            Technical 1800/1800 replay da CAL-A v2 (mesma repetição), 0 mismatch, 0 live;
+            40 chamadas live (20 Risk, 20 Portfolio), 0 retry; Portfolio 66 replay
+            Risk v3: 20/20 APROVADO; checker V3-R1 0 · V3-R2 0 · V3-R3 0
+            S1: configs 2, 3, 6 = 0.00125779; configs 1, 4, 5 = 0.00071857
+            única âncora que discrimina: 2023-01-18 (vol 0.445 em 21 / 0.520 em 63):
+              0.40 e 63/0.50 vetam por regra dura; 21/0.50, 21/0.60 e 63/0.60 levam ao
+              Risk v3, que aprova (na v2 o Risk v1 vetava por confidence baixa)
+            -> CAL_A_V3_DISCRIMINATION = YES, empate exato no topo (2, 3, 6) -> menor
+               config_id -> config 2 (volatility_window 21, risk_max_volatility 0.50),
+               basis EMPIRICAL_S1 (uma âncora, R = 3: development evidence, sem
+               afirmação de superioridade robusta)
 ```

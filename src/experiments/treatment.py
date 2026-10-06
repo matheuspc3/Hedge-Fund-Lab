@@ -206,7 +206,17 @@ H2_V3_DEGENERACY_PERSISTS = "H2_V3 RISK CONTRACT FIXED — DEGENERACY PERSISTS"
 H2_V3_DEFECT_FIX_PASSED = "H2_V3 MINIMAL DEFECT FIX PASSED"
 
 #: Seleções v3, preenchidas só pelos commits de resultado de cada fase.
-CAL_A_V3_SELECTED_CONFIG: Mapping[str, Any] | None = None
+#: CAL-A v3: S1 discriminou só pela âncora 2023-01-18 (0.40 e 63/0.50 vetam por
+#: regra dura; 21/0.50, 21/0.60 e 63/0.60 deixam o Risk v3 aprovar). Empate exato
+#: no topo entre 2, 3 e 6 -> menor config_id. R = 3, uma âncora: development
+#: evidence, sem afirmação de superioridade robusta.
+CAL_A_V3_SELECTED_CONFIG: Mapping[str, Any] | None = MappingProxyType({
+    "config_id": 2, "volatility_window": 21, "risk_max_volatility": 0.50,
+    "S1": 0.0012577896112663505, "ranking": (2, 3, 6, 1, 4, 5),
+    "discrimination": "YES", "selection_basis": "EMPIRICAL_S1",
+    "tie": "TOP_TIE_2_3_6_FALLBACK_LOWEST_CONFIG_ID",
+    "evidence": "docs/evidence/cal_a_v3/run_20261006T151945Z/summary.json",
+})
 SEQUENTIAL_DEV_V3_SELECTED_CONFIG: Mapping[str, Any] | None = None
 
 

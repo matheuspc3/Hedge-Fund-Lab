@@ -213,3 +213,23 @@ def test_hardening_dirigido_v3_registrado_bate_com_a_evidencia() -> None:
     assert "technical_analyst" not in m["replay_audit"]["live"]  # nenhuma chamada Technical nova
     assert m["target_case"]["same_logical_payload_in_all_v3_calls"]
     assert all(not c["findings"] for c in m["target_case"]["v3_risk_prompt_v2"])
+
+
+def test_selecao_cal_a_v3_bate_com_a_evidencia() -> None:
+    import json
+    from pathlib import Path
+
+    sel = treatment.CAL_A_V3_SELECTED_CONFIG
+    s = json.loads((Path(__file__).resolve().parents[2] / sel["evidence"]).read_text(encoding="utf-8"))
+    assert s["complete"] and s["treatment_version"] == 3 and s["kind"] == "CAL_A_V3"
+    assert s["paired_technical_audit"]["same_five_technical_responses_in_all_configs"]
+    assert s["cal_b_audit"]["cal_b_sessions_touched"] == []
+    assert not s["frozen_component_replay"]["mismatch"] and "technical_analyst" not in s["frozen_component_replay"]["live"]
+    s1 = {int(k): v for k, v in s["S1"].items()}
+    ranking = sorted(s1, key=lambda c: (-s1[c], c))
+    assert sel["config_id"] == ranking[0] == s["selected_config_id"] and tuple(ranking) == sel["ranking"]
+    assert sel["discrimination"] == ("NONE" if len(set(s1.values())) == 1 else "YES")
+    assert sel["selection_basis"] == ("PROTOCOL_TIE_FALLBACK" if sel["discrimination"] == "NONE" else "EMPIRICAL_S1")
+    assert [c for c in s1 if s1[c] == s1[ranking[0]]] == [2, 3, 6]  # empate no topo -> menor config_id
+    grid = next(c for c in s["grid"] if c["config_id"] == sel["config_id"])
+    assert (grid["volatility_window"], grid["risk_max_volatility"]) == (sel["volatility_window"], sel["risk_max_volatility"])
