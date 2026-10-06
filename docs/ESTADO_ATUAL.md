@@ -1003,6 +1003,12 @@ gate de mínimo de vetos do Risk LLM (`RISK_LLM_VETO_RATE_HAS_NO_MINIMUM_GATE`);
 revisão humana de um autor (`PRIMARY_HUMAN_REVIEWERS_REQUIRED = 1`; segunda
 revisão recomendada como auditoria posterior, não bloqueante); nenhuma
 métrica financeira.
+Executada uma vez (10 âncoras × R = 1, 57 chamadas, 0 retry): os dez gates
+automáticos PASS (6/10 HOLD, total_hold_rate 0.60; 0 contradição semântica ou
+transição nos 50 votos; 0 achado do checker do Risk; 0 violação de regra
+dura). Risk LLM 3/3 APROVADO (`NOT_OBSERVED`, descritivo). CAL-B3 consumida;
+status `CAL_B3_AWAITING_PRIMARY_AUTHOR_REVIEW`. Nenhum resultado financeiro;
+Validation e Final Test intocados.
 
 ### Hardening pré-B0 — suporte implementado
 

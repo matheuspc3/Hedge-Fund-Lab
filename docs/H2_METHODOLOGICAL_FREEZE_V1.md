@@ -2433,3 +2433,37 @@ mudou.
             CAL-B3: 0 sessões de decisão v3, selada, não executada; nenhuma sessão v3 >= 2024-09-02
             -> H2_V3 DEVELOPMENT COMPLETE — READY FOR CAL-B3 PROTOCOL
 ```
+2026-10-06  Risk rationale checker v2 (Amendment 11), ANTES de qualquer chamada CAL-B3
+            commit 31d8714; evidência docs/evidence/h2_v3/risk_checker_v2/
+            RISK_RATIONALE_CHECKER_VERSION 2 · risk_contract.py 1ff4343a · corpus 19f59ae9...
+            corpus: 210 respostas únicas do Risk LLM de development + 37 sintéticos PT/EN
+            0/2 falsos positivos conhecidos restantes · 0 regressão nos 21 inválidos
+            congelados · V3-R1, V3-R2 e CONFIDENCE_ONLY_DECISION idênticos · 0 divergência
+            reaplicação offline ao corpus v3: V3-R3 2/70 -> 0/70; R1/R2 0 -> 0
+            -> checker congelado no CAL_B3_PROTOCOL_FREEZE_V1 (871a29f)
+2026-10-06  CAL-B3 one-shot (Amendment 11), 10 âncoras x R=1, outcome-blind
+            CAL_B3_FREEZE_COMMIT 871a29f; autorização/guards/gates af24e80 (batch)
+            evidência docs/evidence/cal_b3/run_20261006T161844Z/
+            compromisso a5cadecd...baf e spec 1d63ad4c...becc conferidos antes da autorização
+            selo bruto commitado antes do pacote (580cd08); selos conferidos
+            10/10 seladas na ordem comprometida; 57 chamadas lógicas, 57 HTTP 200,
+            0 retry, 0 erro transitório, 0 recuperação; nenhum preço t+1 lido
+            CB3-A PASS · CB3-S PASS · CB3-C PASS · CB3-HR PASS
+            CB3-TSEM PASS (0/50 votos) · CB3-TTRANS PASS (0/50)
+            CB3-R1 PASS (0/3) · CB3-R2 PASS (0/3) · CB3-R3 PASS (0/3)
+            CB3-D PASS: 6/10 HOLD (6 TECH_EXPLICIT_HOLD), total_hold_rate 0.60 < 0.90
+            distribuição: técnico MANTER 6 · COMPRA 3 · VENDA 1; causas
+            TECH_EXPLICIT_HOLD 6 · ACTION_BUY 3 · ACTION_SELL 1 (VENDA com carteira
+            zerada, alvo 0)
+            regras duras: 0 violação; vol > 0.50 em 2020-05-13 (0.551) e 2022-11-29
+            (0.531), ambas MANTER -> regra de volatilidade não exercida (nenhuma
+            COMPRA acima do limite); drawdown e concentração 0 na âncora
+            Risk LLM (descritivo, sem PASS/FAIL): 3 chamadas, 3 APROVADO, 0 VETADO
+            -> RISK_LLM_DISCRETIONARY_VETO = NOT_OBSERVED
+            nota: o rationale do Risk em 2021-08-17 ("não havendo fatores adversos nas
+            métricas fornecidas que justifiquem veto") seria VERDICT_TEXT_CONTRADICTION
+            no checker v1; o v2, corrigido e congelado antes da abertura, não o marca
+            pré-filtro léxico: 0 marcações
+            -> CAL_B3_STATUS = CONSUMED; status CAL_B3_AWAITING_PRIMARY_AUTHOR_REVIEW
+               (gates automáticos PASS; PRIMARY_AUTHOR.json em branco;
+               SECOND_AUTHOR_OPTIONAL.json NOT_REVIEWED — NONBLOCKING)

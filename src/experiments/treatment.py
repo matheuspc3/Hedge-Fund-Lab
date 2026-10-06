@@ -265,7 +265,7 @@ def require_cal_b3_committed() -> None:
     """Nenhuma chamada live v3 antes do compromisso da CAL-B3 (Amendment 10)."""
     if not anchors.CAL_B3_ANCHORS or anchors.digest(anchors.CAL_B3_ANCHORS) != anchors.CAL_B3_COMMITMENT_SHA256:
         raise ValueError("CAL-B3 must be committed before any H2 v3 live call")
-    if anchors.CAL_B3_STATUS != "SEALED":
+    if anchors.CAL_B3_STATUS != "SEALED":  # CONSUMED desde o Amendment 11: development v3 encerrado
         raise ValueError(f"CAL-B3 is {anchors.CAL_B3_STATUS}; v3 development needs it sealed")
 
 

@@ -186,9 +186,10 @@ def test_cal_b3_comprometida_bate_com_a_regra_e_a_evidencia() -> None:
         assert {row["cal_b1_anchor"], row["cal_b2_anchor"]} <= set(row["excluded_sessions"])
         s = next(x for x in anchors.STRATA if x.stratum_id == row["stratum_id"])
         assert s.subset == "CAL-B" and s.first <= row["winner"] <= s.last
-    treatment.require_cal_b3_committed()
-    assert anchors.CAL_B3_STATUS == "SEALED" and anchors.CAL_B_AUTHORIZED is False
-    for day in anchors.CAL_B3_ANCHORS:  # selada: nenhuma janela de development a toca
+    with pytest.raises(ValueError, match="CONSUMED"):  # consumida no Amendment 11: development v3 encerrado
+        treatment.require_cal_b3_committed()
+    assert anchors.CAL_B3_STATUS == "CONSUMED" and anchors.CAL_B_AUTHORIZED is False
+    for day in anchors.CAL_B3_ANCHORS:  # nenhuma janela de development a toca
         assert day in anchors.sealed_holdout_anchors()
         with pytest.raises(ValueError, match="CAL-B"):
             anchors.require_cal_b_locked(day, day)
@@ -284,7 +285,7 @@ def test_status_development_v3_e_seguranca_cal_b3() -> None:
     s = json.loads((Path(__file__).resolve().parents[2] / treatment.H2_V3_DEVELOPMENT_SUMMARY).read_text(encoding="utf-8"))
     assert s["status"] == treatment.H2_V3_DEVELOPMENT_STATUS
     assert s["cal_b3_safety"]["v3_decision_sessions_in_cal_b3"] == [] and not s["cal_b3_safety"]["executed"]
-    assert s["cal_b3_safety"]["commitment"] == anchors.CAL_B3_COMMITMENT_SHA256 and anchors.CAL_B3_STATUS == "SEALED"
+    assert s["cal_b3_safety"]["commitment"] == anchors.CAL_B3_COMMITMENT_SHA256 and s["cal_b3_safety"]["status"] == "SEALED"
     assert s["validation_final_safety"]["v3_sessions_at_or_after_validation"] == []
     assert s["frozen_component_replay"]["mismatches"] == 0
     assert "technical_analyst/live" not in s["frozen_component_replay"]["totals"]  # Technical 100% replay v2

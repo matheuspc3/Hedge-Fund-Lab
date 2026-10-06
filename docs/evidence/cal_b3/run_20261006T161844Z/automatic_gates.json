@@ -1,0 +1,448 @@
+{
+  "kind": "CAL_B3_AUTOMATIC_GATES",
+  "freeze": "CAL_B3_PROTOCOL_FREEZE_V1",
+  "computed_utc": "2026-10-06T16:20:22Z",
+  "git_commit": "580cd08e1515b635a4c8dcfe6616471eb1f408ea",
+  "batch_commit": "af24e801f5feb0b94e92c923e11caafd3fe28f13",
+  "anchors_x_repetitions": "10 x 1",
+  "gates": {
+    "CB3-A": {
+      "issues": {},
+      "pass": true
+    },
+    "CB3-S": {
+      "issues": {},
+      "pass": true
+    },
+    "CB3-C": {
+      "issues": {},
+      "pass": true
+    },
+    "CB3-HR": {
+      "issues": {},
+      "pass": true
+    },
+    "CB3-TSEM": {
+      "value": 0,
+      "threshold": "== 0",
+      "flagged": {},
+      "pass": true
+    },
+    "CB3-TTRANS": {
+      "value": 0,
+      "threshold": "== 0",
+      "flagged": {},
+      "pass": true
+    },
+    "CB3-R1": {
+      "value": 0,
+      "threshold": "== 0",
+      "flagged": {},
+      "pass": true
+    },
+    "CB3-R2": {
+      "value": 0,
+      "threshold": "== 0",
+      "flagged": {},
+      "pass": true
+    },
+    "CB3-R3": {
+      "value": 0,
+      "threshold": "== 0",
+      "flagged": {},
+      "pass": true
+    },
+    "CB3-D": {
+      "total_hold_rate": 0.6,
+      "threshold": ">= 0.90 fails",
+      "pass": true
+    }
+  },
+  "automatic_pass": true,
+  "hold_rates": {
+    "explicit_hold_rate": 0.6,
+    "no_majority_abstention_rate": 0.0,
+    "risk_veto_rate": 0.0,
+    "portfolio_hold_rate": 0.0,
+    "total_hold_rate": 0.6,
+    "total_holds": 6,
+    "decisions": 10,
+    "degenerate_inactive": false
+  },
+  "action_distribution": {
+    "final_cause": {
+      "ACTION_BUY": 3,
+      "ACTION_SELL": 1,
+      "TECH_EXPLICIT_HOLD": 6
+    },
+    "technical_outcome": {
+      "COMPRA": 3,
+      "MANTER": 6,
+      "VENDA": 1
+    }
+  },
+  "hard_risk_audit": {
+    "rules": {
+      "risk_max_volatility": 0.5,
+      "risk_max_drawdown": 0.25,
+      "risk_max_concentration": 1.0,
+      "volatility_window": 21
+    },
+    "by_anchor": [
+      {
+        "anchor": "2018-08-03",
+        "recent_volatility": 0.334551,
+        "current_drawdown": 0.0,
+        "current_concentration": 0.0,
+        "technical_outcome": "MANTER",
+        "volatility_breach": false,
+        "risk_source": "AUTO_APPROVE",
+        "risk_rule": null,
+        "risk_verdict": "APROVADO",
+        "final_cause": "TECH_EXPLICIT_HOLD"
+      },
+      {
+        "anchor": "2019-03-19",
+        "recent_volatility": 0.231626,
+        "current_drawdown": 0.0,
+        "current_concentration": 0.0,
+        "technical_outcome": "MANTER",
+        "volatility_breach": false,
+        "risk_source": "AUTO_APPROVE",
+        "risk_rule": null,
+        "risk_verdict": "APROVADO",
+        "final_cause": "TECH_EXPLICIT_HOLD"
+      },
+      {
+        "anchor": "2019-10-18",
+        "recent_volatility": 0.192782,
+        "current_drawdown": 0.0,
+        "current_concentration": 0.0,
+        "technical_outcome": "COMPRA",
+        "volatility_breach": false,
+        "risk_source": "LLM",
+        "risk_rule": null,
+        "risk_verdict": "APROVADO",
+        "final_cause": "ACTION_BUY"
+      },
+      {
+        "anchor": "2020-05-13",
+        "recent_volatility": 0.551417,
+        "current_drawdown": 0.0,
+        "current_concentration": 0.0,
+        "technical_outcome": "MANTER",
+        "volatility_breach": true,
+        "risk_source": "AUTO_APPROVE",
+        "risk_rule": null,
+        "risk_verdict": "APROVADO",
+        "final_cause": "TECH_EXPLICIT_HOLD"
+      },
+      {
+        "anchor": "2021-01-06",
+        "recent_volatility": 0.297476,
+        "current_drawdown": 0.0,
+        "current_concentration": 0.0,
+        "technical_outcome": "VENDA",
+        "volatility_breach": false,
+        "risk_source": "AUTO_APPROVE",
+        "risk_rule": null,
+        "risk_verdict": "APROVADO",
+        "final_cause": "ACTION_SELL"
+      },
+      {
+        "anchor": "2021-08-17",
+        "recent_volatility": 0.368561,
+        "current_drawdown": 0.0,
+        "current_concentration": 0.0,
+        "technical_outcome": "COMPRA",
+        "volatility_breach": false,
+        "risk_source": "LLM",
+        "risk_rule": null,
+        "risk_verdict": "APROVADO",
+        "final_cause": "ACTION_BUY"
+      },
+      {
+        "anchor": "2022-03-11",
+        "recent_volatility": 0.407904,
+        "current_drawdown": 0.0,
+        "current_concentration": 0.0,
+        "technical_outcome": "MANTER",
+        "volatility_breach": false,
+        "risk_source": "AUTO_APPROVE",
+        "risk_rule": null,
+        "risk_verdict": "APROVADO",
+        "final_cause": "TECH_EXPLICIT_HOLD"
+      },
+      {
+        "anchor": "2022-11-29",
+        "recent_volatility": 0.53121,
+        "current_drawdown": 0.0,
+        "current_concentration": 0.0,
+        "technical_outcome": "MANTER",
+        "volatility_breach": true,
+        "risk_source": "AUTO_APPROVE",
+        "risk_rule": null,
+        "risk_verdict": "APROVADO",
+        "final_cause": "TECH_EXPLICIT_HOLD"
+      },
+      {
+        "anchor": "2023-05-12",
+        "recent_volatility": 0.343721,
+        "current_drawdown": 0.0,
+        "current_concentration": 0.0,
+        "technical_outcome": "MANTER",
+        "volatility_breach": false,
+        "risk_source": "AUTO_APPROVE",
+        "risk_rule": null,
+        "risk_verdict": "APROVADO",
+        "final_cause": "TECH_EXPLICIT_HOLD"
+      },
+      {
+        "anchor": "2024-01-11",
+        "recent_volatility": 0.177251,
+        "current_drawdown": 0.0,
+        "current_concentration": 0.0,
+        "technical_outcome": "COMPRA",
+        "volatility_breach": false,
+        "risk_source": "LLM",
+        "risk_rule": null,
+        "risk_verdict": "APROVADO",
+        "final_cause": "ACTION_BUY"
+      }
+    ]
+  },
+  "risk_discretionary_activity": {
+    "risk_llm_calls": 3,
+    "APPROVED": 3,
+    "VETOED": 0,
+    "approval_rate": 1.0,
+    "veto_rate": 0.0,
+    "RISK_LLM_DISCRETIONARY_VETO": "NOT_OBSERVED",
+    "authority": "DESCRIPTIVE ONLY (no PASS/FAIL)"
+  },
+  "risk_llm_veto_rate_has_no_minimum_gate": true,
+  "risk_checker_version": 2,
+  "checker_blobs": {
+    "src/agents/feature_semantics.py": "7a086701afda203a415cf1f9b67912d4788b3e56",
+    "scripts/run_h2_v2_defect.py": "2ec09c494732148680b3543ed4ed7ceae58018c2",
+    "src/agents/risk_contract.py": "1ff4343a8e5d24ec4f8c71349a64771a21aa3636"
+  },
+  "prescreen_flags_by_anchor": {
+    "2018-08-03": [],
+    "2019-03-19": [],
+    "2019-10-18": [],
+    "2020-05-13": [],
+    "2021-01-06": [],
+    "2021-08-17": [],
+    "2022-03-11": [],
+    "2022-11-29": [],
+    "2023-05-12": [],
+    "2024-01-11": []
+  },
+  "prescreen_note": "lexical flags only point reviewers to text; classification is human",
+  "operational": [
+    {
+      "anchor": "2018-08-03",
+      "logical_calls": 5,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 5,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 5
+      },
+      "input_tokens": 4435,
+      "output_tokens": 590,
+      "thinking_tokens": 0,
+      "latency_ms_total": 20405.9,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2019-03-19",
+      "logical_calls": 5,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 5,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 5
+      },
+      "input_tokens": 4435,
+      "output_tokens": 597,
+      "thinking_tokens": 0,
+      "latency_ms_total": 17682.0,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2019-10-18",
+      "logical_calls": 7,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 1,
+        "portfolio_manager": 1
+      },
+      "http_attempts": 7,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 7
+      },
+      "input_tokens": 5094,
+      "output_tokens": 658,
+      "thinking_tokens": 446,
+      "latency_ms_total": 35296.2,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2020-05-13",
+      "logical_calls": 5,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 5,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 5
+      },
+      "input_tokens": 4440,
+      "output_tokens": 571,
+      "thinking_tokens": 0,
+      "latency_ms_total": 21872.4,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2021-01-06",
+      "logical_calls": 6,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 1
+      },
+      "http_attempts": 6,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 6
+      },
+      "input_tokens": 4635,
+      "output_tokens": 638,
+      "thinking_tokens": 0,
+      "latency_ms_total": 21988.0,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2021-08-17",
+      "logical_calls": 7,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 1,
+        "portfolio_manager": 1
+      },
+      "http_attempts": 7,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 7
+      },
+      "input_tokens": 5097,
+      "output_tokens": 768,
+      "thinking_tokens": 0,
+      "latency_ms_total": 26621.3,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2022-03-11",
+      "logical_calls": 5,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 5,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 5
+      },
+      "input_tokens": 4440,
+      "output_tokens": 606,
+      "thinking_tokens": 0,
+      "latency_ms_total": 14980.5,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2022-11-29",
+      "logical_calls": 5,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 5,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 5
+      },
+      "input_tokens": 4435,
+      "output_tokens": 543,
+      "thinking_tokens": 0,
+      "latency_ms_total": 16880.8,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2023-05-12",
+      "logical_calls": 5,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 5,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 5
+      },
+      "input_tokens": 4440,
+      "output_tokens": 598,
+      "thinking_tokens": 0,
+      "latency_ms_total": 14982.9,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2024-01-11",
+      "logical_calls": 7,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 1,
+        "portfolio_manager": 1
+      },
+      "http_attempts": 7,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 7
+      },
+      "input_tokens": 5058,
+      "output_tokens": 713,
+      "thinking_tokens": 0,
+      "latency_ms_total": 20467.6,
+      "recovery_used": false
+    }
+  ],
+  "operational_totals": {
+    "logical_calls": 57,
+    "http_attempts": 57,
+    "retries": 0,
+    "transient_failures": 0,
+    "latency_ms_p50": 3275.1422000001185,
+    "latency_ms_p90": 5329.811799991876,
+    "input_tokens": 46509,
+    "output_tokens": 6282,
+    "thinking_tokens": 446,
+    "cost": "not computed: no versioned pricing source"
+  },
+  "financial_outcome": "NOT COMPUTED (no t+1 price read, no return/P&L/Sharpe/Sortino/MDD/accuracy)"
+}

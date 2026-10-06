@@ -350,3 +350,21 @@ def test_cal_b3_checkers_congelados_por_blob() -> None:
     for path, blob in cal_b.CAL_B3_CHECKER_BLOBS.items():
         assert subprocess.run(["git", "hash-object", path], capture_output=True, text=True,
                               check=True).stdout.strip() == blob
+
+
+def test_cal_b3_gates_registrados_batem_com_a_evidencia() -> None:
+    import json
+    from pathlib import Path
+
+    run = Path(__file__).resolve().parents[2] / cal_b.CAL_B3_EVIDENCE
+    report = json.loads((run / "automatic_gates.json").read_text(encoding="utf-8"))
+    assert {g: v["pass"] for g, v in report["gates"].items()} == dict(cal_b.CAL_B3_GATE_RESULTS)
+    assert tuple(report["gates"]) == cal_b.CAL_B3_GATES
+    assert report["hold_rates"]["total_holds"] == 6 and report["hold_rates"]["decisions"] == 10
+    assert report["batch_commit"].startswith(cal_b.CAL_B3_BATCH_COMMIT)
+    assert report["financial_outcome"].startswith("NOT COMPUTED")
+    assert report["risk_discretionary_activity"]["RISK_LLM_DISCRETIONARY_VETO"] == "NOT_OBSERVED"
+    assert cal_b.cal_b3_status(report["automatic_pass"], None, B3) == cal_b.CAL_B3_AUTOMATIC_STATUS
+    assert anchors.CAL_B3_STATUS == "CONSUMED"
+    with pytest.raises(ValueError, match="CONSUMED"):
+        anchors.authorize_cal_b3(*B3_OK)

@@ -122,14 +122,16 @@ CAL_B2_STATUS = "CONSUMED"
 
 
 #: CAL-B3 (Amendment 10): novo holdout da v3, preenchido só pelo commit de
-#: compromisso, antes de qualquer chamada live v3. Selada; não executada.
+#: compromisso, antes de qualquer chamada live v3.
 CAL_B3_ANCHORS: tuple[str, ...] = (
     "2018-08-03", "2019-03-19", "2019-10-18", "2020-05-13", "2021-01-06",
     "2021-08-17", "2022-03-11", "2022-11-29", "2023-05-12", "2024-01-11",
 )
 CAL_B3_COMMITMENT_SHA256: str | None = "a5cadecd361de5059370bf4bfa97b1417b82eb8951950cf92b0aebc7edecdbaf"
 CAL_B3_SELECTION_EVIDENCE = "docs/evidence/cal_b3/selection.json"
-CAL_B3_STATUS = "SEALED"
+#: CONSUMED desde o lote one-shot (Amendment 11): ``authorize_cal_b3`` recusa
+#: reabri-la, com PASS ou FAIL.
+CAL_B3_STATUS = "CONSUMED"
 
 
 def sealed_holdout_anchors() -> tuple[str, ...]:

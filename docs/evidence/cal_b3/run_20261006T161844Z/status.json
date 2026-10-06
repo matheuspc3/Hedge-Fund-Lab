@@ -1,0 +1,16 @@
+{
+  "kind": "CAL_B3_STATUS",
+  "computed_utc": "2026-10-06T16:21:07Z",
+  "status": "CAL_B3_AWAITING_PRIMARY_AUTHOR_REVIEW",
+  "automatic_pass": true,
+  "consumption": "CONSUMED (10/10 anchors, R=1)",
+  "system_calibration_complete": false,
+  "next": null,
+  "primary_human_reviewers_required": 1,
+  "second_review_status": "NOT_REVIEWED — NONBLOCKING",
+  "second_independent_review": [
+    "NOT REQUIRED FOR PROGRESSION",
+    "RECOMMENDED AS LATER AUDIT"
+  ],
+  "h2_final_treatment_version": null
+}

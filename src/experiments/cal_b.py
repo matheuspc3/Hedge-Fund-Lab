@@ -307,3 +307,16 @@ def cal_b3_status(automatic_pass: bool, primary_review: Mapping[str, Any] | None
     if any(v not in ("PASS", "FAIL") for v in verdicts):
         return CAL_B3_AWAITING_PRIMARY_AUTHOR_REVIEW
     return CAL_B3_PASS if all(v == "PASS" for v in verdicts) else CAL_B3_FAIL
+
+
+# ── Resultado da CAL-B3 (registrado) ─────────────────────────────
+
+CAL_B3_FREEZE_COMMIT = "871a29f"
+CAL_B3_BATCH_COMMIT = "af24e80"
+CAL_B3_RAW_SEAL_COMMIT = "580cd08"
+CAL_B3_EVIDENCE = "docs/evidence/cal_b3/run_20261006T161844Z"
+#: Os dez gates automáticos passaram (6/10 HOLD, total_hold_rate 0.60). Risk LLM
+#: 3/3 APROVADO: RISK_LLM_DISCRETIONARY_VETO = NOT_OBSERVED, só descritivo.
+CAL_B3_GATE_RESULTS: Mapping[str, bool] = MappingProxyType(dict.fromkeys(CAL_B3_GATES, True))
+#: Intermediário até a ficha do autor principal (``run_cal_b.py status ... --cal-b3``).
+CAL_B3_AUTOMATIC_STATUS = CAL_B3_AWAITING_PRIMARY_AUTHOR_REVIEW

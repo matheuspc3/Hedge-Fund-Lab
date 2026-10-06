@@ -1,0 +1,58 @@
+{
+  "role": "PRIMARY_AUTHOR",
+  "required": true,
+  "reviewer": null,
+  "reviewed_utc": null,
+  "anchors": {
+    "2018-08-03": {
+      "material_unsupported_claim": null,
+      "rationale_action_coherence": null,
+      "optional_note": ""
+    },
+    "2019-03-19": {
+      "material_unsupported_claim": null,
+      "rationale_action_coherence": null,
+      "optional_note": ""
+    },
+    "2019-10-18": {
+      "material_unsupported_claim": null,
+      "rationale_action_coherence": null,
+      "optional_note": ""
+    },
+    "2020-05-13": {
+      "material_unsupported_claim": null,
+      "rationale_action_coherence": null,
+      "optional_note": ""
+    },
+    "2021-01-06": {
+      "material_unsupported_claim": null,
+      "rationale_action_coherence": null,
+      "optional_note": ""
+    },
+    "2021-08-17": {
+      "material_unsupported_claim": null,
+      "rationale_action_coherence": null,
+      "optional_note": ""
+    },
+    "2022-03-11": {
+      "material_unsupported_claim": null,
+      "rationale_action_coherence": null,
+      "optional_note": ""
+    },
+    "2022-11-29": {
+      "material_unsupported_claim": null,
+      "rationale_action_coherence": null,
+      "optional_note": ""
+    },
+    "2023-05-12": {
+      "material_unsupported_claim": null,
+      "rationale_action_coherence": null,
+      "optional_note": ""
+    },
+    "2024-01-11": {
+      "material_unsupported_claim": null,
+      "rationale_action_coherence": null,
+      "optional_note": ""
+    }
+  }
+}
