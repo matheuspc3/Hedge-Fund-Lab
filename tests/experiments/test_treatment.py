@@ -76,3 +76,21 @@ def test_hardening_dirigido_registrado_bate_com_a_evidencia() -> None:
     assert m["technical_prompt_sha256"] == TECHNICAL_SYSTEM_PROMPT_V2_SHA256
     assert m["participant_params"] == dict(treatment.H2_V2_DEFECT_PARAMS)
     assert m["semantic_audit"]["technical_votes"] == 150
+
+
+def test_selecao_cal_a_v2_bate_com_a_evidencia() -> None:
+    import json
+    from pathlib import Path
+
+    sel = treatment.CAL_A_V2_SELECTED_CONFIG
+    s = json.loads((Path(__file__).resolve().parents[2] / sel["evidence"]).read_text(encoding="utf-8"))
+    assert s["complete"] and s["treatment_version"] == 2
+    assert s["paired_technical_audit"]["same_five_technical_responses_in_all_configs"]
+    assert s["cal_b_audit"]["cal_b_sessions_touched"] == []
+    s1 = {int(k): v for k, v in s["S1"].items()}
+    ranking = sorted(s1, key=lambda c: (-s1[c], c))
+    assert sel["config_id"] == ranking[0] == s["selected_config_id"] and tuple(ranking) == sel["ranking"]
+    assert sel["discrimination"] == ("NONE" if len(set(s1.values())) == 1 else "YES")
+    assert sel["selection_basis"] == ("PROTOCOL_TIE_FALLBACK" if sel["discrimination"] == "NONE" else "EMPIRICAL_S1")
+    grid = next(c for c in s["grid"] if c["config_id"] == sel["config_id"])
+    assert (grid["volatility_window"], grid["risk_max_volatility"]) == (sel["volatility_window"], sel["risk_max_volatility"])

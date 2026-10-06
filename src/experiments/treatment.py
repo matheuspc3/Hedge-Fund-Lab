@@ -48,7 +48,14 @@ H2_V2_DEFECT_PARAMS: Mapping[str, Any] = MappingProxyType(v2_params(STRESS_FROZE
 H2_V2_HARDENING_PARAMS: Mapping[str, Any] = MappingProxyType(v2_params(h2_freeze_v1_params(H2_FROZEN_THINKING_LEVEL)))
 
 #: Seleções v2, preenchidas só pelos commits de resultado de cada fase.
-CAL_A_V2_SELECTED_CONFIG: Mapping[str, Any] | None = None
+#: CAL-A v2: S1 idêntico nas seis configurações -> DISCRIMINATION NONE ->
+#: config 1 pelo desempate do protocolo, não por desempenho superior.
+CAL_A_V2_SELECTED_CONFIG: Mapping[str, Any] | None = MappingProxyType({
+    "config_id": 1, "volatility_window": 21, "risk_max_volatility": 0.40,
+    "S1": 0.0007185651086917932, "ranking": (1, 2, 3, 4, 5, 6),
+    "discrimination": "NONE", "selection_basis": "PROTOCOL_TIE_FALLBACK",
+    "evidence": "docs/evidence/cal_a_v2/run_20261006T022946Z/summary.json",
+})
 SEQUENTIAL_DEV_V2_SELECTED_CONFIG: Mapping[str, Any] | None = None
 
 

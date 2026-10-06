@@ -1503,4 +1503,11 @@ mudou.
             348 chamadas lógicas, 0 retries
 2026-10-05  B0 v2 (H, R = 1); evidência docs/evidence/h2_v2/b0_low_20261006T022838Z/
             G-A 0 · G-T 0 · G-I 0.50 -> B0 PASS (v2)
+2026-10-05  CAL-A v2: mesmas 20 âncoras, grade, R = 3, pareamento, S1 e desempate
+            commit 7fb50dd; evidência docs/evidence/cal_a_v2/run_20261006T022946Z/
+            360/360 avaliações; pareamento técnico true; CAL-B (B1/B2): 0 sessões
+            360 chamadas live (300 técnicas), 1617 do banco, 1 HTTP 503 recuperado
+            S1 = 0.00071857 nas seis configurações (exatamente iguais)
+            -> CAL_A_V2_DISCRIMINATION = NONE -> config 1 (volatility_window 21,
+               risk_max_volatility 0.40), basis PROTOCOL_TIE_FALLBACK
 ```
