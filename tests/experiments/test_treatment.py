@@ -233,3 +233,28 @@ def test_selecao_cal_a_v3_bate_com_a_evidencia() -> None:
     assert [c for c in s1 if s1[c] == s1[ranking[0]]] == [2, 3, 6]  # empate no topo -> menor config_id
     grid = next(c for c in s["grid"] if c["config_id"] == sel["config_id"])
     assert (grid["volatility_window"], grid["risk_max_volatility"]) == (sel["volatility_window"], sel["risk_max_volatility"])
+
+
+def test_selecao_sequential_dev_v3_bate_com_a_evidencia() -> None:
+    import json
+    from pathlib import Path
+
+    from src.experiments.phases import SEQUENTIAL_DEV_GRID, SEQUENTIAL_DEV_REPETITIONS
+
+    sel = treatment.SEQUENTIAL_DEV_V3_SELECTED_CONFIG
+    s = json.loads((Path(__file__).resolve().parents[2] / sel["evidence"]).read_text(encoding="utf-8"))
+    assert s["complete"] and s["treatment_version"] == 3 and s["kind"] == "SEQUENTIAL_DEVELOPMENT_V3"
+    assert s["base_volatility_config"] == {"volatility_window": 21, "risk_max_volatility": 0.5}  # CAL-A v3
+    assert s["paired_technical_audit"]["same_five_technical_responses_in_all_configs"]
+    assert s["cal_b_audit"]["cal_b_sessions_touched"] == []
+    assert not s["frozen_component_replay"]["mismatch"] and "technical_analyst" not in s["frozen_component_replay"]["live"]
+    s2 = {int(k): v for k, v in s["S2"].items()}
+    for cid, values in s["sharpe_by_replicate"].items():
+        assert s2[int(cid)] == sum(values) / SEQUENTIAL_DEV_REPETITIONS
+    ranking = sorted(s2, key=lambda c: (-s2[c], c))
+    assert sel["config_id"] == ranking[0] == s["selected_config_id"] and tuple(ranking) == sel["ranking"]
+    assert sel["discrimination"] == ("NONE" if len(set(s2.values())) == 1 else "YES")
+    assert sel["selection_basis"] == ("PROTOCOL_TIE_FALLBACK" if sel["discrimination"] == "NONE" else "EMPIRICAL_S2")
+    assert next(c for c in SEQUENTIAL_DEV_GRID if c["config_id"] == sel["config_id"])["risk_max_drawdown"] == sel["risk_max_drawdown"]
+    assert treatment.stress_v3_params() == {**treatment.stress_v2_params(), "risk_max_volatility": 0.50,
+                                            "risk_max_drawdown": 0.25, "risk_prompt_version": 2}

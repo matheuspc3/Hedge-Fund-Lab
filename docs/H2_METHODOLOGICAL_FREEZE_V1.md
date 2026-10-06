@@ -2070,4 +2070,22 @@ mudou.
                config_id -> config 2 (volatility_window 21, risk_max_volatility 0.50),
                basis EMPIRICAL_S1 (uma âncora, R = 3: development evidence, sem
                afirmação de superioridade robusta)
+2026-10-06  Sequential Development v3: mesma janela, D01-D03, R = 3, S2, fronteira
+            commit 9e99d1c; evidência docs/evidence/sequential_dev_v3/run_20261006T152426Z/
+            9/9 runs; base 21 / 0.50 (CAL-A v3); pareamento técnico 381/381;
+            CAL-B (B1/B2/B3): 0 sessões; data_end máx. 2024-08-30
+            Technical 5715/5715 replay do Sequential v2 (mesma repetição), 0 mismatch;
+            26 chamadas live (Risk 11 únicas, todas APROVADO; Portfolio), 0 retry
+            checker do Risk: V3-R1 0 · V3-R2 0 · V3-R3 0
+            drawdown canônico máx. por repetição 0.144 / 0.166 / 0.223 (D01/D03); D02 (0.15)
+            vetou por regra dura em r2 (11) e r3 (27), todos acima do limite, 0 ordens
+            acima do limite; com 0.25/0.35 o Risk v3 aprova as entradas que o Risk v1 vetava
+            com "excede os limites prudenciais" (regra inventada, V3-R2 na evidência v2)
+            Sharpe v1 por repetição D01 0.9653 / 0.2436 / -0.4247
+                                    D02 0.9653 / -0.3947 / -0.3565
+                                    D03 = D01
+            S2 D01 0.2614 · D02 0.0714 · D03 0.2614
+            -> SEQUENTIAL_DEV_V3_DISCRIMINATION = YES, empate exato no topo (D01, D03) ->
+               menor config_id -> D01 (risk_max_drawdown 0.25), basis EMPIRICAL_S2
+               (R = 3, development evidence, sem afirmação de superioridade robusta)
 ```

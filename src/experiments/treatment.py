@@ -217,7 +217,17 @@ CAL_A_V3_SELECTED_CONFIG: Mapping[str, Any] | None = MappingProxyType({
     "tie": "TOP_TIE_2_3_6_FALLBACK_LOWEST_CONFIG_ID",
     "evidence": "docs/evidence/cal_a_v3/run_20261006T151945Z/summary.json",
 })
-SEQUENTIAL_DEV_V3_SELECTED_CONFIG: Mapping[str, Any] | None = None
+#: Sequential Development v3 (base 21 / 0.50 da CAL-A v3): S2 D01 = D03 > D02
+#: (o limite 0.15 vetou entradas por regra dura em r2/r3; com 0.25/0.35 o Risk v3
+#: aprova). Empate exato no topo (1, 3) -> menor config_id -> D01. R = 3:
+#: development evidence, sem afirmação de superioridade robusta.
+SEQUENTIAL_DEV_V3_SELECTED_CONFIG: Mapping[str, Any] | None = MappingProxyType({
+    "config_id": 1, "name": "D01", "risk_max_drawdown": 0.25,
+    "S2": 0.2614222625465128, "ranking": (1, 3, 2),
+    "discrimination": "YES", "selection_basis": "EMPIRICAL_S2",
+    "tie": "TOP_TIE_1_3_FALLBACK_LOWEST_CONFIG_ID",
+    "evidence": "docs/evidence/sequential_dev_v3/run_20261006T152426Z/summary.json",
+})
 
 
 def stress_v3_params() -> dict[str, Any]:
