@@ -938,6 +938,13 @@ Executada (`33785f9`): 10/10 âncoras seladas, CB-A/S/C/R PASS, **CB-D FAIL**
 `CAL_B_STATUS = CONSUMED`, `SYSTEM_CALIBRATION_COMPLETE = False`. Nenhuma
 métrica financeira calculada; nada rerodado ou ajustado; uma nova versão
 metodológica, se houver, é decisão fora desta fase.
+Post-mortem (`docs/evidence/cal_b_v1/postmortem/`, CAL-B1 CONSUMED — NOW
+DEVELOPMENT EVIDENCE, sem chamada nova): os HOLDs são do Technical (5/8
+unânimes, nenhum via Risk/Portfolio); diagnóstico primário E — MIXED, com
+mecanismo dominante na semântica de feature não especificada no prompt
+(`bb_upper_gap < 0` lido como rompimento da banda superior em 27/40 votos das
+âncoras HOLD, padrão presente desde o Hardening), além de conflito real
+tendência/momentum em 5/8 estados e linguagem de cautela em 9/36 votos MANTER.
 
 ### Hardening pré-B0 — suporte implementado
 
