@@ -2006,4 +2006,21 @@ mudou.
             pré-filtro léxico: 0 marcações
             -> CAL_B2_STATUS = CONSUMED; status CAL_B2_AWAITING_HUMAN_REVIEW
                (gates automáticos PASS; fichas dos dois autores em branco)
+2026-10-06  H2 v3 (Amendment 10): governança da v2 e compromisso da CAL-B3, ANTES de qualquer chamada v3
+            CAL-B2: status histórico CAL_B2_AWAITING_HUMAN_REVIEW preservado (fichas em
+            branco, segunda revisão não aguardada); H2_V2_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE =
+            True (CAL_B2 CONSUMED AND USED AS DEVELOPMENT EVIDENCE)
+            contrato e checker do Risk congelados em c148dc7 (+ 9101c93, só estilo de teste)
+            seed SHA256("HEDGE-FUND-LAB|CAL-B3|" + 518dd9dd...b167) = f1c36f4d...8184
+            só calendário; seleção rodada em eb3fd1d; excluídas CAL-B1, CAL-B2, H_real
+            (atual e pré-Amendment 1), âncoras CAL-A, Sequential Dev e as 369 sessões de
+            decisão em docs/evidence (inclui Stress e todo development v1/v2)
+            evidência docs/evidence/cal_b3/selection.json
+            estrato 3  -> 2018-08-03 (49 cand.)    estrato 18 -> 2021-08-17 (48)
+            estrato 6  -> 2019-03-19 (48)          estrato 21 -> 2022-03-11 (48)
+            estrato 9  -> 2019-10-18 (49)          estrato 24 -> 2022-11-29 (48)
+            estrato 12 -> 2020-05-13 (48)          estrato 27 -> 2023-05-12 (48)
+            estrato 15 -> 2021-01-06 (49)          estrato 30 -> 2024-01-11 (48)
+            CAL_B3_COMMITMENT_SHA256 a5cadecd361de5059370bf4bfa97b1417b82eb8951950cf92b0aebc7edecdbaf
+            -> CAL-B3 SELADA (runner e banco recusam as datas; não executada)
 ```

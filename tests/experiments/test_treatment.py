@@ -163,3 +163,32 @@ def test_governanca_v2_preserva_status_historico_e_fichas_em_branco() -> None:
     assert treatment.H2_V2_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE is True
     assert treatment.H2_V2_SYSTEM_FREEZE_INELIGIBILITY_REASON == "CAL_B2 CONSUMED AND USED AS DEVELOPMENT EVIDENCE"
     assert cal_b.SYSTEM_CALIBRATION_COMPLETE is False and anchors.CAL_B2_STATUS == "CONSUMED"
+
+
+def test_cal_b3_comprometida_bate_com_a_regra_e_a_evidencia() -> None:
+    """Amendment 10: seed do compromisso da CAL-B2, menor digest, fora de todo development."""
+    import json
+    from pathlib import Path
+
+    from src.experiments import anchors
+
+    seed = hashlib.sha256(("HEDGE-FUND-LAB|CAL-B3|" + anchors.CAL_B2_COMMITMENT_SHA256).encode()).hexdigest()
+    assert treatment.CAL_B3_SELECTION_SEED == seed
+    root = Path(__file__).resolve().parents[2]
+    sel = json.loads((root / anchors.CAL_B3_SELECTION_EVIDENCE).read_text(encoding="utf-8"))
+    assert tuple(sel["cal_b3_anchors"]) == anchors.CAL_B3_ANCHORS and sel["seed"] == seed
+    assert anchors.digest(anchors.CAL_B3_ANCHORS) == anchors.CAL_B3_COMMITMENT_SHA256 == sel["cal_b3_commitment_sha256"]
+    consumed = set(anchors.CAL_B_ANCHORS) | set(anchors.CAL_B2_ANCHORS) | set(anchors.CAL_A_ANCHORS)
+    assert not set(anchors.CAL_B3_ANCHORS) & consumed
+    for row in sel["strata"]:
+        assert row["winner_digest"] == treatment.session_digest(row["stratum_id"], row["winner"], seed)
+        assert row["winner"] not in row["excluded_sessions"]
+        assert {row["cal_b1_anchor"], row["cal_b2_anchor"]} <= set(row["excluded_sessions"])
+        s = next(x for x in anchors.STRATA if x.stratum_id == row["stratum_id"])
+        assert s.subset == "CAL-B" and s.first <= row["winner"] <= s.last
+    treatment.require_cal_b3_committed()
+    assert anchors.CAL_B3_STATUS == "SEALED" and anchors.CAL_B_AUTHORIZED is False
+    for day in anchors.CAL_B3_ANCHORS:  # selada: nenhuma janela de development a toca
+        assert day in anchors.sealed_holdout_anchors()
+        with pytest.raises(ValueError, match="CAL-B"):
+            anchors.require_cal_b_locked(day, day)
