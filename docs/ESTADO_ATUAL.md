@@ -991,6 +991,19 @@ Observação: o Risk v3 aprovou 70/70 no development (v1 vetava 19/67, v2
 18/73). Status: `H2_V3 DEVELOPMENT COMPLETE — READY FOR CAL-B3 PROTOCOL`.
 Validation e Final Test intocados.
 
+**CAL-B3 (Amendment 11, `CAL_B3_PROTOCOL_FREEZE_V1`).** Antes de qualquer
+chamada sobre as datas CAL-B3, o checker do Risk passou à versão 2
+(negação por construção na sentença; os 2 falsos positivos conhecidos de
+`VERDICT_TEXT_CONTRADICTION` corrigidos, R1/R2/CONFIDENCE_ONLY idênticos no
+corpus de development) e foi congelado. Configuração final v3 (21 / 0.50 por
+EMPIRICAL_S1, drawdown 0.25 por EMPIRICAL_S2; spec `1d63ad4c…`),
+compromisso `a5cadecd…`, R = 1, batch selado, autorização limitada à fase,
+hash, datas, versões e spec; gates CB3-A/S/C/HR/TSEM/TTRANS/R1/R2/R3/D; sem
+gate de mínimo de vetos do Risk LLM (`RISK_LLM_VETO_RATE_HAS_NO_MINIMUM_GATE`);
+revisão humana de um autor (`PRIMARY_HUMAN_REVIEWERS_REQUIRED = 1`; segunda
+revisão recomendada como auditoria posterior, não bloqueante); nenhuma
+métrica financeira.
+
 ### Hardening pré-B0 — suporte implementado
 
 Implementado como engenharia, sem rodar CAL-A, CAL-B, Stress científico,

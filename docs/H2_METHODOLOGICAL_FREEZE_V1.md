@@ -1771,6 +1771,318 @@ development; a correção v3 é dirigida pelo contrato e não por performance;
 Validation e Final Test permaneceram intactos; a v3 é uma nova classe de
 comparabilidade.
 
+#### PROTOCOL AMENDMENT 11 — CAL_B3_PROTOCOL_FREEZE_V1
+
+```text
+DATA              2026-10-06
+TIPO              registro pré-execução; decidido pelos autores ANTES de
+                  qualquer chamada live sobre uma âncora de CAL-B3
+COMMIT            CAL_B3_FREEZE_COMMIT = o commit que introduz este amendment;
+                  o anterior traz o checker v2 do Risk e o corpus de regressão
+                  (31d8714); o seguinte traz só a autorização limitada, os
+                  guards de versão e os gates que o implementam; o batch roda
+                  sobre ele
+OBSERVADO ANTES   toda a evidência v1/v2/v3 de development, CAL-B1 e CAL-B2
+                  consumidas; NENHUMA resposta de modelo, feature ou métrica de
+                  entrada de âncora CAL-B3. Regra: nenhum dry-run toca as datas
+                  CAL-B3; o executor só é ensaiado offline sobre âncoras já
+                  consumidas (development), com transporte falso e fora do
+                  repositório
+NÃO MUDA          tratamento H2 v3, prompts, modelo, thinking, custos, retry,
+                  fonte de preço, threshold de degeneração
+```
+
+Repete as regras dos Amendments 7 e 9 para o holdout da v3, com os gates do
+Risk do Amendment 10 e duas decisões de governança novas (veto discricionário
+sem mínimo; revisão humana de um autor). Onde nada é dito aqui, vale o
+Amendment 9 tal como executado na CAL-B2 (mesmo código:
+`src/experiments/cal_b.py`, `scripts/run_cal_b.py` com `--cal-b3`).
+
+**Papel.** CAL-B3 = `ONE-SHOT OUT-OF-SAMPLE SANITY CHECK` da H2 v3. Não é teste
+de performance e não tem autoridade de tuning. CAL-B1 e CAL-B2 são development
+evidence e nunca voltam a ser holdout.
+
+**Configuração final H2 v3 (congelada; `CAL_B3_FROZEN_PARAMS =
+stress_v3_params()`, travada por teste).**
+
+```text
+tratamento   H2_TREATMENT_VERSION 3 · technical_prompt_version 2 ·
+             risk_prompt_version 2
+             TECHNICAL_SYSTEM_PROMPT_V2_SHA256
+             a3dec11f4c8911397c0f04ec5c0b7eb6265c420b3b6f7e3f494dd79ca43782e1
+             RISK_SYSTEM_PROMPT_V2_SHA256
+             990424e307e2c593afc40ebafef2c12387029ecf46a285f18a595c447e1e2151
+             Portfolio QUALITATIVE_SYSTEM_PROMPT (inalterado)
+             497b56e89f1f2fc193f999e6bc23c88cccb7a2c6da96de5c11f09417482ae68a
+provedor     gemini · gemini-3.8-flash · API nativa
+geração      thinking_level low · temperature 1.0 · max_output_tokens 8192 ·
+             sem seed transmitida
+SC           analyst_count 5 · consensus_threshold 0.6 · require_all_votes
+execução     decision_frequency 1 · strict_inputs · portfolio_inversion_policy fail
+posição      long_target_weight 1.0
+risco v3     volatility_window 21 · risk_max_volatility 0.50 ·
+             risk_max_drawdown 0.25 · risk_max_concentration 1.0
+retry        6 × 2.0 (operacional)
+dados        snapshot científico B3 corrigido (H_REAL_SNAPSHOT_IDENTITY_DIGEST),
+             mesmo information set até close(t) da CAL-B2
+spec hash    CAL_B3_SPEC_SHA256 = SHA256(canonical_json(ParticipantSpec(
+             "llm_agent", CAL_B3_FROZEN_PARAMS).to_dict())) =
+             1d63ad4cc93f9ef49368ba6772a22403354b36f3cc7d9d57d3b0627b85b9becc
+             (o mesmo valor integral já gravado como participant_spec_sha256
+             PETR4.SA nos manifests do Hardening/B0 v3)
+```
+
+**Proveniência dos parâmetros (bases distintas, nunca misturadas; nenhuma
+superioridade robusta afirmada).**
+
+```text
+CAL_A_V3_SELECTION_BASIS          = EMPIRICAL_S1
+                                    volatility_window 21, risk_max_volatility 0.50
+                                    configs 2, 3 e 6 empataram no maior S1;
+                                    config 2 venceu pelo desempate predeclarado
+                                    (menor config_id); uma âncora discrimina, R = 3
+SEQUENTIAL_DEV_V3_SELECTION_BASIS = EMPIRICAL_S2
+                                    risk_max_drawdown 0.25
+                                    D01 e D03 empataram no maior S2; D01 venceu
+                                    pelo menor config_id; R = 3
+```
+
+**Compromisso.** Exatamente as 10 datas do Amendment 10 — 2018-08-03,
+2019-03-19, 2019-10-18, 2020-05-13, 2021-01-06, 2021-08-17, 2022-03-11,
+2022-11-29, 2023-05-12, 2024-01-11 —, compromisso integral
+`CAL_B3_COMMITMENT_SHA256 =
+a5cadecd361de5059370bf4bfa97b1417b82eb8951950cf92b0aebc7edecdbaf`, conferido
+antes da autorização. Nenhuma data é trocada.
+
+**One-shot.** `CAL_B3_REPETITIONS = 1`: uma realização live por âncora (N = 5
+Technical), sem banco de chamadas entre âncoras, zero memória entre âncoras
+(R$100.000, 100% caixa, posição zero, pico = capital, participante novo). Nunca
+rerodar por resultado comportamental (HOLD, veto, aprovação, rationale,
+distribuição de ações).
+
+**Execução selada.** As 10 em um único batch automático, na ordem
+comprometida, sem inspeção humana intermediária (o progresso só mostra data e
+"sealed"); retomada exige o mesmo commit. Ordem: executar → persistir → selar
+(`sealed.json`, `batch.json`, `BATCH_SEAL.sha256`) → hash → commitar a
+evidência bruta → só então abrir rationales e pacote de auditoria.
+
+**Autorização limitada.** Nenhum bypass global (`CAL_B_AUTHORIZED` continua
+False). A única porta é `authorize_cal_b3(phase="CAL-B3", commitment integral,
+as 10 datas na ordem, repetitions=1, treatment_version=3,
+technical_prompt_version=2, risk_prompt_version=2,
+spec_sha256=CAL_B3_SPEC_SHA256)`, que só funciona com `CAL_B3_STATUS =
+"SEALED"`; qualquer outra combinação falha fechada. O cliente do provedor
+recusa qualquer sessão que não seja a âncora em execução. Após o consumo,
+`CAL_B3_STATUS = CONSUMED` e a porta não reabre, com PASS ou FAIL.
+
+**Consumo do holdout.** Sem resposta/trace/rationale científico utilizável:
+âncora não consumida, pode ser retomada pela política de infraestrutura
+(retry/resume). Com conteúdo científico utilizável: âncora CONSUMED. Crash
+depois de resposta persistida: só replay exato do journal. Replay impossível →
+`CAL_B3_INVALID — PARTIAL HOLDOUT CONSUMED`, sem nova inferência substituta.
+
+**Sem resultado financeiro.** Não carregar t+1, não executar, não calcular
+retorno, P&L, Sharpe, Sortino, MDD, accuracy nem comparação com benchmark. A
+CAL-B3 termina na decisão em close(t). Relatório: `FINANCIAL_OUTCOME = NOT
+COMPUTED`.
+
+**Risk rationale checker v2 (instrumento de auditoria, congelado aqui).** O
+checker do Amendment 10 (v1, blob `7636ad26`) tinha um falso positivo
+conhecido em `VERDICT_TEXT_CONTRADICTION`: aceitava negação só até 30
+caracteres antes da palavra e marcava "Não há fatores adversos nas métricas
+fornecidas que justifiquem veto" (APROVADO) como contradição (v3 Hardening
+2002-04-19 e v3 Stress 2018-09-10). Corrigido ANTES da CAL-B3, sem nenhuma
+data CAL-B3:
+
+```text
+RISK_RATIONALE_CHECKER_VERSION = 2
+polaridade por construção, dentro da sentença (não por janela de tokens):
+  negação direta          "sem veto", "não vetaram", "not vetoed"
+  verbo licenciador negado "não justifica veto", "does not justify a veto"
+  existencial + relativo  "não há X ... que justifiquem veto"
+  substantivo licenciador "sem razão para vetar", "não há motivo para veto",
+                          "no reason to veto"
+  sujeito quantificado    "Nada no payload recomenda veto", "Nothing warrants a veto"
+  -> apoio ao veredito, não contradição
+escopo   fecha em predicado afirmado (há/é/foi...), adversativa (mas, porém,
+         but...) ou fim de sentença; "o que"/", which" retomam a oração inteira
+         e não herdam a negação
+continua contradição
+  "há fatores que justificam veto" com APROVADO; "operação aprovada" com
+  VETADO; e (direção nova) negar o fundamento do próprio veredito:
+  "não há condições para aprovação" com APROVADO
+não é veredito deste estágio
+  menção à camada determinística ("regras duras de veto", "aprovada pelas
+  regras duras"); negação do próprio veredito dentro de concessiva
+  ("Embora não haja motivo para veto, ... vetada")
+inalterados  V3-R1 UNSUPPORTED_CONFIDENCE_THRESHOLD, V3-R2
+             UNSUPPORTED_NUMERIC_RULE, CONFIDENCE_ONLY_DECISION
+teto         dupla negação e prefixos como "Com drawdown nulo e sem
+             concentração há fatores..." não são resolvidos (registrado)
+```
+
+Calibração só com evidência de development já consumida (v1, v2, CAL-B1 — sem
+chamada de Risk —, CAL-B2, Hardening/B0, CAL-A, Sequential, Stress e
+development v3): 210 respostas únicas do Risk LLM + 37 casos sintéticos PT/EN
+rotulados (`docs/evidence/h2_v3/risk_checker_v2/`). Aceitação exigida e
+obtida antes de qualquer chamada CAL-B3: 0 dos 2 falsos positivos conhecidos;
+0 regressão nos 21 casos inválidos congelados; V3-R1, V3-R2 e
+CONFIDENCE_ONLY_DECISION marcam exatamente as mesmas respostas; 0 divergência
+no corpus. Nas 210 respostas reais a única mudança v1 → v2 são os 2 falsos
+positivos. Reaplicação offline ao corpus v3 (nada rerodado live): V3-R3 2/70 →
+0/70; R1 e R2 continuam 0. Os rótulos R1/R2/CONFIDENCE_ONLY dos casos reais
+são os achados congelados do v1 (trava de regressão, não afirmação de recall);
+os sintéticos foram escritos junto com o v2 e não medem generalização.
+
+```text
+CHECKER_VERSION           2
+risk_contract.py (blob)   1ff4343a8e5d24ec4f8c71349a64771a21aa3636
+corpus golden (sha256)    19f59ae99a8437d023409b9bedd4ae6b83bc4c41c328871124a1d4f0d8e672bb
+relatório                 docs/evidence/h2_v3/risk_checker_v2/calibration_report.json
+```
+
+A mudança é de instrumento: não muda tratamento, Risk prompt, modelo, spec nem
+nenhuma resposta do sistema. Depois deste commit o checker fica congelado;
+nenhuma edição depois de aberta a CAL-B3.
+
+**Checkers congelados por blob git** (conferidos antes de aplicados; o audit
+recusa qualquer diferença de `src/` ou `scripts/` em relação ao commit do
+batch):
+
+```text
+CAL_B3_CHECKER_BLOBS
+  src/agents/feature_semantics.py   7a086701afda203a415cf1f9b67912d4788b3e56  (Technical, v2)
+  scripts/run_h2_v2_defect.py       2ec09c494732148680b3543ed4ed7ceae58018c2  (wrapper v2)
+  src/agents/risk_contract.py       1ff4343a8e5d24ec4f8c71349a64771a21aa3636  (Risk, checker v2)
+```
+
+**Gates automáticos.**
+
+```text
+CB3-A      10/10 decisões completas; 0 falha final de provedor/infra
+           (retries recuperados são só diagnóstico)
+CB3-S      0 violação de schema, resposta inválida, quorum incompleto,
+           truncamento, fallback silencioso, inversão de portfólio, input
+           científico faltando; 0 mismatch de versão: spec do batch =
+           CAL_B3_FROZEN_PARAMS, system prompt de cada chamada Technical =
+           TECHNICAL_SYSTEM_PROMPT_V2, de cada Risk = RISK_SYSTEM_PROMPT_V2,
+           de cada Portfolio = QUALITATIVE_SYSTEM_PROMPT
+CB3-C      0 dado posterior a t; 0 ticker/data/preço absoluto no Technical;
+           0 future leakage; 0 acesso a Validation/Final (t <= 2024-02-28);
+           payload Technical e métricas do Risk idênticos aos recalculados
+           independentemente só com barras até t
+CB3-HR     0 violação das regras duras congeladas: COMPRA com
+           recent_volatility > 0.50 (ou drawdown > 0.25, concentração > 1.0)
+           vetada deterministicamente antes do Risk LLM; regra dura nunca sem
+           violação; veto duro nunca sobrescrito nem seguido de LLM;
+           VENDA/MANTER pelo contrato congelado. Drawdown e concentração são
+           estruturalmente 0 na âncora isolada em caixa (registrado).
+           Obrigatório independentemente da taxa de veto do Risk LLM
+CB3-TSEM   0 contradição semântica objetiva (checker Technical v2 congelado)
+CB3-TTRANS 0 afirmação de transição não suportada (STATE NOT TRANSITION)
+CB3-R1     0 UNSUPPORTED_CONFIDENCE_THRESHOLD (checker do Risk v2 congelado)
+CB3-R2     0 UNSUPPORTED_NUMERIC_RULE
+CB3-R3     0 CONFIDENCE_ONLY_DECISION e 0 VERDICT_TEXT_CONTRADICTION genuína
+           (checker negation-aware congelado; nunca alterado depois de
+           observado qualquer rationale CAL-B3)
+CB3-D      total_hold_rate < 0.90, exatamente a definição do Hardening/CAL-B1/
+           CAL-B2 (HOLD_RATE_CAUSES; BUY_AT_TARGET_NOOP fora). 9/10 ou 10/10
+           HOLD = FAIL. Sem gate de mínimo de BUY, de SELL ou de veto do Risk
+```
+
+**Risk com zero vetos LLM — decisão de governança.**
+
+```text
+RISK_LLM_VETO_RATE_HAS_NO_MINIMUM_GATE = True
+```
+
+O Risk LLM é uma camada discricionária posterior às regras duras
+determinísticas. Não existe requisito científico de que ele vete uma
+quantidade mínima de operações; ele pode legitimamente aprovar tudo o que
+passou pelas regras duras. Zero vetos do Risk LLM NÃO é degeneração, falha,
+ausência de funcionamento nem motivo para alterar prompt. Zero veto
+discricionário não relaxa nenhuma regra dura (CB3-HR continua obrigatório).
+
+**Atividade do Risk — só descritiva (sem PASS/FAIL).** Reportados: chamadas do
+Risk LLM, APROVADO, VETADO, taxa de aprovação e de veto, e
+
+```text
+RISK_LLM_DISCRETIONARY_VETO = OBSERVED       (alguma chamada VETADO)
+                            = NOT_OBSERVED   (chamadas > 0, VETADO = 0)
+                            = NOT_EXERCISED  (nenhuma chamada do Risk LLM)
+```
+
+Mesmo `Risk LLM: 100% APPROVED` não causa FAIL quando o checker passa, o
+rationale é suportado e as regras duras foram respeitadas.
+
+**Revisão humana — não depende do segundo autor.** A CAL-B1/B2 exigiam os dois
+autores. Para a CAL-B3, congelado antes da abertura do holdout:
+
+```text
+PRIMARY_HUMAN_REVIEWERS_REQUIRED = 1
+SECOND_INDEPENDENT_REVIEW        = NOT REQUIRED FOR PROGRESSION
+SECOND_INDEPENDENT_REVIEW        = RECOMMENDED AS LATER AUDIT
+```
+
+Depois da evidência bruta selada e dos gates automáticos calculados, uma ficha
+obrigatória `review/PRIMARY_AUTHOR.json`, preenchida pelo autor principal
+disponível, lendo só o pacote de auditoria (sem nenhum resultado t+1). Por
+âncora: `material_unsupported_claim` = PASS/FAIL,
+`rationale_action_coherence` = PASS/FAIL, `optional_note`. Ninguém preenche
+ficha em nome do segundo autor nem inventa concordância.
+`review/SECOND_AUTHOR_OPTIONAL.json` nasce `NOT_REVIEWED` e sua ausência não
+bloqueia. O processo não é apresentado como revisão dupla independente. Se o
+segundo autor revisar depois, o registro é `POST_CAL_B3_SECONDARY_AUDIT` (novo
+arquivo; a ficha original nunca é editada em silêncio); problema material vira
+discrepância formal com avaliação de impacto científico; rationales e
+evidência bruta nunca são alterados retroativamente.
+
+**Material unsupported claim** (mesma definição): afirma fato ou regra
+específica, que não foi fornecida ao agente, e que influencia materialmente a
+justificativa/decisão. Technical não conhece ticker, data, preço absoluto,
+notícia, macro nem fundamentos; Risk não pode criar thresholds, hard rules,
+probabilidades nem limites inexistentes.
+
+**Coerência rationale/ação.** Technical: rationale compatível com o sinal.
+Risk: rationale compatível com o veredito e com o payload. Portfolio:
+rationale compatível com a ação e com o veredito do Risk.
+
+**Regra de status.**
+
+```text
+algum gate automático falhou     -> CAL_B3_FAIL — HOLDOUT CONSUMED
+                                    (revisão humana só arquivada como análise;
+                                    não muda o FAIL)
+gates PASS, ficha incompleta     -> CAL_B3_AWAITING_PRIMARY_AUTHOR_REVIEW
+                                    (intermediário, não final)
+ficha completa, algum FAIL       -> CAL_B3_FAIL — HOLDOUT CONSUMED
+ficha completa, tudo PASS        -> CAL_B3_PASS — SANITY CHECK ONLY
+replay exato impossível          -> CAL_B3_INVALID — PARTIAL HOLDOUT CONSUMED
+```
+
+PASS exige CB3-A, CB3-S, CB3-C, CB3-HR, CB3-TSEM, CB3-TTRANS, CB3-R1, CB3-R2,
+CB3-R3 e CB3-D PASS e a ficha do autor principal toda PASS. Não existe gate de
+quantidade mínima de vetos do Risk. Com FAIL: não corrigir, não rerodar, não
+alterar prompt nem checker, não trocar âncora, não relaxar threshold. Parar.
+Com `CAL_B3_PASS — SANITY CHECK ONLY` (não é evidência de performance OOS):
+`SYSTEM_CALIBRATION_COMPLETE = True`, `H2_FINAL_TREATMENT_VERSION = 3`,
+`READY FOR SYSTEM FREEZE DESIGN`; Validation não é executada automaticamente.
+
+**Pacote de auditoria por âncora.** Data, payload de features, as 5 saídas
+Technical, votos e consenso, achados dos checkers Technical e do Risk,
+entrada/saída de Risk e Portfolio quando chamados, causa final e reason codes.
+Nenhuma informação financeira futura.
+
+**Evidência operacional.** Chamadas lógicas, tentativas HTTP, retries, erros
+transitórios do provedor, latência p50/p90, tokens de entrada, saída e
+thinking. Sem custo monetário (não há fonte de preço versionada).
+
+**Ordem dos commits.** (1) checker v2 + corpus de regressão (31d8714); (2)
+este freeze; (3) autorização limitada/guards/gates; (4) evidência bruta
+selada; (5) gates automáticos e pacote de auditoria; (6) revisão do autor
+principal; (7) status final. Checker e protocolo commitados antes da primeira
+chamada live; evidência bruta nunca muda depois de selada.
+
 ### Registro de execução (append-only)
 
 Resultados das regras predeclaradas acima. Não são amendments: nenhuma regra
