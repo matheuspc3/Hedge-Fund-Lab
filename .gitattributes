@@ -1,3 +1,4 @@
 # Evidência selada por SHA-256: bytes exatos, sem conversão de fim de linha.
 docs/evidence/cal_b/** -text
 docs/evidence/cal_b2/run_*/** -text
+docs/evidence/h2_v3/risk_checker_v2/** -text

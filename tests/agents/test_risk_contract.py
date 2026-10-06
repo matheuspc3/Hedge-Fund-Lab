@@ -104,6 +104,29 @@ def test_contradicao_textual_de_veredito() -> None:
     assert rc.VERDICT_TEXT_CONTRADICTION in codes("Operação aprovada: volatilidade de 36.46% aceitável.")
     assert rc.VERDICT_TEXT_CONTRADICTION in codes("A entrada é vetada; volatilidade de 36.46%.", "APROVADO")
     assert codes("Não há motivo para veto: volatilidade de 36.46% e drawdown nulo.", "APROVADO") == set()
+    # checker v2 (Amendment 11): negação distante por construção, não por janela
+    assert codes("Volatilidade de 36.46%. Não há fatores adversos nas métricas fornecidas que justifiquem veto.",
+                 "APROVADO") == set()
+    assert rc.VERDICT_TEXT_CONTRADICTION in codes("Há fatores que justificam veto: volatilidade de 36.46%.", "APROVADO")
+    assert rc.VERDICT_TEXT_CONTRADICTION in codes("Não há condições para aprovação; volatilidade de 36.46%.",
+                                                  "APROVADO")
+
+
+def test_checker_v2_corpus_dourado_de_development() -> None:
+    """Corpus congelado (development + sintéticos): o v2 reproduz todo rótulo; CAL-B3 nunca entra."""
+    from src.experiments import anchors
+
+    base = ROOT / "docs" / "evidence" / "h2_v3" / "risk_checker_v2"
+    raw = (base / "golden_corpus.json").read_bytes()
+    report = json.loads((base / "calibration_report.json").read_text(encoding="utf-8"))
+    assert rc.RISK_RATIONALE_CHECKER_VERSION == report["checker_version"] == 2
+    assert hashlib.sha256(raw).hexdigest() == report["golden_corpus_sha256"] and report["acceptance"]["pass"]
+    items = json.loads(raw)["items"]
+    assert not {i.get("decision_session") for i in items} & set(anchors.CAL_B3_ANCHORS)
+    wrong = [i["id"] for i in items if sorted({a["code"] for a in rc.audit_risk_rationale(
+        i["analysis"], i["verdict"], i["payload"])}) != i["expected_codes"]]
+    assert wrong == []
+    assert sum(i["category"] == "KNOWN_FALSE_POSITIVE_V1" for i in items) == 2
 
 
 def test_calibracao_no_corpus_de_development_reproduz_o_caso() -> None:

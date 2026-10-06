@@ -117,6 +117,107 @@ _CLAUSE = re.compile(r"[.;!?](?:\s+|$)|,\s|\s[-–—]\s")  # noqa: RUF001
 _SAYS_APPROVED = re.compile(r"\b(?:aprovad[oa]s?|aprova-se|aprovamos|aprovo|approved|approve)\b", re.I)
 _SAYS_VETOED = re.compile(r"\b(?:vetad[oa]s?|veta-se|vetamos|vetar|veto|vetoed|rejected|reject)\b", re.I)
 
+# ── VERDICT_TEXT_CONTRADICTION com negação por sentença/cláusula (checker v2) ──
+#
+# v1 aceitava negação só até 30 caracteres antes da palavra e marcava "Não há
+# fatores adversos nas métricas fornecidas que justifiquem veto" (APROVADO)
+# como contradição. v2 (Amendment 11) decide a polaridade pela construção, dentro
+# da sentença: negação direta, verbo licenciador negado, "não há X que
+# justifique", "sem motivo para". Instrumento de auditoria; o tratamento não muda.
+
+RISK_RATIONALE_CHECKER_VERSION = 2
+
+#: Palavras funcionais (classe fechada) que podem ficar entre a negação e o alvo.
+_FW = (r"(?:o|a|os|as|um|uma|ao|aos|à|às|do|da|dos|das|de|para|por|pelo|pela|pelos|pelas|qualquer|quaisquer|"
+       r"se|é|foi|foram|será|seria|seriam|são|ser|sido|está|estão|h[áa]|houve|haver|deve|devem|deveria|deveriam|"
+       r"pode|podem|poderia|poderiam|tem|têm|tenha|tenham|teve|tinha|"
+       r"the|an|any|to|be|been|is|are|was|were|will|would|should|could|can|must|do|does|did|has|have|had|it|"
+       r"for|of|by)")
+_ADV = r"(?:\w+mente|\w+ly|por\s+si\s+s[óo]|em\s+si|isoladamente|ainda|by\s+itself|alone|therefore|thus|still)"
+_GLUE = rf"(?:[\s,]+(?:{_FW}|{_ADV}))*[\s,]*"
+#: Negação verbal/adverbial: governa o que vem logo depois.
+_NEG = (r"(?:\bn[ãa]o|\bnem|\bnunca|\bjamais|\bsem|\bnenhum\w*|\bnada|\bnot|\bnever|\bwithout|\bcannot|"
+        r"\bthere\s+(?:is|are|was|were)\s+no|n['’]t)\b")  # noqa: RUF001
+#: Negação existencial/quantificadora: abre um sintagma ("não há fatores...").
+#: "no" inglês só antes de substantivo licenciador (em português "no" é em + o).
+_NEG_EXIST = re.compile(
+    r"\b(?:there\s+(?:is|are|was|were)\s+no|(?:n[ãa]o|not|never|nunca|jamais)\s+\w+|sem|nenhum\w*|nada|nem|"
+    r"inexist\w*|aus[êe]ncia\s+de|falta\s+de|nothing|none|without|absence\s+of|lack\s+of|"
+    r"no(?=(?:\s+\w+){0,2}\s+(?:reasons?|grounds?|basis|need|cause|justification|room|case)\b))\b", re.I)
+#: Verbo cujo objeto é o veredito ("justifiquem veto", "justify a veto").
+_LIC_VERB = (r"(?:justific\w*|justifiqu\w*|recomend\w*|exig\w*|requer\w*|demand\w*|imp[õo]\w*|sustent\w*|"
+             r"fundament\w*|embas\w*|ensej\w*|permit\w*|autoriz\w*|suport\w*|indic\w*|aconselh\w*|suger\w*|"
+             r"sugir\w*|justify|justifies|justified|warrant\w*|recommend\w*|requir\w*|calls?\s+for|merit\w*|"
+             r"support\w*|allow\w*|authori[sz]\w*|indicat\w*|suggest\w*)")
+#: Substantivo cujo complemento é o veredito ("motivo para veto", "reason to veto").
+_LIC_NOUN = (r"(?:motivos?|raz[õoã]\w*|fundamentos?|bases?|justificativas?|justifica[çc][ãa]o|condi[çc]\w+|"
+             r"espa[çc]o|margem|necessidade|ind[íi]cios?|reasons?|grounds?|basis|justification|cause|room|need|"
+             r"case)")
+#: Relativo restritivo ("fatores QUE justifiquem"); "o que" e ", which" retomam a
+#: oração inteira e afirmam algo novo, então não herdam a negação.
+_REL = r"(?:(?<!\bo\s)\bque|\bthat|(?<!,\s)\bwhich)"
+#: Fecha o escopo de uma negação existencial: novo predicado afirmado ou adversativa.
+_CLOSER = re.compile(r"\b(?:h[áa]|existem?|houve|é|são|está|estão|foi|foram|mas|por[ée]m|contudo|entretanto|"
+                     r"todavia|no\s+entanto|is|are|was|were|but|however|yet)\b", re.I)
+_SCOPE = re.compile(r"[.;:!?](?:\s+|$)")
+_DIRECT = re.compile(rf"{_NEG}{_GLUE}$", re.I)
+_LICENSED_DIRECT = re.compile(rf"{_NEG}{_GLUE}{_LIC_VERB}{_GLUE}$", re.I)
+_LICENSED_REL = re.compile(rf"{_REL}{_GLUE}{_LIC_VERB}{_GLUE}$", re.I)
+_LICENSED_NOUN = re.compile(rf"\b{_LIC_NOUN}(?:,[^,]*,)?\s+(?:para|de|a|ao|à|to|for|of){_GLUE}$", re.I)
+_LICENSED_VERB = re.compile(rf"\b{_LIC_VERB}{_GLUE}$", re.I)
+#: Sujeito quantificado negativamente governa o verbo principal ("Nada no payload recomenda veto").
+_NEG_QUANT = re.compile(r"\b(?:nada|nenhum\w*|nothing|none)\b", re.I)
+#: Menção à camada determinística ("regras de veto", "veto duro", "aprovada pelas
+#: regras duras"): descreve as regras duras, não o veredito deste estágio.
+_LAYER = r"(?:regras?|filtros?|limites?|crit[ée]rios?|etapas?|camadas?|rules?|filters?|limits?|stages?)"
+_LAYER_ADJ = r"(?:dur[oa]s?|determin[íi]stic[oa]s?|num[ée]ric[oa]s?|hard|deterministic|upstream)"
+_LAYER_BEFORE = re.compile(rf"\b(?:{_LAYER}|{_LAYER_ADJ})\s+(?:de\s+)?$", re.I)
+_LAYER_AFTER = re.compile(rf"^(?:\s+{_FW})*\s+(?:{_LAYER}|{_LAYER_ADJ})\b", re.I)
+#: Formas de cada veredito cuja negação licenciada contradiz o próprio campo.
+_SAYS_APPROVAL_ANY = re.compile(r"\b(?:aprovad[oa]s?|aprova-se|aprovamos|aprovo|aprovar|aprova[çc][ãa]o|"
+                                r"approved|approve|approval)\b", re.I)
+
+
+def _scope_start(text: str, start: int) -> int:
+    return max((m.end() for m in _SCOPE.finditer(text, 0, start)), default=0)
+
+
+def _licensed_negation(seg: str) -> bool:
+    """A negação incide sobre o licenciador do veredito ("não justifica", "não há X que justifique", "sem motivo para")."""
+    if _LICENSED_DIRECT.search(seg):
+        return True
+    for licensed, cue in ((_LICENSED_REL, _NEG_EXIST), (_LICENSED_NOUN, _NEG_EXIST), (_LICENSED_VERB, _NEG_QUANT)):
+        lic = licensed.search(seg)
+        neg = [n for n in cue.finditer(seg) if n.end() <= lic.start()] if lic else []  # o lookahead de "no" vê além
+        # ponytail: o escopo vai da última negação até o licenciador e só um
+        # predicado afirmado (há/é/foi...) ou adversativa o fecha; "Com drawdown nulo
+        # e sem concentração há fatores que justificam veto" escapa (teto conhecido).
+        if neg and not _CLOSER.search(seg, neg[-1].end(), lic.start()):
+            return True
+    return False
+
+
+def _layer_reference(text: str, m: re.Match) -> bool:
+    return bool(_LAYER_BEFORE.search(text[max(0, m.start() - 40): m.start()]) or
+                _LAYER_AFTER.search(text[m.end(): m.end() + 60]))
+
+
+def _verdict_contradictions(text: str, verdict: str) -> list[tuple[re.Match, str]]:
+    """(menção, detalhe) de cada contradição genuína entre texto e ``verdict``."""
+    approved = verdict == "APROVADO"
+    found = []
+    for m in (_SAYS_VETOED if approved else _SAYS_APPROVED).finditer(text):
+        seg = text[_scope_start(text, m.start()): m.start()]
+        if not (_layer_reference(text, m) or _DIRECT.search(seg) or _licensed_negation(seg)):
+            found.append((m, f"text says {m.group(0)!r}, verdict is {verdict}"))
+    for m in (_SAYS_APPROVAL_ANY if approved else _SAYS_VETOED).finditer(text):
+        seg = text[_scope_start(text, m.start()): m.start()]
+        # "Embora não haja motivo para veto, ... vetada": a concessiva concede o oposto.
+        conceded = any("," not in seg[c.end():] for c in _CONCESSIVE.finditer(seg))
+        if not conceded and not _layer_reference(text, m) and _licensed_negation(seg):
+            found.append((m, f"text denies grounds for {m.group(0)!r}, verdict is {verdict}"))
+    return found
+
 
 def _numbers(value: Any) -> list[float]:
     """Todo número do payload (métricas, confidence e os do texto do sinal)."""
@@ -174,7 +275,10 @@ def audit_risk_rationale(analysis: str, verdict: str, payload: Mapping[str, Any]
       ("volatilidade de 36.46%") e qualificá-lo ("elevada") é permitido;
     - veredito sem nenhuma métrica de risco fora de oração concessiva
       (apesar/embora...) -> ``CONFIDENCE_ONLY_DECISION``;
-    - texto que declara o veredito oposto -> ``VERDICT_TEXT_CONTRADICTION``.
+    - texto que declara o veredito oposto sem negá-lo ("operação aprovada" com
+      VETADO), ou que nega o fundamento do próprio veredito ("não há condições
+      para aprovação" com APROVADO) -> ``VERDICT_TEXT_CONTRADICTION`` (checker
+      v2: polaridade pela construção na sentença, ver ``_verdict_contradictions``).
     """
     numbers = _numbers(payload)
     found: list[dict[str, Any]] = []
@@ -212,10 +316,8 @@ def audit_risk_rationale(analysis: str, verdict: str, payload: Mapping[str, Any]
         add(CONFIDENCE_ONLY_DECISION, 0, len(analysis),
             f"{verdict} rests only on the technical signal; no risk metric outside a concessive clause")
 
-    opposite = _SAYS_APPROVED if verdict == "VETADO" else _SAYS_VETOED
-    for m in opposite.finditer(analysis):
-        if not _negated(analysis, m.start()):
-            add(VERDICT_TEXT_CONTRADICTION, m.start(), m.end(), f"text says {m.group(0)!r}, verdict is {verdict}")
+    for m, detail in _verdict_contradictions(analysis, verdict):
+        add(VERDICT_TEXT_CONTRADICTION, m.start(), m.end(), detail)
     return found
 
 
