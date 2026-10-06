@@ -1527,4 +1527,12 @@ mudou.
             nota: a lista "manter" da tarefa v2 citava risk_max_drawdown 0.25 como
             parte da mudança isolada (hardening dirigido); o Amendment 8 manteve a
             autoridade do Sequential Development, cuja regra seleciona 0.15
+2026-10-06  Stress v2 — execução ABORTADA (falha operacional, não do tratamento)
+            commit 54d3d05; evidência preservada docs/evidence/stress_v2/run_20261006T030202Z/
+            S1 r1 completo; antes de S1 r2 o operador criou um arquivo não rastreado
+            (scripts/h2_v2_summary.py) e o guard de proveniência do runner recusou
+            o run seguinte (DirtyRepositoryError) antes de construir o participante.
+            Nenhum código muda. Pela política congelada do Stress (sem checkpoint
+            predeclarado), as 12 trajetórias são refeitas do zero; o run abortado
+            fica fora de qualquer análise
 ```
