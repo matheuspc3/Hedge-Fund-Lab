@@ -23,9 +23,10 @@ from typing import Any
 
 from src.agents.participant import FAILURE_CAUSES, RISK_VETO_CAUSES
 from src.agents.state import PortfolioAction, RiskVerdict, TechnicalSignal
-from src.agents.technical_analyst import build_prompt
+from src.agents.technical_analyst import build_prompt, system_prompt_for
 from src.experiments.hardening import HOLD_RATE_CAUSES, H2_FREEZE_V1_GATES
 from src.experiments.stress import STRESS_FROZEN_PARAMS
+from src.experiments.treatment import stress_v2_params
 
 CAL_B_PROTOCOL_FREEZE = "CAL_B_PROTOCOL_FREEZE_V1"
 #: A configuração final de desenvolvimento é exatamente a do Stress.
@@ -97,9 +98,10 @@ def anchor_issues(
     expected_features: Mapping[str, float],
     expected_volatility: float,
     history_last_session: str,
+    params: Mapping[str, Any] = CAL_B_FROZEN_PARAMS,
 ) -> dict[str, list[str]]:
     """Problemas por gate de UMA âncora, só de campos estruturados e do trace."""
-    p = CAL_B_FROZEN_PARAMS
+    p = params
     issues: dict[str, list[str]] = {gate: [] for gate in ("CB-A", "CB-S", "CB-C", "CB-R")}
     if decision is None:
         issues["CB-A"].append("no decision record")
@@ -140,6 +142,10 @@ def anchor_issues(
             SCHEMAS[r.request.response_schema].model_validate(r.validated_response)
         except Exception as exc:  # schema violation
             s.append(f"{r.call_id}: schema violation {type(exc).__name__}")
+    expected_system = system_prompt_for({"features": dict(expected_features)},  # type: ignore[typeddict-item]
+                                        p.get("technical_prompt_version", 1))
+    if any(r.request.system_prompt != expected_system for r in technical):
+        s.append("technical system prompt differs from the frozen treatment version")
 
     # CB-C: tudo ancorado em t, payload igual ao recalculado só com dados até t.
     c = issues["CB-C"]
@@ -153,6 +159,9 @@ def anchor_issues(
             c.append(f"{r.call_id}: session {r.request.decision_session}")
         if r.request.stage == "technical_analyst" and r.request.user_prompt != expected_prompt:
             c.append(f"{r.call_id}: technical payload differs from features recomputed up to t")
+        if r.request.stage == "technical_analyst" and any(
+                token in r.request.system_prompt + r.request.user_prompt for token in (anchor, p["ticker"].split(".")[0], "R$")):
+            c.append(f"{r.call_id}: ticker/date/absolute price reached the technical prompt")
         if r.request.stage == "risk_manager":
             metrics = json.loads(r.request.user_prompt).get("risk_metrics")
             if metrics != {"current_concentration": 0.0, "current_drawdown": 0.0,
@@ -205,3 +214,27 @@ CAL_B_GATE_RESULTS: Mapping[str, bool] = MappingProxyType(
 )
 CAL_B_FINAL_STATUS = CAL_B_FAIL
 SYSTEM_CALIBRATION_COMPLETE = False
+
+
+# ── CAL-B2 (Amendment 9, CAL_B2_PROTOCOL_FREEZE_V1) ──────────────
+
+CAL_B2_PROTOCOL_FREEZE = "CAL_B2_PROTOCOL_FREEZE_V1"
+#: Configuração final v2: seleções da CAL-A v2 (21 / 0.40, PROTOCOL_TIE_FALLBACK)
+#: e do Sequential Development v2 (drawdown 0.15, EMPIRICAL_S2) + prompt v2.
+CAL_B2_FROZEN_PARAMS: Mapping[str, Any] = MappingProxyType(stress_v2_params())
+#: Checker semântico de development v2, congelado por blob git antes do batch.
+CAL_B2_CHECKER_BLOBS: Mapping[str, str] = MappingProxyType({
+    "src/agents/feature_semantics.py": "7a086701afda203a415cf1f9b67912d4788b3e56",
+    "scripts/run_h2_v2_defect.py": "2ec09c494732148680b3543ed4ed7ceae58018c2",
+})
+CAL_B2_PASS = "CAL_B2_PASS — SANITY CHECK ONLY"
+CAL_B2_FAIL = "CAL_B2_FAIL — HOLDOUT CONSUMED"
+CAL_B2_INVALID = "CAL_B2_INVALID — PARTIAL HOLDOUT CONSUMED"
+CAL_B2_REVIEW_DISAGREEMENT = "CAL_B2_REVIEW_DISAGREEMENT"
+CAL_B2_AWAITING_HUMAN_REVIEW = "CAL_B2_AWAITING_HUMAN_REVIEW"
+
+
+def cal_b2_status(automatic_pass: bool, reviews: Sequence[Mapping[str, Any]], anchors: Sequence[str]) -> str:
+    """A mesma regra congelada da CAL-B1, com os rótulos da CAL-B2."""
+    # ponytail: só troca o prefixo; a regra é uma só para B1 e B2.
+    return cal_b_status(automatic_pass, reviews, anchors).replace("CAL_B_", "CAL_B2_", 1)

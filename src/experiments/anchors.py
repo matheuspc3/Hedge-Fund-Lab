@@ -243,3 +243,37 @@ def authorize_cal_b(phase: str, commitment_sha256: str, dates: Sequence[str],
     if isinstance(repetitions, bool) or repetitions != CAL_B_REPETITIONS:
         raise ValueError(f"CAL-B is one-shot: repetitions must be {CAL_B_REPETITIONS}")
     return CalBAuthorization(phase, commitment_sha256, tuple(dates), repetitions)
+
+
+# ── CAL-B2: autorização limitada (Amendment 9, CAL_B2_PROTOCOL_FREEZE_V1) ──
+#
+# Mesma porta da CAL-B1, mais a identidade do tratamento: só a fase CAL-B2, o
+# hash comprometido, as 10 datas, R = 1, tratamento v2, prompt técnico v2 e o
+# spec hash congelado. ``CAL_B_AUTHORIZED`` (global) continua False.
+
+CAL_B2_PHASE = "CAL-B2"
+CAL_B2_REPETITIONS = 1
+CAL_B2_TREATMENT_VERSION = 2
+CAL_B2_TECHNICAL_PROMPT_VERSION = 2
+#: SHA256(canonical_json(ParticipantSpec("llm_agent", CAL_B2_FROZEN_PARAMS).to_dict())).
+CAL_B2_SPEC_SHA256 = "89ac12071d8f68774a3f2af8192c04ff4254a62df90bfc7c5c8d6301767c2324"
+
+
+def authorize_cal_b2(phase: str, commitment_sha256: str, dates: Sequence[str], repetitions: int,
+                     treatment_version: int, technical_prompt_version: int, spec_sha256: str) -> CalBAuthorization:
+    """Autorização one-shot da CAL-B2; qualquer desvio falha fechado."""
+    if CAL_B2_STATUS != "SEALED":
+        raise ValueError(f"CAL-B2 is {CAL_B2_STATUS}: the holdout cannot be opened again")
+    if phase != CAL_B2_PHASE:
+        raise ValueError(f"CAL-B2 authorization requires phase {CAL_B2_PHASE!r}, got {phase!r}")
+    if commitment_sha256 != CAL_B2_COMMITMENT_SHA256 or digest(CAL_B2_ANCHORS) != CAL_B2_COMMITMENT_SHA256:
+        raise ValueError("CAL-B2 commitment hash does not match the frozen anchors")
+    if tuple(dates) != CAL_B2_ANCHORS:
+        raise ValueError("CAL-B2 authorization requires exactly the 10 committed dates, in order")
+    if isinstance(repetitions, bool) or repetitions != CAL_B2_REPETITIONS:
+        raise ValueError(f"CAL-B2 is one-shot: repetitions must be {CAL_B2_REPETITIONS}")
+    if (treatment_version, technical_prompt_version) != (CAL_B2_TREATMENT_VERSION, CAL_B2_TECHNICAL_PROMPT_VERSION):
+        raise ValueError("CAL-B2 requires treatment version 2 and technical prompt version 2")
+    if spec_sha256 != CAL_B2_SPEC_SHA256:
+        raise ValueError("CAL-B2 participant spec hash differs from the frozen H2 v2 spec")
+    return CalBAuthorization(phase, commitment_sha256, tuple(dates), repetitions)

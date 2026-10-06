@@ -4,7 +4,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from src.agents.technical_analyst import build_prompt
+from src.agents.technical_analyst import build_prompt, system_prompt_for
 from src.experiments import anchors, cal_b
 from src.experiments.anchors import (
     CAL_A_ANCHORS,
@@ -89,7 +89,8 @@ def record(stage: str, i: int, response: dict, user_prompt: str, **kw) -> Simple
         resolved_model="gemini-3.8-flash", validated_response=response,
         transport_options={"max_output_tokens": 8192, "temperature": 1.0, "thinking_level": "low"},
         request=SimpleNamespace(stage=stage, decision_session=kw.get("session", "2020-06-01"),
-                                response_schema=schema, user_prompt=user_prompt, analyst_id=i))
+                                response_schema=schema, user_prompt=user_prompt, analyst_id=i,
+                                system_prompt=kw.get("system", system_prompt_for({"features": FEATURES}))))
 
 
 def buy_case(volatility: float, **kw):
@@ -147,3 +148,74 @@ def test_status_registrado_bate_com_a_evidencia() -> None:
     assert json.loads((run / "status.json").read_text(encoding="utf-8"))["status"] == cal_b.CAL_B_FINAL_STATUS
     assert cal_b.cal_b_status(report["automatic_pass"], [], DATES) == cal_b.CAL_B_FINAL_STATUS == cal_b.CAL_B_FAIL
     assert not cal_b.SYSTEM_CALIBRATION_COMPLETE
+
+
+# ── CAL-B2 (Amendment 9) ─────────────────────────────────────────
+
+B2 = ("2018-08-16", "2019-04-05", "2019-10-07", "2020-07-01", "2021-01-21",
+      "2021-09-22", "2022-04-07", "2022-11-01", "2023-06-26", "2023-12-18")
+B2_COMMITMENT = "518dd9ddc132244726fc40b2939684876c6f69bf6bad67ea1f91a78fc4e9b167"
+
+
+def test_cal_b2_config_final_e_spec_hash() -> None:
+    import hashlib
+
+    from src.artifacts import canonical_json
+    from src.experiments.spec import ParticipantSpec
+
+    p = cal_b.CAL_B2_FROZEN_PARAMS
+    assert (p["technical_prompt_version"], p["volatility_window"], p["risk_max_volatility"],
+            p["risk_max_drawdown"], p["risk_max_concentration"]) == (2, 21, 0.40, 0.15, 1.0)
+    assert {k: v for k, v in p.items() if k not in ("technical_prompt_version", "risk_max_drawdown")} == {
+        k: v for k, v in cal_b.CAL_B_FROZEN_PARAMS.items() if k != "risk_max_drawdown"}
+    spec = canonical_json(ParticipantSpec("llm_agent", dict(p)).to_dict())
+    assert hashlib.sha256(spec.encode()).hexdigest() == anchors.CAL_B2_SPEC_SHA256
+
+
+def test_cal_b2_autorizacao_limitada_recusa_qualquer_desvio(monkeypatch: pytest.MonkeyPatch) -> None:
+    assert anchors.CAL_B2_ANCHORS == B2 and anchors.CAL_B2_COMMITMENT_SHA256 == B2_COMMITMENT == digest(B2)
+    ok = ("CAL-B2", B2_COMMITMENT, B2, 1, 2, 2, anchors.CAL_B2_SPEC_SHA256)
+    monkeypatch.setattr(anchors, "CAL_B2_STATUS", "SEALED")
+    auth = anchors.authorize_cal_b2(*ok)
+    assert auth.require_anchor("2020-07-01") == "2020-07-01"
+    with pytest.raises(ValueError, match="not a committed"):
+        auth.require_anchor("2020-06-01")  # âncora CAL-B1
+    for i, bad in ((0, "CAL-B"), (1, CAL_B_COMMITMENT_SHA256), (2, B2[:9]), (2, B2[::-1]), (2, DATES), (3, 2),
+                   (3, True), (4, 1), (5, 1), (6, "0" * 64)):
+        with pytest.raises(ValueError):
+            anchors.authorize_cal_b2(*ok[:i], bad, *ok[i + 1:])
+    monkeypatch.setattr(anchors, "CAL_B2_STATUS", "CONSUMED")
+    with pytest.raises(ValueError, match="CONSUMED"):
+        anchors.authorize_cal_b2(*ok)
+
+
+def test_cal_b2_guards_de_versao_e_identidade() -> None:
+    from src.agents.feature_semantics import TECHNICAL_SYSTEM_PROMPT_V2
+
+    v2 = cal_b.CAL_B2_FROZEN_PARAMS
+    decision, _ = buy_case(0.5)
+    tech = [record("technical_analyst", i, {"signal": "COMPRA", "justification": "x", "confidence": 0.6},
+                   build_prompt({"features": FEATURES}), system=TECHNICAL_SYSTEM_PROMPT_V2) for i in range(1, 6)]
+    assert not any(cal_b.anchor_issues("2020-06-01", decision, tech, FEATURES, 0.5, "2020-06-01", v2).values())
+    old = [record("technical_analyst", i, {"signal": "COMPRA", "justification": "x", "confidence": 0.6},
+                  build_prompt({"features": FEATURES})) for i in range(1, 6)]  # prompt v1 sob spec v2
+    assert cal_b.anchor_issues("2020-06-01", decision, old, FEATURES, 0.5, "2020-06-01", v2)["CB-S"]
+    leak = [record("technical_analyst", i, {"signal": "COMPRA", "justification": "x", "confidence": 0.6},
+                   "PETR4 2020-06-01 " + build_prompt({"features": FEATURES}),
+                   system=TECHNICAL_SYSTEM_PROMPT_V2) for i in range(1, 6)]
+    assert cal_b.anchor_issues("2020-06-01", decision, leak, FEATURES, 0.5, "2020-06-01", v2)["CB-C"]
+
+
+def test_cal_b2_rotulos_de_status_e_checker_congelado() -> None:
+    import subprocess
+
+    def review(value: str) -> dict:
+        return {"anchors": {d: {"material_hallucination": value, "rationale_action_coherence": value} for d in B2}}
+
+    assert cal_b.cal_b2_status(False, [], B2) == cal_b.CAL_B2_FAIL == "CAL_B2_FAIL — HOLDOUT CONSUMED"
+    assert cal_b.cal_b2_status(True, [], B2) == cal_b.CAL_B2_AWAITING_HUMAN_REVIEW
+    assert cal_b.cal_b2_status(True, [review("PASS")] * 2, B2) == cal_b.CAL_B2_PASS
+    assert cal_b.cal_b2_status(True, [review("PASS"), review("FAIL")], B2) == cal_b.CAL_B2_REVIEW_DISAGREEMENT
+    for path, blob in cal_b.CAL_B2_CHECKER_BLOBS.items():
+        assert subprocess.run(["git", "hash-object", path], capture_output=True, text=True,
+                              check=True).stdout.strip() == blob
