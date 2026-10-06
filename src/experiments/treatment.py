@@ -19,6 +19,8 @@ from typing import Any
 import numpy as np
 
 from src.experiments.anchors import CAL_B_COMMITMENT_SHA256, CAL_B_STRATA, STRATA_COUNT
+from src.experiments.hardening import H2_FROZEN_THINKING_LEVEL, h2_freeze_v1_params
+from src.experiments.stress import STRESS_FROZEN_PARAMS
 
 H2_TREATMENT_VERSION = 2
 SCIENTIFIC_TECHNICAL_PROMPT_VERSION = 2
@@ -39,6 +41,40 @@ def v2_params(base: Mapping[str, Any]) -> dict[str, Any]:
         raise ValueError("base params already declare a technical prompt version")
     return {**base, "technical_prompt_version": SCIENTIFIC_TECHNICAL_PROMPT_VERSION}
 
+
+#: Hardening dirigido: a configuração final de desenvolvimento v1 + prompt v2.
+H2_V2_DEFECT_PARAMS: Mapping[str, Any] = MappingProxyType(v2_params(STRESS_FROZEN_PARAMS))
+#: Diagnostic Hardening / B0 v2: a mesma spec ex ante da v1 (freeze v1, LOW) + prompt v2.
+H2_V2_HARDENING_PARAMS: Mapping[str, Any] = MappingProxyType(v2_params(h2_freeze_v1_params(H2_FROZEN_THINKING_LEVEL)))
+
+#: Seleções v2, preenchidas só pelos commits de resultado de cada fase.
+CAL_A_V2_SELECTED_CONFIG: Mapping[str, Any] | None = None
+SEQUENTIAL_DEV_V2_SELECTED_CONFIG: Mapping[str, Any] | None = None
+
+
+def stress_v2_params() -> dict[str, Any]:
+    """Config congelada v2 para o Stress: seleções da CAL-A v2 e do Sequential Dev v2."""
+    if CAL_A_V2_SELECTED_CONFIG is None or SEQUENTIAL_DEV_V2_SELECTED_CONFIG is None:
+        raise ValueError("Stress v2 needs the CAL-A v2 and Sequential Development v2 selections")
+    return v2_params({
+        **{k: v for k, v in STRESS_FROZEN_PARAMS.items()},
+        "volatility_window": CAL_A_V2_SELECTED_CONFIG["volatility_window"],
+        "risk_max_volatility": CAL_A_V2_SELECTED_CONFIG["risk_max_volatility"],
+        "risk_max_drawdown": SEQUENTIAL_DEV_V2_SELECTED_CONFIG["risk_max_drawdown"],
+    })
+
+
+
+def v2_calibration_provenance() -> dict[str, str]:
+    """Discriminação e base de seleção das calibrações v2 (nenhuma superioridade afirmada)."""
+    if CAL_A_V2_SELECTED_CONFIG is None or SEQUENTIAL_DEV_V2_SELECTED_CONFIG is None:
+        raise ValueError("v2 provenance needs the CAL-A v2 and Sequential Development v2 selections")
+    return {
+        "CAL_A_V2_DISCRIMINATION": CAL_A_V2_SELECTED_CONFIG["discrimination"],
+        "CAL_A_V2_SELECTION_BASIS": CAL_A_V2_SELECTED_CONFIG["selection_basis"],
+        "SEQUENTIAL_DEV_V2_DISCRIMINATION": SEQUENTIAL_DEV_V2_SELECTED_CONFIG["discrimination"],
+        "SEQUENTIAL_DEV_V2_SELECTION_BASIS": SEQUENTIAL_DEV_V2_SELECTED_CONFIG["selection_basis"],
+    }
 
 # ── CAL-B2: novo holdout por seleção determinística (só identidade/data) ──
 
@@ -82,8 +118,3 @@ def select_cal_b2(domain: Sequence[str], excluded: set[str]) -> list[dict[str, A
     return rows
 
 
-#: Preenchidos SÓ pelo commit de compromisso da CAL-B2, antes de qualquer
-#: chamada live v2. Vazio = CAL-B2 ainda não comprometida.
-CAL_B2_ANCHORS: tuple[str, ...] = ()
-CAL_B2_COMMITMENT_SHA256: str | None = None
-CAL_B2_STATUS: Mapping[str, Any] = MappingProxyType({"executed": False, "authorized": False})

@@ -73,6 +73,9 @@ SELECTION = OUT / "selection.json"
 PROBES = OUT / "risk_probes.json"
 STRATUM = {s.stratum_id: s for s in STRATA}
 DESCRIPTIVE = "DESCRIPTIVE ONLY — NO SELECTION AUTHORITY"
+#: Config congelada do run; ``run --treatment 2`` (Amendment 8) troca pela v2.
+PARAMS: dict[str, Any] = dict(stress.STRESS_FROZEN_PARAMS)
+PROVENANCE: dict[str, str] = dict(stress.CALIBRATION_PROVENANCE)
 
 
 def now() -> str:
@@ -197,7 +200,7 @@ def committed_windows() -> list[dict[str, Any]]:
 def spec_for(window: dict[str, Any]) -> ExperimentSpec:
     return ExperimentSpec(
         snapshot_id=stress.STRESS_SNAPSHOT_ID,
-        participant=ParticipantSpec("llm_agent", dict(stress.STRESS_FROZEN_PARAMS)),
+        participant=ParticipantSpec("llm_agent", dict(PARAMS)),
         initial_capital=CAL_A_INITIAL_CAPITAL,
         costs=CostSpec(**CAL_A_COST_SPEC),
         metrics=MetricSpec(),
@@ -210,7 +213,7 @@ def spec_for(window: dict[str, Any]) -> ExperimentSpec:
     )
 
 
-def run() -> None:
+def run(treatment_version: int = 1) -> None:
     commit = require_clean_and_locked()
     windows = committed_windows()
     _, frame = load_frame()
@@ -218,7 +221,7 @@ def run() -> None:
     started = datetime.now(timezone.utc)
     stamp = started.strftime("%Y%m%dT%H%M%SZ")
     runs_dir = ROOT / "data" / "runs" / f"stress_{stamp}"
-    out = OUT / f"run_{stamp}"
+    out = (OUT if treatment_version == 1 else ROOT / "docs" / "evidence" / "stress_v2") / f"run_{stamp}"
     participant_module.PROVIDER_CLIENTS["gemini"] = StressGeminiClient  # type: ignore[index]
     trajectories: list[dict[str, Any]] = []
     failure: str | None = None
@@ -261,8 +264,8 @@ def run() -> None:
         started.isoformat(timespec="seconds").replace("+00:00", "Z"), "finished_utc": now(),
         "wall_clock_seconds": round(time.perf_counter() - clock, 1), "git_commit": commit,
         "freeze_commit": stress.STRESS_FREEZE_COMMIT, "snapshot_id": stress.STRESS_SNAPSHOT_ID,
-        "frozen_params": dict(stress.STRESS_FROZEN_PARAMS), "calibration_provenance":
-        dict(stress.CALIBRATION_PROVENANCE), "repetitions": stress.STRESS_REPETITIONS,
+        "treatment_version": treatment_version, "frozen_params": dict(PARAMS), "calibration_provenance":
+        dict(PROVENANCE), "repetitions": stress.STRESS_REPETITIONS,
         "cost_spec": CAL_A_COST_SPEC, "sharpe_definition": metrics.SCIENTIFIC_SHARPE_DEFINITION,
         "windows": windows, "failure": failure,
     })
@@ -278,7 +281,7 @@ def run() -> None:
 
 def canonical_volatility(frame: pd.DataFrame, day: pd.Timestamp) -> float:
     """Mesmo caminho de ``LLMParticipant._agent_state`` sobre o histórico até t."""
-    window = int(stress.STRESS_FROZEN_PARAMS["volatility_window"])
+    window = int(PARAMS["volatility_window"])
     returns = frame.loc[:day, "fechamento"].pct_change().dropna().tail(window)
     return canonical_number(float(returns.std(ddof=1) * math.sqrt(252)))
 
@@ -290,8 +293,7 @@ def describe(item: dict[str, Any], frame: pd.DataFrame) -> dict[str, Any]:
     decisions = [json.loads(x) for x in (path / "decisions.jsonl").read_text(encoding="utf-8").splitlines()]
     records = list(load_trace((path / "llm_calls.jsonl").read_bytes()))
     first, last_decision, end = (pd.Timestamp(item[k]) for k in ("start", "last_decision", "end"))
-    max_dd, max_vol = float(stress.STRESS_FROZEN_PARAMS["risk_max_drawdown"]), float(
-        stress.STRESS_FROZEN_PARAMS["risk_max_volatility"])
+    max_dd, max_vol = float(PARAMS["risk_max_drawdown"]), float(PARAMS["risk_max_volatility"])
 
     # S-C: fronteira, CAL-B, dado futuro.
     days = [pd.Timestamp(d["decision_session"]) for d in decisions]
@@ -484,4 +486,13 @@ def summarize(out: Path, trajectories: list[dict], frame: pd.DataFrame, base: di
 
 
 if __name__ == "__main__":
-    {"select": select, "run": run}[sys.argv[1] if len(sys.argv) > 1 else ""]()
+    if sys.argv[1:] == ["run", "--treatment", "2"]:
+        from src.experiments import treatment
+
+        PARAMS.clear()
+        PARAMS.update(treatment.stress_v2_params())
+        PROVENANCE.clear()
+        PROVENANCE.update(treatment.v2_calibration_provenance())
+        run(2)
+    else:
+        {"select": select, "run": run}[sys.argv[1] if len(sys.argv) > 1 else ""]()

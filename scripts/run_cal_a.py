@@ -123,7 +123,7 @@ class BankedGeminiClient(GeminiLLMClient):
         declared = metadata or LLMCallMetadata(stage=STAGE_UNDECLARED)
         if self._session is None:
             raise RuntimeError("call bank needs a declared decision session")
-        if self._session in CAL_B_ANCHORS:
+        if self._session in anchors.sealed_holdout_anchors():
             raise RuntimeError(f"CAL-B session {self._session} must never reach the call bank")
         request = LLMCallRequest(
             stage=declared.stage,
@@ -171,6 +171,10 @@ class BankedGeminiClient(GeminiLLMClient):
         return response
 
 
+#: ``{}`` na v1; ``{"technical_prompt_version": 2}`` com ``--treatment 2`` (Amendment 8).
+TREATMENT_EXTRA: dict[str, Any] = {}
+
+
 def git(*args: str) -> str:
     return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, check=True).stdout.strip()
 
@@ -181,6 +185,7 @@ def spec_for(anchor: str, config: dict[str, Any]) -> ExperimentSpec:
         **h2_freeze_v1_params(H2_FROZEN_THINKING_LEVEL),
         "volatility_window": config["volatility_window"],
         "risk_max_volatility": config["risk_max_volatility"],
+        **TREATMENT_EXTRA,
     }
     return ExperimentSpec(
         snapshot_id=ANCHOR_SNAPSHOT_ID,
@@ -234,7 +239,11 @@ def main() -> None:
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--resume", type=Path, default=None)
+    parser.add_argument("--treatment", type=int, choices=(1, 2), default=1)
     args = parser.parse_args()
+    if args.treatment == 2:
+        TREATMENT_EXTRA["technical_prompt_version"] = 2
+    phase_dir = "cal_a" if args.treatment == 1 else "cal_a_v2"
     previous = None if args.resume is None else (ROOT / args.resume).resolve()
     if git("status", "--porcelain"):
         sys.exit("working tree is not clean: commit before CAL-A")
@@ -254,7 +263,7 @@ def main() -> None:
     evaluations, carried_uses, prior_attempts = carried_blocks(previous)
     BANK.uses.extend(carried_uses)
     carried = {(e["anchor"], e["replicate"]) for e in evaluations}
-    new_root = f"docs/evidence/cal_a/run_{stamp}/runs"
+    new_root = f"docs/evidence/{phase_dir}/run_{stamp}/runs"
     failure: str | None = None
     total = len(CAL_A_ANCHORS) * CAL_A_REPETITIONS * len(CAL_A_GRID)
     clock = time.perf_counter()
@@ -290,7 +299,7 @@ def main() -> None:
         print("CAL-A STOPPED:", failure, flush=True)
 
     finished = datetime.now(timezone.utc)
-    out = ROOT / "docs" / "evidence" / "cal_a" / f"run_{stamp}"
+    out = ROOT / "docs" / "evidence" / phase_dir / f"run_{stamp}"
     out.mkdir(parents=True, exist_ok=True)
     if runs_dir.exists():
         shutil.copytree(runs_dir, out / "runs")
@@ -301,7 +310,8 @@ def main() -> None:
     summary: dict[str, Any] = {
         "resumed_from": None if previous is None else previous.name,
         "carried_evaluations": sum(1 for e in evaluations if e.get("carried_from")),
-        "kind": "CAL_A",
+        "kind": "CAL_A" if args.treatment == 1 else "CAL_A_V2",
+        "treatment_version": args.treatment,
         "started_utc": started.isoformat(timespec="seconds").replace("+00:00", "Z"),
         "finished_utc": finished.isoformat(timespec="seconds").replace("+00:00", "Z"),
         "git_commit": commit,
@@ -387,7 +397,7 @@ def main() -> None:
     }
     summary["cal_b_audit"] = {
         "bank_sessions": sorted({u["anchor"] for u in BANK.uses}),
-        "cal_b_sessions_touched": sorted({u["anchor"] for u in BANK.uses} & set(CAL_B_ANCHORS)),
+        "cal_b_sessions_touched": sorted({u["anchor"] for u in BANK.uses} & set(anchors.sealed_holdout_anchors())),
     }
     (out / "summary.json").write_text(json.dumps(summary, indent=2, default=str) + "\n", encoding="utf-8")
     (out / "call_bank.jsonl").write_text("".join(canonical_json(u) + "\n" for u in BANK.uses), encoding="utf-8")

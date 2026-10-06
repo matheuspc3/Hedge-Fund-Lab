@@ -863,6 +863,7 @@ class LLMParticipant:
         max_output_tokens: int | None = None,
         strict_inputs: bool = False,
         portfolio_inversion_policy: str = "flag",
+        technical_prompt_version: int = 1,
         llm_client: LLMClient | None = None,
     ) -> None:
         if not ticker.strip():
@@ -876,6 +877,9 @@ class LLMParticipant:
         retry_attempts = _require_int("retry_attempts", retry_attempts, minimum=1)
         analyst_count = _require_int("analyst_count", analyst_count, minimum=1)
         seed_base = _require_int("seed_base", seed_base, minimum=0)
+        technical_prompt_version = _require_int(
+            "technical_prompt_version", technical_prompt_version, minimum=1
+        )
         if retry_base_delay < 0 or not math.isfinite(retry_base_delay):
             raise ValueError("retry_base_delay must be finite and >= 0")
         long_target_weight = _validate_long_target_weight(
@@ -936,6 +940,7 @@ class LLMParticipant:
             temperature_min=0.2 if temperature_min is None else temperature_min,
             temperature_max=0.8 if temperature_max is None else temperature_max,
             seed_base=seed_base,
+            prompt_version=technical_prompt_version,
         )
         self.risk_config = RiskConfig(
             max_volatility=risk_max_volatility,

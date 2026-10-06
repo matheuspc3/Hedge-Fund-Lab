@@ -145,6 +145,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", choices=sorted(REPETITIONS), required=True)
     parser.add_argument("--thinking-level", required=True)
+    parser.add_argument("--treatment", type=int, choices=(1, 2), default=1)
     args = parser.parse_args()
 
     if git("status", "--porcelain", "--untracked-files=no"):
@@ -153,6 +154,14 @@ def main() -> None:
     load_key()
 
     params = h2_freeze_v1_params(args.thinking_level)
+    evidence_root = EVIDENCE_ROOT
+    if args.treatment == 2:  # Amendment 8: mesma spec ex ante + prompt técnico v2; thinking não muda
+        from src.experiments import treatment
+
+        if args.thinking_level != treatment.H2_V2_HARDENING_PARAMS["thinking_level"]:
+            sys.exit("H2 v2 keeps thinking_level fixed; the ladder does not move in v2")
+        params = dict(treatment.H2_V2_HARDENING_PARAMS)
+        evidence_root = ROOT / "docs" / "evidence" / "h2_v2"
     capability = LLMParticipant.preflight(params, scientific=True)
     states = build_states()
     repetitions = REPETITIONS[args.mode]
@@ -178,7 +187,7 @@ def main() -> None:
     finished = datetime.now(timezone.utc)
 
     stamp = started.strftime("%Y%m%dT%H%M%SZ")
-    out = EVIDENCE_ROOT / f"{args.mode}_{args.thinking_level}_{stamp}"
+    out = evidence_root / f"{args.mode}_{args.thinking_level}_{stamp}"
     (out / "traces").mkdir(parents=True, exist_ok=True)
 
     decisions, records = [], []
@@ -253,7 +262,8 @@ def main() -> None:
         "wall_clock_seconds": round((finished - started).total_seconds(), 1),
     }
     manifest = {
-        "kind": f"H2_{args.mode.upper()}",
+        "kind": f"H2_{args.mode.upper()}" + ("" if args.treatment == 1 else "_V2"),
+        "treatment_version": args.treatment,
         "freeze": H2_FREEZE_VERSION,
         "financial_metrics": "none computed (no settlement)",
         "started_utc": started.isoformat(timespec="seconds").replace("+00:00", "Z"),

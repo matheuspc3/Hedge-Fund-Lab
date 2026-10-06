@@ -75,6 +75,10 @@ from src.experiments.spec import (  # noqa: E402
 )
 
 OUT_ROOT = ROOT / "docs" / "evidence" / "sequential_dev"
+#: Base de volatilidade e extra de tratamento; ``--treatment 2`` (Amendment 8)
+#: troca pela seleção da CAL-A v2 e pelo prompt técnico v2.
+BASE_VOL: dict[str, Any] = {k: CAL_A_SELECTED_CONFIG[k] for k in ("volatility_window", "risk_max_volatility")}
+TREATMENT_EXTRA: dict[str, Any] = {}
 HARD_VETOES = {"RISK_VETO_VOLATILITY", "RISK_VETO_DRAWDOWN", "RISK_VETO_CONCENTRATION"}
 
 
@@ -82,9 +86,10 @@ def spec_for(config: dict[str, Any]) -> ExperimentSpec:
     params = {
         "ticker": "PETR4.SA",
         **h2_freeze_v1_params(H2_FROZEN_THINKING_LEVEL),
-        "volatility_window": CAL_A_SELECTED_CONFIG["volatility_window"],
-        "risk_max_volatility": CAL_A_SELECTED_CONFIG["risk_max_volatility"],
+        "volatility_window": BASE_VOL["volatility_window"],
+        "risk_max_volatility": BASE_VOL["risk_max_volatility"],
         "risk_max_drawdown": config["risk_max_drawdown"],
+        **TREATMENT_EXTRA,
     }
     return ExperimentSpec(
         snapshot_id=ANCHOR_SNAPSHOT_ID,
@@ -263,7 +268,7 @@ def summarize(out: Path, evaluations: list[dict], uses: list[dict], attempts: li
     summary["cal_b_audit"] = {
         "cal_b_authorized": anchors.CAL_B_AUTHORIZED,
         "decision_sessions_reaching_provider_or_bank": len(sessions),
-        "cal_b_sessions_touched": sorted(sessions & set(CAL_B_ANCHORS)),
+        "cal_b_sessions_touched": sorted(sessions & set(anchors.sealed_holdout_anchors())),
     }
     summary["validation_audit"] = {
         "last_decision_session": max(sessions) if sessions else None,
@@ -282,7 +287,17 @@ def main() -> None:
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--resume", type=Path, default=None)
+    parser.add_argument("--treatment", type=int, choices=(1, 2), default=1)
     args = parser.parse_args()
+    out_root = OUT_ROOT
+    if args.treatment == 2:
+        from src.experiments import treatment
+
+        if treatment.CAL_A_V2_SELECTED_CONFIG is None:
+            sys.exit("Sequential Development v2 needs the committed CAL-A v2 selection")
+        BASE_VOL.update({k: treatment.CAL_A_V2_SELECTED_CONFIG[k] for k in BASE_VOL})
+        TREATMENT_EXTRA["technical_prompt_version"] = 2
+        out_root = ROOT / "docs" / "evidence" / "sequential_dev_v2"
     previous = None if args.resume is None else (ROOT / args.resume).resolve()
     if git("status", "--porcelain"):
         sys.exit("working tree is not clean: commit the freeze before Sequential Development")
@@ -298,7 +313,7 @@ def main() -> None:
     evaluations, carried_uses, prior_attempts = carried_replicates(previous)
     BANK.uses.extend(carried_uses)
     carried = {e["replicate"] for e in evaluations}
-    out = OUT_ROOT / f"run_{stamp}"
+    out = out_root / f"run_{stamp}"
     new_root = out.relative_to(ROOT).as_posix() + "/runs"
     failure: str | None = None
     clock = time.perf_counter()
@@ -336,7 +351,9 @@ def main() -> None:
     if runs_dir.exists():
         shutil.copytree(runs_dir, out / "runs")
     base = {
-        "kind": "SEQUENTIAL_DEVELOPMENT",
+        "kind": "SEQUENTIAL_DEVELOPMENT" if args.treatment == 1 else "SEQUENTIAL_DEVELOPMENT_V2",
+        "treatment_version": args.treatment,
+        "base_volatility_config": dict(BASE_VOL),
         "resumed_from": None if previous is None else previous.name,
         "started_utc": started.isoformat(timespec="seconds").replace("+00:00", "Z"),
         "finished_utc": datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z"),

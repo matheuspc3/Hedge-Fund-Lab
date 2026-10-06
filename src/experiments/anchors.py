@@ -108,12 +108,23 @@ def strata_of(domain: Sequence[str]) -> tuple[Stratum, ...]:
     )
 
 
+#: CAL-B2 (Amendment 8): novo holdout da v2, preenchido só pelo commit de
+#: compromisso, antes de qualquer chamada live v2. Selado como a CAL-B.
+CAL_B2_ANCHORS: tuple[str, ...] = ()
+CAL_B2_COMMITMENT_SHA256: str | None = None
+
+
+def sealed_holdout_anchors() -> tuple[str, ...]:
+    """Datas que nenhuma janela de development pode tocar (CAL-B1 e CAL-B2)."""
+    return (*CAL_B_ANCHORS, *CAL_B2_ANCHORS)
+
+
 def require_cal_b_locked(decision_start: Any, decision_end: Any) -> None:
-    """Recusa janela que contenha âncora de CAL-B antes da fase autorizada."""
+    """Recusa janela que contenha âncora de CAL-B (B1 ou B2) antes da fase autorizada."""
     if CAL_B_AUTHORIZED:
         return
     start, end = pd.Timestamp(decision_start), pd.Timestamp(decision_end)
-    touched = [day for day in CAL_B_ANCHORS if start <= pd.Timestamp(day) <= end]
+    touched = [day for day in sealed_holdout_anchors() if start <= pd.Timestamp(day) <= end]
     if touched:
         raise ValueError(
             f"window {start.date()}..{end.date()} contains locked CAL-B anchor(s) "
