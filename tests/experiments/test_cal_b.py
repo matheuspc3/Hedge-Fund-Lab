@@ -234,3 +234,119 @@ def test_cal_b2_gates_registrados_batem_com_a_evidencia() -> None:
     assert anchors.CAL_B2_STATUS == "CONSUMED"
     with pytest.raises(ValueError, match="CONSUMED"):
         anchors.authorize_cal_b2("CAL-B2", B2_COMMITMENT, B2, 1, 2, 2, anchors.CAL_B2_SPEC_SHA256)
+
+
+# ── CAL-B3 (Amendment 11) ────────────────────────────────────────
+
+B3 = ("2018-08-03", "2019-03-19", "2019-10-18", "2020-05-13", "2021-01-06",
+      "2021-08-17", "2022-03-11", "2022-11-29", "2023-05-12", "2024-01-11")
+B3_COMMITMENT = "a5cadecd361de5059370bf4bfa97b1417b82eb8951950cf92b0aebc7edecdbaf"
+B3_OK = ("CAL-B3", B3_COMMITMENT, B3, 1, 3, 2, 2, "1d63ad4cc93f9ef49368ba6772a22403354b36f3cc7d9d57d3b0627b85b9becc")
+
+
+def test_cal_b3_config_final_e_spec_hash() -> None:
+    import hashlib
+
+    from src.artifacts import canonical_json
+    from src.experiments.spec import ParticipantSpec
+
+    p = cal_b.CAL_B3_FROZEN_PARAMS
+    assert (p["technical_prompt_version"], p["risk_prompt_version"], p["volatility_window"], p["risk_max_volatility"],
+            p["risk_max_drawdown"], p["risk_max_concentration"]) == (2, 2, 21, 0.50, 0.25, 1.0)
+    assert (p["provider"], p["model"], p["thinking_level"], p["temperature"], p["max_output_tokens"]) == (
+        "gemini", "gemini-3.8-flash", "low", 1.0, 8192)
+    assert (p["analyst_count"], p["consensus_threshold"], p["require_all_votes"], p["decision_frequency"],
+            p["strict_inputs"], p["portfolio_inversion_policy"], p["long_target_weight"]) == (
+        5, 0.6, True, 1, True, "fail", 1.0)
+    assert "seed" not in p
+    spec = canonical_json(ParticipantSpec("llm_agent", dict(p)).to_dict())
+    assert hashlib.sha256(spec.encode()).hexdigest() == anchors.CAL_B3_SPEC_SHA256 == B3_OK[-1]
+
+
+def test_cal_b3_autorizacao_limitada_recusa_qualquer_desvio(monkeypatch: pytest.MonkeyPatch) -> None:
+    assert anchors.CAL_B3_ANCHORS == B3 and anchors.CAL_B3_COMMITMENT_SHA256 == B3_COMMITMENT == digest(B3)
+    assert anchors.CAL_B_AUTHORIZED is False and anchors.CAL_B3_REPETITIONS == 1
+    monkeypatch.setattr(anchors, "CAL_B3_STATUS", "SEALED")
+    auth = anchors.authorize_cal_b3(*B3_OK)
+    assert auth.require_anchor("2020-05-13") == "2020-05-13"
+    with pytest.raises(ValueError, match="not a committed"):
+        auth.require_anchor("2020-07-01")  # âncora CAL-B2
+    for i, bad in ((0, "CAL-B2"), (1, B2_COMMITMENT), (2, B3[:9]), (2, B3[::-1]), (2, B2), (3, 2), (3, True),
+                   (4, 2), (5, 1), (6, 1), (7, anchors.CAL_B2_SPEC_SHA256)):
+        with pytest.raises(ValueError):
+            anchors.authorize_cal_b3(*B3_OK[:i], bad, *B3_OK[i + 1:])
+    monkeypatch.setattr(anchors, "CAL_B3_STATUS", "CONSUMED")
+    with pytest.raises(ValueError, match="CONSUMED"):
+        anchors.authorize_cal_b3(*B3_OK)
+
+
+def test_cal_b3_guards_de_versao_dos_tres_prompts() -> None:
+    from src.agents.feature_semantics import TECHNICAL_SYSTEM_PROMPT_V2
+    from src.agents.portfolio_manager import QUALITATIVE_SYSTEM_PROMPT
+    from src.agents.risk_contract import RISK_SYSTEM_PROMPT_V2
+    from src.agents.risk_manager import SYSTEM_PROMPT
+
+    v3 = cal_b.CAL_B3_FROZEN_PARAMS
+    decision, _ = buy_case(0.5)
+    decision = {**decision, "final_cause": "ACTION_BUY", "risk_source": "LLM", "risk_rule": None,
+                "portfolio_rule": None}
+    tech = [record("technical_analyst", i, {"signal": "COMPRA", "justification": "x", "confidence": 0.6},
+                   build_prompt({"features": FEATURES}), system=TECHNICAL_SYSTEM_PROMPT_V2) for i in range(1, 6)]
+    risk_prompt = '{"risk_metrics": {"current_concentration": 0.0, "current_drawdown": 0.0, "recent_volatility": 0.4}}'
+
+    def downstream(risk_system: str, portfolio_system: str) -> list:
+        return [record("risk_manager", 0, {"verdict": "APROVADO", "analysis": "ok", "risk_metrics": {}}, risk_prompt,
+                       system=risk_system),
+                record("portfolio_manager", 0, {"decision": "COMPRA", "reasoning": "ok"}, "{}",
+                       system=portfolio_system)]
+
+    clean = cal_b.anchor_issues("2020-06-01", decision, tech + downstream(RISK_SYSTEM_PROMPT_V2,
+                                QUALITATIVE_SYSTEM_PROMPT), FEATURES, 0.4, "2020-06-01", v3)
+    assert not any(clean.values()), clean
+    for risk_system, portfolio_system in ((SYSTEM_PROMPT, QUALITATIVE_SYSTEM_PROMPT),
+                                          (RISK_SYSTEM_PROMPT_V2, SYSTEM_PROMPT)):
+        issues = cal_b.anchor_issues("2020-06-01", decision, tech + downstream(risk_system, portfolio_system),
+                                     FEATURES, 0.4, "2020-06-01", v3)
+        assert issues["CB-S"] and "system prompt differs" in issues["CB-S"][0]
+    # regra dura v3 (0.50): COMPRA a 0.51 tem de ser vetada antes do LLM de risco
+    assert cal_b.anchor_issues("2020-06-01", decision, tech + downstream(RISK_SYSTEM_PROMPT_V2,
+                               QUALITATIVE_SYSTEM_PROMPT), FEATURES, 0.51, "2020-06-01", v3)["CB-R"]
+
+
+def test_cal_b3_regra_de_status_com_um_autor() -> None:
+    def sheet(value: str | None, override: dict | None = None) -> dict:
+        rows = {d: {"material_unsupported_claim": value, "rationale_action_coherence": value} for d in B3}
+        rows.update(override or {})
+        return {"anchors": rows}
+
+    assert cal_b.cal_b3_status(False, sheet("PASS"), B3) == cal_b.CAL_B3_FAIL == "CAL_B3_FAIL — HOLDOUT CONSUMED"
+    assert cal_b.cal_b3_status(True, None, B3) == cal_b.CAL_B3_AWAITING_PRIMARY_AUTHOR_REVIEW
+    assert cal_b.cal_b3_status(True, sheet(None), B3) == cal_b.CAL_B3_AWAITING_PRIMARY_AUTHOR_REVIEW
+    assert cal_b.cal_b3_status(True, sheet("PASS"), B3) == cal_b.CAL_B3_PASS == "CAL_B3_PASS — SANITY CHECK ONLY"
+    one_fail = {B3[4]: {"material_unsupported_claim": "PASS", "rationale_action_coherence": "FAIL"}}
+    assert cal_b.cal_b3_status(True, sheet("PASS", one_fail), B3) == cal_b.CAL_B3_FAIL
+    assert cal_b.PRIMARY_HUMAN_REVIEWERS_REQUIRED == 1
+    assert cal_b.SECOND_INDEPENDENT_REVIEW == ("NOT REQUIRED FOR PROGRESSION", "RECOMMENDED AS LATER AUDIT")
+
+
+def test_cal_b3_veto_do_risk_so_descritivo() -> None:
+    assert cal_b.RISK_LLM_VETO_RATE_HAS_NO_MINIMUM_GATE is True
+    assert "CB3-HR" in cal_b.CAL_B3_GATES and not any("VETO" in g for g in cal_b.CAL_B3_GATES)
+    assert cal_b.risk_activity([])["RISK_LLM_DISCRETIONARY_VETO"] == "NOT_EXERCISED"
+    approved = cal_b.risk_activity(["APROVADO"] * 4)
+    assert approved["RISK_LLM_DISCRETIONARY_VETO"] == "NOT_OBSERVED" and approved["approval_rate"] == 1.0
+    assert cal_b.risk_activity(["APROVADO", "VETADO"])["RISK_LLM_DISCRETIONARY_VETO"] == "OBSERVED"
+    assert cal_b.CAL_B_MAX_TOTAL_HOLD_RATE == 0.90  # CB3-D: o mesmo limiar, literal
+
+
+def test_cal_b3_checkers_congelados_por_blob() -> None:
+    import subprocess
+
+    from src.agents.risk_contract import RISK_RATIONALE_CHECKER_VERSION
+
+    assert RISK_RATIONALE_CHECKER_VERSION == cal_b.CAL_B3_RISK_CHECKER_VERSION == 2
+    assert set(cal_b.CAL_B3_CHECKER_BLOBS) == {"src/agents/feature_semantics.py", "scripts/run_h2_v2_defect.py",
+                                               "src/agents/risk_contract.py"}
+    for path, blob in cal_b.CAL_B3_CHECKER_BLOBS.items():
+        assert subprocess.run(["git", "hash-object", path], capture_output=True, text=True,
+                              check=True).stdout.strip() == blob

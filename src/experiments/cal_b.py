@@ -22,11 +22,14 @@ from types import MappingProxyType
 from typing import Any
 
 from src.agents.participant import FAILURE_CAUSES, RISK_VETO_CAUSES
+from src.agents.portfolio_manager import QUALITATIVE_SYSTEM_PROMPT
+from src.agents.risk_contract import RISK_SYSTEM_PROMPT_V2
+from src.agents.risk_manager import SYSTEM_PROMPT as RISK_SYSTEM_PROMPT_V1
 from src.agents.state import PortfolioAction, RiskVerdict, TechnicalSignal
 from src.agents.technical_analyst import build_prompt, system_prompt_for
 from src.experiments.hardening import HOLD_RATE_CAUSES, H2_FREEZE_V1_GATES
 from src.experiments.stress import STRESS_FROZEN_PARAMS
-from src.experiments.treatment import stress_v2_params
+from src.experiments.treatment import stress_v2_params, stress_v3_params
 
 CAL_B_PROTOCOL_FREEZE = "CAL_B_PROTOCOL_FREEZE_V1"
 #: A configuração final de desenvolvimento é exatamente a do Stress.
@@ -146,6 +149,10 @@ def anchor_issues(
                                         p.get("technical_prompt_version", 1))
     if any(r.request.system_prompt != expected_system for r in technical):
         s.append("technical system prompt differs from the frozen treatment version")
+    expected_risk = RISK_SYSTEM_PROMPT_V2 if p.get("risk_prompt_version", 1) == 2 else RISK_SYSTEM_PROMPT_V1
+    for stage, expected in (("risk_manager", expected_risk), ("portfolio_manager", QUALITATIVE_SYSTEM_PROMPT)):
+        if any(r.request.stage == stage and r.request.system_prompt != expected for r in records):
+            s.append(f"{stage} system prompt differs from the frozen treatment version")
 
     # CB-C: tudo ancorado em t, payload igual ao recalculado só com dados até t.
     c = issues["CB-C"]
@@ -249,3 +256,54 @@ def cal_b2_status(automatic_pass: bool, reviews: Sequence[Mapping[str, Any]], an
     """A mesma regra congelada da CAL-B1, com os rótulos da CAL-B2."""
     # ponytail: só troca o prefixo; a regra é uma só para B1 e B2.
     return cal_b_status(automatic_pass, reviews, anchors).replace("CAL_B_", "CAL_B2_", 1)
+
+
+# ── CAL-B3 (Amendment 11, CAL_B3_PROTOCOL_FREEZE_V1) ──────────────
+
+CAL_B3_PROTOCOL_FREEZE = "CAL_B3_PROTOCOL_FREEZE_V1"
+#: Configuração final v3: CAL-A v3 (21 / 0.50, EMPIRICAL_S1) e Sequential Dev v3
+#: (drawdown 0.25, EMPIRICAL_S2) + Technical prompt v2 + Risk prompt v2.
+CAL_B3_FROZEN_PARAMS: Mapping[str, Any] = MappingProxyType(stress_v3_params())
+#: Checkers Technical v2 e Risk v2 (negation-aware), congelados por blob antes do batch.
+CAL_B3_CHECKER_BLOBS: Mapping[str, str] = MappingProxyType({
+    **CAL_B2_CHECKER_BLOBS,
+    "src/agents/risk_contract.py": "1ff4343a8e5d24ec4f8c71349a64771a21aa3636",
+})
+CAL_B3_RISK_CHECKER_VERSION = 2
+CAL_B3_GATES = ("CB3-A", "CB3-S", "CB3-C", "CB3-HR", "CB3-TSEM", "CB3-TTRANS", "CB3-R1", "CB3-R2", "CB3-R3", "CB3-D")
+#: Gate do checker do Risk v2 -> gate CAL-B3.
+CAL_B3_RISK_GATE_OF = MappingProxyType({"V3-R1": "CB3-R1", "V3-R2": "CB3-R2", "V3-R3": "CB3-R3"})
+
+#: O Risk LLM é discricionário e posterior às regras duras: zero vetos não é
+#: degeneração nem falha. Só descritivo (``risk_activity``).
+RISK_LLM_VETO_RATE_HAS_NO_MINIMUM_GATE = True
+PRIMARY_HUMAN_REVIEWERS_REQUIRED = 1
+SECOND_INDEPENDENT_REVIEW = ("NOT REQUIRED FOR PROGRESSION", "RECOMMENDED AS LATER AUDIT")
+CAL_B3_REVIEW_FIELDS = ("material_unsupported_claim", "rationale_action_coherence")
+SECOND_REVIEW_NOT_REVIEWED = "NOT_REVIEWED"
+
+CAL_B3_PASS = "CAL_B3_PASS — SANITY CHECK ONLY"
+CAL_B3_FAIL = "CAL_B3_FAIL — HOLDOUT CONSUMED"
+CAL_B3_INVALID = "CAL_B3_INVALID — PARTIAL HOLDOUT CONSUMED"
+CAL_B3_AWAITING_PRIMARY_AUTHOR_REVIEW = "CAL_B3_AWAITING_PRIMARY_AUTHOR_REVIEW"
+
+
+def risk_activity(verdicts: Sequence[str]) -> dict[str, Any]:
+    """Atividade discricionária do Risk LLM, sem PASS/FAIL (Amendment 11)."""
+    calls, vetoed = len(verdicts), sum(v == "VETADO" for v in verdicts)
+    approved = sum(v == "APROVADO" for v in verdicts)
+    state = "NOT_EXERCISED" if not calls else "OBSERVED" if vetoed else "NOT_OBSERVED"
+    return {"risk_llm_calls": calls, "APPROVED": approved, "VETOED": vetoed,
+            "approval_rate": approved / calls if calls else None, "veto_rate": vetoed / calls if calls else None,
+            "RISK_LLM_DISCRETIONARY_VETO": state, "authority": "DESCRIPTIVE ONLY (no PASS/FAIL)"}
+
+
+def cal_b3_status(automatic_pass: bool, primary_review: Mapping[str, Any] | None, anchors: Sequence[str]) -> str:
+    """Gates automáticos, depois só a ficha do autor principal; a segunda revisão nunca bloqueia."""
+    if not automatic_pass:
+        return CAL_B3_FAIL
+    rows = (primary_review or {}).get("anchors", {})
+    verdicts = [rows.get(a, {}).get(f) for a in anchors for f in CAL_B3_REVIEW_FIELDS]
+    if any(v not in ("PASS", "FAIL") for v in verdicts):
+        return CAL_B3_AWAITING_PRIMARY_AUTHOR_REVIEW
+    return CAL_B3_PASS if all(v == "PASS" for v in verdicts) else CAL_B3_FAIL

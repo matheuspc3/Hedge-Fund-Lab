@@ -21,6 +21,13 @@ CAL-B2 (Amendment 9): o mesmo executor com ``--cal-b2`` no fim do comando
 (``run --cal-b2``, ``audit docs/evidence/cal_b2/run_X --cal-b2``...): fase,
 âncoras, autorização com versão/spec hash, config v2, gates CB2-* (inclui
 CB2-SEM/CB2-TRANS com o checker congelado) e rótulos de status da CAL-B2.
+
+CAL-B3 (Amendment 11): ``--cal-b3`` no fim do comando. Autorização com versões
+Technical/Risk e spec hash v3, gates CB3-A/S/C/HR/TSEM/TTRANS/R1/R2/R3/D (Risk
+checker v2 congelado por blob; o audit recusa qualquer mudança de ``src/`` ou
+``scripts/`` desde o commit do batch), atividade do Risk só descritiva, ficha
+única ``review/PRIMARY_AUTHOR.json`` e ``SECOND_AUTHOR_OPTIONAL.json`` não
+bloqueante.
 """
 
 import hashlib
@@ -71,6 +78,7 @@ ATTEMPTS = AttemptLog(timeout=120.0)
 PHASE, ANCHORS, PARAMS, FREEZE, GATE = (CAL_B_PHASE, CAL_B_ANCHORS, cal_b.CAL_B_FROZEN_PARAMS,
                                         cal_b.CAL_B_PROTOCOL_FREEZE, "CB")
 STATUS_RULE, PASS, INVALID, NEXT = cal_b.cal_b_status, cal_b.CAL_B_PASS, cal_b.CAL_B_INVALID, "READY FOR SYSTEM FREEZE"
+CHECKER_BLOBS = cal_b.CAL_B2_CHECKER_BLOBS
 
 
 def use_cal_b2() -> None:
@@ -80,6 +88,20 @@ def use_cal_b2() -> None:
                                             cal_b.CAL_B2_PROTOCOL_FREEZE, "CB2")
     STATUS_RULE, PASS, INVALID, NEXT = (cal_b.cal_b2_status, cal_b.CAL_B2_PASS, cal_b.CAL_B2_INVALID,
                                         "READY FOR SYSTEM FREEZE DESIGN")
+
+
+def use_cal_b3() -> None:
+    global OUT, PHASE, ANCHORS, PARAMS, FREEZE, GATE, PASS, INVALID, CHECKER_BLOBS
+    use_cal_b2()
+    OUT = ROOT / "docs" / "evidence" / "cal_b3"
+    PHASE, ANCHORS, PARAMS, FREEZE, GATE = (anchors.CAL_B3_PHASE, anchors.CAL_B3_ANCHORS, cal_b.CAL_B3_FROZEN_PARAMS,
+                                            cal_b.CAL_B3_PROTOCOL_FREEZE, "CB3")
+    PASS, INVALID, CHECKER_BLOBS = cal_b.CAL_B3_PASS, cal_b.CAL_B3_INVALID, cal_b.CAL_B3_CHECKER_BLOBS
+
+
+def phase_status() -> str:
+    return {CAL_B_PHASE: anchors.CAL_B_STATUS, anchors.CAL_B2_PHASE: anchors.CAL_B2_STATUS,
+            anchors.CAL_B3_PHASE: anchors.CAL_B3_STATUS}[PHASE]
 
 
 def spec_sha256(spec: ParticipantSpec) -> str:
@@ -94,6 +116,11 @@ def authorize(spec: ParticipantSpec) -> anchors.CalBAuthorization:
         if anchors.digest(CAL_B_ANCHORS) != CAL_B_COMMITMENT_SHA256:
             sys.exit("CAL-B anchors do not match the full commitment hash")
         return anchors.authorize_cal_b(CAL_B_PHASE, CAL_B_COMMITMENT_SHA256, CAL_B_ANCHORS, CAL_B_REPETITIONS)
+    if PHASE == anchors.CAL_B3_PHASE:
+        return anchors.authorize_cal_b3(
+            anchors.CAL_B3_PHASE, anchors.CAL_B3_COMMITMENT_SHA256, anchors.CAL_B3_ANCHORS,
+            anchors.CAL_B3_REPETITIONS, treatment.H2_TREATMENT_VERSION, spec.params.get("technical_prompt_version", 1),
+            spec.params.get("risk_prompt_version", 1), spec_sha256(spec))
     return anchors.authorize_cal_b2(
         anchors.CAL_B2_PHASE, anchors.CAL_B2_COMMITMENT_SHA256, anchors.CAL_B2_ANCHORS, anchors.CAL_B2_REPETITIONS,
         treatment.H2_TREATMENT_VERSION, spec.params.get("technical_prompt_version", 1), spec_sha256(spec))
@@ -219,7 +246,7 @@ def run(resume: Path | None) -> None:
                      "phase": AUTH.phase, "commitment_sha256": AUTH.commitment_sha256,
                      "anchors": list(AUTH.anchors), "repetitions": AUTH.repetitions,
                      "global_cal_b_authorized": anchors.CAL_B_AUTHORIZED,
-                     "status_at_start": anchors.CAL_B_STATUS if PHASE == CAL_B_PHASE else anchors.CAL_B2_STATUS},
+                     "status_at_start": phase_status(), "treatment_version": treatment.H2_TREATMENT_VERSION},
                  "snapshot": {"snapshot_id": snapshot.snapshot_id, "identity_digest": snapshot.identity_digest,
                               "files": [dict(f) for f in snapshot.files]},
                  "participant_spec": spec.to_dict(), "spec_hash_inputs": "ParticipantSpec only; no evaluation window",
@@ -318,13 +345,18 @@ def audit(target: Path) -> None:
     batch = verify_seal(target)
     _, frame = load_frame()
     p = PARAMS
-    for path, blob in cal_b.CAL_B2_CHECKER_BLOBS.items():  # checker congelado antes do batch
+    for path, blob in CHECKER_BLOBS.items():  # checker congelado antes do batch
         if git("hash-object", path) != blob:
             sys.exit(f"semantic checker {path} differs from the frozen blob")
+    if GATE == "CB3" and git("diff", "--name-only", batch["git_commit"], "--", "src", "scripts"):
+        sys.exit("code under src/ or scripts/ changed since the batch commit: gates are frozen")
     from run_h2_v2_defect import semantic_audit  # o wrapper exato de development v2
+
+    from src.agents.risk_contract import audit_risk_rationale, gate_counts
 
     spec_ok = batch["participant_spec"] == {"kind": "llm_agent", "params": dict(PARAMS)}
     gates_by_anchor, packet, flags, causes, operational, semantic = {}, [], {}, [], [], {}
+    risk_findings, risk_verdicts, hard_risk = {}, [], []
     for anchor in ANCHORS:
         adir = target / "anchors" / anchor
         info = json.loads((adir / "anchor.json").read_text(encoding="utf-8"))
@@ -344,6 +376,20 @@ def audit(target: Path) -> None:
             issues["CB-S"].append("batch participant spec differs from the frozen treatment")
         semantic[anchor] = semantic_audit(records)
         gates_by_anchor[anchor] = issues
+        risk_findings[anchor] = []
+        for r in records:
+            if r.request.stage == "risk_manager" and r.status == "ok":
+                v = r.validated_response
+                risk_verdicts.append(v["verdict"])
+                found = audit_risk_rationale(v["analysis"], v["verdict"], json.loads(r.request.user_prompt))
+                risk_findings[anchor].append({"call_id": r.call_id, "verdict": v["verdict"],
+                                              "gates": gate_counts(found), "findings": found})
+        if decision:
+            hard_risk.append({"anchor": anchor, "recent_volatility": volatility, "current_drawdown": 0.0,
+                              "current_concentration": 0.0, "technical_outcome": decision["technical_outcome"],
+                              "volatility_breach": volatility > p["risk_max_volatility"],
+                              "risk_source": decision["risk_source"], "risk_rule": decision["risk_rule"],
+                              "risk_verdict": decision["risk_verdict"], "final_cause": decision["final_cause"]})
         causes.append(decision["final_cause"] if decision else None)
         calls, anchor_flags = [], []
         for r in records:
@@ -360,6 +406,7 @@ def audit(target: Path) -> None:
             "consensus": {k: decision[k] for k in ("vote_counts", "valid_votes", "consensus_reached",
                                                    "technical_outcome")} if decision else None,
             "semantic_checker": semantic[anchor],
+            **({"risk_checker_v2": risk_findings[anchor]} if GATE == "CB3" else {}),
             "reason_codes": {k: decision[k] for k in ("risk_verdict", "risk_source", "risk_rule", "portfolio_called",
                                                       "portfolio_source", "portfolio_rule", "portfolio_decision",
                                                       "target_weight", "final_cause")} if decision else None,
@@ -381,15 +428,21 @@ def audit(target: Path) -> None:
             "recovery_used": info["recovery_used"],
         })
     rates = cal_b.hold_rates([c for c in causes if c is not None])
-    gates = {g.replace("CB", GATE): {"issues": {a: i[g] for a, i in gates_by_anchor.items() if i[g]},
-                                     "pass": not any(i[g] for i in gates_by_anchor.values())}
-             for g in ("CB-A", "CB-S", "CB-C", "CB-R")}
+    gates = {g.replace("CB", GATE).replace("CB3-R", "CB3-HR"): {
+        "issues": {a: i[g] for a, i in gates_by_anchor.items() if i[g]},
+        "pass": not any(i[g] for i in gates_by_anchor.values())} for g in ("CB-A", "CB-S", "CB-C", "CB-R")}
     gates[f"{GATE}-A"]["pass"] = gates[f"{GATE}-A"]["pass"] and sum(c is not None for c in causes) == len(ANCHORS)
-    if GATE == "CB2":
-        for gate, key in (("CB2-SEM", "votes_with_contradiction"), ("CB2-TRANS", "votes_with_transition")):
+    if GATE in ("CB2", "CB3"):
+        for name, key in (("SEM", "votes_with_contradiction"), ("TRANS", "votes_with_transition")):
+            gate = f"{GATE}-{'T' if GATE == 'CB3' else ''}{name}"
             gates[gate] = {"value": sum(a[key] for a in semantic.values()), "threshold": "== 0",
                            "flagged": {a: v["flagged"] for a, v in semantic.items() if v[key]},
                            "pass": all(a[key] == 0 for a in semantic.values())}
+    if GATE == "CB3":
+        for risk_gate, gate in cal_b.CAL_B3_RISK_GATE_OF.items():
+            hits = {a: [f for f in fs if f["gates"][risk_gate]] for a, fs in risk_findings.items()}
+            gates[gate] = {"value": sum(len(h) for h in hits.values()), "threshold": "== 0",
+                           "flagged": {a: h for a, h in hits.items() if h}, "pass": not any(hits.values())}
     gates[f"{GATE}-D"] = {"total_hold_rate": rates["total_hold_rate"], "threshold": ">= 0.90 fails",
                           "pass": not rates["degenerate_inactive"]}
     latencies = [ms for o in operational for ms in o.pop("latency_ms")]
@@ -402,6 +455,13 @@ def audit(target: Path) -> None:
             "final_cause": dict(sorted(pd.Series(causes).value_counts().items())),
             "technical_outcome": dict(sorted(pd.Series([e["consensus"]["technical_outcome"] for e in packet
                                                         if e["consensus"]]).value_counts().items()))},
+        **({"hard_risk_audit": {"rules": {k: p[k] for k in ("risk_max_volatility", "risk_max_drawdown",
+                                                             "risk_max_concentration", "volatility_window")},
+                                "by_anchor": hard_risk},
+            "risk_discretionary_activity": cal_b.risk_activity(risk_verdicts),
+            "risk_llm_veto_rate_has_no_minimum_gate": cal_b.RISK_LLM_VETO_RATE_HAS_NO_MINIMUM_GATE,
+            "risk_checker_version": cal_b.CAL_B3_RISK_CHECKER_VERSION,
+            "checker_blobs": dict(CHECKER_BLOBS)} if GATE == "CB3" else {}),
         "prescreen_flags_by_anchor": flags,
         "prescreen_note": "lexical flags only point reviewers to text; classification is human",
         "operational": operational,
@@ -424,12 +484,23 @@ def audit(target: Path) -> None:
           "Classifique cada âncora de forma independente em `review/AUTHOR_1.json` ou `review/AUTHOR_2.json`:",
           "`material_hallucination` e `rationale_action_coherence` = PASS ou FAIL. Avalie só o texto visível de",
           "cada estágio contra o prompt daquele estágio. Marcas do pré-filtro léxico são só ponteiros.", ""]
+    if GATE == "CB3":
+        md[2:5] = ["Autor principal: classifique cada âncora em `review/PRIMARY_AUTHOR.json`:",
+                   "`material_unsupported_claim` e `rationale_action_coherence` = PASS ou FAIL (`optional_note` livre).",
+                   "Material = fato/regra específica, não fornecida ao agente, que pesa na justificativa/decisão",
+                   "(Technical: ticker, data, preço absoluto, notícia, macro, fundamentos; Risk: threshold, hard rule,",
+                   "probabilidade ou limite inexistente). Coerência: Technical x sinal; Risk x veredito e payload;",
+                   "Portfolio x ação e veredito do Risk. A segunda revisão é opcional (`SECOND_AUTHOR_OPTIONAL.json`)."]
     for e in packet:
         md += [f"## {e['anchor']}", "", f"Features: `{json.dumps(e['technical_feature_payload'], sort_keys=True)}`", "",
                f"Consenso: `{json.dumps(e['consensus'], ensure_ascii=False)}`", "",
                f"Códigos: `{json.dumps(e['reason_codes'], ensure_ascii=False)}`", "",
                f"Checker semântico: `{json.dumps({k: v for k, v in e['semantic_checker'].items() if k != 'flagged'})}`",
                ""]
+        if "risk_checker_v2" in e:
+            risk = [{"verdict": f["verdict"], "gates": f["gates"], "codes": [x["code"] for x in f["findings"]]}
+                    for f in e["risk_checker_v2"]]
+            md += [f"Checker do Risk v2: `{json.dumps(risk, ensure_ascii=False)}`", ""]
         for c in e["calls"]:
             md += [f"### {c['stage']}" + (f" #{c['analyst_id']}" if c["analyst_id"] else ""), "",
                    "System prompt:", "", "```text", c["system_prompt"], "```", "", "User prompt:", "", "```text",
@@ -440,12 +511,22 @@ def audit(target: Path) -> None:
     (target / "audit_packet.md").write_text("\n".join(md) + "\n", encoding="utf-8", newline="\n")
     review = target / "review"
     review.mkdir(exist_ok=True)
-    for author in ("AUTHOR_1", "AUTHOR_2"):
+    sheets: dict[str, dict[str, Any] | None] = {"AUTHOR_1": None, "AUTHOR_2": None} if GATE != "CB3" else {
+        "PRIMARY_AUTHOR": {"role": "PRIMARY_AUTHOR", "required": True},
+        "SECOND_AUTHOR_OPTIONAL": {"role": "SECOND_AUTHOR", "required": False, "blocking": False,
+                                   "status": cal_b.SECOND_REVIEW_NOT_REVIEWED}}
+    for author, role in sheets.items():
         path = review / f"{author}.json"
-        if not path.exists():
-            path.write_text(json.dumps({"reviewer": None, "reviewed_utc": None, "anchors": {
-                a: {"material_hallucination": None, "rationale_action_coherence": None, "notes": ""}
-                for a in ANCHORS}}, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+        if path.exists():
+            continue
+        fields = cal_b.CAL_B3_REVIEW_FIELDS if GATE == "CB3" else ("material_hallucination",
+                                                                    "rationale_action_coherence")
+        note = "optional_note" if GATE == "CB3" else "notes"
+        sheet: dict[str, Any] = {"reviewer": None, "reviewed_utc": None,
+                                 "anchors": {a: {**dict.fromkeys(fields), note: ""} for a in ANCHORS}}
+        if role is not None:
+            sheet = {**role, **sheet}
+        path.write_text(json.dumps(sheet, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps({k: report[k] for k in ("automatic_pass", "hold_rates", "action_distribution")},
                      indent=1, default=int))
     print(json.dumps({g: v["pass"] for g, v in gates.items()}))
@@ -454,21 +535,33 @@ def audit(target: Path) -> None:
 def status(target: Path) -> None:
     verify_seal(target)
     report = json.loads((target / "automatic_gates.json").read_text(encoding="utf-8"))
-    reviews = [json.loads((target / "review" / f"{a}.json").read_text(encoding="utf-8"))
-               for a in ("AUTHOR_1", "AUTHOR_2") if (target / "review" / f"{a}.json").exists()]
-    result = STATUS_RULE(report["automatic_pass"], reviews, ANCHORS)
+    extra: dict[str, Any] = {}
+    if GATE == "CB3":
+        def sheet(name: str) -> dict[str, Any] | None:
+            path = target / "review" / f"{name}.json"
+            return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+
+        result = cal_b.cal_b3_status(report["automatic_pass"], sheet("PRIMARY_AUTHOR"), ANCHORS)
+        second = sheet("SECOND_AUTHOR_OPTIONAL") or {}
+        extra = {"primary_human_reviewers_required": cal_b.PRIMARY_HUMAN_REVIEWERS_REQUIRED,
+                 "second_review_status": f"{second.get('status', cal_b.SECOND_REVIEW_NOT_REVIEWED)} — NONBLOCKING",
+                 "second_independent_review": list(cal_b.SECOND_INDEPENDENT_REVIEW),
+                 "h2_final_treatment_version": treatment.H2_TREATMENT_VERSION if result == PASS else None}
+    else:
+        reviews = [json.loads((target / "review" / f"{a}.json").read_text(encoding="utf-8"))
+                   for a in ("AUTHOR_1", "AUTHOR_2") if (target / "review" / f"{a}.json").exists()]
+        result = STATUS_RULE(report["automatic_pass"], reviews, ANCHORS)
     record = {"kind": f"{OUT.name.upper()}_STATUS", "computed_utc": now(), "status": result,
               "automatic_pass": report["automatic_pass"], "consumption": "CONSUMED (10/10 anchors, R=1)",
-              "system_calibration_complete": result == PASS, "next": NEXT if result == PASS else None}
+              "system_calibration_complete": result == PASS, "next": NEXT if result == PASS else None, **extra}
     (target / "status.json").write_text(json.dumps(record, indent=2, ensure_ascii=False) + "\n",
                                         encoding="utf-8", newline="\n")
     print(json.dumps(record, indent=1, ensure_ascii=False))
 
 
 if __name__ == "__main__":
-    if sys.argv[-1] == "--cal-b2":
-        sys.argv.pop()
-        use_cal_b2()
+    if sys.argv[-1] in ("--cal-b2", "--cal-b3"):
+        {"--cal-b2": use_cal_b2, "--cal-b3": use_cal_b3}[sys.argv.pop()]()
     command = sys.argv[1] if len(sys.argv) > 1 else ""
     if command == "run":
         run(Path(sys.argv[3]) if len(sys.argv) > 3 and sys.argv[2] == "--resume" else None)

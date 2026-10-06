@@ -289,3 +289,40 @@ def authorize_cal_b2(phase: str, commitment_sha256: str, dates: Sequence[str], r
     if spec_sha256 != CAL_B2_SPEC_SHA256:
         raise ValueError("CAL-B2 participant spec hash differs from the frozen H2 v2 spec")
     return CalBAuthorization(phase, commitment_sha256, tuple(dates), repetitions)
+
+
+# ── CAL-B3: autorização limitada (Amendment 11, CAL_B3_PROTOCOL_FREEZE_V1) ──
+#
+# A porta da CAL-B2 mais a versão do Risk prompt: só a fase CAL-B3, o hash
+# comprometido, as 10 datas, R = 1, tratamento v3, prompts Technical v2 e Risk
+# v2 e o spec hash congelado. ``CAL_B_AUTHORIZED`` (global) continua False.
+
+CAL_B3_PHASE = "CAL-B3"
+CAL_B3_REPETITIONS = 1
+CAL_B3_TREATMENT_VERSION = 3
+CAL_B3_TECHNICAL_PROMPT_VERSION = 2
+CAL_B3_RISK_PROMPT_VERSION = 2
+#: SHA256(canonical_json(ParticipantSpec("llm_agent", CAL_B3_FROZEN_PARAMS).to_dict())).
+CAL_B3_SPEC_SHA256 = "1d63ad4cc93f9ef49368ba6772a22403354b36f3cc7d9d57d3b0627b85b9becc"
+
+
+def authorize_cal_b3(phase: str, commitment_sha256: str, dates: Sequence[str], repetitions: int,
+                     treatment_version: int, technical_prompt_version: int, risk_prompt_version: int,
+                     spec_sha256: str) -> CalBAuthorization:
+    """Autorização one-shot da CAL-B3; qualquer desvio falha fechado."""
+    if CAL_B3_STATUS != "SEALED":
+        raise ValueError(f"CAL-B3 is {CAL_B3_STATUS}: the holdout cannot be opened again")
+    if phase != CAL_B3_PHASE:
+        raise ValueError(f"CAL-B3 authorization requires phase {CAL_B3_PHASE!r}, got {phase!r}")
+    if commitment_sha256 != CAL_B3_COMMITMENT_SHA256 or digest(CAL_B3_ANCHORS) != CAL_B3_COMMITMENT_SHA256:
+        raise ValueError("CAL-B3 commitment hash does not match the frozen anchors")
+    if tuple(dates) != CAL_B3_ANCHORS:
+        raise ValueError("CAL-B3 authorization requires exactly the 10 committed dates, in order")
+    if isinstance(repetitions, bool) or repetitions != CAL_B3_REPETITIONS:
+        raise ValueError(f"CAL-B3 is one-shot: repetitions must be {CAL_B3_REPETITIONS}")
+    if (treatment_version, technical_prompt_version, risk_prompt_version) != (
+            CAL_B3_TREATMENT_VERSION, CAL_B3_TECHNICAL_PROMPT_VERSION, CAL_B3_RISK_PROMPT_VERSION):
+        raise ValueError("CAL-B3 requires treatment version 3, technical prompt version 2 and risk prompt version 2")
+    if spec_sha256 != CAL_B3_SPEC_SHA256:
+        raise ValueError("CAL-B3 participant spec hash differs from the frozen H2 v3 spec")
+    return CalBAuthorization(phase, commitment_sha256, tuple(dates), repetitions)
