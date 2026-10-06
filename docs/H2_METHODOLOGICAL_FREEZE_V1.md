@@ -2043,4 +2043,17 @@ mudou.
               como observação descritiva, sem autoridade de seleção
             18 HTTP 200, 0 retry
             -> H2_V3 MINIMAL DEFECT FIX PASSED; segue a reexecução de development v3
+2026-10-06  Diagnostic Hardening v3 (H = 8 H_syn + 4 H_real, R = 5), thinking low
+            commit dff13ee; evidência docs/evidence/h2_v3/hardening_low_20261006T151731Z/
+            spec = a ex ante da v2 (freeze v1, LOW, prompt técnico v2) + Risk prompt v2
+            Technical 300/300 replay do Hardening v2 (mesma repetição), 0 mismatch;
+            Portfolio 26 replay + 11 live; Risk 11 live (11 APROVADO)
+            G-A 0 · G-T 0 · G-I 0.383 (v2: 0.383) · G-F 0.0 -> PASS
+            checker do Risk (descritivo): V3-R1 0/11 · V3-R2 0/11 · V3-R3 1/11 — o único
+            achado é FALSO POSITIVO conhecido ("Não há fatores adversos ... que justifiquem
+            veto": negação fora da janela de 30 caracteres); checker congelado, não alterado
+            22 HTTP 200, 0 retry
+2026-10-06  B0 v3 (H, R = 1); evidência docs/evidence/h2_v3/b0_low_20261006T151857Z/
+            Technical 60/60 replay do B0 v2; Risk 2 live (2 APROVADO), 0 achado do checker
+            G-A 0 · G-T 0 · G-I 0.50 -> B0 PASS (v3)
 ```
