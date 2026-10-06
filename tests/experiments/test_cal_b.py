@@ -219,3 +219,18 @@ def test_cal_b2_rotulos_de_status_e_checker_congelado() -> None:
     for path, blob in cal_b.CAL_B2_CHECKER_BLOBS.items():
         assert subprocess.run(["git", "hash-object", path], capture_output=True, text=True,
                               check=True).stdout.strip() == blob
+
+
+def test_cal_b2_gates_registrados_batem_com_a_evidencia() -> None:
+    import json
+    from pathlib import Path
+
+    run = Path(__file__).resolve().parents[2] / cal_b.CAL_B2_EVIDENCE
+    report = json.loads((run / "automatic_gates.json").read_text(encoding="utf-8"))
+    assert {g: v["pass"] for g, v in report["gates"].items()} == dict(cal_b.CAL_B2_GATE_RESULTS)
+    assert report["hold_rates"]["total_holds"] == 7 and report["hold_rates"]["decisions"] == 10
+    assert report["batch_commit"].startswith(cal_b.CAL_B2_BATCH_COMMIT)
+    assert report["financial_outcome"].startswith("NOT COMPUTED")
+    assert anchors.CAL_B2_STATUS == "CONSUMED"
+    with pytest.raises(ValueError, match="CONSUMED"):
+        anchors.authorize_cal_b2("CAL-B2", B2_COMMITMENT, B2, 1, 2, 2, anchors.CAL_B2_SPEC_SHA256)

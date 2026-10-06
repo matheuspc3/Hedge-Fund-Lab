@@ -234,6 +234,17 @@ CAL_B2_REVIEW_DISAGREEMENT = "CAL_B2_REVIEW_DISAGREEMENT"
 CAL_B2_AWAITING_HUMAN_REVIEW = "CAL_B2_AWAITING_HUMAN_REVIEW"
 
 
+# ── Resultado da CAL-B2 (registrado) ─────────────────────────────
+
+CAL_B2_FREEZE_COMMIT = "f6e8c93"
+CAL_B2_BATCH_COMMIT = "c9cc719"
+CAL_B2_EVIDENCE = "docs/evidence/cal_b2/run_20261006T125636Z"
+#: Os sete gates automáticos passaram (7/10 HOLD, total_hold_rate 0.70).
+CAL_B2_GATE_RESULTS: Mapping[str, bool] = MappingProxyType({
+    "CB2-A": True, "CB2-S": True, "CB2-C": True, "CB2-R": True, "CB2-SEM": True, "CB2-TRANS": True, "CB2-D": True,
+})
+
+
 def cal_b2_status(automatic_pass: bool, reviews: Sequence[Mapping[str, Any]], anchors: Sequence[str]) -> str:
     """A mesma regra congelada da CAL-B1, com os rótulos da CAL-B2."""
     # ponytail: só troca o prefixo; a regra é uma só para B1 e B2.

@@ -1763,4 +1763,21 @@ mudou.
             Sequential Dev D02 (dd 0.15, EMPIRICAL_S2)
             CAL-B2: 0 sessões de decisão v2, não executada; nenhuma sessão v2 >= 2024-09-02
             -> H2_V2 DEVELOPMENT COMPLETE — READY FOR CAL-B2 PROTOCOL
+2026-10-06  CAL-B2 one-shot (Amendment 9), 10 âncoras x R=1, outcome-blind
+            CAL_B2_FREEZE_COMMIT f6e8c93; autorização/guards c9cc719 (batch)
+            evidência docs/evidence/cal_b2/run_20261006T125636Z/
+            selo bruto commitado antes do pacote (59533dc); selos conferidos
+            10/10 seladas na ordem comprometida; 56 chamadas lógicas, 56 HTTP
+            200, 0 retry, 0 recuperação; spec 89ac1207...; nenhum preço t+1 lido
+            CB2-A PASS · CB2-S PASS · CB2-C PASS · CB2-R PASS
+            CB2-SEM PASS (0/50 votos com contradição) · CB2-TRANS PASS (0/50)
+            CB2-D PASS: 7/10 HOLD (6 TECH_EXPLICIT_HOLD + 1 RISK_VETO_LLM),
+                 total_hold_rate 0.70 < 0.90
+            distribuição: técnico MANTER 6 · COMPRA 3 · VENDA 1; causas
+            TECH_EXPLICIT_HOLD 6 · ACTION_BUY 2 · ACTION_SELL 1 (VENDA com
+            carteira zerada, alvo 0) · RISK_VETO_LLM 1; nenhum veto duro
+            (vol máx. nas COMPRA 0.371 <= 0.40; drawdown 0 na âncora)
+            pré-filtro léxico: 0 marcações
+            -> CAL_B2_STATUS = CONSUMED; status CAL_B2_AWAITING_HUMAN_REVIEW
+               (gates automáticos PASS; fichas dos dois autores em branco)
 ```

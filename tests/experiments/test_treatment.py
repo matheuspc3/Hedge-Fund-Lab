@@ -53,7 +53,7 @@ def test_cal_b2_comprometida_bate_com_a_regra_e_a_evidencia() -> None:
         assert row["winner"] not in row["excluded_sessions"]
         s = next(x for x in anchors.STRATA if x.stratum_id == row["stratum_id"])
         assert s.subset == "CAL-B" and s.first <= row["winner"] <= s.last
-    assert anchors.CAL_B2_STATUS == "SEALED"
+    assert anchors.CAL_B2_STATUS == "CONSUMED"  # Amendment 9: lote one-shot executado
 
 
 def test_runner_recusa_janela_com_ancora_cal_b2() -> None:
@@ -143,4 +143,4 @@ def test_status_development_v2_e_seguranca_cal_b2() -> None:
     assert s["status"] == treatment.H2_V2_DEVELOPMENT_STATUS
     assert s["cal_b2_safety"]["v2_decision_sessions_in_cal_b2"] == [] and not s["cal_b2_safety"]["executed"]
     assert s["validation_final_safety"]["v2_sessions_at_or_after_validation"] == []
-    assert anchors.CAL_B2_STATUS == "SEALED" and anchors.CAL_B_AUTHORIZED is False
+    assert anchors.CAL_B_AUTHORIZED is False

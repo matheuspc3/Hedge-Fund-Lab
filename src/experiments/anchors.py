@@ -116,8 +116,9 @@ CAL_B2_ANCHORS: tuple[str, ...] = (
 )
 CAL_B2_COMMITMENT_SHA256: str | None = "518dd9ddc132244726fc40b2939684876c6f69bf6bad67ea1f91a78fc4e9b167"
 CAL_B2_SELECTION_EVIDENCE = "docs/evidence/cal_b2/selection.json"
-#: Selada: nenhuma execução, nenhuma autorização nesta versão até o protocolo da CAL-B2.
-CAL_B2_STATUS = "SEALED"
+#: CONSUMED desde o lote one-shot (Amendment 9): ``authorize_cal_b2`` recusa
+#: reabri-la, com PASS ou FAIL.
+CAL_B2_STATUS = "CONSUMED"
 
 
 def sealed_holdout_anchors() -> tuple[str, ...]:

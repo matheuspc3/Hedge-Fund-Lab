@@ -966,6 +966,10 @@ PROTOCOL_TIE_FALLBACK, drawdown 0.15 por EMPIRICAL_S2), compromisso
 versão do tratamento/prompt e spec hash; gates CB2-A/S/C/R/SEM/TRANS/D com o
 checker v2 congelado por blob; revisão humana dos dois autores; nenhuma
 métrica financeira.
+Executada (`59533dc`): 10/10 âncoras seladas, 0 retry; os sete gates
+automáticos PASS (0 contradição semântica, 0 transição, 7/10 HOLD,
+`total_hold_rate` 0.70). `CAL_B2_STATUS = CONSUMED`. Estado:
+`CAL_B2_AWAITING_HUMAN_REVIEW` até as fichas dos dois autores.
 
 ### Hardening pré-B0 — suporte implementado
 
