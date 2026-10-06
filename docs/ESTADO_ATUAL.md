@@ -959,6 +959,14 @@ v2 sem discriminação (21/0.40 por desempate); Sequential Dev v2 discriminou
 de integridade PASS. Status: `H2_V2 DEVELOPMENT COMPLETE — READY FOR CAL-B2
 PROTOCOL`. Validation e Final Test intocados.
 
+**CAL-B2 (Amendment 9, `CAL_B2_PROTOCOL_FREEZE_V1`).** Congelada antes de
+qualquer chamada sobre as datas CAL-B2: configuração final v2 (21 / 0.40 por
+PROTOCOL_TIE_FALLBACK, drawdown 0.15 por EMPIRICAL_S2), compromisso
+`518dd9dd…`, R = 1, batch selado, autorização limitada à fase, hash, datas,
+versão do tratamento/prompt e spec hash; gates CB2-A/S/C/R/SEM/TRANS/D com o
+checker v2 congelado por blob; revisão humana dos dois autores; nenhuma
+métrica financeira.
+
 ### Hardening pré-B0 — suporte implementado
 
 Implementado como engenharia, sem rodar CAL-A, CAL-B, Stress científico,

@@ -1340,6 +1340,211 @@ CAL-B1 foi observado; a correção v2 foi dirigida pela contradição entre
 rationale e input e não escolhida por performance; Validation e Final Test
 permaneceram intactos; a v2 é uma nova classe de comparabilidade.
 
+#### PROTOCOL AMENDMENT 9 — CAL_B2_PROTOCOL_FREEZE_V1
+
+```text
+DATA              2026-10-06
+TIPO              registro pré-execução; decidido pelos autores ANTES de
+                  qualquer chamada live sobre uma âncora de CAL-B2
+COMMIT            CAL_B2_FREEZE_COMMIT = o commit que introduz este amendment;
+                  o commit seguinte traz só a autorização limitada e os guards
+                  de versão que o implementam; o batch roda sobre ele
+OBSERVADO ANTES   toda a evidência v1 e v2 de development (registro abaixo),
+                  CAL-B1 consumida; NENHUMA resposta de modelo, feature ou
+                  métrica de entrada de âncora CAL-B2. Regra: nenhum dry-run
+                  toca as datas CAL-B2; o executor só pode ser ensaiado
+                  offline sobre as âncoras CAL-B1 (development), com
+                  transporte falso e fora do repositório
+NÃO MUDA          configuração H2 v2, prompts, checker, modelo, thinking,
+                  custos, retry, fonte de preço, threshold de degeneração
+```
+
+Repete as regras do Amendment 7 para o holdout da v2, com os gates
+semânticos do Amendment 8. Onde nada é dito aqui, vale o Amendment 7 tal como
+executado na CAL-B1 (mesmo código: `src/experiments/cal_b.py`,
+`scripts/run_cal_b.py` com `--cal-b2`).
+
+**Papel.** CAL-B2 = `ONE-SHOT OUT-OF-SAMPLE SANITY CHECK`. Não é teste de
+performance e não tem autoridade de tuning. A H2 v1 terminou em
+`CAL_B_FAIL — HOLDOUT CONSUMED`; as 10 âncoras CAL-B1 são development evidence
+e nunca voltam a ser holdout. A v2 corrigiu só `TECHNICAL FEATURE SEMANTICS
+UNDER-SPECIFIED` (Technical Prompt v2).
+
+**Configuração final H2 v2 (congelada; `CAL_B2_FROZEN_PARAMS =
+stress_v2_params()`, travada por teste).**
+
+```text
+tratamento   H2_TREATMENT_VERSION 2 · technical_prompt_version 2
+             TECHNICAL_SYSTEM_PROMPT_V2_SHA256
+             a3dec11f4c8911397c0f04ec5c0b7eb6265c420b3b6f7e3f494dd79ca43782e1
+provedor     gemini · gemini-3.8-flash · API nativa
+geração      thinking_level low · temperature 1.0 · max_output_tokens 8192 ·
+             sem seed transmitida
+SC           analyst_count 5 · consensus_threshold 0.6 · require_all_votes
+execução     decision_frequency 1 · strict_inputs · portfolio_inversion_policy fail
+posição      long_target_weight 1.0
+risco        volatility_window 21 · risk_max_volatility 0.40 ·
+             risk_max_drawdown 0.15 · risk_max_concentration 1.0
+retry        6 × 2.0 (operacional)
+dados        snapshot científico B3 corrigido (H_REAL_SNAPSHOT_IDENTITY_DIGEST),
+             OHLCV oficial B3, fator Yahoo só pela política congelada, feature
+             schema científico existente; CostSpec científico congelado (sem
+             uso: não há execução)
+spec hash    CAL_B2_SPEC_SHA256 = SHA256(canonical_json(ParticipantSpec(
+             "llm_agent", CAL_B2_FROZEN_PARAMS).to_dict())) =
+             89ac12071d8f68774a3f2af8192c04ff4254a62df90bfc7c5c8d6301767c2324
+```
+
+**Resolução de `risk_max_drawdown = 0.15` (não reabrir).** A instrução inicial
+da v2 tinha tensão entre preservar 0.25 e reexecutar o Sequential
+Development. O Amendment 8 resolveu isso ANTES da execução: devolveu a
+autoridade de seleção ao Sequential Development v2, cuja regra S2 congelada
+escolheu D02 = 0.15 (`EMPIRICAL_S2`). 0.15 é parte da configuração final v2.
+Não é afirmação de superioridade robusta: é seleção de development com R = 3
+segundo o protocolo.
+
+**Proveniência dos parâmetros (bases distintas, nunca misturadas).**
+
+```text
+CAL_A_V2_SELECTION_BASIS          = PROTOCOL_TIE_FALLBACK
+                                    volatility_window 21, risk_max_volatility 0.40
+SEQUENTIAL_DEV_V2_SELECTION_BASIS = EMPIRICAL_S2
+                                    risk_max_drawdown 0.15
+```
+
+**Compromisso.** Exatamente as 10 datas de Amendment 8 — 2018-08-16,
+2019-04-05, 2019-10-07, 2020-07-01, 2021-01-21, 2021-09-22, 2022-04-07,
+2022-11-01, 2023-06-26, 2023-12-18 —, compromisso integral
+`518dd9ddc132244726fc40b2939684876c6f69bf6bad67ea1f91a78fc4e9b167`, conferido
+antes da execução. Nenhuma data é trocada, nenhuma âncora nova é selecionada.
+
+**One-shot.** `CAL_B2_REPETITIONS = 1`: uma realização live por âncora (5
+amostras Technical). Nunca repetir para medir estabilidade nem rerodar por
+HOLD, veto, rationale ruim ou distribuição de ações.
+
+**Independência.** Cada âncora: R$100.000, 100% caixa, posição zero, pico =
+capital, histórico causal até close(t), participante novo, zero memória entre
+âncoras (posição, equity, rationale, trace, contexto, resposta do provedor).
+
+**Execução selada.** As 10 em um único batch automático, na ordem
+comprometida, sem abrir respostas entre âncoras (o progresso só mostra data e
+"sealed"); retomada exige o mesmo commit. Ordem: executar as 10 → persistir
+artefatos → selar (`sealed.json`, `batch.json`, `BATCH_SEAL.sha256`) →
+commitar a evidência bruta → só então abrir o pacote de auditoria. Se o batch
+produzir conteúdo científico utilizável, o holdout foi consumido.
+
+**Autorização limitada.** Nenhum bypass global (`CAL_B_AUTHORIZED` continua
+False). A única porta é `authorize_cal_b2(phase="CAL-B2", commitment, as 10
+datas na ordem, repetitions=1, treatment_version=2,
+technical_prompt_version=2, spec_sha256=CAL_B2_SPEC_SHA256)`, que só funciona
+com `CAL_B2_STATUS = "SEALED"`; qualquer outra combinação falha fechada. O
+cliente do provedor recusa qualquer sessão que não seja a âncora em execução.
+Após a observação, `CAL_B2_STATUS = CONSUMED`, com PASS ou FAIL.
+
+**Sem resultado financeiro.** Não carregar t+1, não executar ordem, não
+calcular retorno, P&L, Sharpe, Sortino, MDD, hit rate nem benchmark. O objeto
+é a decisão em close(t). Relatório: `FINANCIAL_OUTCOME = NOT COMPUTED`.
+
+**Consumo.** Falha puramente infra antes de qualquer resposta utilizável
+persistida: âncora não consumida (pode ser retomada). Depois de resposta
+utilizável: consumida; crash posterior só se recupera por replay exato do
+journal; nunca substituir resposta observada por nova inferência. Replay exato
+impossível → `CAL_B2_INVALID — PARTIAL HOLDOUT CONSUMED`, e parar.
+
+**Gates automáticos.**
+
+```text
+CB2-A     10/10 decisões completas; 0 falha final de provedor/infra
+          (retries recuperados são só evidência operacional)
+CB2-S     0 violação de schema, resposta inválida, quorum incompleto,
+          truncamento, fallback silencioso, inversão de portfólio, input
+          científico faltando; 0 mismatch de tratamento/versão (spec do batch
+          = CAL_B2_FROZEN_PARAMS, technical_prompt_version 2, system prompt de
+          cada chamada técnica = TECHNICAL_SYSTEM_PROMPT_V2)
+CB2-C     0 feature posterior a t, 0 ticker/data/preço absoluto no prompt
+          técnico, 0 informação futura/t+1, 0 acesso a Validation/Final
+          (t <= 2024-02-28); payload técnico idêntico às features recalculadas
+          independentemente só com barras até t
+CB2-R     COMPRA com recent_volatility > 0.40 ou current_drawdown > 0.15 ->
+          veto duro antes do LLM de risco; regra dura nunca sem violação; veto
+          nunca sobrescrito; VENDA/MANTER pelo contrato congelado. Drawdown
+          estruturalmente 0 na âncora isolada em caixa (registrado)
+CB2-SEM   contradições semânticas objetivas = 0 (Bollinger, SMA50, SMA200,
+          MACD vs signal, sinais declarados) em cada rationale técnico visível
+          contra o payload que o próprio modelo recebeu
+CB2-TRANS afirmações de transição não suportadas = 0 (cruzou, rompeu hoje,
+          acaba de romper, reverteu, crossover, entrou na banda…)
+CB2-D     total_hold_rate < 0.90, mesma definição do Hardening/CAL-B1
+          (HOLD_RATE_CAUSES; BUY_AT_TARGET_NOOP fora). 9 ou 10 HOLD = FAIL
+```
+
+CB2-SEM e CB2-TRANS usam exatamente o checker validado em development v2
+(`audit_rationale`/`contradictions`/`transitions` e o wrapper
+`semantic_audit`), congelado por blob git ANTES do batch e conferido antes de
+aplicado:
+
+```text
+CAL_B2_CHECKER_BLOBS
+  src/agents/feature_semantics.py   7a086701afda203a415cf1f9b67912d4788b3e56
+  scripts/run_h2_v2_defect.py       2ec09c494732148680b3543ed4ed7ceae58018c2
+```
+
+Nenhuma regex ou regra muda depois de aberto o batch. O checker cobre o
+Technical (onde as relações quantitativas são enviadas); Risk/Portfolio ficam
+na revisão humana.
+
+**Degeneração, literal.** A v2 passou o hardening dirigido com
+`total_hold_rate = 0.867`, perto do limite. Isso não autoriza relaxar CB2-D,
+usar 0.95, aceitar 9/10, reclassificar VENDA sem posição ou retirar âncora.
+Reportados à parte: TECH_EXPLICIT_HOLD, TECH_NO_MAJORITY, RISK_VETO,
+PORTFOLIO_HOLD, ACTION_BUY, ACTION_SELL (e BUY_AT_TARGET_NOOP, fora de
+qualquer veto).
+
+**Revisão humana** (só depois da evidência bruta selada e commitada). Fichas
+`review/AUTHOR_1.json` e `review/AUTHOR_2.json`, preenchidas
+independentemente pelos dois autores: `material_hallucination` e
+`rationale_action_coherence` = PASS/FAIL por âncora. Material unsupported claim
+= fato específico não fornecido ao estágio e usado materialmente para
+justificar a decisão; Technical sem ticker, data, preço absoluto, notícia,
+fundamentos ou macro; Risk/Portfolio só com seus payloads explícitos.
+Coerência: Technical não defende direção contrária ao sinal; Risk coerente com
+métricas e regras duras; Portfolio respeita direção e veredito de risco. O
+checker automático não substitui esta revisão. Discordância →
+`CAL_B2_REVIEW_DISAGREEMENT`, sem rerodar. Fichas incompletas →
+`CAL_B2_AWAITING_HUMAN_REVIEW` (intermediário, não final).
+
+**Regra de status.** PASS só se CB2-A, CB2-S, CB2-C, CB2-R, CB2-SEM,
+CB2-TRANS e CB2-D passarem, e as duas revisões concordarem em zero alucinação
+material e zero contradição rationale/ação.
+
+```text
+gate automático falhou        -> CAL_B2_FAIL — HOLDOUT CONSUMED
+revisões incompletas          -> CAL_B2_AWAITING_HUMAN_REVIEW
+revisões divergentes          -> CAL_B2_REVIEW_DISAGREEMENT
+concordam, algum FAIL         -> CAL_B2_FAIL — HOLDOUT CONSUMED
+concordam, tudo PASS          -> CAL_B2_PASS — SANITY CHECK ONLY
+replay exato impossível       -> CAL_B2_INVALID — PARTIAL HOLDOUT CONSUMED
+```
+
+`CAL_B2_PASS` não é evidência de performance OOS. Só com ele:
+`SYSTEM_CALIBRATION_COMPLETE = True` e `READY FOR SYSTEM FREEZE DESIGN`;
+Validation não é executada automaticamente. Com FAIL: não editar prompt nem
+checker, não relaxar gate, não alterar parâmetro, não rerodar, não substituir
+âncora. Parar.
+
+**Pacote de auditoria por âncora.** Data, payload de features, as 5 saídas
+técnicas, distribuição de votos, consenso, achados do checker semântico e de
+transição, entrada/saída de Risk e Portfolio quando chamados, causa final e
+reason codes. Nenhuma informação financeira futura.
+
+**Evidência operacional.** Chamadas lógicas, tentativas HTTP, retries, falhas
+transitórias, latência p50/p90, tokens de entrada, saída e thinking. Sem custo
+monetário (não há fonte de preço versionada).
+
+**Ordem dos commits.** (1) este freeze; (2) autorização/guards de versão; (3)
+evidência bruta selada; (4) gates automáticos; (5) revisão humana; (6) status
+final. Evidência bruta nunca muda depois de selada.
+
 ### Registro de execução (append-only)
 
 Resultados das regras predeclaradas acima. Não são amendments: nenhuma regra
