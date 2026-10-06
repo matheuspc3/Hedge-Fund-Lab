@@ -131,3 +131,16 @@ def test_stress_v2_registrado_bate_com_a_evidencia() -> None:
     assert s["windows"] == [dict(w) for w in STRESS_SELECTED_WINDOWS]  # mesmas janelas, sem reseleção
     assert all(g["pass"] for g in s["gates"].values())
     assert s["calibration_provenance"] == treatment.v2_calibration_provenance()
+
+
+def test_status_development_v2_e_seguranca_cal_b2() -> None:
+    import json
+    from pathlib import Path
+
+    from src.experiments import anchors
+
+    s = json.loads((Path(__file__).resolve().parents[2] / treatment.H2_V2_DEVELOPMENT_SUMMARY).read_text(encoding="utf-8"))
+    assert s["status"] == treatment.H2_V2_DEVELOPMENT_STATUS
+    assert s["cal_b2_safety"]["v2_decision_sessions_in_cal_b2"] == [] and not s["cal_b2_safety"]["executed"]
+    assert s["validation_final_safety"]["v2_sessions_at_or_after_validation"] == []
+    assert anchors.CAL_B2_STATUS == "SEALED" and anchors.CAL_B_AUTHORIZED is False

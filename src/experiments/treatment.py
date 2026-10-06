@@ -146,3 +146,9 @@ H2_V2_DEFECT_STATUS = H2_V2_DEFECT_FIX_PASSED
 
 STRESS_V2_EVIDENCE = "docs/evidence/stress_v2/run_20261006T030655Z/summary.json"
 STRESS_V2_STATUS = "STRESS PROBING COMPLETE — READY FOR CAL-B PROTOCOL"
+
+
+# ── Status de development v2 ─────────────────────────────────────
+
+H2_V2_DEVELOPMENT_SUMMARY = "docs/evidence/h2_v2/development_summary.json"
+H2_V2_DEVELOPMENT_STATUS = "H2_V2 DEVELOPMENT COMPLETE — READY FOR CAL-B2 PROTOCOL"

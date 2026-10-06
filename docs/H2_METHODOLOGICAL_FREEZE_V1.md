@@ -1548,4 +1548,14 @@ mudou.
             financeiro (DESCRIPTIVE ONLY): Sharpe S1 -2.840 (x3), S2 -1.068/-1.068/
             -0.601, S3 -0.793/-0.331/-0.793, S4 3.794 (x3)
             -> STRESS PROBING COMPLETE — READY FOR CAL-B PROTOCOL (v2)
+2026-10-06  Resumo de development v2 (descritivo; docs/evidence/h2_v2/development_summary.json)
+            votos técnicos com contradição semântica, v1 -> v2: Hardening 0.317 -> 0.000,
+            CAL-A 0.383 -> 0.003, Sequential Dev 0.351 -> 0.000, Stress 0.335 -> 0.000
+            votos com transição não suportada, v1 -> v2: 0.37-0.42 -> 0.000-0.009
+            TECH_EXPLICIT_HOLD v1 -> v2: Hardening 0.617 -> 0.383, CAL-A 0.467 -> 0.650,
+            Sequential Dev 0.627 -> 0.648, Stress 0.523 -> 0.539
+            seleções v2: CAL-A config 1 (21/0.40, PROTOCOL_TIE_FALLBACK);
+            Sequential Dev D02 (dd 0.15, EMPIRICAL_S2)
+            CAL-B2: 0 sessões de decisão v2, não executada; nenhuma sessão v2 >= 2024-09-02
+            -> H2_V2 DEVELOPMENT COMPLETE — READY FOR CAL-B2 PROTOCOL
 ```

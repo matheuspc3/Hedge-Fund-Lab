@@ -946,6 +946,19 @@ mecanismo dominante na semântica de feature não especificada no prompt
 âncoras HOLD, padrão presente desde o Hardening), além de conflito real
 tendência/momentum em 5/8 estados e linguagem de cautela em 9/36 votos MANTER.
 
+**H2 v2 (Amendment 8).** Única mudança: o system prompt técnico ganhou o
+glossário semântico das 8 features e a regra estado-não-transição
+(`technical_prompt_version = 2`); features, schema, N, quorum, geração, risco e
+prompts de Risk/Portfolio idênticos. CAL-B2 comprometida antes de qualquer
+chamada v2 (seleção determinística só por calendário; selada, não executada).
+Hardening dirigido nas âncoras CAL-B1 consumidas: 0/150 contradições e 0/150
+transições (v1: 32/50 e 33/50), hold 0.867 → `H2_V2 MINIMAL DEFECT FIX
+PASSED`. Development v2 refeito com as regras da v1: Hardening e B0 PASS; CAL-A
+v2 sem discriminação (21/0.40 por desempate); Sequential Dev v2 discriminou
+(D02, `risk_max_drawdown = 0.15`, EMPIRICAL_S2); Stress v2 com todos os gates
+de integridade PASS. Status: `H2_V2 DEVELOPMENT COMPLETE — READY FOR CAL-B2
+PROTOCOL`. Validation e Final Test intocados.
+
 ### Hardening pré-B0 — suporte implementado
 
 Implementado como engenharia, sem rodar CAL-A, CAL-B, Stress científico,
