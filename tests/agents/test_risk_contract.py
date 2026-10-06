@@ -9,7 +9,10 @@ from pathlib import Path
 import pytest
 
 from src.agents import risk_contract as rc
-from src.agents.feature_semantics import TECHNICAL_SYSTEM_PROMPT_V2, TECHNICAL_SYSTEM_PROMPT_V2_SHA256
+from src.agents.feature_semantics import (
+    TECHNICAL_SYSTEM_PROMPT_V2,
+    TECHNICAL_SYSTEM_PROMPT_V2_SHA256,
+)
 from src.agents.llm_client import LLMCallMetadata, MockLLMClient
 from src.agents.participant import LLMParticipant
 from src.agents.portfolio_manager import QUALITATIVE_SYSTEM_PROMPT
@@ -106,7 +109,7 @@ def test_contradicao_textual_de_veredito() -> None:
 def test_calibracao_no_corpus_de_development_reproduz_o_caso() -> None:
     """O Risk v1 da CAL-B2 (consumida, development) é marcado; o checker não lê a CAL-B3."""
     path = ROOT / treatment.FROZEN_V2_EVIDENCE["defect"] / "anchors" / "2023-06-26" / "llm_calls.jsonl"
-    risk = [json.loads(x) for x in path.read_text(encoding="utf-8").splitlines() if '"risk_manager"' in x][0]
+    risk = next(json.loads(x) for x in path.read_text(encoding="utf-8").splitlines() if '"risk_manager"' in x)
     v = risk["validated_response"]
     assert json.loads(risk["user_prompt"]) == PAYLOAD
     assert rc.gate_counts(rc.audit_risk_rationale(v["analysis"], v["verdict"], PAYLOAD))["V3-R1"]
