@@ -1201,6 +1201,145 @@ decidida fora desta tarefa.
 429/5xx/reset, tokens de entrada, saída e thinking, latência; custo monetário
 não é calculado sem fonte de preço versionada.
 
+#### PROTOCOL AMENDMENT 8 — H2 TREATMENT VERSION 2 (correção mínima do contrato semântico)
+
+```text
+DATA              2026-10-05
+TIPO              nova versão do tratamento, dirigida a defeito objetivo;
+                  registrada ANTES de qualquer chamada live v2 e antes da
+                  seleção da CAL-B2
+OBSERVADO ANTES   toda a evidência v1 (Hardening/B0, CAL-A, Sequential Dev,
+                  Stress, CAL-B1 consumida) e o post-mortem da CAL-B1
+                  (docs/evidence/cal_b_v1/postmortem/); nenhum retorno da CAL-B1
+                  foi observado; Validation e Final Test intocados
+STATUS v1         H2 V1 FAILED CAL-B1 — CONSUMED. Toda a evidência v1 é
+                  preservada como está; as 10 âncoras CAL-B1 são DEVELOPMENT
+                  EVIDENCE e nunca voltam a ser holdout
+```
+
+Código: `src/experiments/treatment.py` (`H2_TREATMENT_VERSION = 2`,
+`SCIENTIFIC_TECHNICAL_PROMPT_VERSION = 2`, regra da CAL-B2),
+`src/agents/feature_semantics.py` (contrato semântico, prompt v2, checker),
+parâmetro `technical_prompt_version` do `LLMParticipant`.
+
+**Por quê.** A v1 falhou o sanity check da CAL-B1 por degeneração (CB-D,
+`total_hold_rate = 0.90`). O post-mortem achou um defeito objetivo, detectável
+sem resultado financeiro: o prompt técnico entregava as 8 razões sem definição
+nem convenção de sinal, e o modelo afirmava rompimento da banda superior com
+`bb_upper_gap < 0` (64% dos votos da CAL-B1, 33–43% nas fases anteriores). A
+correção v2 é dirigida pela contradição entre rationale e input, não por
+performance.
+
+**Changeset v1 → v2 (único).** O system prompt técnico científico ganha:
+- glossário semântico das 8 features (fórmula e convenção de sinal), gerado
+  de uma representação canônica única (`FEATURE_SEMANTICS`);
+- regra STATE, NOT TRANSITION: o payload é só o estado em `t`, sem `t-1`;
+  posições podem ser afirmadas, transições (cruzou, rompeu, reverteu, entrou)
+  não.
+
+Ficam idênticos: provider/modelo/API nativa, thinking low, temperature 1.0,
+max_output_tokens 8192, sem seed, N = 5, limiar 0.6, require_all_votes,
+decision_frequency 1, strict_inputs, portfolio_inversion_policy fail,
+long_target_weight 1.0, volatility_window 21, risk_max_volatility 0.40,
+risk_max_drawdown 0.25, risk_max_concentration 1.0, CostSpec, fonte de preço,
+as 8 features e suas fórmulas (`LLM_FEATURE_SCHEMA_VERSION` continua 2: ele
+versiona o conjunto/fórmulas das features, que não mudaram), o user prompt
+técnico, o schema de resposta, a semântica de MANTER, o Risk prompt e o
+Portfolio prompt. O prompt não ganha nenhuma instrução para operar mais,
+evitar MANTER, favorecer direção ou assumir risco. A identidade científica
+muda pelo parâmetro `technical_prompt_version = 2` (entra no `spec_hash`) e
+pelo hash do system prompt (entra na identidade de cada chamada).
+
+**Checker semântico** (`audit_rationale`, determinístico, só o texto visível
+do Technical; nunca reescreve decisão). Afirmações de posição conferidas
+contra o payload: preço acima/abaixo da banda superior (`bb_upper_gap > 0` /
+`< 0`), abaixo/acima da banda inferior (`bb_lower_gap < 0` / `> 0`), dentro
+das bandas (`bb_upper_gap <= 0` e `bb_lower_gap >= 0`), acima/abaixo da
+SMA50/SMA200 (`sma*_gap > 0` / `< 0`), MACD acima/abaixo da linha de sinal
+(`macd_ratio > / < macd_signal_ratio`) e sinal declarado de cada feature
+("sma50_gap positivo"). Linguagem de transição (cruzou, cruzamento, cruzando,
+crossover, rompeu, rompimento, ultrapassou, superou, perfurou, reverteu,
+reversão, entrou, voltou, acabou de, virada) é
+`UNSUPPORTED_TRANSITION_CLAIM`, exceto quando negada ou hipotética (não, sem,
+possível, pode, aguardar, risco de, antes de…) ou em "reversão à média". As
+regras exatas ficam congeladas no código do commit do contrato, testadas, antes
+de qualquer chamada v2.
+
+**CAL-B2 — novo holdout, comprometido antes de qualquer chamada live v2.**
+Os mesmos 10 estratos de CAL-B (3, 6, …, 30), uma sessão nova por estrato.
+
+```text
+seed       CAL_B2_SELECTION_SEED = SHA256("HEDGE-FUND-LAB|CAL-B2|" +
+           CAL_B1_COMMITMENT_HASH), hex
+candidatos sessões do estrato (domínio do Amendment 2) menos:
+           as âncoras CAL-B1, as sessões H_real (atuais e as do snapshot
+           anterior), toda âncora de Hardening/B0/CAL-A, toda sessão de
+           decisão de Stress, toda sessão da Sequential Development e toda
+           sessão de decisão registrada em qualquer evidência de
+           desenvolvimento (varredura de docs/evidence)
+digest     SHA256(seed + "|" + stratum_id + "|" + ISO_DATE(d))
+vencedor   menor digest (ordem lexicográfica)
+persistido número de candidatos, hash do ranking completo, vencedor e o
+           compromisso SHA-256 das 10 datas
+```
+
+Nenhum retorno, volatilidade, feature, resposta de LLM ou regime entra na
+seleção. Depois do commit, CAL-B2 fica selada: o runner e o banco de chamadas
+recusam suas datas, e nenhuma fase v2 decide sobre elas. CAL-B2 **não** é
+executada nesta tarefa.
+
+**Hardening dirigido ao defeito (v2).** Depois do compromisso da CAL-B2.
+Estados: as 10 âncoras CAL-B1 (consumidas, development), histórico até
+close(t), carteira zerada. Configuração: a final de desenvolvimento v1 com o
+prompt v2. `R = 3` por âncora, N = 5: 150 chamadas técnicas; Risk/Portfolio
+seguem o grafo; nenhum retorno, nenhum preço `t+1`.
+
+```text
+V2-S1  contradições semânticas objetivas (checker) = 0
+V2-S2  afirmações de transição não suportadas (checker) = 0
+V2-A   falhas finais = 0
+V2-T   truncamentos (MAX_TOKENS / length) = 0
+V2-D   total_hold_rate < 0.90 (mesmos códigos HOLD do Hardening)
+```
+
+Interpretação congelada: V2-S1 ou V2-S2 falha → `H2_V2_SEMANTIC_FIX FAILED`
+(parar; nenhuma outra variável muda). S1/S2 passam e V2-D falha →
+`H2_V2 SEMANTICS FIXED — DEGENERACY PERSISTS` (parar; evidência para uma
+eventual v3 sobre MANTER, que não é alterado aqui). Tudo passa →
+`H2_V2 MINIMAL DEFECT FIX PASSED`.
+
+**Reexecução de development v2 (só se o hardening dirigido passar).** O
+prompt é parte do tratamento, então todas as fases de development rodam de
+novo, com os MESMOS conjuntos, grades, R, escores, desempates, gates e
+fronteiras da v1, sem nova grade, threshold ou data, e com evidência em
+diretórios `*_v2` (a v1 nunca é sobrescrita):
+
+```text
+Diagnostic Hardening  H = 8 H_syn + 4 H_real, R = 5, gates G-A/G-T/G-I/G-F;
+                      thinking low fixo (a escada não sobe na v2: falha de G-I
+                      ou G-F para tudo, porque thinking não pode mudar)
+B0                    H, R = 1, só se o Hardening v2 passar
+CAL-A                 20 âncoras, grade {21,63} x {0.40,0.50,0.60}, R = 3,
+                      pareada, S1, desempate menor config_id. O gate de
+                      identificabilidade não é refeito: é determinístico, não
+                      depende do prompt (7 âncoras distinguíveis, REDUCED)
+Sequential Dev        2024-03-01..2024-08-29 (liquidação 08-30), D01/D02/D03,
+                      R = 3, S2 com Sharpe v1, mesma fronteira e desempate;
+                      base = seleção da CAL-A v2
+Stress                as mesmas 4 janelas comprometidas (sem reseleção), R = 3,
+                      gates S-A/S-T/S-C/S-R; config = seleções v2
+```
+
+Resultados v1 não selecionam nada na v2; cada seleção v2 registra sua
+`selection_basis` (EMPIRICAL ou PROTOCOL_TIE_FALLBACK). Ao fim, se tudo passar:
+`H2_V2 DEVELOPMENT COMPLETE — READY FOR CAL-B2 PROTOCOL`, e parar.
+
+**Governança para a monografia.** A v1 falhou o sanity check por degeneração;
+o post-mortem achou um contrato semântico sub-especificado; nenhum retorno da
+CAL-B1 foi observado; a correção v2 foi dirigida pela contradição entre
+rationale e input e não escolhida por performance; Validation e Final Test
+permaneceram intactos; a v2 é uma nova classe de comparabilidade.
+
 ### Registro de execução (append-only)
 
 Resultados das regras predeclaradas acima. Não são amendments: nenhuma regra
