@@ -2023,4 +2023,24 @@ mudou.
             estrato 15 -> 2021-01-06 (49)          estrato 30 -> 2024-01-11 (48)
             CAL_B3_COMMITMENT_SHA256 a5cadecd361de5059370bf4bfa97b1417b82eb8951950cf92b0aebc7edecdbaf
             -> CAL-B3 SELADA (runner e banco recusam as datas; não executada)
+2026-10-06  H2 v3 — hardening dirigido ao defeito (Amendment 10), CAL-B2 x R=3
+            commit 2e33eac (CAL-B3 já comprometida); primeira chamada live v3
+            evidência docs/evidence/h2_v3/defect_hardening_20261006T151527Z/
+            config final v2 (21 / 0.40 / 0.15 / 1.0) + Risk prompt v2 (990424e3...)
+            checker congelado: risk_contract.py 7636ad26 · h2_v3.py e6f5ca5a
+            Technical: 150/150 respostas CAL-B2 reaproveitadas por identidade exata,
+              0 chamada Technical nova, 0 mismatch; prompt técnico a3dec11f em todas
+            Portfolio: 3 replay (VENDA auto-aprovada) + 9 live; Risk: 9 live
+            V3-R1 limiar de confidence inventado 0/9             PASS (v1 na CAL-B2: 1/3)
+            V3-R2 regra numérica inventada 0/9                   PASS
+            V3-R3 contradições rationale/veredito 0/9            PASS
+            V3-S  0 falha, 0 truncamento, 0 erro final, 0 inversão/fallback  PASS
+            V3-D  total_hold_rate 0.60 (18/30, todos TECH_EXPLICIT_HOLD) < 0.90  PASS
+            caso-alvo 2023-06-26: mesmo payload lógico do Risk nas 3 repetições;
+              v1 VETADO com "abaixo do limiar de 50%" -> v3 APROVADO x3, sem limiar
+              nem regra inventada (mudança de decisão não era critério)
+            Risk v3: 9/9 APROVADO (v1 na CAL-B2: 2 APROVADO, 1 VETADO) — registrado
+              como observação descritiva, sem autoridade de seleção
+            18 HTTP 200, 0 retry
+            -> H2_V3 MINIMAL DEFECT FIX PASSED; segue a reexecução de development v3
 ```

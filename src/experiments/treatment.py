@@ -247,3 +247,9 @@ def require_cal_b3_committed() -> None:
         raise ValueError("CAL-B3 must be committed before any H2 v3 live call")
     if anchors.CAL_B3_STATUS != "SEALED":
         raise ValueError(f"CAL-B3 is {anchors.CAL_B3_STATUS}; v3 development needs it sealed")
+
+
+# ── Resultado do hardening dirigido v3 (registrado) ──────────────
+
+H2_V3_DEFECT_EVIDENCE = "docs/evidence/h2_v3/defect_hardening_20261006T151527Z/manifest.json"
+H2_V3_DEFECT_STATUS = H2_V3_DEFECT_FIX_PASSED

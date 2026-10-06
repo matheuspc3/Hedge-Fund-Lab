@@ -1,0 +1,271 @@
+{
+  "kind": "H2_V3_DEFECT_DIRECTED_HARDENING",
+  "treatment_version": 3,
+  "technical_prompt_version": 2,
+  "technical_prompt_sha256": "a3dec11f4c8911397c0f04ec5c0b7eb6265c420b3b6f7e3f494dd79ca43782e1",
+  "risk_prompt_version": 2,
+  "risk_prompt_sha256": "990424e307e2c593afc40ebafef2c12387029ecf46a285f18a595c447e1e2151",
+  "frozen_component_replay": "TECHNICAL_V2",
+  "frozen_v2_evidence": "docs/evidence/cal_b2/run_20261006T125636Z",
+  "checker_blobs": {
+    "src/agents/risk_contract.py": "7636ad26e3ed7777c38d532e2ab4267f268359de",
+    "scripts/h2_v3.py": "e6f5ca5a7dc198a3779284650e509744cd6d4fd7"
+  },
+  "financial_metrics": "none computed (no settlement, no t+1)",
+  "started_utc": "2026-10-06T15:15:27Z",
+  "finished_utc": "2026-10-06T15:16:35Z",
+  "git_commit": "2e33eacf2a0e0f99bf15db45dfa324cf367f82a4",
+  "participant_params": {
+    "ticker": "PETR4.SA",
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "temperature": 1.0,
+    "max_output_tokens": 8192,
+    "analyst_count": 5,
+    "consensus_threshold": 0.6,
+    "require_all_votes": true,
+    "decision_frequency": 1,
+    "strict_inputs": true,
+    "portfolio_inversion_policy": "fail",
+    "long_target_weight": 1.0,
+    "risk_max_concentration": 1.0,
+    "risk_max_volatility": 0.4,
+    "risk_max_drawdown": 0.15,
+    "volatility_window": 21,
+    "retry_attempts": 6,
+    "retry_base_delay": 2.0,
+    "thinking_level": "low",
+    "technical_prompt_version": 2,
+    "risk_prompt_version": 2
+  },
+  "capability": {
+    "status": "QUALIFIED",
+    "qualified": [
+      "max_output_tokens",
+      "temperature",
+      "thinking_level"
+    ]
+  },
+  "states": [
+    "cal-b2:2018-08-16",
+    "cal-b2:2019-04-05",
+    "cal-b2:2019-10-07",
+    "cal-b2:2020-07-01",
+    "cal-b2:2021-01-21",
+    "cal-b2:2021-09-22",
+    "cal-b2:2022-04-07",
+    "cal-b2:2022-11-01",
+    "cal-b2:2023-06-26",
+    "cal-b2:2023-12-18"
+  ],
+  "repetitions": 3,
+  "cal_b3_commitment": "a5cadecd361de5059370bf4bfa97b1417b82eb8951950cf92b0aebc7edecdbaf",
+  "aborted": null,
+  "diagnostics": {
+    "decision_count": 30,
+    "failure_count": 0,
+    "failure_causes": {},
+    "buy_at_target_noop_count": 0,
+    "explicit_hold_rate": 0.6,
+    "no_majority_abstention_rate": 0.0,
+    "risk_veto_rate": 0.0,
+    "portfolio_hold_rate": 0.0,
+    "total_hold_rate": 0.6,
+    "same_state_flip_rate": 0.0,
+    "same_state_disagreement_rate": 0.0,
+    "max_tokens_count": 0
+  },
+  "risk_audit": {
+    "risk_llm_responses": 9,
+    "verdicts": {
+      "APROVADO": 9
+    },
+    "risk_system_prompts": {
+      "990424e307e2c593afc40ebafef2c12387029ecf46a285f18a595c447e1e2151": 9
+    },
+    "risk_prompt_v2_only": true,
+    "V3-R1": 0,
+    "V3-R2": 0,
+    "V3-R3": 0,
+    "rates": {
+      "V3-R1": 0.0,
+      "V3-R2": 0.0,
+      "V3-R3": 0.0
+    },
+    "flagged": []
+  },
+  "replay_audit": {
+    "replayed": {
+      "technical_analyst": 150,
+      "portfolio_manager": 3
+    },
+    "live": {
+      "portfolio_manager": 9
+    },
+    "mismatch": {},
+    "technical_system_prompts": {
+      "a3dec11f4c8911397c0f04ec5c0b7eb6265c420b3b6f7e3f494dd79ca43782e1": 150
+    },
+    "technical_prompt_v2_byte_identical": true,
+    "proof": "identity_digest + provider_response_id + sha256(raw_response) + sha256(validated_response)"
+  },
+  "truncations": 0,
+  "gates": {
+    "V3-R1": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "V3-R2": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "V3-R3": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "V3-S": {
+      "value": {
+        "failures": 0,
+        "truncations": 0,
+        "final_provider_errors": 0,
+        "invalid_or_inversion": 0,
+        "replay_mismatches": {},
+        "complete": true
+      },
+      "pass": true
+    },
+    "V3-D": {
+      "value": 0.6,
+      "threshold": "< 0.9",
+      "pass": true
+    }
+  },
+  "status": "H2_V3 MINIMAL DEFECT FIX PASSED",
+  "target_case": {
+    "anchor": "2023-06-26",
+    "risk_payload": {
+      "risk_metrics": {
+        "current_concentration": 0.0,
+        "current_drawdown": 0.0,
+        "recent_volatility": 0.364617
+      },
+      "technical_signal": {
+        "confidence": 0.462,
+        "justification": "Consenso coletivo: 3/5 votos em COMPRA",
+        "signal": "COMPRA"
+      }
+    },
+    "same_logical_payload_in_all_v3_calls": true,
+    "v2_risk_prompt_v1": {
+      "verdict": "VETADO",
+      "analysis": "O sinal técnico apresenta uma confiança baixa de 0.462 (abaixo do limiar de 50%), com consenso fraco (3/5 votos). Somado à volatilidade recente elevada de 36.46%, a relação risco/retorno é desfavorável para a preservação de capital.",
+      "findings": [
+        {
+          "code": "UNSUPPORTED_CONFIDENCE_THRESHOLD",
+          "gate": "V3-R1",
+          "text": "apresenta uma confiança baixa de 0.462 (abaixo do limiar de 50%), com consen",
+          "detail": "COMPARE_LIMIT: no confidence threshold exists"
+        },
+        {
+          "code": "UNSUPPORTED_CONFIDENCE_THRESHOLD",
+          "gate": "V3-R1",
+          "text": "uma confiança baixa de 0.462 (abaixo do limiar de 50%), com consen",
+          "detail": "LIMIT_NOUN: no confidence threshold exists"
+        }
+      ]
+    },
+    "v3_risk_prompt_v2": [
+      {
+        "call_id": "2023-06-26|risk_manager|-|000005",
+        "verdict": "APROVADO",
+        "analysis": "A proposta de COMPRA apresenta métricas de risco favoráveis, com concentração atual zerada e drawdown zerado, permitindo a alocação de risco sem violar limites de exposição prévios. Embora a volatilidade recente esteja presente no ativo e a confiança do sinal represente uma maioria simples de 3/5 votos, a ausência de concentração e drawdown prévios viabiliza a execução da ordem dentro dos parâmetros operacionais vigentes.",
+        "findings": []
+      },
+      {
+        "call_id": "2023-06-26|risk_manager|-|000005",
+        "verdict": "APROVADO",
+        "analysis": "A operação de compra apresenta métricas de exposição controladas, com concentração atual zerada (0.0) e sem drawdown registrado (0.0). A volatilidade recente de 0.364617 está associada a um sinal de consenso de compra apoiado pela maioria dos votos técnicos, sem evidência de violação de risco com base nos dados disponíveis no payload.",
+        "findings": []
+      },
+      {
+        "call_id": "2023-06-26|risk_manager|-|000005",
+        "verdict": "APROVADO",
+        "analysis": "A proposta de COMPRA apresenta métricas de exposição controladas, com concentração atual e drawdown nulos. A volatilidade recente de 0.364617 está presente, mas o sinal é respaldado por consenso de compra sem violação das métricas fornecidas.",
+        "findings": []
+      }
+    ]
+  },
+  "v2_consumed_cal_b2_risk_audit_REFERENCE": {
+    "risk_llm_responses": 3,
+    "verdicts": {
+      "APROVADO": 2,
+      "VETADO": 1
+    },
+    "risk_system_prompts": {
+      "57ee8505ad8f6549d0c7c9a6e307bce1b5d6d7f5d4b3eeb165faeb7c330ad114": 3
+    },
+    "risk_prompt_v2_only": false,
+    "V3-R1": 1,
+    "V3-R2": 0,
+    "V3-R3": 0,
+    "rates": {
+      "V3-R1": 0.3333333333333333,
+      "V3-R2": 0.0,
+      "V3-R3": 0.0
+    },
+    "flagged": [
+      {
+        "call_id": "2023-06-26|risk_manager|-|000005",
+        "decision_session": "2023-06-26",
+        "verdict": "VETADO",
+        "analysis": "O sinal técnico apresenta uma confiança baixa de 0.462 (abaixo do limiar de 50%), com consenso fraco (3/5 votos). Somado à volatilidade recente elevada de 36.46%, a relação risco/retorno é desfavorável para a preservação de capital.",
+        "findings": [
+          {
+            "code": "UNSUPPORTED_CONFIDENCE_THRESHOLD",
+            "gate": "V3-R1",
+            "text": "apresenta uma confiança baixa de 0.462 (abaixo do limiar de 50%), com consen",
+            "detail": "COMPARE_LIMIT: no confidence threshold exists"
+          },
+          {
+            "code": "UNSUPPORTED_CONFIDENCE_THRESHOLD",
+            "gate": "V3-R1",
+            "text": "uma confiança baixa de 0.462 (abaixo do limiar de 50%), com consen",
+            "detail": "LIMIT_NOUN: no confidence threshold exists"
+          }
+        ]
+      }
+    ]
+  },
+  "operational": {
+    "logical_calls": 171,
+    "logical_calls_by_stage": {
+      "technical_analyst": 150,
+      "portfolio_manager": 12,
+      "risk_manager": 9
+    },
+    "calls_by_stage_and_source": {
+      "portfolio_manager/frozen_v2": 3,
+      "portfolio_manager/live": 9,
+      "risk_manager/live": 9,
+      "technical_analyst/frozen_v2": 150
+    },
+    "http_attempts": 18,
+    "attempt_outcomes": {
+      "http_200": 18
+    },
+    "recovered_retries": 0,
+    "live_token_usage": {
+      "completion_tokens": 1709,
+      "prompt_tokens": 5847,
+      "total_tokens": 7556
+    },
+    "resolved_models": {
+      "gemini-3.8-flash": 171
+    },
+    "wall_clock_seconds": 67.5,
+    "cost": "not computed: no pricing source is recorded in the repository"
+  }
+}

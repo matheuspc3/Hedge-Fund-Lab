@@ -192,3 +192,24 @@ def test_cal_b3_comprometida_bate_com_a_regra_e_a_evidencia() -> None:
         assert day in anchors.sealed_holdout_anchors()
         with pytest.raises(ValueError, match="CAL-B"):
             anchors.require_cal_b_locked(day, day)
+
+
+def test_hardening_dirigido_v3_registrado_bate_com_a_evidencia() -> None:
+    import json
+    from pathlib import Path
+
+    from src.agents.feature_semantics import TECHNICAL_SYSTEM_PROMPT_V2_SHA256
+    from src.agents.risk_contract import RISK_SYSTEM_PROMPT_V2_SHA256
+    from src.experiments import anchors
+
+    m = json.loads((Path(__file__).resolve().parents[2] / treatment.H2_V3_DEFECT_EVIDENCE).read_text(encoding="utf-8"))
+    assert m["status"] == treatment.H2_V3_DEFECT_STATUS == treatment.H2_V3_DEFECT_FIX_PASSED
+    assert all(g["pass"] for g in m["gates"].values())
+    assert (m["technical_prompt_sha256"], m["risk_prompt_sha256"]) == (TECHNICAL_SYSTEM_PROMPT_V2_SHA256,
+                                                                     RISK_SYSTEM_PROMPT_V2_SHA256)
+    assert m["participant_params"] == dict(treatment.H2_V3_DEFECT_PARAMS)
+    assert m["cal_b3_commitment"] == anchors.CAL_B3_COMMITMENT_SHA256  # comprometida antes da 1a chamada v3
+    assert m["replay_audit"]["replayed"]["technical_analyst"] == 150 and not m["replay_audit"]["mismatch"]
+    assert "technical_analyst" not in m["replay_audit"]["live"]  # nenhuma chamada Technical nova
+    assert m["target_case"]["same_logical_payload_in_all_v3_calls"]
+    assert all(not c["findings"] for c in m["target_case"]["v3_risk_prompt_v2"])
