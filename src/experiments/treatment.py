@@ -28,8 +28,8 @@ from src.experiments.anchors import CAL_B_COMMITMENT_SHA256, CAL_B_STRATA, STRAT
 from src.experiments.hardening import H2_FROZEN_THINKING_LEVEL, h2_freeze_v1_params
 from src.experiments.stress import STRESS_FROZEN_PARAMS
 
-H2_TREATMENT_VERSION = 3
-SCIENTIFIC_TECHNICAL_PROMPT_VERSION = 2
+H2_TREATMENT_VERSION = 4
+SCIENTIFIC_TECHNICAL_PROMPT_VERSION = 3
 SCIENTIFIC_RISK_PROMPT_VERSION = 2
 H2_V1_STATUS = "H2 V1 FAILED CAL-B1 — CONSUMED"
 CAL_B1_STATUS = "CONSUMED — DEVELOPMENT EVIDENCE"
@@ -46,7 +46,7 @@ def v2_params(base: Mapping[str, Any]) -> dict[str, Any]:
     """A spec v1 dada com o prompt técnico v2 e nada mais."""
     if "technical_prompt_version" in base:
         raise ValueError("base params already declare a technical prompt version")
-    return {**base, "technical_prompt_version": SCIENTIFIC_TECHNICAL_PROMPT_VERSION}
+    return {**base, "technical_prompt_version": 2}
 
 
 #: Hardening dirigido: a configuração final de desenvolvimento v1 + prompt v2.
@@ -189,7 +189,7 @@ FROZEN_V2_EVIDENCE: Mapping[str, str] = MappingProxyType({
 
 def v3_params(base: Mapping[str, Any]) -> dict[str, Any]:
     """Uma spec v2 (prompt técnico v2) com o Risk prompt v2 e nada mais."""
-    if base.get("technical_prompt_version") != SCIENTIFIC_TECHNICAL_PROMPT_VERSION or "risk_prompt_version" in base:
+    if base.get("technical_prompt_version") != 2 or "risk_prompt_version" in base:
         raise ValueError("v3 starts from a v2 spec (technical prompt v2, no risk prompt version)")
     return {**base, "risk_prompt_version": SCIENTIFIC_RISK_PROMPT_VERSION}
 
@@ -291,3 +291,45 @@ CAL_B3_FINAL_STATUS = "CAL_B3_FAIL — HOLDOUT CONSUMED"
 CAL_B3_ROLE = "CONSUMED — DEVELOPMENT EVIDENCE"
 H2_V3_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE = True
 H2_V3_SYSTEM_FREEZE_INELIGIBILITY_REASON = "CAL_B3 HUMAN REVIEW FAILURE — UNSUPPORTED TEMPORAL CLAIMS"
+
+# H2 v4 (Amendment 12): only Technical v2 -> v3; Risk v2 unchanged.
+def v4_params(base: Mapping[str, Any]) -> dict[str, Any]:
+    if (base.get("technical_prompt_version"), base.get("risk_prompt_version")) != (2, 2):
+        raise ValueError("v4 starts from Technical v2 / Risk v2")
+    return {**base, "technical_prompt_version": 3}
+
+
+H2_V4_DEFECT_PARAMS: Mapping[str, Any] = MappingProxyType(v4_params(stress_v3_params()))
+H2_V4_HARDENING_PARAMS: Mapping[str, Any] = MappingProxyType(v4_params(H2_V3_HARDENING_PARAMS))
+H2_V4_DEFECT_REPETITIONS = 3
+H2_V4_TEMPORAL_FIX_FAILED = "H2_V4 TEMPORAL CONTRACT FIX FAILED"
+H2_V4_DEGENERACY_PERSISTS = "H2_V4 TEMPORAL FIX PASSED — DEGENERACY PERSISTS"
+H2_V4_DEFECT_FIX_PASSED = "H2_V4 MINIMAL DEFECT FIX PASSED"
+CAL_A_V4_SELECTED_CONFIG: Mapping[str, Any] | None = None
+SEQUENTIAL_DEV_V4_SELECTED_CONFIG: Mapping[str, Any] | None = None
+CAL_B4_SELECTION_SEED = hashlib.sha256(
+    ("HEDGE-FUND-LAB|CAL-B4|" + str(anchors.CAL_B3_COMMITMENT_SHA256)).encode("utf-8")
+).hexdigest()
+
+
+def require_cal_b4_committed() -> None:
+    if (not anchors.CAL_B4_ANCHORS or anchors.digest(anchors.CAL_B4_ANCHORS) != anchors.CAL_B4_COMMITMENT_SHA256
+            or anchors.CAL_B4_STATUS != "SEALED"):
+        raise ValueError("CAL-B4 must be committed and SEALED before any H2 v4 live call")
+
+
+def stress_v4_params() -> dict[str, Any]:
+    if CAL_A_V4_SELECTED_CONFIG is None or SEQUENTIAL_DEV_V4_SELECTED_CONFIG is None:
+        raise ValueError("Stress v4 needs committed CAL-A v4 and Sequential Development v4 selections")
+    return {**v4_params(stress_v3_params()),
+            "volatility_window": CAL_A_V4_SELECTED_CONFIG["volatility_window"],
+            "risk_max_volatility": CAL_A_V4_SELECTED_CONFIG["risk_max_volatility"],
+            "risk_max_drawdown": SEQUENTIAL_DEV_V4_SELECTED_CONFIG["risk_max_drawdown"]}
+
+
+def v4_calibration_provenance() -> dict[str, str]:
+    stress_v4_params()  # requires both selections
+    return {"CAL_A_V4_DISCRIMINATION": CAL_A_V4_SELECTED_CONFIG["discrimination"],
+            "CAL_A_V4_SELECTION_BASIS": CAL_A_V4_SELECTED_CONFIG["selection_basis"],
+            "SEQUENTIAL_DEV_V4_DISCRIMINATION": SEQUENTIAL_DEV_V4_SELECTED_CONFIG["discrimination"],
+            "SEQUENTIAL_DEV_V4_SELECTION_BASIS": SEQUENTIAL_DEV_V4_SELECTED_CONFIG["selection_basis"]}

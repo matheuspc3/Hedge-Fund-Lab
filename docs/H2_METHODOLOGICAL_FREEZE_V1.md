@@ -2467,3 +2467,70 @@ mudou.
             -> CAL_B3_STATUS = CONSUMED; status CAL_B3_AWAITING_PRIMARY_AUTHOR_REVIEW
                (gates automáticos PASS; PRIMARY_AUTHOR.json em branco;
                SECOND_AUTHOR_OPTIONAL.json NOT_REVIEWED — NONBLOCKING)
+
+
+## Amendment 12 — H2 TREATMENT VERSION 4 (2026-10-07)
+
+CAL-B3 terminou **CAL_B3_FAIL — HOLDOUT CONSUMED**. Todos os dez gates
+automáticos passaram; o autor principal rejeitou claims temporais materiais
+nas âncoras 2020-05-13 e 2022-03-11. Segunda revisão:
+NOT_REVIEWED — NONBLOCKING. H2_V3_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE = True;
+razão CAL_B3 HUMAN REVIEW FAILURE — UNSUPPORTED TEMPORAL CLAIMS.
+A revisão, raw evidence, commitment e PASS automático são preservados.
+V1 FAILED CAL-B1 e v2 inelegível após consumo CAL-B2 permanecem históricos.
+Nenhum retorno futuro foi usado para motivar v4.
+
+Única mudança de tratamento: Technical Prompt v2 -> v3, SNAPSHOT-ONLY /
+STATE-ONLY. Risk Prompt v2 e Portfolio byte-idênticos. H2_TREATMENT_VERSION = 4,
+technical_prompt_version = 3, risk_prompt_version = 2; spec hash novo.
+LLM_FEATURE_SCHEMA_VERSION = 2: mesmas oito keys, fórmulas e semântica matemática.
+Runtime congelado: gemini / gemini-3.8-flash / native API / low / temperature 1.0 /
+8192 tokens / sem seed; N=5, threshold=0.6, require_all_votes=true. Frequência,
+strict_inputs, inversão, políticas B3/Yahoo, CostSpec, quantity mode, calendário
+e contrato de execução causal não mudam. MANTER mantém a mesma semântica.
+
+MACD acima da signal e momentum atual positivo/fraco são interpretações de
+estado permitidas. Fortaleceu/enfraqueceu/recuperou/perdeu momentum exigem t-1.
+Preservar todo o prompt v2 e acrescentar contrato explícito de linguagem de
+snapshot; sinais conflitantes são um estado misto, sem narrativa temporal.
+Checker v3 audita apenas rationale visível em PT/EN, por cláusula/contexto,
+com UNSUPPORTED_TEMPORAL_STATE_CLAIM separado de semântica e transições.
+Calibrar somente v1/v2/v3 e CAL-B1/B2/B3 consumidos; quatro exemplos humanos
+golden FAIL e estados estáticos golden PASS. Exigir detecção dos defeitos,
+zero regressões Bollinger/SMA/MACD e state-vs-transition antes do live.
+Congelar source blobs/hashes e corpus antes da primeira chamada v4.
+
+CAL-B4 usa estratos 3,6,9,12,15,18,21,24,27,30 e exclui toda decisão anterior
+em artifacts de development, CAL-B1/B2/B3, H_real, CAL-A, Stress e Sequential.
+Seed = SHA256("HEDGE-FUND-LAB|CAL-B4|" + CAL_B3_COMMITMENT_HASH);
+digest = SHA256(seed + "|" + stratum_id + "|" + ISO_DATE).
+Menor digest lexicográfico vence, somente calendário/identidade; persistir
+ranking hashes e CAL_B4_COMMITMENT_SHA256 e commitar antes do live. SEALED;
+runner/call bank bloqueiam; não executar CAL-B4 nesta task.
+
+Hardening dirigido: dez âncoras CAL-B3 consumidas, R=3, Technical v4 LIVE N=5,
+sem t+1; observar obrigatoriamente 2020-05-13 e 2022-03-11, sem exigir mudança
+de ação. Gates V4-S1 semântica=0; V4-S2 transições=0; V4-S3 evolução implícita=0;
+V4-A falhas finais=0; V4-T truncamentos=0; V4-D total_hold_rate < 0.90.
+S1/S2/S3 falham -> H2_V4 TEMPORAL CONTRACT FIX FAILED.
+Só D falha -> H2_V4 TEMPORAL FIX PASSED — DEGENERACY PERSISTS.
+Todos passam -> H2_V4 MINIMAL DEFECT FIX PASSED.
+Não retunar prompt/checker após observar v4 sob esta versão.
+
+Só após hardening dirigido PASS, rerodar: Diagnostic Hardening (H, R=5),
+B0 (H, R=1), CAL-A (mesmas 20 anchors, {21,63} x {0.40,0.50,0.60}, R=3,
+S1/desempate congelados), Sequential (2024-03-01..2024-08-30, D01=.25,
+D02=.15, D03=.35, R=3, Scientific Sharpe/S2/desempate congelados), Stress
+(mesmas quatro janelas market-only, R=3, mesmos gates, sem tuning).
+Reselecionar CAL-A e Sequential pelo resultado v4. Technical nunca replay v3;
+common realization/pareamento existente continua dentro da fase. Risk/Portfolio
+podem replay SOMENTE por LLMCallRequest.identity() exatamente igual.
+Validation/Final absolutamente proibidos: nenhuma decisão/resultado >=2024-09-02;
+última barra development 2024-08-30. Sem implementação de UI ou alteração do
+protocolo para UI; preservar decisões/votos/features/equity/métricas/proveniência.
+
+Commits separados: governança v3; Amendment v4; prompt/checker/testes;
+script seleção; commitment; hardening dirigido; Hardening/B0; CAL-A;
+Sequential; Stress; resumo. Só com development completo registrar:
+H2_V4 DEVELOPMENT COMPLETE — READY FOR CAL-B4 PROTOCOL.
+Próxima etapa é desenhar o protocolo CAL-B4, nunca executá-la automaticamente.
