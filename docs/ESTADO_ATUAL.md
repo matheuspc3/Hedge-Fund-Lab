@@ -1,5 +1,18 @@
 # Estado atual do Hedge-Fund-Lab
 
+**Atualização científica — 07/10/2026 (Amendment 12).** CAL-B3 final:
+`CAL_B3_FAIL — HOLDOUT CONSUMED`; os dez gates automáticos passaram, mas a
+revisão humana do autor principal falhou por claims temporais não suportados
+em 2020-05-13 e 2022-03-11. H2 v3 não elegível para System Freeze.
+H2 v4 altera somente Technical Prompt v2 -> v3; Risk v2, Portfolio e features
+permanecem idênticos. Checker v3 aceito e congelado antes do live; CAL-B4
+comprometida e selada antes da primeira chamada v4.
+Hardening dirigido v4: `H2_V4 TEMPORAL CONTRACT FIX FAILED` (S3=10/150,
+S1=S2=0; falhas/truncamentos=0; HOLD=0,40). Taxa temporal observada:
+CAL-B3 consumida 32% -> v4 6,67%. Development completo não executado porque
+dependia de PASS. CAL-B4, Validation e Final não executados.
+Entrega: [relatório H2 v4](evidence/h2_v4/DELIVERY.md).
+
 Documento vivo, descrito sobre o estado versionado da branch `#1-Update` no
 commit `139a0a9` (13/09/2026). A baseline original foi auditada em **10/09/2026**
 e desde então o documento incorpora os fatos introduzidos pelos commits
@@ -1007,7 +1020,10 @@ Executada uma vez (10 âncoras × R = 1, 57 chamadas, 0 retry): os dez gates
 automáticos PASS (6/10 HOLD, total_hold_rate 0.60; 0 contradição semântica ou
 transição nos 50 votos; 0 achado do checker do Risk; 0 violação de regra
 dura). Risk LLM 3/3 APROVADO (`NOT_OBSERVED`, descritivo). CAL-B3 consumida;
-status `CAL_B3_AWAITING_PRIMARY_AUTHOR_REVIEW`. Nenhum resultado financeiro;
+status inicial `CAL_B3_AWAITING_PRIMARY_AUTHOR_REVIEW`, finalizado em 07/10
+como `CAL_B3_FAIL — HOLDOUT CONSUMED` pela revisão do autor principal.
+Segunda revisão `NOT_REVIEWED — NONBLOCKING`; v3 inelegível para System Freeze.
+Nenhum resultado financeiro;
 Validation e Final Test intocados.
 
 ### Hardening pré-B0 — suporte implementado

@@ -15,6 +15,41 @@ def test_versao_e_parametros_v2() -> None:
         treatment.v2_params({"technical_prompt_version": 1})
 
 
+def test_v4_fail_preserved_and_full_development_blocked() -> None:
+    import json
+    import sys
+    from pathlib import Path
+
+    from src.agents.llm_trace import load_trace
+    from src.experiments import anchors
+
+    root = Path(__file__).resolve().parents[2]
+    sys.path.insert(0, str(root / "scripts"))
+    from h2_v4 import require_pre_live_freeze, technical_audit
+
+    manifest = root / treatment.H2_V4_DEFECT_EVIDENCE
+    m = json.loads(manifest.read_text(encoding="utf-8"))
+    records = [r for p in (manifest.parent / "traces").glob("*.jsonl") for r in load_trace(p.read_bytes())]
+    recomputed = technical_audit(records)
+    assert {g: recomputed[g] for g in ("V4-S1", "V4-S2", "V4-S3")} == {"V4-S1": 0, "V4-S2": 0, "V4-S3": 10}
+    assert recomputed["technical_votes"] == 150 and recomputed["technical_prompt_v3_only"]
+    assert m["status"] == treatment.H2_V4_DEFECT_STATUS == treatment.H2_V4_TEMPORAL_FIX_FAILED
+    assert m["complete"] and m["repetitions"] == 3
+    assert not m["gates"]["V4-S3"]["pass"] and all(m["gates"][g]["pass"] for g in ("V4-S1", "V4-S2", "V4-A", "V4-T", "V4-D"))
+    assert m["gates"]["V4-D"]["threshold"] == "< 0.90" and m["gates"]["V4-D"]["value"] == 0.4
+    assert m["target_anchors"]["2020-05-13"]["v4_live"]["V4-S3"] == 6
+    assert m["target_anchors"]["2022-03-11"]["v4_live"]["V4-S3"] == 1
+    sessions = {r.request.decision_session for r in records}
+    assert not sessions & set(anchors.CAL_B4_ANCHORS) and max(sessions) <= "2024-08-30"
+    with pytest.raises(ValueError, match="requires defect-directed hardening PASS"):
+        require_pre_live_freeze(full_development=True)
+    summary = json.loads((root / treatment.H2_V4_DEVELOPMENT_SUMMARY).read_text(encoding="utf-8"))
+    assert summary["status"] == treatment.H2_V4_DEVELOPMENT_STATUS and not summary["development_complete"]
+    assert all(not p["executed"] for n, p in summary["phases"].items() if n != "Defect-directed hardening")
+    assert summary["final_v4_params"] is None
+    assert summary["safety"]["cal_b4_sessions_touched"] == summary["safety"]["validation_final_sessions_touched"] == []
+
+
 def test_seed_publico_e_digest() -> None:
     seed = hashlib.sha256(("HEDGE-FUND-LAB|CAL-B2|" + CAL_B_COMMITMENT_SHA256).encode()).hexdigest()
     assert treatment.CAL_B2_SELECTION_SEED == seed

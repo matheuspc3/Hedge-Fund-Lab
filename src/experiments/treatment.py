@@ -338,3 +338,5 @@ def v4_calibration_provenance() -> dict[str, str]:
 # Registered result, never reclassified as PASS: 10/150 implicit persistence claims.
 H2_V4_DEFECT_EVIDENCE = "docs/evidence/h2_v4/defect_hardening_20261007T220356Z/manifest.json"
 H2_V4_DEFECT_STATUS = H2_V4_TEMPORAL_FIX_FAILED
+H2_V4_DEVELOPMENT_SUMMARY = "docs/evidence/h2_v4/development_summary.json"
+H2_V4_DEVELOPMENT_STATUS = H2_V4_TEMPORAL_FIX_FAILED
