@@ -381,3 +381,8 @@ def v5_calibration_provenance() -> dict[str, str]:
             "CAL_A_V5_SELECTION_BASIS": CAL_A_V5_SELECTED_CONFIG["selection_basis"],
             "SEQUENTIAL_DEV_V5_DISCRIMINATION": SEQUENTIAL_DEV_V5_SELECTED_CONFIG["discrimination"],
             "SEQUENTIAL_DEV_V5_SELECTION_BASIS": SEQUENTIAL_DEV_V5_SELECTED_CONFIG["selection_basis"]}
+
+
+# Recorded frozen hardening result; no treatment setting changes.
+H2_V5_DEFECT_EVIDENCE = "docs/evidence/h2_v5/defect_hardening_20261007T232326Z/manifest.json"
+H2_V5_DEFECT_STATUS = H2_V5_DEFECT_FIX_PASSED
