@@ -362,7 +362,13 @@ H2_V5_DEFECT_REPETITIONS = 3
 H2_V5_TEMPORAL_FIX_FAILED = "H2_V5 TEMPORAL CONTRACT FIX FAILED"
 H2_V5_DEGENERACY_PERSISTS = "H2_V5 TEMPORAL FIX PASSED — DEGENERACY PERSISTS"
 H2_V5_DEFECT_FIX_PASSED = "H2_V5 MINIMAL DEFECT FIX PASSED"
-CAL_A_V5_SELECTED_CONFIG: Mapping[str, Any] | None = None
+CAL_A_V5_SELECTED_CONFIG: Mapping[str, Any] | None = MappingProxyType({
+    "config_id": 1, "volatility_window": 21, "risk_max_volatility": 0.40,
+    "S1": -0.00017041605303383015, "ranking": (1, 2, 3, 4, 5, 6),
+    "discrimination": "NONE", "selection_basis": "PROTOCOL_TIE_FALLBACK",
+    "tie": "ALL_SIX_IDENTICAL_FALLBACK_LOWEST_CONFIG_ID",
+    "evidence": "docs/evidence/cal_a_v5/run_20261007T233451Z/summary.json",
+})
 SEQUENTIAL_DEV_V5_SELECTED_CONFIG: Mapping[str, Any] | None = None
 
 
