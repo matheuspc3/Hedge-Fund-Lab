@@ -12,6 +12,7 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from h2_v5 import require_pre_live_freeze, require_sessions, technical_audit  # noqa: E402
+from h2_v4 import technical_audit as historical_audit  # noqa: E402
 from run_cal_b import history_until, load_frame  # noqa: E402
 from run_h2_hardening import AttemptLog, git, load_key  # noqa: E402
 
@@ -104,11 +105,11 @@ def main():
         status = treatment.H2_V5_DEFECT_FIX_PASSED
     prior = [r for a in anchors.CAL_B3_ANCHORS for r in load_trace(
         (ROOT / CAL_B3_EVIDENCE / "anchors" / a / "llm_calls.jsonl").read_bytes())]
-    targets = {a: {"v3_consumed": technical_audit(r for r in prior if r.request.decision_session == a),
+    targets = {a: {"v3_consumed": historical_audit(r for r in prior if r.request.decision_session == a),
                    "v5_live": technical_audit(r for r in records if r.request.decision_session == a),
                    "v5_decisions": [d for d in decisions if d["state_id"] == f"cal-b3:{a}"]} for a in TARGETS}
     manifest = {"kind": "H2_V5_DEFECT_DIRECTED_HARDENING", "treatment_version": 5,
-                "technical_prompt_version": 4, "risk_prompt_version": 2,
+                "technical_prompt_version": 4, "risk_prompt_version": 2, "feature_schema_version": 2,
                 "technical_prompt_sha256": TECHNICAL_SYSTEM_PROMPT_V4_SHA256,
                 "risk_prompt_sha256": RISK_SYSTEM_PROMPT_V2_SHA256, "checker_freeze": freeze,
                 "participant_params": {"ticker": ticker, **params},
@@ -120,7 +121,7 @@ def main():
                 "repetitions": 3, "complete": complete, "aborted": None if aborted is None else str(aborted),
                 "capability": {"status": capability.status, "qualified": list(capability.qualified)},
                 "diagnostics": metrics, "technical_audit": audit, "gates": gates, "status": status,
-                "v3_consumed_reference_DESCRIPTIVE": technical_audit(prior), "target_anchors": targets,
+                "v3_consumed_reference_DESCRIPTIVE": historical_audit(prior), "target_anchors": targets,
                 "operational": {"logical_calls": len(records), "http_attempts": len(log.attempts),
                                 "logical_calls_by_stage": dict(Counter(r.request.stage for r in records)),
                                 "attempt_outcomes": dict(Counter(a["outcome"] for a in log.attempts)),

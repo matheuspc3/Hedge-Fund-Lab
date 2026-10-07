@@ -223,7 +223,7 @@ def run(treatment_version: int = 1) -> None:
     started = datetime.now(timezone.utc)
     stamp = started.strftime("%Y%m%dT%H%M%SZ")
     runs_dir = ROOT / "data" / "runs" / f"stress_{stamp}"
-    out = {1: OUT, 2: ROOT / "docs" / "evidence" / "stress_v2", 3: ROOT / "docs" / "evidence" / "stress_v3", 4: ROOT / "docs/evidence/stress_v4"}[
+    out = {1: OUT, 2: ROOT / "docs" / "evidence" / "stress_v2", 3: ROOT / "docs" / "evidence" / "stress_v3", 4: ROOT / "docs/evidence/stress_v4", 5: ROOT / "docs/evidence/stress_v5"}[
         treatment_version] / f"run_{stamp}"
     participant_module.PROVIDER_CLIENTS["gemini"] = StressGeminiClient  # type: ignore[index]
     trajectories: list[dict[str, Any]] = []
@@ -473,8 +473,11 @@ def summarize(out: Path, trajectories: list[dict], frame: pd.DataFrame, base: di
                   for r in load_trace((ROOT / t["runs_root"] / t["run_dir"] / "llm_calls.jsonl").read_bytes())]
         extra = {"frozen_component_replay": replay_audit((r, FROZEN[t["replicate"]]) for t, r in traces),
                  "risk_audit": risk_audit(r for _, r in traces)}
-    if base["treatment_version"] == 4:
-        from h2_v4 import require_pre_live_freeze, technical_audit
+    if base["treatment_version"] in (4, 5):
+        if base["treatment_version"] == 5:
+            from h2_v5 import require_pre_live_freeze, technical_audit
+        else:
+            from h2_v4 import require_pre_live_freeze, technical_audit
 
         extra["checker_freeze"] = require_pre_live_freeze(full_development=True)
         extra["technical_audit"] = technical_audit(
@@ -537,5 +540,19 @@ if __name__ == "__main__":
         PROVENANCE.clear()
         PROVENANCE.update(treatment.v4_calibration_provenance())
         run(4)
+    elif sys.argv[1:] == ["run", "--treatment", "5"]:
+        from h2_v5 import require_pre_live_freeze, require_sessions
+
+        from src.experiments import treatment
+
+        require_pre_live_freeze(full_development=True)
+        for window in committed_windows():
+            require_sessions((window["start"], window["last_decision"]))
+            anchors.require_cal_b_locked(window["start"], window["last_decision"])
+        PARAMS.clear()
+        PARAMS.update(treatment.stress_v5_params())
+        PROVENANCE.clear()
+        PROVENANCE.update(treatment.v5_calibration_provenance())
+        run(5)
     else:
         {"select": select, "run": run}[sys.argv[1] if len(sys.argv) > 1 else ""]()

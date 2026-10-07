@@ -145,7 +145,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", choices=sorted(REPETITIONS), required=True)
     parser.add_argument("--thinking-level", required=True)
-    parser.add_argument("--treatment", type=int, choices=(1, 2, 3, 4), default=1)
+    parser.add_argument("--treatment", type=int, choices=(1, 2, 3, 4, 5), default=1)
     args = parser.parse_args()
 
     if git("status", "--porcelain", "--untracked-files=no"):
@@ -175,16 +175,21 @@ def main() -> None:
         params = dict(treatment.H2_V3_HARDENING_PARAMS)
         evidence_root = ROOT / "docs" / "evidence" / "h2_v3"
         frozen = by_state(treatment.FROZEN_V2_EVIDENCE[args.mode])
-    if args.treatment == 4:
-        from h2_v4 import require_pre_live_freeze
+    if args.treatment in (4, 5):
+        if args.treatment == 5:
+            from h2_v5 import require_pre_live_freeze, require_sessions
+            require_sessions(H_REAL_SESSIONS)
+        else:
+            from h2_v4 import require_pre_live_freeze
 
         from src.experiments import treatment
 
         require_pre_live_freeze(full_development=True)
-        if args.thinking_level != treatment.H2_V4_HARDENING_PARAMS["thinking_level"]:
-            sys.exit("H2 v4 keeps thinking_level fixed")
-        params = dict(treatment.H2_V4_HARDENING_PARAMS)
-        evidence_root = ROOT / "docs/evidence/h2_v4"
+        phase_params = treatment.H2_V5_HARDENING_PARAMS if args.treatment == 5 else treatment.H2_V4_HARDENING_PARAMS
+        if args.thinking_level != phase_params["thinking_level"]:
+            sys.exit(f"H2 v{args.treatment} keeps thinking_level fixed")
+        params = dict(phase_params)
+        evidence_root = ROOT / f"docs/evidence/h2_v{args.treatment}"
     capability = LLMParticipant.preflight(params, scientific=True)
     states = build_states()
     repetitions = REPETITIONS[args.mode]
@@ -293,7 +298,7 @@ def main() -> None:
         "wall_clock_seconds": round((finished - started).total_seconds(), 1),
     }
     manifest = {
-        "kind": f"H2_{args.mode.upper()}" + {1: "", 2: "_V2", 3: "_V3", 4: "_V4"}[args.treatment],
+        "kind": f"H2_{args.mode.upper()}" + {1: "", 2: "_V2", 3: "_V3", 4: "_V4", 5: "_V5"}[args.treatment],
         "treatment_version": args.treatment,
         "freeze": H2_FREEZE_VERSION,
         "financial_metrics": "none computed (no settlement)",
@@ -340,8 +345,11 @@ def main() -> None:
         manifest["calls_by_stage_and_source"] = {f"{st}/{src}": n for (st, src), n in
                                                  sorted(Counter((u["stage"], u["source"]) for u in uses).items())}
         (out / "replay_uses.jsonl").write_text("".join(canonical_json(u) + "\n" for u in uses), encoding="utf-8")
-    if args.treatment == 4:
-        from h2_v4 import require_pre_live_freeze, technical_audit
+    if args.treatment in (4, 5):
+        if args.treatment == 5:
+            from h2_v5 import require_pre_live_freeze, technical_audit
+        else:
+            from h2_v4 import require_pre_live_freeze, technical_audit
 
         manifest["checker_freeze"] = require_pre_live_freeze(full_development=True)
         manifest["technical_audit"] = technical_audit(records)
