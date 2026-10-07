@@ -333,3 +333,8 @@ def v4_calibration_provenance() -> dict[str, str]:
             "CAL_A_V4_SELECTION_BASIS": CAL_A_V4_SELECTED_CONFIG["selection_basis"],
             "SEQUENTIAL_DEV_V4_DISCRIMINATION": SEQUENTIAL_DEV_V4_SELECTED_CONFIG["discrimination"],
             "SEQUENTIAL_DEV_V4_SELECTION_BASIS": SEQUENTIAL_DEV_V4_SELECTED_CONFIG["selection_basis"]}
+
+
+# Registered result, never reclassified as PASS: 10/150 implicit persistence claims.
+H2_V4_DEFECT_EVIDENCE = "docs/evidence/h2_v4/defect_hardening_20261007T220356Z/manifest.json"
+H2_V4_DEFECT_STATUS = H2_V4_TEMPORAL_FIX_FAILED
