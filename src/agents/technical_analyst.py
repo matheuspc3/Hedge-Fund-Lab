@@ -8,7 +8,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from src.agents.feature_semantics import TECHNICAL_SYSTEM_PROMPT_V2
+from src.agents.feature_semantics import TECHNICAL_SYSTEM_PROMPT_V2, TECHNICAL_SYSTEM_PROMPT_V3
 from src.agents.features import FEATURE_KEYS, canonical_prompt_json
 from src.agents.llm_client import LLMCallMetadata, LLMClient
 from src.agents.llm_trace import STAGE_TECHNICAL_ANALYST
@@ -57,7 +57,7 @@ class AnalystEnsembleConfig(BaseModel):
     seed_base: int = 10_000
     #: Versão do system prompt técnico científico (Amendment 8): 1 = v1 sem
     #: glossário; 2 = glossário semântico das features + estado-não-transição.
-    prompt_version: int = Field(default=1, ge=1, le=2)
+    prompt_version: int = Field(default=1, ge=1, le=3)
 
     @model_validator(mode="after")
     def validate_temperature_range(self):
@@ -101,7 +101,7 @@ def system_prompt_for(state: AgentState, prompt_version: int = 1) -> str:
     """Escolhe o system prompt pelo contrato que o estado satisfaz e pela versão."""
     if not parse_features_from_state(state):
         return SYSTEM_PROMPT
-    return TECHNICAL_SYSTEM_PROMPT_V2 if prompt_version == 2 else CAUSAL_SYSTEM_PROMPT
+    return {1: CAUSAL_SYSTEM_PROMPT, 2: TECHNICAL_SYSTEM_PROMPT_V2, 3: TECHNICAL_SYSTEM_PROMPT_V3}[prompt_version]
 
 
 def build_prompt(state: AgentState) -> str:

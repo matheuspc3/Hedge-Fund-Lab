@@ -87,10 +87,102 @@ TECHNICAL_SYSTEM_PROMPT_V2 = technical_system_prompt_v2()
 #: Identidade do prompt v2; mudar o texto exige nova versão de prompt.
 TECHNICAL_SYSTEM_PROMPT_V2_SHA256 = "a3dec11f4c8911397c0f04ec5c0b7eb6265c420b3b6f7e3f494dd79ca43782e1"
 
+SNAPSHOT_ONLY_LANGUAGE = """Snapshot-only language:
+You receive only the current-session snapshot t. Therefore describe only relations observable in that snapshot.
+
+Allowed examples:
+- "the close is above the SMA50"
+- "MACD is below its signal line"
+- "RSI is neutral"
+- "the current configuration is mixed"
+- "the current indicators do not provide a clear directional preference"
+
+Do not describe or imply how the state evolved over time unless previous-session values are explicitly provided.
+Do not claim that price, trend, momentum or any indicator:
+- recovered;
+- weakened;
+- strengthened;
+- accelerated;
+- decelerated;
+- improved;
+- deteriorated;
+- increased or decreased;
+- reversed;
+- rebounded;
+- pulled back;
+- consolidated or is consolidating;
+- recently changed;
+- continues/remains in a state based on previous observations;
+- gained/lost momentum.
+
+Avoid temporal language such as "recently", "recent recovery", "continues", "remains", "has weakened", or equivalent expressions when they imply an unobserved earlier state.
+You may describe current momentum as positive, negative, strong, weak, mixed or neutral when that characterization follows from the current features. Do not say that momentum became stronger/weaker.
+If the snapshot is conflicting, describe it simply as a mixed current state. Do not invent a temporal narrative to explain the conflict."""
+
+# Exact v2 text preserved as a prefix; no change to MANTER or feature semantics.
+TECHNICAL_SYSTEM_PROMPT_V3 = TECHNICAL_SYSTEM_PROMPT_V2 + "\n\n" + SNAPSHOT_ONLY_LANGUAGE
+TECHNICAL_SYSTEM_PROMPT_V3_SHA256 = "ca283bd920bbd0655d9c9a23eacd98fb6da48e6609097cb27cd835e9dee50759"
+TECHNICAL_RATIONALE_CHECKER_VERSION = 3
+
 
 # ── Checker semântico do rationale visível ───────────────────────
 
 UNSUPPORTED_TRANSITION_CLAIM = "UNSUPPORTED_TRANSITION_CLAIM"
+UNSUPPORTED_TEMPORAL_STATE_CLAIM = "UNSUPPORTED_TEMPORAL_STATE_CLAIM"
+
+# ponytail: bounded clause patterns, not a language parser. New paraphrases need
+# development-only golden cases and a new checker version, never holdout tuning.
+_MARKET_SUBJECT = re.compile(
+    r"\b(pre[çc]o|fechamento|ativo|tend[êe]ncia|momentum|momento|for[çc]a|rsi|macd|sma\w*|"
+    r"m[ée]dia\w*|bandas?|indicador\w*|volatilidade|price|close|asset|trend|strength|"
+    r"signal|indicators?|bands?|volatility)\b", re.I)
+_EVOLUTION = re.compile(
+    r"\b(recupera[çc][ãa]o|recuperou|recuperando|rebound(?:ed|ing)?|recover(?:ed|ing|y)|"
+    r"fortaleceu|enfraqueceu|fortalec(?:imento|endo)|enfraquec(?:imento|endo)|"
+    r"weaken(?:ed|ing)|strengthen(?:ed|ing)|acelerou|desacelerou|melhorou|piorou|deteriorou|"
+    r"accelerat(?:ed|ing|ion)|decelerat(?:ed|ing|ion)|improv(?:ed|ing|ement)|worsen(?:ed|ing)|"
+    r"deteriorat(?:ed|ing|ion)|consolida[çc][ãa]o|consolidando|consolidat(?:ed|ing|ion)|"
+    r"aumentou|diminuiu|subiu|caiu|increased|decreased|reverteu|reversed|pulled\s+back|"
+    r"(?:ganhou|perdeu|ganhando|perdendo|ganho|perda|gaining|losing|gained|lost|gain|loss)"
+    r"\s+(?:(?:de|of)\s+)?(?:momentum|momento|for[çc]a|strength)|"
+    r"(?:ficou|tornou-se|became)\s+(?:mais\s+|more\s+)?(?:forte|fraco|stronger|weaker)|"
+    r"(?:mudou|changed)\s+(?:recentemente|recently))\b", re.I)
+_PERSISTENCE = re.compile(
+    r"\b(permanece\w*|continua\w*|ainda\s+(?:est[áa]|se\s+encontra)|remains?|continues?|still)\b"
+    r"(?=[^.;!?]{0,80}\b(?:acima|abaixo|dentro|fora|neutr\w*|positiv\w*|negativ\w*|"
+    r"forte|fraco|alta|baixa|above|below|inside|outside|neutral|positive|negative|strong|weak|"
+    r"bullish|bearish|overbought|oversold)\b)", re.I)
+_TEMPORAL_HEDGE = re.compile(
+    r"\b(n[ãa]o|sem|nem|nenhum\w*|not|no|without|never|cannot|can't|"
+    r"caso|if|poderia|could|aguardar|await|esperar|wait)\b[^.;!?]{0,65}$", re.I)
+
+
+def temporal_state_claims(text: str) -> list[dict[str, Any]]:
+    """Asserted evolution/persistence in a market clause; static adjectives are OK.
+
+    'Sugere recuperação' still claims evidence of a past change. Negated claims,
+    conditional/future scenarios and definitions are not observations of evolution.
+    """
+    found = []
+    for clause in re.split(r"[.;!?]|\b(?:mas|porém|contudo|however|but)\b", text, flags=re.I):
+        for pattern in (_EVOLUTION, _PERSISTENCE):
+            for m in pattern.finditer(clause):
+                # Recovery/consolidation themselves name a market process. Other
+                # verb changes/persistence need a market subject in the clause.
+                process = re.match(r"(?:recupera[çc][ãa]o|recovery|rebound)\b", m.group(0), re.I) and re.search(
+                    r"\b(?:recente\w*|recent\w*|curto\s+prazo|short.term)\b", clause, re.I)
+                if not process and not _MARKET_SUBJECT.search(clause):
+                    continue
+                before, after = clause[:m.start()], clause[m.end():]
+                if _TEMPORAL_HEDGE.search(before) or re.match(
+                    r"\s*(?:futur\w*|future|possível|possible|esperad\w*|expected)\b", after, re.I
+                ):
+                    continue
+                if re.search(r"\b(?:defini[çc][ãa]o|definition|termo|term|palavra|word)\b", before, re.I):
+                    continue
+                found.append({"claim": UNSUPPORTED_TEMPORAL_STATE_CLAIM, "text": clause.strip(),
+                              "requires": "t-1 values (not in the payload)", "holds": False})
+    return found
 #: Negação logo antes de uma afirmação: não é afirmação de fato.
 _NEGATION = re.compile(r"\b(n[ãa]o|sem|nem|nenhum\w*|aus[êe]ncia)\b[^.;,]{0,15}$", re.IGNORECASE)
 #: Negação ou hipótese em torno de um termo de transição: não afirma que a
@@ -190,11 +282,12 @@ def audit_rationale(text: str, features: Mapping[str, float]) -> list[dict[str, 
             continue
         found.append({"claim": UNSUPPORTED_TRANSITION_CLAIM, "text": text[max(0, m.start() - 30): m.end() + 30],
                       "requires": "t-1 values (not in the payload)", "holds": False})
-    return found
+    return found + temporal_state_claims(text)
 
 
 def contradictions(audit: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    return [a for a in audit if not a["holds"] and a["claim"] != UNSUPPORTED_TRANSITION_CLAIM]
+    return [a for a in audit if not a["holds"] and a["claim"] not in
+            (UNSUPPORTED_TRANSITION_CLAIM, UNSUPPORTED_TEMPORAL_STATE_CLAIM)]
 
 
 def transitions(audit: list[dict[str, Any]]) -> list[dict[str, Any]]:

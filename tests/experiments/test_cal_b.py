@@ -217,6 +217,10 @@ def test_cal_b2_rotulos_de_status_e_checker_congelado() -> None:
     assert cal_b.cal_b2_status(True, [review("PASS")] * 2, B2) == cal_b.CAL_B2_PASS
     assert cal_b.cal_b2_status(True, [review("PASS"), review("FAIL")], B2) == cal_b.CAL_B2_REVIEW_DISAGREEMENT
     for path, blob in cal_b.CAL_B2_CHECKER_BLOBS.items():
+        if path == "src/agents/feature_semantics.py":  # v4 evolved the checker; the consumed v2 blob remains immutable.
+            assert subprocess.run(["git", "cat-file", "-t", blob], capture_output=True, text=True,
+                                  check=True).stdout.strip() == "blob"
+            continue
         assert subprocess.run(["git", "hash-object", path], capture_output=True, text=True,
                               check=True).stdout.strip() == blob
 
@@ -348,6 +352,10 @@ def test_cal_b3_checkers_congelados_por_blob() -> None:
     assert set(cal_b.CAL_B3_CHECKER_BLOBS) == {"src/agents/feature_semantics.py", "scripts/run_h2_v2_defect.py",
                                                "src/agents/risk_contract.py"}
     for path, blob in cal_b.CAL_B3_CHECKER_BLOBS.items():
+        if path == "src/agents/feature_semantics.py":  # v3 evidence is evaluated by its historical frozen blob.
+            assert subprocess.run(["git", "cat-file", "-t", blob], capture_output=True, text=True,
+                                  check=True).stdout.strip() == "blob"
+            continue
         assert subprocess.run(["git", "hash-object", path], capture_output=True, text=True,
                               check=True).stdout.strip() == blob
 

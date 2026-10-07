@@ -65,7 +65,7 @@ def test_versao_muda_a_identidade_do_tratamento() -> None:
     assert built.ensemble_config.prompt_version == 2
     assert LLMParticipant("PETR4.SA", llm_client=MockLLMClient()).ensemble_config.prompt_version == 1
     with pytest.raises(ValueError):
-        LLMParticipant("PETR4.SA", llm_client=MockLLMClient(), technical_prompt_version=3)
+        LLMParticipant("PETR4.SA", llm_client=MockLLMClient(), technical_prompt_version=4)
 
 
 def test_bollinger_dentro_acima_e_abaixo() -> None:

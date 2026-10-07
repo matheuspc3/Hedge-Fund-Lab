@@ -123,6 +123,8 @@ class BankedGeminiClient(GeminiLLMClient):
         declared = metadata or LLMCallMetadata(stage=STAGE_UNDECLARED)
         if self._session is None:
             raise RuntimeError("call bank needs a declared decision session")
+        if self._session > "2024-08-30":
+            raise RuntimeError("development call bank refuses data after 2024-08-30")
         if self._session in anchors.sealed_holdout_anchors():
             raise RuntimeError(f"CAL-B session {self._session} must never reach the call bank")
         request = LLMCallRequest(
@@ -177,7 +179,7 @@ class BankedGeminiClient(GeminiLLMClient):
 TREATMENT_EXTRA: dict[str, Any] = {}
 #: v3: respostas v2 do componente congelado por repetição (FROZEN_COMPONENT_REPLAY).
 FROZEN: dict[int, dict[str, Any]] = {}
-KINDS = {1: "CAL_A", 2: "CAL_A_V2", 3: "CAL_A_V3"}
+KINDS = {1: "CAL_A", 2: "CAL_A_V2", 3: "CAL_A_V3", 4: "CAL_A_V4"}
 
 
 def git(*args: str) -> str:
@@ -244,11 +246,11 @@ def main() -> None:
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--resume", type=Path, default=None)
-    parser.add_argument("--treatment", type=int, choices=(1, 2, 3), default=1)
+    parser.add_argument("--treatment", type=int, choices=(1, 2, 3, 4), default=1)
     args = parser.parse_args()
     if args.treatment >= 2:
         TREATMENT_EXTRA["technical_prompt_version"] = 2
-    phase_dir = {1: "cal_a", 2: "cal_a_v2", 3: "cal_a_v3"}[args.treatment]
+    phase_dir = {1: "cal_a", 2: "cal_a_v2", 3: "cal_a_v3", 4: "cal_a_v4"}[args.treatment]
     if args.treatment == 3:
         from h2_v3 import by_replicate, seed_bank
 
@@ -258,6 +260,11 @@ def main() -> None:
         TREATMENT_EXTRA["risk_prompt_version"] = treatment.SCIENTIFIC_RISK_PROMPT_VERSION
         FROZEN.update(by_replicate(treatment.FROZEN_V2_EVIDENCE["cal_a"], "evaluations"))
         seed_bank(BANK, FROZEN)
+    if args.treatment == 4:
+        from h2_v4 import require_pre_live_freeze
+
+        require_pre_live_freeze(full_development=True)
+        TREATMENT_EXTRA.update(technical_prompt_version=3, risk_prompt_version=2)
     previous = None if args.resume is None else (ROOT / args.resume).resolve()
     if git("status", "--porcelain"):
         sys.exit("working tree is not clean: commit before CAL-A")
@@ -415,6 +422,11 @@ def main() -> None:
 
         summary["frozen_component_replay"] = replay_audit((r, FROZEN[item["replicate"]]) for item, r in traces)
         summary["risk_audit"] = risk_audit(r for _, r in traces)
+    if args.treatment == 4:
+        from h2_v4 import require_pre_live_freeze, technical_audit
+
+        summary["checker_freeze"] = require_pre_live_freeze(full_development=True)
+        summary["technical_audit"] = technical_audit(r for _, r in traces)
     summary["cal_b_audit"] = {
         "bank_sessions": sorted({u["anchor"] for u in BANK.uses}),
         "cal_b_sessions_touched": sorted({u["anchor"] for u in BANK.uses} & set(anchors.sealed_holdout_anchors())),

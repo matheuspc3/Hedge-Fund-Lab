@@ -274,6 +274,12 @@ def summarize(out: Path, evaluations: list[dict], uses: list[dict], attempts: li
         "cost": "not computed: no versioned API pricing source in the repository",
     }
     sessions = {u["decision_session"] for u in uses}
+    if summary["treatment_version"] == 4:
+        from h2_v4 import require_pre_live_freeze, technical_audit
+
+        summary["checker_freeze"] = require_pre_live_freeze(full_development=True)
+        summary["technical_audit"] = technical_audit(
+            r for e in evaluations for r in load_trace((run_dir(e) / "llm_calls.jsonl").read_bytes()))
     summary["cal_b_audit"] = {
         "cal_b_authorized": anchors.CAL_B_AUTHORIZED,
         "decision_sessions_reaching_provider_or_bank": len(sessions),
@@ -296,7 +302,7 @@ def main() -> None:
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--resume", type=Path, default=None)
-    parser.add_argument("--treatment", type=int, choices=(1, 2, 3), default=1)
+    parser.add_argument("--treatment", type=int, choices=(1, 2, 3, 4), default=1)
     args = parser.parse_args()
     out_root = OUT_ROOT
     if args.treatment == 3:  # Amendment 10: base = CAL-A v3, Risk prompt v2, Technical v2 por replay
@@ -320,6 +326,17 @@ def main() -> None:
         BASE_VOL.update({k: treatment.CAL_A_V2_SELECTED_CONFIG[k] for k in BASE_VOL})
         TREATMENT_EXTRA["technical_prompt_version"] = 2
         out_root = ROOT / "docs" / "evidence" / "sequential_dev_v2"
+    if args.treatment == 4:
+        from h2_v4 import require_pre_live_freeze
+
+        from src.experiments import treatment
+
+        require_pre_live_freeze(full_development=True)
+        if treatment.CAL_A_V4_SELECTED_CONFIG is None:
+            sys.exit("Sequential Development v4 needs the committed CAL-A v4 selection")
+        BASE_VOL.update({k: treatment.CAL_A_V4_SELECTED_CONFIG[k] for k in BASE_VOL})
+        TREATMENT_EXTRA.update(technical_prompt_version=3, risk_prompt_version=2)
+        out_root = ROOT / "docs/evidence/sequential_dev_v4"
     previous = None if args.resume is None else (ROOT / args.resume).resolve()
     if git("status", "--porcelain"):
         sys.exit("working tree is not clean: commit the freeze before Sequential Development")
@@ -373,7 +390,7 @@ def main() -> None:
     if runs_dir.exists():
         shutil.copytree(runs_dir, out / "runs")
     base = {
-        "kind": {1: "SEQUENTIAL_DEVELOPMENT", 2: "SEQUENTIAL_DEVELOPMENT_V2", 3: "SEQUENTIAL_DEVELOPMENT_V3"}[
+        "kind": {1: "SEQUENTIAL_DEVELOPMENT", 2: "SEQUENTIAL_DEVELOPMENT_V2", 3: "SEQUENTIAL_DEVELOPMENT_V3", 4: "SEQUENTIAL_DEVELOPMENT_V4"}[
             args.treatment],
         "treatment_version": args.treatment,
         "base_volatility_config": dict(BASE_VOL),
