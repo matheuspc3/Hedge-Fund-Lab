@@ -1,5 +1,18 @@
 # Estado atual do Hedge-Fund-Lab
 
+**Atualização H2 v5 — 07/10/2026 (Amendment 13).** V4 formalmente inelegível
+para System Freeze: `DEFECT-DIRECTED HARDENING FAILED V4-S3`; evidências
+preservadas. V5 altera exclusivamente o contrato snapshot/temporal do Technical
+(Prompt v4); Risk v2, feature schema 2 e checker v3 byte-idênticos. Baseline de
+entrada v3: 21 / 0,50 / 0,25 / 1,0. CAL-B4 carried forward, integrity PRESERVED,
+mesmo commitment, SEALED — NEVER EXECUTED; nenhuma CAL-B5.
+Pré-live audit e regressão offline reproduzem os 10/150 flags originais v4.
+Live v5 **NOT EXECUTED**: revisão automática bloqueou o envio de payloads à API
+Gemini até autorização explícita do destino; zero chamadas. Gates v5 ainda
+não medidos, nenhuma seleção final. Runners preparados para as fases
+condicionais; development exige PASS do hardening dirigido. Validation/Final
+intocados. [Entrega v5](evidence/h2_v5/DELIVERY.md).
+
 **Atualização científica — 07/10/2026 (Amendment 12).** CAL-B3 final:
 `CAL_B3_FAIL — HOLDOUT CONSUMED`; os dez gates automáticos passaram, mas a
 revisão humana do autor principal falhou por claims temporais não suportados

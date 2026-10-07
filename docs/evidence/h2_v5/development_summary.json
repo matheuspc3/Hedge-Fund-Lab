@@ -1,0 +1,215 @@
+{
+  "kind": "H2_V5_DEVELOPMENT_SUMMARY",
+  "descriptive_only": true,
+  "status": "H2_V5 LIVE NOT EXECUTED — AWAITING PROVIDER EGRESS APPROVAL",
+  "development_complete": false,
+  "phases": {
+    "Defect-directed hardening v5": {
+      "executed": false,
+      "evidence": null,
+      "result": null
+    },
+    "Hardening v5": {
+      "executed": false,
+      "evidence": null,
+      "result": null
+    },
+    "B0 v5": {
+      "executed": false,
+      "evidence": null,
+      "result": null
+    },
+    "CAL-A v5": {
+      "executed": false,
+      "evidence": null,
+      "result": null
+    },
+    "Sequential Development v5": {
+      "executed": false,
+      "evidence": null,
+      "result": null
+    },
+    "Stress v5": {
+      "executed": false,
+      "evidence": null,
+      "result": null
+    }
+  },
+  "v4_final_governance": {
+    "status": "H2_V4 TEMPORAL CONTRACT FIX FAILED",
+    "H2_V4_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE": true,
+    "reason": "DEFECT-DIRECTED HARDENING FAILED V4-S3",
+    "evidence": "docs/evidence/h2_v4/defect_hardening_20261007T220356Z/manifest.json",
+    "frozen_results": {
+      "S1": 0,
+      "S2": 0,
+      "S3": 10,
+      "technical_outputs": 150,
+      "A": 0,
+      "T": 0,
+      "total_hold_rate": 0.4
+    },
+    "preservation": "Existing v4 prompt, checker, responses, artifacts, gates and CAL-B4 commitment unchanged",
+    "CAL_B4": "SEALED — NEVER EXECUTED",
+    "validation_final": "NOT EXECUTED"
+  },
+  "treatment_version": 5,
+  "technical_prompt_version": 4,
+  "risk_prompt_version": 2,
+  "feature_schema_version": 2,
+  "technical_prompt_sha256": "f20bc8140cf10ad35fde876a291298b7a1a124e08081a5b1186b4eb600862077",
+  "participant_spec_hashes": {
+    "v4": "a75b9e783cdc48b1098267c64bd22f47f45157b8e2cc4898711e418b01ebeb19",
+    "v5": "44f218c21ade5b95d98f119b17b169570a31fe6a5812d982d9e08770de909e9e"
+  },
+  "baseline_v5_params": {
+    "ticker": "PETR4.SA",
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "temperature": 1.0,
+    "max_output_tokens": 8192,
+    "analyst_count": 5,
+    "consensus_threshold": 0.6,
+    "require_all_votes": true,
+    "decision_frequency": 1,
+    "strict_inputs": true,
+    "portfolio_inversion_policy": "fail",
+    "long_target_weight": 1.0,
+    "risk_max_concentration": 1.0,
+    "risk_max_volatility": 0.5,
+    "risk_max_drawdown": 0.25,
+    "volatility_window": 21,
+    "retry_attempts": 6,
+    "retry_base_delay": 2.0,
+    "thinking_level": "low",
+    "technical_prompt_version": 4,
+    "risk_prompt_version": 2
+  },
+  "final_v5_params": null,
+  "CAL_A_V5_SELECTED_CONFIG": null,
+  "SEQUENTIAL_DEV_V5_SELECTED_CONFIG": null,
+  "temporal_claim_comparison": {
+    "v3_consumed_CAL_B3": {
+      "violations": 16,
+      "outputs": 50,
+      "rate": 0.32
+    },
+    "v4_defect": {
+      "violations": 10,
+      "outputs": 150,
+      "rate": 0.06666666666666667
+    },
+    "v5_defect": null,
+    "interpretation": "development language fidelity only; no future performance"
+  },
+  "checker_immutability_audit": {
+    "version": 3,
+    "source_sha256": {
+      "src/agents/feature_semantics.py": "fb2cfa36feba26b5e8f622828e03aa8fcfd25b1f7a0567d387f82baf9f056169",
+      "scripts/h2_v4.py": "630e7d8f862d4b5ffe5d8052911928e23f51634eaafcc88292ae0ef74a539f8e"
+    },
+    "source_blobs": {
+      "src/agents/feature_semantics.py": "57c0b1b0548455b897fdf0149c177a9bcd7b2557",
+      "scripts/h2_v4.py": "672f6931ce19254acb147a2bc93705f542018ea1"
+    },
+    "regression_report": "docs/evidence/h2_v4/technical_checker_v3/calibration_report.json"
+  },
+  "offline_checker_baselines": {
+    "h2_v3": {
+      "technical_votes": 410,
+      "V4-S1": 0,
+      "V4-S2": 2,
+      "V4-S3": 119
+    },
+    "cal_a_v3": {
+      "technical_votes": 300,
+      "V4-S1": 1,
+      "V4-S2": 0,
+      "V4-S3": 114
+    },
+    "sequential_dev_v3": {
+      "technical_votes": 1905,
+      "V4-S1": 0,
+      "V4-S2": 7,
+      "V4-S3": 723
+    },
+    "stress_v3": {
+      "technical_votes": 2985,
+      "V4-S1": 0,
+      "V4-S2": 27,
+      "V4-S3": 1264
+    },
+    "cal_b3": {
+      "technical_votes": 50,
+      "V4-S1": 0,
+      "V4-S2": 0,
+      "V4-S3": 16
+    },
+    "h2_v4": {
+      "technical_votes": 150,
+      "V4-S1": 0,
+      "V4-S2": 0,
+      "V4-S3": 10
+    }
+  },
+  "CAL_B4_CARRIED_FORWARD_TO_H2_V5": true,
+  "CAL_B4_HOLDOUT_INTEGRITY": "PRESERVED",
+  "cal_b4_safety": {
+    "status": "SEALED — NEVER EXECUTED",
+    "executed": false,
+    "commitment": "35d3d468a3253538392314c158c8605867c283c864fbd99c9499c8fd276f6ae7",
+    "sessions_touched": [],
+    "new_commitment": false
+  },
+  "validation_final_safety": {
+    "executed": false,
+    "sessions_touched": [],
+    "last_permitted_bar": "2024-08-30"
+  },
+  "structured_outputs": "existing decisions/traces preserve session, features, five votes, consensus, all stage rationales, final action, target weight, reason and provenance; no UI changes",
+  "live_technical_calls": 0,
+  "execution_blocker": {
+    "kind": "H2_V5_LIVE_EXECUTION_BLOCKER",
+    "phase": "defect-directed hardening v5",
+    "command": ".\\.venv\\Scripts\\python.exe scripts/run_h2_v5_defect.py",
+    "status": "NOT EXECUTED — AWAITING PROVIDER EGRESS APPROVAL",
+    "process_started": false,
+    "provider_calls": 0,
+    "source": "automatic approval review",
+    "reason": "The command performs live external provider calls using local credentials and sends locally derived experimental payloads, but the user did not authorize that specific data disclosure to a named destination; the egress therefore remains unverified.",
+    "destination": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
+    "payload_scope": "System/user prompts, eight anonymous dimensionless current-session Technical features; conditional Risk/Portfolio stage consensus and portfolio metrics; response schemas and frozen generation settings",
+    "credential_scope": "GEMINI_API_KEY used locally for Google API authentication; no credential printed or persisted in evidence",
+    "requested_approval": "Live v5 hardening and conditional development at the existing Gemini provider; normal API billing; no CAL-B4, Validation or Final execution",
+    "checker_version": 3,
+    "scientific_results": "No v5 live results or gate verdicts exist"
+  },
+  "offline_verification": {
+    "kind": "H2_V5_OFFLINE_VERIFICATION",
+    "passed": 326,
+    "failed": 0,
+    "errors": 0,
+    "duration_seconds": 82.94,
+    "provider_calls": 0,
+    "execution": "pytest with mocks/synthetic data, outside sandbox to resolve temporary-directory Windows ACL limitations",
+    "test_paths": [
+      "tests/experiments/test_v5_phase_routing.py",
+      "tests/experiments/test_cal_b4_safety.py",
+      "tests/experiments/test_hardening.py",
+      "tests/experiments/test_anchors.py",
+      "tests/experiments/test_treatment.py",
+      "tests/experiments/test_stress.py",
+      "tests/experiments/test_runner.py",
+      "tests/experiments/test_llm_runner.py",
+      "tests/agents/test_agents.py",
+      "tests/agents/test_strict_snapshot_contract.py",
+      "tests/agents/test_temporal_contract.py",
+      "tests/agents/test_feature_semantics.py"
+    ],
+    "pytest_options": "-q -p no:cacheprovider --basetemp=.pytest_temp/h2-v5-offline-20261007T2300 --tb=short",
+    "frozen_checker_and_components_diff_from_ab7a328": "empty",
+    "original_v4_evidence_diff_from_ab7a328": "no existing file changed; only final_governance.json added",
+    "scientific_live_result": "NOT EXECUTED"
+  },
+  "next_step": "Provider egress approval, then run frozen defect hardening; later phases require PASS"
+}
