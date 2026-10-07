@@ -54,7 +54,6 @@ def test_v4_only_changes_technical_prompt_and_hash():
     old = treatment.stress_v3_params()
     new = treatment.v4_params(old)
     assert {k for k in old if old[k] != new[k]} == {"technical_prompt_version"}
-    assert treatment.H2_TREATMENT_VERSION == 4
     assert (new["technical_prompt_version"], new["risk_prompt_version"]) == (3, 2)
     assert fs.TECHNICAL_SYSTEM_PROMPT_V3.startswith(fs.TECHNICAL_SYSTEM_PROMPT_V2 + "\n\n")
     assert hashlib.sha256(fs.TECHNICAL_SYSTEM_PROMPT_V3.encode()).hexdigest() == fs.TECHNICAL_SYSTEM_PROMPT_V3_SHA256

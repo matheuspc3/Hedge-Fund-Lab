@@ -9,7 +9,7 @@ from src.experiments.anchors import CAL_B_COMMITMENT_SHA256, CAL_B_STRATA
 
 
 def test_versao_e_parametros_v2() -> None:
-    assert treatment.H2_TREATMENT_VERSION == 4 and treatment.SCIENTIFIC_TECHNICAL_PROMPT_VERSION == 3
+    assert treatment.H2_TREATMENT_VERSION == 5 and treatment.SCIENTIFIC_TECHNICAL_PROMPT_VERSION == 4
     assert treatment.v2_params({"a": 1}) == {"a": 1, "technical_prompt_version": 2}
     with pytest.raises(ValueError):
         treatment.v2_params({"technical_prompt_version": 1})
