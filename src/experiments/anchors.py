@@ -134,8 +134,11 @@ CAL_B3_SELECTION_EVIDENCE = "docs/evidence/cal_b3/selection.json"
 CAL_B3_STATUS = "CONSUMED"
 
 # Amendment 12: populated only by the pre-live CAL-B4 commitment commit.
-CAL_B4_ANCHORS: tuple[str, ...] = ()
-CAL_B4_COMMITMENT_SHA256: str | None = None
+CAL_B4_ANCHORS: tuple[str, ...] = (
+    "2018-08-21", "2019-01-29", "2019-10-28", "2020-06-03", "2021-02-18",
+    "2021-09-02", "2022-03-30", "2022-10-03", "2023-07-17", "2024-01-12",
+)
+CAL_B4_COMMITMENT_SHA256: str | None = "35d3d468a3253538392314c158c8605867c283c864fbd99c9499c8fd276f6ae7"
 CAL_B4_SELECTION_EVIDENCE = "docs/evidence/cal_b4/selection.json"
 CAL_B4_STATUS = "SEALED"
 

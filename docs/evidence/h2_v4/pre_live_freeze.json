@@ -1,0 +1,22 @@
+{
+  "kind": "H2_V4_PRE_LIVE_FREEZE",
+  "git_commit": "e4fed8911a3263f1eef93d5a241a384995a51ef7",
+  "technical_prompt_sha256": "ca283bd920bbd0655d9c9a23eacd98fb6da48e6609097cb27cd835e9dee50759",
+  "source_blobs": {
+    "src/agents/feature_semantics.py": "57c0b1b0548455b897fdf0149c177a9bcd7b2557",
+    "scripts/h2_v4.py": "672f6931ce19254acb147a2bc93705f542018ea1",
+    "scripts/technical_checker_v3_calibration.py": "3b8afdbff9af1b9dc3019a0b24fdd0fc0c899470",
+    "tests/agents/test_temporal_contract.py": "8aa56dc762de17a265483b9a883544fa8477542f"
+  },
+  "source_sha256": {
+    "src/agents/feature_semantics.py": "fb2cfa36feba26b5e8f622828e03aa8fcfd25b1f7a0567d387f82baf9f056169",
+    "scripts/h2_v4.py": "630e7d8f862d4b5ffe5d8052911928e23f51634eaafcc88292ae0ef74a539f8e",
+    "scripts/technical_checker_v3_calibration.py": "a787b82cb8cd22cbaf0506033187de9ec9490aa44b1e6b533d9cde9c607e6a5c",
+    "tests/agents/test_temporal_contract.py": "5e5782a76cc4c2d5472f2efd9ec9ade370ae079f07ea398dc0cad8f11e78a87f"
+  },
+  "v3_spec_sha256": "1d63ad4cc93f9ef49368ba6772a22403354b36f3cc7d9d57d3b0627b85b9becc",
+  "v4_defect_spec_sha256": "a75b9e783cdc48b1098267c64bd22f47f45157b8e2cc4898711e418b01ebeb19",
+  "provider_calls_v4": 0,
+  "tests": "783 passed (agents + experiments); CAL-B4 safety checks recorded separately",
+  "risk_portfolio_features_source_unchanged": true
+}
