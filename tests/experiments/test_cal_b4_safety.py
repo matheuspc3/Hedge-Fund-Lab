@@ -49,3 +49,16 @@ def test_call_bank_blocks_validation_before_network():
     client.begin_session("2024-09-02")
     with pytest.raises(RuntimeError, match="after 2024-08-30"):
         asyncio.run(client.generate("unused", "unused"))
+
+
+def test_v5_sessions_and_full_development_guard():
+    from scripts.h2_v5 import require_pre_live_freeze, require_sessions
+
+    require_sessions(anchors.CAL_B3_ANCHORS)
+    for day in (*anchors.CAL_B4_ANCHORS, "2024-09-02", "2026-10-07"):
+        with pytest.raises(ValueError):
+            require_sessions([day])
+    paths = sorted((ROOT / "docs/evidence/h2_v5").glob("defect_hardening_*/manifest.json"))
+    if not paths or json.loads(paths[-1].read_text(encoding="utf-8"))["status"] != treatment.H2_V5_DEFECT_FIX_PASSED:
+        with pytest.raises(ValueError, match="hardening PASS"):
+            require_pre_live_freeze(full_development=True)
