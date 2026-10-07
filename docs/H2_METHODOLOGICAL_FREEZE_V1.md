@@ -2534,3 +2534,10 @@ script seleção; commitment; hardening dirigido; Hardening/B0; CAL-A;
 Sequential; Stress; resumo. Só com development completo registrar:
 H2_V4 DEVELOPMENT COMPLETE — READY FOR CAL-B4 PROTOCOL.
 Próxima etapa é desenhar o protocolo CAL-B4, nunca executá-la automaticamente.
+
+## Amendment 13 — H2 v5
+
+Protocol frozen before live: [H2 v5 amendment](H2_V5_AMENDMENT_13.md).
+V4 failed V4-S3 and is ineligible for System Freeze. V5 changes only the
+Technical snapshot/temporal language, keeps checker v3 byte-identical and
+carries forward the existing sealed CAL-B4 commitment. No CAL-B5.

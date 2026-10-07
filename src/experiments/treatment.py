@@ -28,8 +28,8 @@ from src.experiments.anchors import CAL_B_COMMITMENT_SHA256, CAL_B_STRATA, STRAT
 from src.experiments.hardening import H2_FROZEN_THINKING_LEVEL, h2_freeze_v1_params
 from src.experiments.stress import STRESS_FROZEN_PARAMS
 
-H2_TREATMENT_VERSION = 4
-SCIENTIFIC_TECHNICAL_PROMPT_VERSION = 3
+H2_TREATMENT_VERSION = 5
+SCIENTIFIC_TECHNICAL_PROMPT_VERSION = 4
 SCIENTIFIC_RISK_PROMPT_VERSION = 2
 H2_V1_STATUS = "H2 V1 FAILED CAL-B1 — CONSUMED"
 CAL_B1_STATUS = "CONSUMED — DEVELOPMENT EVIDENCE"
@@ -344,3 +344,40 @@ H2_V4_DEVELOPMENT_STATUS = H2_V4_TEMPORAL_FIX_FAILED
 # Final governance: v4 failed S3; its evidence is immutable development evidence.
 H2_V4_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE = True
 H2_V4_SYSTEM_FREEZE_INELIGIBILITY_REASON = "DEFECT-DIRECTED HARDENING FAILED V4-S3"
+
+# H2 v5 (Amendment 13): only the Technical snapshot/temporal language changes.
+CAL_B4_CARRIED_FORWARD_TO_H2_V5 = True
+CAL_B4_HOLDOUT_INTEGRITY = "PRESERVED"
+
+
+def v5_params(base: Mapping[str, Any]) -> dict[str, Any]:
+    if (base.get("technical_prompt_version"), base.get("risk_prompt_version")) != (3, 2):
+        raise ValueError("v5 starts from Technical v3 / Risk v2")
+    return {**base, "technical_prompt_version": 4}
+
+
+H2_V5_DEFECT_PARAMS: Mapping[str, Any] = MappingProxyType(v5_params(H2_V4_DEFECT_PARAMS))
+H2_V5_HARDENING_PARAMS: Mapping[str, Any] = MappingProxyType(v5_params(H2_V4_HARDENING_PARAMS))
+H2_V5_DEFECT_REPETITIONS = 3
+H2_V5_TEMPORAL_FIX_FAILED = "H2_V5 TEMPORAL CONTRACT FIX FAILED"
+H2_V5_DEGENERACY_PERSISTS = "H2_V5 TEMPORAL FIX PASSED — DEGENERACY PERSISTS"
+H2_V5_DEFECT_FIX_PASSED = "H2_V5 MINIMAL DEFECT FIX PASSED"
+CAL_A_V5_SELECTED_CONFIG: Mapping[str, Any] | None = None
+SEQUENTIAL_DEV_V5_SELECTED_CONFIG: Mapping[str, Any] | None = None
+
+
+def stress_v5_params() -> dict[str, Any]:
+    if CAL_A_V5_SELECTED_CONFIG is None or SEQUENTIAL_DEV_V5_SELECTED_CONFIG is None:
+        raise ValueError("Stress v5 needs committed CAL-A v5 and Sequential Development v5 selections")
+    return {**H2_V5_DEFECT_PARAMS,
+            "volatility_window": CAL_A_V5_SELECTED_CONFIG["volatility_window"],
+            "risk_max_volatility": CAL_A_V5_SELECTED_CONFIG["risk_max_volatility"],
+            "risk_max_drawdown": SEQUENTIAL_DEV_V5_SELECTED_CONFIG["risk_max_drawdown"]}
+
+
+def v5_calibration_provenance() -> dict[str, str]:
+    stress_v5_params()
+    return {"CAL_A_V5_DISCRIMINATION": CAL_A_V5_SELECTED_CONFIG["discrimination"],
+            "CAL_A_V5_SELECTION_BASIS": CAL_A_V5_SELECTED_CONFIG["selection_basis"],
+            "SEQUENTIAL_DEV_V5_DISCRIMINATION": SEQUENTIAL_DEV_V5_SELECTED_CONFIG["discrimination"],
+            "SEQUENTIAL_DEV_V5_SELECTION_BASIS": SEQUENTIAL_DEV_V5_SELECTED_CONFIG["selection_basis"]}
