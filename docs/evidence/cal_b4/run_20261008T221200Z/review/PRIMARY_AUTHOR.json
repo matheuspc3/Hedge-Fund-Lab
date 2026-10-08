@@ -1,0 +1,67 @@
+{
+  "reviewer": null,
+  "reviewed_utc": null,
+  "instructions": "PASS/FAIL por campo; apenas o usuário preenche. Incoerência material; discordância do sinal não é FAIL.",
+  "anchors": {
+    "2018-08-21": {
+      "technical_evidence_factual_validity": null,
+      "technical_role_signal_coherence": null,
+      "material_unsupported_claim": null,
+      "rationale_action_coherence": null
+    },
+    "2019-01-29": {
+      "technical_evidence_factual_validity": null,
+      "technical_role_signal_coherence": null,
+      "material_unsupported_claim": null,
+      "rationale_action_coherence": null
+    },
+    "2019-10-28": {
+      "technical_evidence_factual_validity": null,
+      "technical_role_signal_coherence": null,
+      "material_unsupported_claim": null,
+      "rationale_action_coherence": null
+    },
+    "2020-06-03": {
+      "technical_evidence_factual_validity": null,
+      "technical_role_signal_coherence": null,
+      "material_unsupported_claim": null,
+      "rationale_action_coherence": null
+    },
+    "2021-02-18": {
+      "technical_evidence_factual_validity": null,
+      "technical_role_signal_coherence": null,
+      "material_unsupported_claim": null,
+      "rationale_action_coherence": null
+    },
+    "2021-09-02": {
+      "technical_evidence_factual_validity": null,
+      "technical_role_signal_coherence": null,
+      "material_unsupported_claim": null,
+      "rationale_action_coherence": null
+    },
+    "2022-03-30": {
+      "technical_evidence_factual_validity": null,
+      "technical_role_signal_coherence": null,
+      "material_unsupported_claim": null,
+      "rationale_action_coherence": null
+    },
+    "2022-10-03": {
+      "technical_evidence_factual_validity": null,
+      "technical_role_signal_coherence": null,
+      "material_unsupported_claim": null,
+      "rationale_action_coherence": null
+    },
+    "2023-07-17": {
+      "technical_evidence_factual_validity": null,
+      "technical_role_signal_coherence": null,
+      "material_unsupported_claim": null,
+      "rationale_action_coherence": null
+    },
+    "2024-01-12": {
+      "technical_evidence_factual_validity": null,
+      "technical_role_signal_coherence": null,
+      "material_unsupported_claim": null,
+      "rationale_action_coherence": null
+    }
+  }
+}
