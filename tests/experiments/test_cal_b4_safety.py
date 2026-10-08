@@ -62,3 +62,11 @@ def test_v5_sessions_and_full_development_guard():
     if not paths or json.loads(paths[-1].read_text(encoding="utf-8"))["status"] != treatment.H2_V5_DEFECT_FIX_PASSED:
         with pytest.raises(ValueError, match="hardening PASS"):
             require_pre_live_freeze(full_development=True)
+
+
+def test_v5_development_s3_failure_blocks_further_phases():
+    from scripts.h2_v5 import require_pre_live_freeze
+
+    if treatment.H2_V5_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE:
+        with pytest.raises(ValueError, match="development S3 failure"):
+            require_pre_live_freeze(full_development=True)

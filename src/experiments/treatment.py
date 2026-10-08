@@ -398,3 +398,10 @@ def v5_calibration_provenance() -> dict[str, str]:
 # Recorded frozen hardening result; no treatment setting changes.
 H2_V5_DEFECT_EVIDENCE = "docs/evidence/h2_v5/defect_hardening_20261007T232326Z/manifest.json"
 H2_V5_DEFECT_STATUS = H2_V5_DEFECT_FIX_PASSED
+
+# The directed PASS stays preserved; full development exposed four S3 claims.
+H2_V5_FINAL_GOVERNANCE = "docs/evidence/h2_v5/final_governance.json"
+H2_V5_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE = True
+H2_V5_SYSTEM_FREEZE_INELIGIBILITY_REASON = "DEVELOPMENT S3 FAILURE — SEQUENTIAL DEVELOPMENT (4/1905)"
+H2_V5_DEVELOPMENT_SUMMARY = "docs/evidence/h2_v5/development_summary.json"
+H2_V5_DEVELOPMENT_STATUS = H2_V5_TEMPORAL_FIX_FAILED

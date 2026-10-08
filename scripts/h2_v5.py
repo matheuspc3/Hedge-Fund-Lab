@@ -65,6 +65,9 @@ def require_pre_live_freeze(*, full_development=False):
         raise ValueError("CAL-B4 carry-forward audit failed")
     require_sessions(used_sessions())
     if full_development:
+        governance = ROOT / "docs/evidence/h2_v5/final_governance.json"
+        if governance.exists() and json.loads(governance.read_text(encoding="utf-8"))["H2_V5_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE"]:
+            raise ValueError("H2 v5 stopped after development S3 failure; further scientific phases refused")
         paths = sorted((ROOT / "docs/evidence/h2_v5").glob("defect_hardening_*/manifest.json"))
         if not paths:
             raise ValueError("full development requires v5 defect-directed hardening PASS")
