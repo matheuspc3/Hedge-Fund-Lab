@@ -1,6 +1,29 @@
 # Estado atual do Hedge-Fund-Lab
 
-## H2 v6 — development completo (08/10/2026)
+## H2 v6 — CAL-B4 aguardando revisão humana (08/10/2026)
+
+**CAL_B4_AWAITING_PRIMARY_AUTHOR_REVIEW**.
+Após autorização externa específica e confirmação do ParticipantSpec hash final,
+a CAL-B4 foi executada uma única vez: 10/10 decisões completas, 50 votos Technical
+live únicos, 61 chamadas Gemini e zero retries/falhas. Os 12 gates automáticos
+passaram; E/S1/S2/S3/R1/R2/R3=0; HOLD-equivalent=4/10 (40% < 90%).
+Raw batch selado e commitado antes de abrir/calcular a auditoria. Treatment,
+prompts, contratos, checkers, parâmetros e thresholds permaneceram congelados.
+
+CAL-B4 agora está **CONSUMED — ONE-SHOT COMPLETE**. A execução parou para a
+revisão obrigatória de Lucas: quatro campos PASS/FAIL em cada uma das dez anchors.
+A ficha permanece em branco. **SYSTEM_CALIBRATION_COMPLETE=False**;
+nenhum PASS humano/final declarado. Segunda revisão NOT_REVIEWED — NONBLOCKING.
+Validation/Final intocados; FINANCIAL_OUTCOME=NOT COMPUTED; System Freeze não executado.
+
+Leia o [guia de revisão](evidence/cal_b4/run_20261008T221200Z/review/REVIEW_GUIDE.md)
+e preencha a [ficha PRIMARY_AUTHOR](evidence/cal_b4/run_20261008T221200Z/review/PRIMARY_AUTHOR.json).
+[Entrega CAL-B4](evidence/cal_b4/DELIVERY.md);
+[gates automáticos](evidence/cal_b4/run_20261008T221200Z/automatic_gates.json).
+Somente revisão integralmente PASS permite CAL_B4_PASS — SANITY CHECK ONLY e
+READY FOR SYSTEM FREEZE DESIGN; não executar System Freeze automaticamente.
+
+## H2 v6 — development completo, estado anterior à CAL-B4 (08/10/2026)
 
 **H2_V6 DEVELOPMENT COMPLETE — READY FOR CAL-B4 PROTOCOL**.
 Após autorização externa específica H2 v6, defect-directed hardening,

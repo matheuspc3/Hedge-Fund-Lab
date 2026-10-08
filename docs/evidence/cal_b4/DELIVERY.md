@@ -205,6 +205,6 @@ e3ae6a9 — errata documental v6;
 09c9876 — guardas limitados e checks offline;
 0760f72 — autorização externa específica/hash confirmado;
 c5aa362 — raw one-shot selado antes da auditoria.
-O commit seguinte registra automatic gates, packet e ficha em branco;
-o status intermediário é registrado separadamente. Ainda não há commit de
+94edfcb — automatic gates PASS, packet e ficha em branco;
+o status intermediário e o estado atual são registrados separadamente. Ainda não há commit de
 primary review preenchida nem de PASS humano/final.
