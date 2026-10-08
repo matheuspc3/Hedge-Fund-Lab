@@ -1,6 +1,6 @@
 # H2 v6 delivery
 
-H2_V6 PREPARED OFFLINE — AWAITING SPECIFIC EXTERNAL AUTHORIZATION
+H2_V6 DEVELOPMENT COMPLETE — READY FOR CAL-B4 PROTOCOL
 
 ## H2 V5 FINAL GOVERNANCE
 
@@ -93,11 +93,11 @@ CAL_B4_CARRIED_FORWARD_TO_H2_V6=True; PRESERVED. Same commitment/ranking reprodu
 
 ## DEFECT-DIRECTED HARDENING V6
 
-NOT EXECUTED. Ten consumed CAL-B3 anchors x R=3 x N=5; 150 live Technical outputs; no t+1. Gates E/S1/S2/S3/A/T ==0 and HOLD <.90. Any failure stops, with no edits/reruns. Targets 2020-05-13 and 2022-03-11 may remain MANTER.
+H2_V6 STRUCTURED TECHNICAL FIX PASSED. Ten consumed CAL-B3 anchors x R=3 x N=5; 150 live Technical outputs; no t+1. Gates E/S1/S2/S3/A/T ==0 and HOLD <.90. Any failure stops, with no edits/reruns. Targets 2020-05-13 and 2022-03-11 may remain MANTER.
 
 ## STRUCTURED EVIDENCE FAILURES
 
-V6 live E results are pending for phases not executed; offline incompatible facts, duplicate codes, invalid roles and textual extras were rejected. No live PASS is inferred from tests.
+All six live phases passed with E=0: 5700 unique live Technical votes. Offline incompatible facts, duplicate codes, invalid roles and textual extras remain rejected. [Post-live verification](post_live_verification.json) reproduces every stored trace field and provenance hash.
 
 ## TEMPORAL CLAIM RATE
 
@@ -112,45 +112,63 @@ Rates below describe different phase corpora; they are not a paired estimate of 
 | v5 B0 | 0/60 | 0% |
 | v5 CAL-A | 0/300 | 0% |
 | v5 Sequential | 4/1905 | 0.21% |
-| v6 defect | NOT EXECUTED/None | pending |
-| v6 hardening | NOT EXECUTED/None | pending |
-| v6 b0 | NOT EXECUTED/None | pending |
-| v6 cal_a | NOT EXECUTED/None | pending |
-| v6 sequential | NOT EXECUTED/None | pending |
-| v6 stress | NOT EXECUTED/None | pending |
+| v6 defect | 0/150 | 0.0 |
+| v6 hardening | 0/300 | 0.0 |
+| v6 b0 | 0/60 | 0.0 |
+| v6 cal_a | 0/300 | 0.0 |
+| v6 sequential | 0/1905 | 0.0 |
+| v6 stress | 0/2985 | 0.0 |
 
 ## HARDENING V6
 
-NOT EXECUTED. Same 12 H states, R=5, original gates plus E/S1/S2/S3.
+INCOMPLETE. Same 12 H states, R=5, original gates plus E/S1/S2/S3.
 
 ## B0 V6
 
-NOT EXECUTED. Same H states, R=1, same ex ante baseline and gates.
+INCOMPLETE. Same H states, R=1, same ex ante baseline and gates.
 
 ## CAL-A V6
 
-NOT EXECUTED. Same 20 anchors, six 21/63 x .40/.50/.60 candidates, R=3, original S1 and tie-break; new live Technical with within-phase pairing.
+Selected C2 = 21 / 0.50, EMPIRICAL_S1. S1=0.0009706429872947897; C2/C3/C6 tie at the top, original lowest-ID tie-break.
+
+COMPLETE. Same 20 anchors, six 21/63 x .40/.50/.60 candidates, R=3, original S1 and tie-break; new live Technical with within-phase pairing.
 
 ## SEQUENTIAL DEVELOPMENT V6
 
-NOT EXECUTED. Same 2024-03-01 -> 2024-08-30 window, D01 .25/D02 .15/D03 .35, R=3, original Sharpe/S2/tie-break. The protocol requires auditing all 1905 unique Technical outputs. Four prior failure sessions are naturally re-evaluated here only.
+Selected D01 = risk_max_drawdown 0.25, EMPIRICAL_S2. D01/D03 tie at S2=0.0976751454873825, D02 S2=-0.5457944350957457; original lowest-ID tie-break.
+
+COMPLETE. Same 2024-03-01 -> 2024-08-30 window, D01 .25/D02 .15/D03 .35, R=3, original Sharpe/S2/tie-break. All 1905 unique Technical outputs audited. Four prior failure sessions are naturally re-evaluated here only.
 
 Natural four-session results:
 
-{"2024-04-01": "NOT EXECUTED", "2024-05-16": "NOT EXECUTED", "2024-06-12": "NOT EXECUTED", "2024-08-06": "NOT EXECUTED"}
+Each session has 15 unique live votes (R=3, N=5), E/S1/S2/S3=0.
+
+| Session | COMPRA | VENDA | MANTER |
+|---|---:|---:|---:|
+| 2024-04-01 | 0 | 0 | 15 |
+| 2024-05-16 | 0 | 0 | 15 |
+| 2024-06-12 | 0 | 13 | 2 |
+| 2024-08-06 | 0 | 15 | 0 |
 
 ## STRESS V6
 
-NOT EXECUTED. Only after complete Sequential PASS: same four windows, R=3, original integrity gates plus E/S1/S2/S3; no tuning authority.
+12/12 trajectories passed; 2985 live Technical votes, E/S1/S2/S3=0. Original S-A/S-T/S-C/S-R gates passed. S1/S2/S4 have 50 sessions each, S3 has 49: 199 x R=3 x N=5. Volatility rule EXERCISED; drawdown rule NOT_EXERCISED. This is a descriptive coverage limitation, not a reason to change the frozen treatment or rerun.
+
+STRESS PROBING COMPLETE — READY FOR CAL-B PROTOCOL. Only after complete Sequential PASS: same four windows, R=3, original integrity gates plus E/S1/S2/S3; no tuning authority.
 
 ## FINAL V6 PARAMETERS
 
-null — no final selection before all required phases pass.
-Entry only: 21/.40/.15/1.0; V6_ENTRY_BASELINE_ONLY — NOT FINAL SELECTION. CAL-A and Sequential reselect independently.
+Development-selected parameters: **21 / 0.50 / 0.25 / 1.0** (volatility window / max volatility / max drawdown / long target).
+
+CAL-A and Sequential selected afresh; Stress used these parameters unchanged and had no tuning authority. Full frozen runtime is recorded in [development_summary.json](development_summary.json). This development completion does not authorize System Freeze or CAL-B4 execution.
+
+Entry 21/.40/.15/1.0 remains V6_ENTRY_BASELINE_ONLY — NOT FINAL SELECTION.
 
 ## UI SERIALIZATION CONTRACT
 
 signal, confidence, evidence [{code, role, display}], display_explanation; portable JSON, no frontend dependency.
+
+[technical_vote_audit.jsonl](technical_vote_audit.jsonl) contains all 5700 unique live Technical votes, each with signal, confidence, evidence codes, roles, exact displays, deterministic explanation, allowed set, provenance hashes and the original trace path. Raw responses stay in the original traces.
 
 ## CAL-B4 SAFETY
 
@@ -173,10 +191,29 @@ Commits through report generation (the delivery commit itself is recorded by git
 - a71b5d7 Audit CAL-B4 carry-forward to H2 v6 without inference
 - 9c3a462 Integrate v6 evidence validation, provenance and guarded phase runners
 - 18a0aa1 Freeze offline v6 checks, schema, prompt and provenance hashes
+- 6740e37 Deliver offline H2 v6 packet awaiting specific authorization
+- 4189761 Authorize native Gemini live H2 v6 within frozen conditional protocol
+- 083f546 H2 v6 directed hardening PASS: structured and temporal gates zero in 150 live votes
+- 3bbd423 H2 v6 Diagnostic Hardening PASS: 300 live votes with zero structured and temporal flags
+- bb2febe H2 v6 B0 PASS: 60 live votes and zero structured or temporal flags
+- 0f757eb H2 v6 CAL-A PASS: select C2 21/0.50 by frozen S1 and tie-break
+- 8838e47 H2 v6 Sequential PASS: S3 0/1905 and empirical D01 drawdown 0.25
+- fa96487 H2 v6 Stress PASS: 12 trajectories, S3 0/2985 and all integrity gates passed
+
+## LIVE EXECUTION AND FINAL AUDIT
+
+6208 logical live provider calls; 6224 HTTP attempts. Sixteen transient attempts (15 HTTP 503, one connection reset) were recovered under the original retry policy; no final provider failures or truncations. No previous-treatment Technical output was reused.
+
+All 483 original trace files replayed into their exact stored serialization; raw Technical JSON equals its validated structured response; all current-fact metadata and prompt/schema/allowed/raw/validated/rendered hashes reproduce. Native endpoint, model, LOW thinking, temperature 1.0 and 8192 tokens were verified. No seed was transmitted. Individual evidence and display were absent from Risk/Portfolio inputs.
+
+Frozen sources and 1972 original v5 artifacts rechecked byte-identical. CAL-B4 commitment unchanged and carry-forward integrity PRESERVED; no CAL-B4 or Validation/Final decisions. Sequential last actual decision 2024-08-29; settlement and data end 2024-08-30.
+
+A B0 launch stopped in the pre-network guard due to Git line-ending normalization of the Hardening commit. Commit-only normalization was corrected without changing working-file bytes or scientific results. B0 then executed once; no scientific rerun.
+
+[Post-live verification](post_live_verification.json) records the checks and artifact hashes. Frozen offline verification remains 860 tests passed with zero provider calls during that offline check. This final report made no external call.
 
 ## NEXT STEP
 
-Specific H2 v6 external authorization is required before first live call (user request item 40). V5 authorization does not carry to v6.
-After authorization, execute directed hardening then conditional phases in frozen order. CAL-B4 remains sealed throughout.
+**H2_V6 DEVELOPMENT COMPLETE — READY FOR CAL-B4 PROTOCOL**
 
-Offline verification: 860 tests passed; zero external provider calls.
+Stop before CAL-B4. Its protocol requires separate authorization. CAL-B4 remains **SEALED — NOT EXECUTED**; Validation and Final Test remain untouched.

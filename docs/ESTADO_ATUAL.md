@@ -1,15 +1,25 @@
 # Estado atual do Hedge-Fund-Lab
 
-## H2 v6 — preparação offline
+## H2 v6 — development completo (08/10/2026)
 
-Technical estruturado implementado: treatment 6, prompt 5, response schema 2,
-validator/vocabulário 1. Status live: **NOT EXECUTED — aguardando autorização
-externa específica H2 v6** (item 40 do pedido). A autorização v5 não cobre v6.
-Os resultados e artifacts v5 abaixo são históricos e permanecem preservados.
+**H2_V6 DEVELOPMENT COMPLETE — READY FOR CAL-B4 PROTOCOL**.
+Após autorização externa específica H2 v6, defect-directed hardening,
+Diagnostic Hardening, B0, CAL-A, Sequential e Stress passaram na ordem congelada.
+Foram 5700 votos Technical live: E/S1/S2/S3=0 em todas as fases; zero falhas
+finais de provedor ou truncamentos. Technical: treatment 6, prompt 5, response
+schema 2, validator/vocabulário 1. Checker v3 e artifacts v5 byte-idênticos.
 
-CAL-B4: **SEALED / NOT EXECUTED**, mesmo commitment; Validation/Final intocados.
-Baseline v6 21/.40/.15/1.0: **V6_ENTRY_BASELINE_ONLY — NOT FINAL SELECTION**.
-Nenhum parâmetro final v6 selecionado. Relatório: [H2 v6 delivery](evidence/h2_v6/DELIVERY.md).
+CAL-A selecionou C2 (21 / 0,50), EMPIRICAL_S1; Sequential selecionou D01
+(drawdown 0,25), EMPIRICAL_S2, com os tie-breaks originais. Parâmetros de
+development: **21 / 0,50 / 0,25 / 1,0**. Stress passou em 12 trajetórias;
+regra de volatilidade exercitada, regra de drawdown não exercitada.
+
+CAL-B4: **SEALED — NOT EXECUTED**, mesmo commitment e integridade preservada;
+Validation/Final intocados. A execução parou antes da CAL-B4; System Freeze
+continua pendente de seu protocolo. Baseline de entrada 21/.40/.15/1.0 permanece
+**V6_ENTRY_BASELINE_ONLY — NOT FINAL SELECTION**. Resultados v5 abaixo são históricos.
+Relatório: [H2 v6 delivery](evidence/h2_v6/DELIVERY.md);
+[auditoria pós-live](evidence/h2_v6/post_live_verification.json).
 
 
 

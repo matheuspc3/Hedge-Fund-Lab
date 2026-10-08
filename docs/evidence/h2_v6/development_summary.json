@@ -1,5 +1,5 @@
 {
-  "status": "H2_V6 PREPARED OFFLINE — AWAITING SPECIFIC EXTERNAL AUTHORIZATION",
+  "status": "H2_V6 DEVELOPMENT COMPLETE — READY FOR CAL-B4 PROTOCOL",
   "treatment_version": 6,
   "technical_prompt_version": 5,
   "response_schema_version": 2,
@@ -16,40 +16,1016 @@
   },
   "phases": {
     "defect": {
-      "status": "NOT EXECUTED",
-      "technical_votes": null,
-      "S3_rate": null,
-      "parameters": null
+      "status": "H2_V6 STRUCTURED TECHNICAL FIX PASSED",
+      "v6_phase_pass": true,
+      "source": "docs/evidence/h2_v6/defect_hardening_20261008T015051Z/manifest.json",
+      "technical_votes": 150,
+      "technical_audit": {
+        "technical_votes": 150,
+        "rates": {
+          "V6-S1": 0.0,
+          "V6-S2": 0.0,
+          "V6-S3": 0.0,
+          "V6-E": 0.0
+        },
+        "flagged": [],
+        "V6-S1": 0,
+        "V6-S2": 0,
+        "V6-S3": 0,
+        "V6-E": 0,
+        "invalid_evidence": [],
+        "technical_calls": 150,
+        "evidence_validator_version": 1,
+        "technical_prompt_v5_only": true,
+        "natural_v5_failure_sessions": {
+          "2024-04-01": {
+            "technical_calls": 0,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          },
+          "2024-05-16": {
+            "technical_calls": 0,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          },
+          "2024-06-12": {
+            "technical_calls": 0,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          },
+          "2024-08-06": {
+            "technical_calls": 0,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          }
+        }
+      },
+      "S3_rate": 0.0,
+      "gates": {
+        "V6-E": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "V6-S1": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "V6-S2": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "V6-S3": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "V6-A": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "V6-T": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "V6-D": {
+          "value": 0.36666666666666664,
+          "threshold": "< 0.90",
+          "pass": true
+        }
+      },
+      "complete": true,
+      "selected_config_id": null,
+      "selection_basis": null,
+      "parameters": {
+        "ticker": "PETR4.SA",
+        "provider": "gemini",
+        "model": "gemini-3.8-flash",
+        "temperature": 1.0,
+        "max_output_tokens": 8192,
+        "analyst_count": 5,
+        "consensus_threshold": 0.6,
+        "require_all_votes": true,
+        "decision_frequency": 1,
+        "strict_inputs": true,
+        "portfolio_inversion_policy": "fail",
+        "long_target_weight": 1.0,
+        "risk_max_concentration": 1.0,
+        "risk_max_volatility": 0.4,
+        "risk_max_drawdown": 0.15,
+        "volatility_window": 21,
+        "retry_attempts": 6,
+        "retry_base_delay": 2.0,
+        "thinking_level": "low",
+        "technical_prompt_version": 5,
+        "risk_prompt_version": 2,
+        "technical_response_schema_version": 2
+      },
+      "S1": null,
+      "S2": null,
+      "ranking": null,
+      "tie_at_top": null,
+      "pairing": null,
+      "natural_v5_failure_sessions": {
+        "2024-04-01": {
+          "technical_calls": 0,
+          "invalid_evidence": 0,
+          "linguistic_flags": []
+        },
+        "2024-05-16": {
+          "technical_calls": 0,
+          "invalid_evidence": 0,
+          "linguistic_flags": []
+        },
+        "2024-06-12": {
+          "technical_calls": 0,
+          "invalid_evidence": 0,
+          "linguistic_flags": []
+        },
+        "2024-08-06": {
+          "technical_calls": 0,
+          "invalid_evidence": 0,
+          "linguistic_flags": []
+        }
+      },
+      "operational": {
+        "logical_calls": 188,
+        "http_attempts": 188,
+        "logical_calls_by_stage": {
+          "technical_analyst": 150,
+          "risk_manager": 19,
+          "portfolio_manager": 19
+        },
+        "attempt_outcomes": {
+          "http_200": 188
+        },
+        "wall_clock_seconds": 417.258901
+      }
     },
     "hardening": {
-      "status": "NOT EXECUTED",
-      "technical_votes": null,
-      "S3_rate": null,
-      "parameters": null
+      "status": "INCOMPLETE",
+      "v6_phase_pass": true,
+      "source": "docs/evidence/h2_v6/hardening_low_20261008T015837Z/manifest.json",
+      "technical_votes": 300,
+      "technical_audit": {
+        "technical_votes": 300,
+        "rates": {
+          "V6-S1": 0.0,
+          "V6-S2": 0.0,
+          "V6-S3": 0.0,
+          "V6-E": 0.0
+        },
+        "flagged": [],
+        "V6-S1": 0,
+        "V6-S2": 0,
+        "V6-S3": 0,
+        "V6-E": 0,
+        "invalid_evidence": [],
+        "technical_calls": 300,
+        "evidence_validator_version": 1,
+        "technical_prompt_v5_only": true,
+        "natural_v5_failure_sessions": {
+          "2024-04-01": {
+            "technical_calls": 0,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          },
+          "2024-05-16": {
+            "technical_calls": 0,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          },
+          "2024-06-12": {
+            "technical_calls": 0,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          },
+          "2024-08-06": {
+            "technical_calls": 0,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          }
+        }
+      },
+      "S3_rate": 0.0,
+      "gates": {
+        "G-A": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "G-T": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "G-I": {
+          "value": 0.25,
+          "threshold": "< 0.90",
+          "pass": true
+        },
+        "G-F": {
+          "value": 0.0,
+          "threshold": "<= 0.10",
+          "pass": true
+        },
+        "V6-E": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "V6-S1": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "V6-S2": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "V6-S3": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        }
+      },
+      "complete": true,
+      "selected_config_id": null,
+      "selection_basis": null,
+      "parameters": {
+        "provider": "gemini",
+        "model": "gemini-3.8-flash",
+        "temperature": 1.0,
+        "max_output_tokens": 8192,
+        "analyst_count": 5,
+        "consensus_threshold": 0.6,
+        "require_all_votes": true,
+        "decision_frequency": 1,
+        "strict_inputs": true,
+        "portfolio_inversion_policy": "fail",
+        "long_target_weight": 1.0,
+        "risk_max_concentration": 1.0,
+        "risk_max_volatility": 0.5,
+        "risk_max_drawdown": 0.25,
+        "volatility_window": 21,
+        "retry_attempts": 6,
+        "retry_base_delay": 2.0,
+        "thinking_level": "low",
+        "technical_prompt_version": 5,
+        "risk_prompt_version": 2,
+        "technical_response_schema_version": 2
+      },
+      "S1": null,
+      "S2": null,
+      "ranking": null,
+      "tie_at_top": null,
+      "pairing": null,
+      "natural_v5_failure_sessions": {
+        "2024-04-01": {
+          "technical_calls": 0,
+          "invalid_evidence": 0,
+          "linguistic_flags": []
+        },
+        "2024-05-16": {
+          "technical_calls": 0,
+          "invalid_evidence": 0,
+          "linguistic_flags": []
+        },
+        "2024-06-12": {
+          "technical_calls": 0,
+          "invalid_evidence": 0,
+          "linguistic_flags": []
+        },
+        "2024-08-06": {
+          "technical_calls": 0,
+          "invalid_evidence": 0,
+          "linguistic_flags": []
+        }
+      },
+      "operational": {
+        "logical_calls": 360,
+        "logical_calls_by_stage": {
+          "technical_analyst": 300,
+          "risk_manager": 15,
+          "portfolio_manager": 45
+        },
+        "http_attempts": 360,
+        "recovered_retries": 0,
+        "backoff_seconds_scheduled": 0,
+        "retry_after_seconds_requested": 0,
+        "final_error_calls": 0,
+        "attempt_outcomes": {
+          "http_200": 360
+        },
+        "http_status_counts": {},
+        "http_429": 0,
+        "http_503": 0,
+        "transient_error_rate": 0.0,
+        "attempt_latency_ms": {
+          "p50": 3622.1,
+          "p90": 5931.6,
+          "max": 13763.2
+        },
+        "token_usage_totals": {
+          "completion_tokens": 61291,
+          "prompt_tokens": 351269,
+          "thoughts_tokens": 9029,
+          "total_tokens": 421589
+        },
+        "cost": "not computed: no pricing source is recorded in the repository",
+        "wall_clock_seconds": 548.0
+      }
     },
     "b0": {
-      "status": "NOT EXECUTED",
-      "technical_votes": null,
-      "S3_rate": null,
-      "parameters": null
+      "status": "INCOMPLETE",
+      "v6_phase_pass": true,
+      "source": "docs/evidence/h2_v6/b0_low_20261008T020904Z/manifest.json",
+      "technical_votes": 60,
+      "technical_audit": {
+        "technical_votes": 60,
+        "rates": {
+          "V6-S1": 0.0,
+          "V6-S2": 0.0,
+          "V6-S3": 0.0,
+          "V6-E": 0.0
+        },
+        "flagged": [],
+        "V6-S1": 0,
+        "V6-S2": 0,
+        "V6-S3": 0,
+        "V6-E": 0,
+        "invalid_evidence": [],
+        "technical_calls": 60,
+        "evidence_validator_version": 1,
+        "technical_prompt_v5_only": true,
+        "natural_v5_failure_sessions": {
+          "2024-04-01": {
+            "technical_calls": 0,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          },
+          "2024-05-16": {
+            "technical_calls": 0,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          },
+          "2024-06-12": {
+            "technical_calls": 0,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          },
+          "2024-08-06": {
+            "technical_calls": 0,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          }
+        }
+      },
+      "S3_rate": 0.0,
+      "gates": {
+        "G-A": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "G-T": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "G-I": {
+          "value": 0.3333333333333333,
+          "threshold": "< 0.90",
+          "pass": true
+        },
+        "G-F": {
+          "value": null,
+          "threshold": "<= 0.10",
+          "pass": true
+        },
+        "V6-E": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "V6-S1": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "V6-S2": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "V6-S3": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        }
+      },
+      "complete": true,
+      "selected_config_id": null,
+      "selection_basis": null,
+      "parameters": {
+        "provider": "gemini",
+        "model": "gemini-3.8-flash",
+        "temperature": 1.0,
+        "max_output_tokens": 8192,
+        "analyst_count": 5,
+        "consensus_threshold": 0.6,
+        "require_all_votes": true,
+        "decision_frequency": 1,
+        "strict_inputs": true,
+        "portfolio_inversion_policy": "fail",
+        "long_target_weight": 1.0,
+        "risk_max_concentration": 1.0,
+        "risk_max_volatility": 0.5,
+        "risk_max_drawdown": 0.25,
+        "volatility_window": 21,
+        "retry_attempts": 6,
+        "retry_base_delay": 2.0,
+        "thinking_level": "low",
+        "technical_prompt_version": 5,
+        "risk_prompt_version": 2,
+        "technical_response_schema_version": 2
+      },
+      "S1": null,
+      "S2": null,
+      "ranking": null,
+      "tie_at_top": null,
+      "pairing": null,
+      "natural_v5_failure_sessions": {
+        "2024-04-01": {
+          "technical_calls": 0,
+          "invalid_evidence": 0,
+          "linguistic_flags": []
+        },
+        "2024-05-16": {
+          "technical_calls": 0,
+          "invalid_evidence": 0,
+          "linguistic_flags": []
+        },
+        "2024-06-12": {
+          "technical_calls": 0,
+          "invalid_evidence": 0,
+          "linguistic_flags": []
+        },
+        "2024-08-06": {
+          "technical_calls": 0,
+          "invalid_evidence": 0,
+          "linguistic_flags": []
+        }
+      },
+      "operational": {
+        "logical_calls": 70,
+        "logical_calls_by_stage": {
+          "technical_analyst": 60,
+          "risk_manager": 2,
+          "portfolio_manager": 8
+        },
+        "http_attempts": 70,
+        "recovered_retries": 0,
+        "backoff_seconds_scheduled": 0,
+        "retry_after_seconds_requested": 0,
+        "final_error_calls": 0,
+        "attempt_outcomes": {
+          "http_200": 70
+        },
+        "http_status_counts": {},
+        "http_429": 0,
+        "http_503": 0,
+        "transient_error_rate": 0.0,
+        "attempt_latency_ms": {
+          "p50": 3258.8,
+          "p90": 5873.8,
+          "max": 19679.8
+        },
+        "token_usage_totals": {
+          "completion_tokens": 12170,
+          "prompt_tokens": 69639,
+          "total_tokens": 84002,
+          "thoughts_tokens": 2193
+        },
+        "cost": "not computed: no pricing source is recorded in the repository",
+        "wall_clock_seconds": 106.7
+      }
     },
     "cal_a": {
-      "status": "NOT EXECUTED",
-      "technical_votes": null,
-      "S3_rate": null,
-      "parameters": null
+      "status": "COMPLETE",
+      "v6_phase_pass": true,
+      "source": "docs/evidence/cal_a_v6/run_20261008T021136Z/summary.json",
+      "technical_votes": 300,
+      "technical_audit": {
+        "technical_votes": 300,
+        "rates": {
+          "V6-S1": 0.0,
+          "V6-S2": 0.0,
+          "V6-S3": 0.0,
+          "V6-E": 0.0
+        },
+        "flagged": [],
+        "V6-S1": 0,
+        "V6-S2": 0,
+        "V6-S3": 0,
+        "V6-E": 0,
+        "invalid_evidence": [],
+        "technical_calls": 300,
+        "evidence_validator_version": 1,
+        "technical_prompt_v5_only": true,
+        "natural_v5_failure_sessions": {
+          "2024-04-01": {
+            "technical_calls": 0,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          },
+          "2024-05-16": {
+            "technical_calls": 0,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          },
+          "2024-06-12": {
+            "technical_calls": 0,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          },
+          "2024-08-06": {
+            "technical_calls": 0,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          }
+        }
+      },
+      "S3_rate": 0.0,
+      "gates": {
+        "V6-E": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "V6-S1": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "V6-S2": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "V6-S3": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        }
+      },
+      "complete": true,
+      "selected_config_id": 2,
+      "selection_basis": "EMPIRICAL_S1",
+      "parameters": null,
+      "S1": {
+        "1": -0.0010780073423780289,
+        "2": 0.0009706429872947897,
+        "3": 0.0009706429872947897,
+        "4": 3.6042588461948635e-05,
+        "5": -0.0006470305204288818,
+        "6": 0.0009706429872947897
+      },
+      "S2": null,
+      "ranking": [
+        2,
+        3,
+        6,
+        4,
+        5,
+        1
+      ],
+      "tie_at_top": true,
+      "pairing": {
+        "anchor_replicates": 60,
+        "same_five_technical_responses_in_all_configs": true
+      },
+      "natural_v5_failure_sessions": {
+        "2024-04-01": {
+          "technical_calls": 0,
+          "invalid_evidence": 0,
+          "linguistic_flags": []
+        },
+        "2024-05-16": {
+          "technical_calls": 0,
+          "invalid_evidence": 0,
+          "linguistic_flags": []
+        },
+        "2024-06-12": {
+          "technical_calls": 0,
+          "invalid_evidence": 0,
+          "linguistic_flags": []
+        },
+        "2024-08-06": {
+          "technical_calls": 0,
+          "invalid_evidence": 0,
+          "linguistic_flags": []
+        }
+      },
+      "operational": {
+        "logical_calls_in_traces": 2196,
+        "logical_calls_by_config_and_stage": {
+          "1": {
+            "technical_analyst": 300,
+            "risk_manager": 18,
+            "portfolio_manager": 36
+          },
+          "2": {
+            "technical_analyst": 300,
+            "risk_manager": 27,
+            "portfolio_manager": 45
+          },
+          "3": {
+            "technical_analyst": 300,
+            "risk_manager": 27,
+            "portfolio_manager": 45
+          },
+          "4": {
+            "technical_analyst": 300,
+            "risk_manager": 21,
+            "portfolio_manager": 39
+          },
+          "5": {
+            "technical_analyst": 300,
+            "risk_manager": 24,
+            "portfolio_manager": 42
+          },
+          "6": {
+            "technical_analyst": 300,
+            "risk_manager": 27,
+            "portfolio_manager": 45
+          }
+        },
+        "live_calls": 444,
+        "live_calls_by_stage": {
+          "technical_analyst": 300,
+          "risk_manager": 54,
+          "portfolio_manager": 90
+        },
+        "bank_hits": 1752,
+        "frozen_v2_hits_by_stage": {},
+        "http_attempts": 444,
+        "http_attempts_in_aborted_run": 0,
+        "attempt_outcomes": {
+          "http_200": 444
+        },
+        "http_status_counts": {},
+        "attempt_latency_ms": {
+          "p50": 2787.4,
+          "p90": 3679.3
+        },
+        "live_token_usage": {
+          "prompt_tokens": 378463,
+          "completion_tokens": 62047,
+          "total_tokens": 445473,
+          "thoughts_tokens": 4963
+        },
+        "cost": "not computed: no versioned API pricing source in the repository",
+        "wall_clock_seconds": 661.5
+      }
     },
     "sequential": {
-      "status": "NOT EXECUTED",
-      "technical_votes": null,
-      "S3_rate": null,
-      "parameters": null
+      "status": "COMPLETE",
+      "v6_phase_pass": true,
+      "source": "docs/evidence/sequential_dev_v6/run_20261008T022337Z/summary.json",
+      "technical_votes": 1905,
+      "technical_audit": {
+        "technical_votes": 1905,
+        "rates": {
+          "V6-S1": 0.0,
+          "V6-S2": 0.0,
+          "V6-S3": 0.0,
+          "V6-E": 0.0
+        },
+        "flagged": [],
+        "V6-S1": 0,
+        "V6-S2": 0,
+        "V6-S3": 0,
+        "V6-E": 0,
+        "invalid_evidence": [],
+        "technical_calls": 1905,
+        "evidence_validator_version": 1,
+        "technical_prompt_v5_only": true,
+        "natural_v5_failure_sessions": {
+          "2024-04-01": {
+            "technical_calls": 15,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          },
+          "2024-05-16": {
+            "technical_calls": 15,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          },
+          "2024-06-12": {
+            "technical_calls": 15,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          },
+          "2024-08-06": {
+            "technical_calls": 15,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          }
+        }
+      },
+      "S3_rate": 0.0,
+      "gates": {
+        "V6-E": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "V6-S1": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "V6-S2": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "V6-S3": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        }
+      },
+      "complete": true,
+      "selected_config_id": 1,
+      "selection_basis": "EMPIRICAL_S2",
+      "parameters": null,
+      "S1": null,
+      "S2": {
+        "1": 0.0976751454873825,
+        "2": -0.5457944350957457,
+        "3": 0.0976751454873825
+      },
+      "ranking": [
+        1,
+        3,
+        2
+      ],
+      "tie_at_top": true,
+      "pairing": {
+        "session_replicates": 381,
+        "decision_sessions": 127,
+        "same_five_technical_responses_in_all_configs": true,
+        "mismatched": []
+      },
+      "natural_v5_failure_sessions": {
+        "2024-04-01": {
+          "votes": 15,
+          "signals": {
+            "MANTER": 15
+          },
+          "E": 0,
+          "S1": 0,
+          "S2": 0,
+          "S3": 0
+        },
+        "2024-05-16": {
+          "votes": 15,
+          "signals": {
+            "MANTER": 15
+          },
+          "E": 0,
+          "S1": 0,
+          "S2": 0,
+          "S3": 0
+        },
+        "2024-06-12": {
+          "votes": 15,
+          "signals": {
+            "MANTER": 2,
+            "VENDA": 13
+          },
+          "E": 0,
+          "S1": 0,
+          "S2": 0,
+          "S3": 0
+        },
+        "2024-08-06": {
+          "votes": 15,
+          "signals": {
+            "VENDA": 15
+          },
+          "E": 0,
+          "S1": 0,
+          "S2": 0,
+          "S3": 0
+        }
+      },
+      "operational": {
+        "logical_calls": 5927,
+        "live_calls": 1989,
+        "bank_hits": 3938,
+        "frozen_v2_hits_by_stage": {},
+        "calls_by_config_stage_source": {
+          "1/portfolio_manager/live": 62,
+          "1/risk_manager/live": 12,
+          "1/technical_analyst/live": 1905,
+          "2/portfolio_manager/bank": 47,
+          "2/portfolio_manager/live": 10,
+          "2/risk_manager/bank": 7,
+          "2/technical_analyst/bank": 1905,
+          "3/portfolio_manager/bank": 62,
+          "3/risk_manager/bank": 12,
+          "3/technical_analyst/bank": 1905
+        },
+        "http_attempts": 1990,
+        "attempt_outcomes": {
+          "http_200": 1989,
+          "ProviderTransportError": 1
+        },
+        "http_status_counts": {
+          "503": 1
+        },
+        "attempt_latency_ms": {
+          "p50": 2774.7,
+          "p90": 3722.9
+        },
+        "live_token_usage": {
+          "prompt_tokens": 2150823,
+          "completion_tokens": 344981,
+          "total_tokens": 2524546,
+          "thoughts_tokens": 28742
+        },
+        "cost": "not computed: no versioned API pricing source in the repository"
+      }
     },
     "stress": {
-      "status": "NOT EXECUTED",
-      "technical_votes": null,
-      "S3_rate": null,
-      "parameters": null
+      "status": "STRESS PROBING COMPLETE — READY FOR CAL-B PROTOCOL",
+      "v6_phase_pass": true,
+      "source": "docs/evidence/stress_v6/run_20261008T025207Z/summary.json",
+      "technical_votes": 2985,
+      "technical_audit": {
+        "technical_votes": 2985,
+        "rates": {
+          "V6-S1": 0.0,
+          "V6-S2": 0.0,
+          "V6-S3": 0.0,
+          "V6-E": 0.0
+        },
+        "flagged": [],
+        "V6-S1": 0,
+        "V6-S2": 0,
+        "V6-S3": 0,
+        "V6-E": 0,
+        "invalid_evidence": [],
+        "technical_calls": 2985,
+        "evidence_validator_version": 1,
+        "technical_prompt_v5_only": true,
+        "natural_v5_failure_sessions": {
+          "2024-04-01": {
+            "technical_calls": 0,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          },
+          "2024-05-16": {
+            "technical_calls": 0,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          },
+          "2024-06-12": {
+            "technical_calls": 0,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          },
+          "2024-08-06": {
+            "technical_calls": 0,
+            "invalid_evidence": 0,
+            "linguistic_flags": []
+          }
+        }
+      },
+      "S3_rate": 0.0,
+      "gates": {
+        "S-A": {
+          "result": "0 final failures; 0 trajectories missing",
+          "pass": true
+        },
+        "S-T": {
+          "result": "0 truncations",
+          "pass": true
+        },
+        "S-C": {
+          "result": "0 boundary/causal violations",
+          "pass": true
+        },
+        "S-R": {
+          "result": "0 hard-risk contract violations",
+          "pass": true
+        },
+        "V6-E": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "V6-S1": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "V6-S2": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        },
+        "V6-S3": {
+          "value": 0,
+          "threshold": "== 0",
+          "pass": true
+        }
+      },
+      "complete": true,
+      "selected_config_id": null,
+      "selection_basis": null,
+      "parameters": {
+        "ticker": "PETR4.SA",
+        "provider": "gemini",
+        "model": "gemini-3.8-flash",
+        "temperature": 1.0,
+        "max_output_tokens": 8192,
+        "analyst_count": 5,
+        "consensus_threshold": 0.6,
+        "require_all_votes": true,
+        "decision_frequency": 1,
+        "strict_inputs": true,
+        "portfolio_inversion_policy": "fail",
+        "long_target_weight": 1.0,
+        "risk_max_concentration": 1.0,
+        "risk_max_volatility": 0.5,
+        "risk_max_drawdown": 0.25,
+        "volatility_window": 21,
+        "retry_attempts": 6,
+        "retry_base_delay": 2.0,
+        "thinking_level": "low",
+        "technical_prompt_version": 5,
+        "risk_prompt_version": 2,
+        "technical_response_schema_version": 2
+      },
+      "S1": null,
+      "S2": null,
+      "ranking": null,
+      "tie_at_top": null,
+      "pairing": null,
+      "natural_v5_failure_sessions": {
+        "2024-04-01": {
+          "technical_calls": 0,
+          "invalid_evidence": 0,
+          "linguistic_flags": []
+        },
+        "2024-05-16": {
+          "technical_calls": 0,
+          "invalid_evidence": 0,
+          "linguistic_flags": []
+        },
+        "2024-06-12": {
+          "technical_calls": 0,
+          "invalid_evidence": 0,
+          "linguistic_flags": []
+        },
+        "2024-08-06": {
+          "technical_calls": 0,
+          "invalid_evidence": 0,
+          "linguistic_flags": []
+        }
+      },
+      "operational": {
+        "live_calls": 3157,
+        "bank_hits": 0,
+        "every_call_live_and_independent": true,
+        "frozen_v2_hits_by_stage": {},
+        "http_attempts": 3172,
+        "attempt_outcomes": {
+          "http_200": 3157,
+          "ConnectionResetError": 1,
+          "ProviderTransportError": 14
+        },
+        "http_status_counts": {
+          "503": 14
+        },
+        "cost": "not computed: no versioned API pricing source in the repository"
+      },
+      "coverage": {
+        "drawdown_rule": "NOT_EXERCISED",
+        "volatility_rule": "EXERCISED",
+        "flags": [
+          "HISTORICAL_STRESS_DRAWDOWN_RULE_NOT_EXERCISED"
+        ]
+      }
     }
   },
   "entry_baseline_label": "V6_ENTRY_BASELINE_ONLY — NOT FINAL SELECTION",
@@ -77,7 +1053,30 @@
     "risk_prompt_version": 2,
     "technical_response_schema_version": 2
   },
-  "final_v6_params": null,
+  "final_v6_params": {
+    "ticker": "PETR4.SA",
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "temperature": 1.0,
+    "max_output_tokens": 8192,
+    "analyst_count": 5,
+    "consensus_threshold": 0.6,
+    "require_all_votes": true,
+    "decision_frequency": 1,
+    "strict_inputs": true,
+    "portfolio_inversion_policy": "fail",
+    "long_target_weight": 1.0,
+    "risk_max_concentration": 1.0,
+    "risk_max_volatility": 0.5,
+    "risk_max_drawdown": 0.25,
+    "volatility_window": 21,
+    "retry_attempts": 6,
+    "retry_base_delay": 2.0,
+    "thinking_level": "low",
+    "technical_prompt_version": 5,
+    "risk_prompt_version": 2,
+    "technical_response_schema_version": 2
+  },
   "cal_b4": {
     "status": "SEALED / NOT EXECUTED",
     "commitment": "35d3d468a3253538392314c158c8605867c283c864fbd99c9499c8fd276f6ae7",
@@ -139,12 +1138,12 @@
       "rate": 0.002099737532808399
     },
     "v6": {
-      "defect": null,
-      "hardening": null,
-      "b0": null,
-      "cal_a": null,
-      "sequential": null,
-      "stress": null
+      "defect": 0.0,
+      "hardening": 0.0,
+      "b0": 0.0,
+      "cal_a": 0.0,
+      "sequential": 0.0,
+      "stress": 0.0
     }
   },
   "commits_at_report_generation": [
@@ -156,7 +1155,28 @@
     "2977fc2 Render factual evidence and analyst roles for audit and UI",
     "a71b5d7 Audit CAL-B4 carry-forward to H2 v6 without inference",
     "9c3a462 Integrate v6 evidence validation, provenance and guarded phase runners",
-    "18a0aa1 Freeze offline v6 checks, schema, prompt and provenance hashes"
+    "18a0aa1 Freeze offline v6 checks, schema, prompt and provenance hashes",
+    "6740e37 Deliver offline H2 v6 packet awaiting specific authorization",
+    "4189761 Authorize native Gemini live H2 v6 within frozen conditional protocol",
+    "083f546 H2 v6 directed hardening PASS: structured and temporal gates zero in 150 live votes",
+    "3bbd423 H2 v6 Diagnostic Hardening PASS: 300 live votes with zero structured and temporal flags",
+    "bb2febe H2 v6 B0 PASS: 60 live votes and zero structured or temporal flags",
+    "0f757eb H2 v6 CAL-A PASS: select C2 21/0.50 by frozen S1 and tie-break",
+    "8838e47 H2 v6 Sequential PASS: S3 0/1905 and empirical D01 drawdown 0.25",
+    "fa96487 H2 v6 Stress PASS: 12 trajectories, S3 0/2985 and all integrity gates passed"
   ],
-  "provider_calls_from_this_report": 0
+  "provider_calls_from_this_report": 0,
+  "live_authorization": {
+    "source": "docs/evidence/h2_v6/execution_authorization.json",
+    "authorized": true,
+    "host": "generativelanguage.googleapis.com",
+    "completed_authorized_scope": true
+  },
+  "post_live_verification": "docs/evidence/h2_v6/post_live_verification.json",
+  "human_readable_vote_artifact": "docs/evidence/h2_v6/technical_vote_audit.jsonl",
+  "total_unique_live_technical_votes": 5700,
+  "total_live_provider_calls": 6208,
+  "total_http_attempts": 6224,
+  "system_freeze": "NOT AUTHORIZED — CAL-B4 PROTOCOL STILL PENDING",
+  "next_step": "Stop. CAL-B4 protocol requires separate authorization; CAL-B4 remains SEALED — NOT EXECUTED."
 }
