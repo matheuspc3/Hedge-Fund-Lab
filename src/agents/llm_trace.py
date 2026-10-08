@@ -281,7 +281,7 @@ class LLMCallRecord:
         ``LLMCallRequest`` não tem campo para eles.
         """
         request = self.request
-        return {
+        payload = {
             "schema_version": LLM_TRACE_SCHEMA_VERSION,
             "call_id": self.call_id,
             "sequence": self.sequence,
@@ -316,6 +316,29 @@ class LLMCallRecord:
             "resolved_model": self.resolved_model,
             "finish_reason": self.finish_reason,
         }
+        if request.response_schema == "TechnicalEvidenceResponse":
+            from src.agents.technical_evidence import technical_evidence_ui
+            prompt = json.loads(request.user_prompt)
+            allowed = prompt["allowed_evidence_codes"]
+            ui = (technical_evidence_ui(self.validated_response, prompt["features"], allowed)
+                  if self.status == STATUS_OK else None)
+            display = ui["display_explanation"] if ui else None
+            payload["technical_evidence"] = {
+                "treatment_version": 6, "technical_prompt_version": 5,
+                "response_schema_version": 2, "evidence_vocabulary_version": 1,
+                "evidence_validator_version": 1,
+                "prompt_sha256": request.combined_prompt_sha256,
+                "schema_sha256": request.response_schema_sha256,
+                "allowed_evidence_codes": allowed,
+                "allowed_evidence_sha256": sha256_text(canonical_json(allowed)),
+                "raw_response_sha256": sha256_text(self.raw_response) if self.raw_response is not None else None,
+                "validated_response_sha256": sha256_text(canonical_json(self.validated_response))
+                    if self.validated_response is not None else None,
+                "rendered_explanation": display,
+                "rendered_explanation_sha256": sha256_text(display) if display is not None else None,
+                "ui": ui,
+            }
+        return payload
 
     @classmethod
     def from_json_dict(cls, payload: Mapping[str, Any]) -> "LLMCallRecord":
@@ -664,6 +687,9 @@ class ReplayLLMClient(LLMClient):
             slot.provider_response_id = expected.provider_response_id
             slot.resolved_model = expected.resolved_model
             slot.finish_reason = expected.finish_reason
+            if expected.request.response_schema == "TechnicalEvidenceResponse":
+                slot.raw_response = expected.raw_response
+                slot.usage = dict(expected.token_usage) if expected.token_usage else None
 
         if expected.status == STATUS_ERROR:
             raise _rebuild_error(expected)

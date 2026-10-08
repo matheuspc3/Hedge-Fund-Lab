@@ -274,8 +274,10 @@ def summarize(out: Path, evaluations: list[dict], uses: list[dict], attempts: li
         "cost": "not computed: no versioned API pricing source in the repository",
     }
     sessions = {u["decision_session"] for u in uses}
-    if summary["treatment_version"] in (4, 5):
-        if summary["treatment_version"] == 5:
+    if summary["treatment_version"] in (4, 5, 6):
+        if summary["treatment_version"] == 6:
+            from h2_v6 import require_pre_live_freeze, technical_audit
+        elif summary["treatment_version"] == 5:
             from h2_v5 import require_pre_live_freeze, technical_audit
         else:
             from h2_v4 import require_pre_live_freeze, technical_audit
@@ -283,6 +285,9 @@ def summarize(out: Path, evaluations: list[dict], uses: list[dict], attempts: li
         summary["checker_freeze"] = require_pre_live_freeze(full_development=True)
         summary["technical_audit"] = technical_audit(
             r for e in evaluations for r in load_trace((run_dir(e) / "llm_calls.jsonl").read_bytes()))
+    if summary["treatment_version"] == 6:
+        from h2_v6 import apply_structural_gates
+        apply_structural_gates(summary)
     summary["cal_b_audit"] = {
         "cal_b_authorized": anchors.CAL_B_AUTHORIZED,
         "decision_sessions_reaching_provider_or_bank": len(sessions),
@@ -305,7 +310,7 @@ def main() -> None:
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--resume", type=Path, default=None)
-    parser.add_argument("--treatment", type=int, choices=(1, 2, 3, 4, 5), default=1)
+    parser.add_argument("--treatment", type=int, choices=(1, 2, 3, 4, 5, 6), default=1)
     args = parser.parse_args()
     out_root = OUT_ROOT
     if args.treatment == 3:  # Amendment 10: base = CAL-A v3, Risk prompt v2, Technical v2 por replay
@@ -329,8 +334,10 @@ def main() -> None:
         BASE_VOL.update({k: treatment.CAL_A_V2_SELECTED_CONFIG[k] for k in BASE_VOL})
         TREATMENT_EXTRA["technical_prompt_version"] = 2
         out_root = ROOT / "docs" / "evidence" / "sequential_dev_v2"
-    if args.treatment in (4, 5):
-        if args.treatment == 5:
+    if args.treatment in (4, 5, 6):
+        if args.treatment == 6:
+            from h2_v6 import require_pre_live_freeze, require_sessions, technical_audit
+        elif args.treatment == 5:
             from h2_v5 import require_pre_live_freeze, require_sessions
             require_sessions((SEQUENTIAL_DEVELOPMENT_START, SEQUENTIAL_DEVELOPMENT_LAST_DECISION))
             anchors.require_cal_b_locked(SEQUENTIAL_DEVELOPMENT_START, SEQUENTIAL_DEVELOPMENT_LAST_DECISION)
@@ -339,12 +346,21 @@ def main() -> None:
 
         from src.experiments import treatment
 
-        require_pre_live_freeze(full_development=True)
-        selected = treatment.CAL_A_V5_SELECTED_CONFIG if args.treatment == 5 else treatment.CAL_A_V4_SELECTED_CONFIG
+        if args.treatment == 6:
+            require_sessions((SEQUENTIAL_DEVELOPMENT_START, SEQUENTIAL_DEVELOPMENT_LAST_DECISION))
+            require_pre_live_freeze(full_development=True, phase="sequential")
+        else:
+            require_pre_live_freeze(full_development=True)
+        if args.treatment == 6:
+            from h2_v6 import load_v6_selections
+            load_v6_selections()
+        selected = getattr(treatment, f"CAL_A_V{args.treatment}_SELECTED_CONFIG")
         if selected is None:
             sys.exit(f"Sequential Development v{args.treatment} needs its committed CAL-A selection")
         BASE_VOL.update({k: selected[k] for k in BASE_VOL})
         TREATMENT_EXTRA.update(technical_prompt_version=args.treatment - 1, risk_prompt_version=2)
+        if args.treatment == 6:
+            TREATMENT_EXTRA["technical_response_schema_version"] = 2
         out_root = ROOT / f"docs/evidence/sequential_dev_v{args.treatment}"
     previous = None if args.resume is None else (ROOT / args.resume).resolve()
     if git("status", "--porcelain"):
@@ -399,7 +415,7 @@ def main() -> None:
     if runs_dir.exists():
         shutil.copytree(runs_dir, out / "runs")
     base = {
-        "kind": {1: "SEQUENTIAL_DEVELOPMENT", 2: "SEQUENTIAL_DEVELOPMENT_V2", 3: "SEQUENTIAL_DEVELOPMENT_V3", 4: "SEQUENTIAL_DEVELOPMENT_V4", 5: "SEQUENTIAL_DEVELOPMENT_V5"}[
+        "kind": {1: "SEQUENTIAL_DEVELOPMENT", 2: "SEQUENTIAL_DEVELOPMENT_V2", 3: "SEQUENTIAL_DEVELOPMENT_V3", 4: "SEQUENTIAL_DEVELOPMENT_V4", 5: "SEQUENTIAL_DEVELOPMENT_V5", 6: "SEQUENTIAL_DEVELOPMENT_V6"}[
             args.treatment],
         "treatment_version": args.treatment,
         "base_volatility_config": dict(BASE_VOL),

@@ -45,12 +45,13 @@ substituir a origem dos pesos.
 
 import asyncio
 import math
+import json
 from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Any, Iterable, Mapping, Sequence, cast
 
 import pandas as pd
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from src.agents.features import FEATURE_KEYS, canonical_number, dimensionless_features
 from src.agents.graph import build_graph
@@ -675,11 +676,21 @@ class FailureRecordingClient(LLMClient):
         *,
         metadata: LLMCallMetadata | None = None,
     ) -> BaseModel | str:
+        from src.agents.technical_evidence import TechnicalEvidenceResponse, validate_technical_evidence
         try:
-            return await self.client.generate(
+            response = await self.client.generate(
                 system_prompt, user_prompt, response_schema, options, metadata=metadata
             )
+            if response_schema is TechnicalEvidenceResponse:
+                payload = json.loads(user_prompt)
+                response = validate_technical_evidence(response, payload["features"], payload["allowed_evidence_codes"])
+            return response
         except BaseException as exc:  # registrado e repropagado, nunca absorvido
+            if response_schema is TechnicalEvidenceResponse and isinstance(exc, ValidationError):
+                # The existing trace can reconstruct ValueError exactly, not Pydantic internals.
+                failure = ValueError(str(exc))
+                self.failures.append(failure)
+                raise failure from exc
             self.failures.append(exc)
             raise
 
@@ -865,6 +876,7 @@ class LLMParticipant:
         portfolio_inversion_policy: str = "flag",
         technical_prompt_version: int = 1,
         risk_prompt_version: int = 1,
+        technical_response_schema_version: int = 1,
         llm_client: LLMClient | None = None,
     ) -> None:
         if not ticker.strip():
@@ -882,6 +894,9 @@ class LLMParticipant:
             "technical_prompt_version", technical_prompt_version, minimum=1
         )
         risk_prompt_version = _require_int("risk_prompt_version", risk_prompt_version, minimum=1)
+        if (technical_prompt_version == 5 and technical_response_schema_version != 2
+                or technical_prompt_version != 5 and technical_response_schema_version != 1):
+            raise ValueError("Technical prompt and response schema versions are incompatible")
         if retry_base_delay < 0 or not math.isfinite(retry_base_delay):
             raise ValueError("retry_base_delay must be finite and >= 0")
         long_target_weight = _validate_long_target_weight(

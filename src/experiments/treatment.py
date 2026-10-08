@@ -28,8 +28,8 @@ from src.experiments.anchors import CAL_B_COMMITMENT_SHA256, CAL_B_STRATA, STRAT
 from src.experiments.hardening import H2_FROZEN_THINKING_LEVEL, h2_freeze_v1_params
 from src.experiments.stress import STRESS_FROZEN_PARAMS
 
-H2_TREATMENT_VERSION = 5
-SCIENTIFIC_TECHNICAL_PROMPT_VERSION = 4
+H2_TREATMENT_VERSION = 6
+SCIENTIFIC_TECHNICAL_PROMPT_VERSION = 5
 SCIENTIFIC_RISK_PROMPT_VERSION = 2
 H2_V1_STATUS = "H2 V1 FAILED CAL-B1 — CONSUMED"
 CAL_B1_STATUS = "CONSUMED — DEVELOPMENT EVIDENCE"
@@ -405,3 +405,39 @@ H2_V5_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE = True
 H2_V5_SYSTEM_FREEZE_INELIGIBILITY_REASON = "DEVELOPMENT S3 FAILURE — SEQUENTIAL DEVELOPMENT (4/1905)"
 H2_V5_DEVELOPMENT_SUMMARY = "docs/evidence/h2_v5/development_summary.json"
 H2_V5_DEVELOPMENT_STATUS = H2_V5_TEMPORAL_FIX_FAILED
+
+# H2 v6: schema 2 is material to the spec; historical helpers remain unchanged.
+CAL_B4_CARRIED_FORWARD_TO_H2_V6 = True
+H2_V6_ENTRY_BASELINE_LABEL = "V6_ENTRY_BASELINE_ONLY — NOT FINAL SELECTION"
+H2_V6_DEFECT_FIX_FAILED = "H2_V6 STRUCTURED TECHNICAL FIX FAILED"
+H2_V6_DEFECT_FIX_PASSED = "H2_V6 STRUCTURED TECHNICAL FIX PASSED"
+H2_V6_DEFECT_REPETITIONS = 3
+
+
+def v6_params(base: Mapping[str, Any]) -> dict[str, Any]:
+    if (base.get("technical_prompt_version"), base.get("risk_prompt_version")) != (4, 2):
+        raise ValueError("v6 starts from Technical v4 / Risk v2")
+    return {**base, "technical_prompt_version": 5, "technical_response_schema_version": 2}
+
+
+H2_V6_DEFECT_PARAMS = MappingProxyType(v6_params(stress_v5_params()))
+H2_V6_HARDENING_PARAMS = MappingProxyType(v6_params(H2_V5_HARDENING_PARAMS))
+CAL_A_V6_SELECTED_CONFIG = None
+SEQUENTIAL_DEV_V6_SELECTED_CONFIG = None
+
+
+def stress_v6_params() -> dict[str, Any]:
+    if CAL_A_V6_SELECTED_CONFIG is None or SEQUENTIAL_DEV_V6_SELECTED_CONFIG is None:
+        raise ValueError("Stress v6 needs committed v6 CAL-A and Sequential selections")
+    return {**H2_V6_DEFECT_PARAMS,
+            "volatility_window": CAL_A_V6_SELECTED_CONFIG["volatility_window"],
+            "risk_max_volatility": CAL_A_V6_SELECTED_CONFIG["risk_max_volatility"],
+            "risk_max_drawdown": SEQUENTIAL_DEV_V6_SELECTED_CONFIG["risk_max_drawdown"]}
+
+
+def v6_calibration_provenance() -> dict[str, str]:
+    stress_v6_params()
+    return {"CAL_A_V6_DISCRIMINATION": CAL_A_V6_SELECTED_CONFIG["discrimination"],
+            "CAL_A_V6_SELECTION_BASIS": CAL_A_V6_SELECTED_CONFIG["selection_basis"],
+            "SEQUENTIAL_DEV_V6_DISCRIMINATION": SEQUENTIAL_DEV_V6_SELECTED_CONFIG["discrimination"],
+            "SEQUENTIAL_DEV_V6_SELECTION_BASIS": SEQUENTIAL_DEV_V6_SELECTED_CONFIG["selection_basis"]}

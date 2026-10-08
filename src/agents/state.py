@@ -4,6 +4,7 @@ import operator
 from typing import Annotated, Literal, TypedDict
 
 from pydantic import BaseModel, ConfigDict, Field
+from src.agents.technical_evidence import TechnicalEvidenceResponse
 
 
 class StrictModel(BaseModel):
@@ -66,7 +67,7 @@ class TechnicalVote(StrictModel):
     analyst_id: int = Field(ge=1)
     temperature: float = Field(ge=0.0, le=2.0)
     seed: int
-    signal: TechnicalSignal
+    signal: TechnicalSignal | TechnicalEvidenceResponse
 
 
 class AgentState(TypedDict, total=False):

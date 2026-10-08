@@ -3,9 +3,8 @@
 from typing import Literal, get_args
 from collections.abc import Mapping
 
-from pydantic import ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field
 
-from src.agents.state import StrictModel
 from src.agents.features import FEATURE_KEYS, canonical_number, canonical_prompt_json
 
 TECHNICAL_RESPONSE_SCHEMA_VERSION = 2
@@ -25,13 +24,13 @@ EvidenceRole = Literal["SUPPORTS_COMPRA", "SUPPORTS_VENDA", "CAUTION", "NEUTRAL"
 EVIDENCE_CODES = get_args(EvidenceCode)
 
 
-class TechnicalEvidence(StrictModel):
+class TechnicalEvidence(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
     code: EvidenceCode
     role: EvidenceRole
 
 
-class TechnicalEvidenceResponse(StrictModel):
+class TechnicalEvidenceResponse(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
     signal: Literal["COMPRA", "VENDA", "MANTER"]
     confidence: float = Field(ge=0.0, le=1.0, allow_inf_nan=False)
@@ -52,6 +51,7 @@ def canonical_features(features: Mapping[str, float]) -> dict[str, float]:
     if values["bb_upper_gap"] > values["bb_lower_gap"]:
         raise ValueError("inconsistent Bollinger band order")
     if values["bb_upper_gap"] == values["bb_lower_gap"] == 0:
+        # ponytail: the closed vocabulary has no coincident-boundary code; adding one needs a new vocabulary version.
         raise ValueError("coincident band boundaries have no unique vocabulary code")
     return values
 

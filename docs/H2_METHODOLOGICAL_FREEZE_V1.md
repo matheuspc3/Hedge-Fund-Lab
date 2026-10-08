@@ -2541,3 +2541,8 @@ Protocol frozen before live: [H2 v5 amendment](H2_V5_AMENDMENT_13.md).
 V4 failed V4-S3 and is ineligible for System Freeze. V5 changes only the
 Technical snapshot/temporal language, keeps checker v3 byte-identical and
 carries forward the existing sealed CAL-B4 commitment. No CAL-B5.
+# Current Technical amendment
+
+[Amendment 14 — H2 v6 structured Technical](H2_V6_AMENDMENT_14.md) freezes
+the new Technical response schema and its conditional development protocol.
+V5 remains failed; v6 live requires its own explicit external authorization.

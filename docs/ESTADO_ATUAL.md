@@ -1,5 +1,18 @@
 # Estado atual do Hedge-Fund-Lab
 
+## H2 v6 — preparação offline
+
+Technical estruturado implementado: treatment 6, prompt 5, response schema 2,
+validator/vocabulário 1. Status live: **NOT EXECUTED — aguardando autorização
+externa específica H2 v6** (item 40 do pedido). A autorização v5 não cobre v6.
+Os resultados e artifacts v5 abaixo são históricos e permanecem preservados.
+
+CAL-B4: **SEALED / NOT EXECUTED**, mesmo commitment; Validation/Final intocados.
+Baseline v6 21/.40/.15/1.0: **V6_ENTRY_BASELINE_ONLY — NOT FINAL SELECTION**.
+Nenhum parâmetro final v6 selecionado. Relatório: [H2 v6 delivery](evidence/h2_v6/DELIVERY.md).
+
+
+
 **Atualização H2 v5 — 07/10/2026 (Amendment 13).** V4 formalmente inelegível
 para System Freeze: `DEFECT-DIRECTED HARDENING FAILED V4-S3`; evidências
 preservadas. V5 altera exclusivamente o contrato snapshot/temporal do Technical

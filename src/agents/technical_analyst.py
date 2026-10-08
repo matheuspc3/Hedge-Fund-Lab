@@ -10,6 +10,9 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from src.agents.feature_semantics import TECHNICAL_SYSTEM_PROMPT_V2, TECHNICAL_SYSTEM_PROMPT_V3
 from src.agents.technical_prompt_v4 import TECHNICAL_SYSTEM_PROMPT_V4
+from src.agents.technical_prompt_v5 import TECHNICAL_SYSTEM_PROMPT_V5
+from src.agents.technical_evidence import (TechnicalEvidenceResponse, evidence_user_prompt,
+                                          validate_technical_evidence, allowed_evidence_codes)
 from src.agents.features import FEATURE_KEYS, canonical_prompt_json
 from src.agents.llm_client import LLMCallMetadata, LLMClient
 from src.agents.llm_trace import STAGE_TECHNICAL_ANALYST
@@ -58,7 +61,7 @@ class AnalystEnsembleConfig(BaseModel):
     seed_base: int = 10_000
     #: Versão do system prompt técnico científico (Amendment 8): 1 = v1 sem
     #: glossário; 2 = glossário semântico das features + estado-não-transição.
-    prompt_version: int = Field(default=1, ge=1, le=4)
+    prompt_version: int = Field(default=1, ge=1, le=5)
 
     @model_validator(mode="after")
     def validate_temperature_range(self):
@@ -103,7 +106,8 @@ def system_prompt_for(state: AgentState, prompt_version: int = 1) -> str:
     if not parse_features_from_state(state):
         return SYSTEM_PROMPT
     return {1: CAUSAL_SYSTEM_PROMPT, 2: TECHNICAL_SYSTEM_PROMPT_V2,
-            3: TECHNICAL_SYSTEM_PROMPT_V3, 4: TECHNICAL_SYSTEM_PROMPT_V4}[prompt_version]
+            3: TECHNICAL_SYSTEM_PROMPT_V3, 4: TECHNICAL_SYSTEM_PROMPT_V4,
+            5: TECHNICAL_SYSTEM_PROMPT_V5}[prompt_version]
 
 
 def build_prompt(state: AgentState) -> str:
@@ -226,10 +230,14 @@ def create_technical_analyst_ensemble_node(
             / denominator
         )
         seed = config.seed_base + analyst_number
+        structured = config.prompt_version == 5
+        features = parse_features_from_state(state)
+        prompt = (evidence_user_prompt(features) if structured
+                  else ensemble_user_prompt(state, analyst_number, config.analyst_count))
         response = await llm.generate(
             system_prompt_for(state, config.prompt_version),
-            ensemble_user_prompt(state, analyst_number, config.analyst_count),
-            TechnicalSignal,
+            prompt,
+            TechnicalEvidenceResponse if structured else TechnicalSignal,
             {
                 **generation,
                 "temperature": temperature,
@@ -242,7 +250,9 @@ def create_technical_analyst_ensemble_node(
                 stage=STAGE_TECHNICAL_ANALYST, analyst_id=analyst_number
             ),
         )
-        if not isinstance(response, TechnicalSignal):
+        if structured:
+            response = validate_technical_evidence(response, features, allowed_evidence_codes(features))
+        elif not isinstance(response, TechnicalSignal):
             raise TypeError("resposta não segue TechnicalSignal")
         return TechnicalVote(
             analyst_id=analyst_number,

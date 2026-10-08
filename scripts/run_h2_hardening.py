@@ -145,7 +145,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", choices=sorted(REPETITIONS), required=True)
     parser.add_argument("--thinking-level", required=True)
-    parser.add_argument("--treatment", type=int, choices=(1, 2, 3, 4, 5), default=1)
+    parser.add_argument("--treatment", type=int, choices=(1, 2, 3, 4, 5, 6), default=1)
     args = parser.parse_args()
 
     if git("status", "--porcelain", "--untracked-files=no"):
@@ -175,8 +175,10 @@ def main() -> None:
         params = dict(treatment.H2_V3_HARDENING_PARAMS)
         evidence_root = ROOT / "docs" / "evidence" / "h2_v3"
         frozen = by_state(treatment.FROZEN_V2_EVIDENCE[args.mode])
-    if args.treatment in (4, 5):
-        if args.treatment == 5:
+    if args.treatment in (4, 5, 6):
+        if args.treatment == 6:
+            from h2_v6 import require_pre_live_freeze, require_sessions, technical_audit
+        elif args.treatment == 5:
             from h2_v5 import require_pre_live_freeze, require_sessions
             require_sessions(H_REAL_SESSIONS)
         else:
@@ -184,8 +186,12 @@ def main() -> None:
 
         from src.experiments import treatment
 
-        require_pre_live_freeze(full_development=True)
-        phase_params = treatment.H2_V5_HARDENING_PARAMS if args.treatment == 5 else treatment.H2_V4_HARDENING_PARAMS
+        if args.treatment == 6:
+            require_sessions(H_REAL_SESSIONS)
+            require_pre_live_freeze(full_development=True, phase=args.mode)
+        else:
+            require_pre_live_freeze(full_development=True)
+        phase_params = getattr(treatment, f"H2_V{args.treatment}_HARDENING_PARAMS")
         if args.thinking_level != phase_params["thinking_level"]:
             sys.exit(f"H2 v{args.treatment} keeps thinking_level fixed")
         params = dict(phase_params)
@@ -298,7 +304,7 @@ def main() -> None:
         "wall_clock_seconds": round((finished - started).total_seconds(), 1),
     }
     manifest = {
-        "kind": f"H2_{args.mode.upper()}" + {1: "", 2: "_V2", 3: "_V3", 4: "_V4", 5: "_V5"}[args.treatment],
+        "kind": f"H2_{args.mode.upper()}" + {1: "", 2: "_V2", 3: "_V3", 4: "_V4", 5: "_V5", 6: "_V6"}[args.treatment],
         "treatment_version": args.treatment,
         "freeze": H2_FREEZE_VERSION,
         "financial_metrics": "none computed (no settlement)",
@@ -345,14 +351,19 @@ def main() -> None:
         manifest["calls_by_stage_and_source"] = {f"{st}/{src}": n for (st, src), n in
                                                  sorted(Counter((u["stage"], u["source"]) for u in uses).items())}
         (out / "replay_uses.jsonl").write_text("".join(canonical_json(u) + "\n" for u in uses), encoding="utf-8")
-    if args.treatment in (4, 5):
-        if args.treatment == 5:
+    if args.treatment in (4, 5, 6):
+        if args.treatment == 6:
+            from h2_v6 import require_pre_live_freeze, require_sessions, technical_audit
+        elif args.treatment == 5:
             from h2_v5 import require_pre_live_freeze, technical_audit
         else:
             from h2_v4 import require_pre_live_freeze, technical_audit
 
         manifest["checker_freeze"] = require_pre_live_freeze(full_development=True)
         manifest["technical_audit"] = technical_audit(records)
+    if args.treatment == 6:
+        from h2_v6 import apply_structural_gates
+        apply_structural_gates(manifest)
     (out / "manifest.json").write_text(
         json.dumps(manifest, indent=2, ensure_ascii=False, default=str) + "\n", encoding="utf-8"
     )
