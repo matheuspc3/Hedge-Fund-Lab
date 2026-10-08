@@ -1,0 +1,1492 @@
+{
+  "kind": "STRESS_PROBING",
+  "freeze": "STRESS_PROBING_FREEZE_V1",
+  "started_utc": "2026-10-08T02:52:07Z",
+  "finished_utc": "2026-10-08T03:48:20Z",
+  "wall_clock_seconds": 3373.2,
+  "git_commit": "8838e470e085038df9d5deed69dd08a564ac40bb",
+  "freeze_commit": "6a64c34e23509ea080ba761421a6b0b91476b856",
+  "snapshot_id": "20261004T201258177516Z-b4cf39fc761f251d2dd18e787008345a",
+  "treatment_version": 6,
+  "frozen_params": {
+    "ticker": "PETR4.SA",
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "temperature": 1.0,
+    "max_output_tokens": 8192,
+    "analyst_count": 5,
+    "consensus_threshold": 0.6,
+    "require_all_votes": true,
+    "decision_frequency": 1,
+    "strict_inputs": true,
+    "portfolio_inversion_policy": "fail",
+    "long_target_weight": 1.0,
+    "risk_max_concentration": 1.0,
+    "risk_max_volatility": 0.5,
+    "risk_max_drawdown": 0.25,
+    "volatility_window": 21,
+    "retry_attempts": 6,
+    "retry_base_delay": 2.0,
+    "thinking_level": "low",
+    "technical_prompt_version": 5,
+    "risk_prompt_version": 2,
+    "technical_response_schema_version": 2
+  },
+  "calibration_provenance": {
+    "CAL_A_V6_DISCRIMINATION": "YES",
+    "CAL_A_V6_SELECTION_BASIS": "EMPIRICAL_S1",
+    "SEQUENTIAL_DEV_V6_DISCRIMINATION": "YES",
+    "SEQUENTIAL_DEV_V6_SELECTION_BASIS": "EMPIRICAL_S2"
+  },
+  "repetitions": 3,
+  "cost_spec": {
+    "brokerage_fixed": 0.0,
+    "spread_bps": 5.0,
+    "tax_rate": 0.00032
+  },
+  "sharpe_definition": "H2_SCIENTIFIC_SHARPE_DEFINITION_V1",
+  "windows": [
+    {
+      "stress_id": "S1",
+      "category": "MAX_DRAWDOWN",
+      "stratum_id": 11,
+      "start": "2020-02-07",
+      "last_decision": "2020-04-22",
+      "end": "2020-04-23"
+    },
+    {
+      "stress_id": "S2",
+      "category": "MAX_REALIZED_VOLATILITY",
+      "stratum_id": 2,
+      "start": "2018-03-29",
+      "last_decision": "2018-06-11",
+      "end": "2018-06-12"
+    },
+    {
+      "stress_id": "S3",
+      "category": "WORST_DAILY_RETURN",
+      "stratum_id": 29,
+      "start": "2023-10-02",
+      "last_decision": "2023-12-12",
+      "end": "2023-12-13"
+    },
+    {
+      "stress_id": "S4",
+      "category": "MAX_ABS_OVERNIGHT_GAP",
+      "stratum_id": 4,
+      "start": "2018-08-24",
+      "last_decision": "2018-11-06",
+      "end": "2018-11-07"
+    }
+  ],
+  "failure": null,
+  "complete": true,
+  "trajectories": [
+    {
+      "stress_id": "S1",
+      "category": "MAX_DRAWDOWN",
+      "stratum_id": 11,
+      "start": "2020-02-07",
+      "last_decision": "2020-04-22",
+      "end": "2020-04-23",
+      "replicate": 1,
+      "spec_hash": "5abd018e2a1afc44b56bcd9e93b62894634f7585ee0a630859e34b3916cb0205",
+      "run_id": "20261008T025718348961Z-953493326467",
+      "run_dir": "20261008T025718348961Z-953493326467",
+      "runs_root": "docs/evidence/stress_v6/run_20261008T025207Z/runs",
+      "settlement_session": "2020-04-23",
+      "data_end": "2020-04-23",
+      "wall_clock_seconds": 311.1
+    },
+    {
+      "stress_id": "S1",
+      "category": "MAX_DRAWDOWN",
+      "stratum_id": 11,
+      "start": "2020-02-07",
+      "last_decision": "2020-04-22",
+      "end": "2020-04-23",
+      "replicate": 2,
+      "spec_hash": "5abd018e2a1afc44b56bcd9e93b62894634f7585ee0a630859e34b3916cb0205",
+      "run_id": "20261008T030243919701Z-528694701b54",
+      "run_dir": "20261008T030243919701Z-528694701b54",
+      "runs_root": "docs/evidence/stress_v6/run_20261008T025207Z/runs",
+      "settlement_session": "2020-04-23",
+      "data_end": "2020-04-23",
+      "wall_clock_seconds": 325.6
+    },
+    {
+      "stress_id": "S1",
+      "category": "MAX_DRAWDOWN",
+      "stratum_id": 11,
+      "start": "2020-02-07",
+      "last_decision": "2020-04-22",
+      "end": "2020-04-23",
+      "replicate": 3,
+      "spec_hash": "5abd018e2a1afc44b56bcd9e93b62894634f7585ee0a630859e34b3916cb0205",
+      "run_id": "20261008T030748297251Z-eebc96e559a2",
+      "run_dir": "20261008T030748297251Z-eebc96e559a2",
+      "runs_root": "docs/evidence/stress_v6/run_20261008T025207Z/runs",
+      "settlement_session": "2020-04-23",
+      "data_end": "2020-04-23",
+      "wall_clock_seconds": 304.4
+    },
+    {
+      "stress_id": "S2",
+      "category": "MAX_REALIZED_VOLATILITY",
+      "stratum_id": 2,
+      "start": "2018-03-29",
+      "last_decision": "2018-06-11",
+      "end": "2018-06-12",
+      "replicate": 1,
+      "spec_hash": "0e23c9c13d65f9b29865a1e5d2ace493a035ddf29cad1d7a428c397dc41e7858",
+      "run_id": "20261008T031145660862Z-273ca3b99088",
+      "run_dir": "20261008T031145660862Z-273ca3b99088",
+      "runs_root": "docs/evidence/stress_v6/run_20261008T025207Z/runs",
+      "settlement_session": "2018-06-12",
+      "data_end": "2018-06-12",
+      "wall_clock_seconds": 238.4
+    },
+    {
+      "stress_id": "S2",
+      "category": "MAX_REALIZED_VOLATILITY",
+      "stratum_id": 2,
+      "start": "2018-03-29",
+      "last_decision": "2018-06-11",
+      "end": "2018-06-12",
+      "replicate": 2,
+      "spec_hash": "0e23c9c13d65f9b29865a1e5d2ace493a035ddf29cad1d7a428c397dc41e7858",
+      "run_id": "20261008T031737098055Z-e955d0620445",
+      "run_dir": "20261008T031737098055Z-e955d0620445",
+      "runs_root": "docs/evidence/stress_v6/run_20261008T025207Z/runs",
+      "settlement_session": "2018-06-12",
+      "data_end": "2018-06-12",
+      "wall_clock_seconds": 350.4
+    },
+    {
+      "stress_id": "S2",
+      "category": "MAX_REALIZED_VOLATILITY",
+      "stratum_id": 2,
+      "start": "2018-03-29",
+      "last_decision": "2018-06-11",
+      "end": "2018-06-12",
+      "replicate": 3,
+      "spec_hash": "0e23c9c13d65f9b29865a1e5d2ace493a035ddf29cad1d7a428c397dc41e7858",
+      "run_id": "20261008T032228728179Z-f5131b645dd7",
+      "run_dir": "20261008T032228728179Z-f5131b645dd7",
+      "runs_root": "docs/evidence/stress_v6/run_20261008T025207Z/runs",
+      "settlement_session": "2018-06-12",
+      "data_end": "2018-06-12",
+      "wall_clock_seconds": 291.6
+    },
+    {
+      "stress_id": "S3",
+      "category": "WORST_DAILY_RETURN",
+      "stratum_id": 29,
+      "start": "2023-10-02",
+      "last_decision": "2023-12-12",
+      "end": "2023-12-13",
+      "replicate": 1,
+      "spec_hash": "853929942a50257912b5800acc612109ab2164d3892a18e0d26a6e5ed03dc18d",
+      "run_id": "20261008T032626879584Z-3d4127b76a49",
+      "run_dir": "20261008T032626879584Z-3d4127b76a49",
+      "runs_root": "docs/evidence/stress_v6/run_20261008T025207Z/runs",
+      "settlement_session": "2023-12-13",
+      "data_end": "2023-12-13",
+      "wall_clock_seconds": 238.2
+    },
+    {
+      "stress_id": "S3",
+      "category": "WORST_DAILY_RETURN",
+      "stratum_id": 29,
+      "start": "2023-10-02",
+      "last_decision": "2023-12-12",
+      "end": "2023-12-13",
+      "replicate": 2,
+      "spec_hash": "853929942a50257912b5800acc612109ab2164d3892a18e0d26a6e5ed03dc18d",
+      "run_id": "20261008T033045571041Z-e9cdf17f10c3",
+      "run_dir": "20261008T033045571041Z-e9cdf17f10c3",
+      "runs_root": "docs/evidence/stress_v6/run_20261008T025207Z/runs",
+      "settlement_session": "2023-12-13",
+      "data_end": "2023-12-13",
+      "wall_clock_seconds": 258.7
+    },
+    {
+      "stress_id": "S3",
+      "category": "WORST_DAILY_RETURN",
+      "stratum_id": 29,
+      "start": "2023-10-02",
+      "last_decision": "2023-12-12",
+      "end": "2023-12-13",
+      "replicate": 3,
+      "spec_hash": "853929942a50257912b5800acc612109ab2164d3892a18e0d26a6e5ed03dc18d",
+      "run_id": "20261008T033446266990Z-1d7f2bb955d3",
+      "run_dir": "20261008T033446266990Z-1d7f2bb955d3",
+      "runs_root": "docs/evidence/stress_v6/run_20261008T025207Z/runs",
+      "settlement_session": "2023-12-13",
+      "data_end": "2023-12-13",
+      "wall_clock_seconds": 240.7
+    },
+    {
+      "stress_id": "S4",
+      "category": "MAX_ABS_OVERNIGHT_GAP",
+      "stratum_id": 4,
+      "start": "2018-08-24",
+      "last_decision": "2018-11-06",
+      "end": "2018-11-07",
+      "replicate": 1,
+      "spec_hash": "08657d0c2d01dfc2cbbb0828d7c9e98206112e2a3375e7de3e09062fe40caef2",
+      "run_id": "20261008T033906468572Z-940ee91a8a4f",
+      "run_dir": "20261008T033906468572Z-940ee91a8a4f",
+      "runs_root": "docs/evidence/stress_v6/run_20261008T025207Z/runs",
+      "settlement_session": "2018-11-07",
+      "data_end": "2018-11-07",
+      "wall_clock_seconds": 260.2
+    },
+    {
+      "stress_id": "S4",
+      "category": "MAX_ABS_OVERNIGHT_GAP",
+      "stratum_id": 4,
+      "start": "2018-08-24",
+      "last_decision": "2018-11-06",
+      "end": "2018-11-07",
+      "replicate": 2,
+      "spec_hash": "08657d0c2d01dfc2cbbb0828d7c9e98206112e2a3375e7de3e09062fe40caef2",
+      "run_id": "20261008T034327498565Z-0b14b7fac4ff",
+      "run_dir": "20261008T034327498565Z-0b14b7fac4ff",
+      "runs_root": "docs/evidence/stress_v6/run_20261008T025207Z/runs",
+      "settlement_session": "2018-11-07",
+      "data_end": "2018-11-07",
+      "wall_clock_seconds": 261.0
+    },
+    {
+      "stress_id": "S4",
+      "category": "MAX_ABS_OVERNIGHT_GAP",
+      "stratum_id": 4,
+      "start": "2018-08-24",
+      "last_decision": "2018-11-06",
+      "end": "2018-11-07",
+      "replicate": 3,
+      "spec_hash": "08657d0c2d01dfc2cbbb0828d7c9e98206112e2a3375e7de3e09062fe40caef2",
+      "run_id": "20261008T034820300402Z-a318bc10d709",
+      "run_dir": "20261008T034820300402Z-a318bc10d709",
+      "runs_root": "docs/evidence/stress_v6/run_20261008T025207Z/runs",
+      "settlement_session": "2018-11-07",
+      "data_end": "2018-11-07",
+      "wall_clock_seconds": 292.8
+    }
+  ],
+  "gates": {
+    "S-A": {
+      "result": "0 final failures; 0 trajectories missing",
+      "pass": true
+    },
+    "S-T": {
+      "result": "0 truncations",
+      "pass": true
+    },
+    "S-C": {
+      "result": "0 boundary/causal violations",
+      "pass": true
+    },
+    "S-R": {
+      "result": "0 hard-risk contract violations",
+      "pass": true
+    },
+    "V6-E": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "V6-S1": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "V6-S2": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "V6-S3": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    }
+  },
+  "coverage": {
+    "drawdown_rule": "NOT_EXERCISED",
+    "volatility_rule": "EXERCISED",
+    "flags": [
+      "HISTORICAL_STRESS_DRAWDOWN_RULE_NOT_EXERCISED"
+    ]
+  },
+  "per_trajectory": {
+    "S1-r1": {
+      "boundary_audit": {
+        "decision_sessions_equal_window": true,
+        "orders_outside_window": [],
+        "equity_first_last": [
+          "2020-02-07",
+          "2020-04-23"
+        ],
+        "equity_bounds_ok": true,
+        "settlement_is_window_end": true,
+        "data_end_is_window_end": true,
+        "trace_sessions_outside_decisions": [],
+        "cal_b_sessions_touched": [],
+        "validation_or_final_access": false,
+        "violations": 0
+      },
+      "risk_audit": {
+        "violations": [],
+        "trace_metric_mismatches": [],
+        "buy_decisions": 5,
+        "volatility_rule_exercised": "NO",
+        "buys_with_volatility_above_limit": 0,
+        "drawdown_rule_exercised": "NO",
+        "buys_with_drawdown_above_limit_deciding": 0,
+        "buys_with_drawdown_above_limit_masked_by_volatility": 0,
+        "breach_buys_by_final_cause": {}
+      },
+      "truncations": 0,
+      "final_failed_calls": 0,
+      "DESCRIPTIVE ONLY — NO SELECTION AUTHORITY": {
+        "scientific_sharpe": -2.8400407838763724,
+        "terminal_net_return": -0.1374584343899381,
+        "max_strategy_drawdown": 0.15879175661990103,
+        "sortino": -2.9295953498157647,
+        "turnover_traded_notional_over_capital": 1.8624301019918628,
+        "trades": 2,
+        "time_in_market": 0.16,
+        "max_current_drawdown_at_decisions": 0.158792,
+        "max_recent_volatility_at_decisions": 1.936493,
+        "technical_explicit_holds": 11,
+        "technical_no_majority": 0,
+        "hard_volatility_vetoes": 0,
+        "hard_drawdown_vetoes": 0,
+        "llm_risk_vetoes": 0,
+        "portfolio_holds": 0,
+        "buy_at_target_noop": 4,
+        "final_causes": {
+          "ACTION_BUY": 1,
+          "ACTION_SELL": 34,
+          "BUY_AT_TARGET_NOOP": 4,
+          "TECH_EXPLICIT_HOLD": 11
+        },
+        "risk_rule_counts": {
+          "None": 46,
+          "CONCENTRATION": 4
+        }
+      },
+      "operational": {
+        "decision_sessions": 50,
+        "logical_calls": 286,
+        "logical_calls_by_stage": {
+          "technical_analyst": 250,
+          "risk_manager": 1,
+          "portfolio_manager": 35
+        },
+        "provider_retries": 1,
+        "token_usage": {
+          "completion_tokens": 44480,
+          "prompt_tokens": 287281,
+          "total_tokens": 335497,
+          "thoughts_tokens": 3736
+        },
+        "call_latency_ms": {
+          "p50": 2875.2500000009604,
+          "p90": 4186.202199998661,
+          "total": 898999.1
+        },
+        "wall_clock_seconds": 311.1
+      }
+    },
+    "S1-r2": {
+      "boundary_audit": {
+        "decision_sessions_equal_window": true,
+        "orders_outside_window": [],
+        "equity_first_last": [
+          "2020-02-07",
+          "2020-04-23"
+        ],
+        "equity_bounds_ok": true,
+        "settlement_is_window_end": true,
+        "data_end_is_window_end": true,
+        "trace_sessions_outside_decisions": [],
+        "cal_b_sessions_touched": [],
+        "validation_or_final_access": false,
+        "violations": 0
+      },
+      "risk_audit": {
+        "violations": [],
+        "trace_metric_mismatches": [],
+        "buy_decisions": 5,
+        "volatility_rule_exercised": "NO",
+        "buys_with_volatility_above_limit": 0,
+        "drawdown_rule_exercised": "NO",
+        "buys_with_drawdown_above_limit_deciding": 0,
+        "buys_with_drawdown_above_limit_masked_by_volatility": 0,
+        "breach_buys_by_final_cause": {}
+      },
+      "truncations": 0,
+      "final_failed_calls": 0,
+      "DESCRIPTIVE ONLY — NO SELECTION AUTHORITY": {
+        "scientific_sharpe": -2.8400407838763724,
+        "terminal_net_return": -0.1374584343899381,
+        "max_strategy_drawdown": 0.15879175661990103,
+        "sortino": -2.9295953498157647,
+        "turnover_traded_notional_over_capital": 1.8624301019918628,
+        "trades": 2,
+        "time_in_market": 0.16,
+        "max_current_drawdown_at_decisions": 0.158792,
+        "max_recent_volatility_at_decisions": 1.936493,
+        "technical_explicit_holds": 13,
+        "technical_no_majority": 0,
+        "hard_volatility_vetoes": 0,
+        "hard_drawdown_vetoes": 0,
+        "llm_risk_vetoes": 0,
+        "portfolio_holds": 0,
+        "buy_at_target_noop": 4,
+        "final_causes": {
+          "ACTION_BUY": 1,
+          "ACTION_SELL": 32,
+          "BUY_AT_TARGET_NOOP": 4,
+          "TECH_EXPLICIT_HOLD": 13
+        },
+        "risk_rule_counts": {
+          "None": 46,
+          "CONCENTRATION": 4
+        }
+      },
+      "operational": {
+        "decision_sessions": 50,
+        "logical_calls": 284,
+        "logical_calls_by_stage": {
+          "technical_analyst": 250,
+          "risk_manager": 1,
+          "portfolio_manager": 33
+        },
+        "provider_retries": 0,
+        "token_usage": {
+          "completion_tokens": 45469,
+          "prompt_tokens": 286856,
+          "total_tokens": 334816,
+          "thoughts_tokens": 2491
+        },
+        "call_latency_ms": {
+          "p50": 2888.320800000656,
+          "p90": 4214.304799999809,
+          "total": 912425.2
+        },
+        "wall_clock_seconds": 325.6
+      }
+    },
+    "S1-r3": {
+      "boundary_audit": {
+        "decision_sessions_equal_window": true,
+        "orders_outside_window": [],
+        "equity_first_last": [
+          "2020-02-07",
+          "2020-04-23"
+        ],
+        "equity_bounds_ok": true,
+        "settlement_is_window_end": true,
+        "data_end_is_window_end": true,
+        "trace_sessions_outside_decisions": [],
+        "cal_b_sessions_touched": [],
+        "validation_or_final_access": false,
+        "violations": 0
+      },
+      "risk_audit": {
+        "violations": [],
+        "trace_metric_mismatches": [],
+        "buy_decisions": 5,
+        "volatility_rule_exercised": "NO",
+        "buys_with_volatility_above_limit": 0,
+        "drawdown_rule_exercised": "NO",
+        "buys_with_drawdown_above_limit_deciding": 0,
+        "buys_with_drawdown_above_limit_masked_by_volatility": 0,
+        "breach_buys_by_final_cause": {}
+      },
+      "truncations": 0,
+      "final_failed_calls": 0,
+      "DESCRIPTIVE ONLY — NO SELECTION AUTHORITY": {
+        "scientific_sharpe": -2.8400407838763724,
+        "terminal_net_return": -0.1374584343899381,
+        "max_strategy_drawdown": 0.15879175661990103,
+        "sortino": -2.9295953498157647,
+        "turnover_traded_notional_over_capital": 1.8624301019918628,
+        "trades": 2,
+        "time_in_market": 0.16,
+        "max_current_drawdown_at_decisions": 0.158792,
+        "max_recent_volatility_at_decisions": 1.936493,
+        "technical_explicit_holds": 12,
+        "technical_no_majority": 0,
+        "hard_volatility_vetoes": 0,
+        "hard_drawdown_vetoes": 0,
+        "llm_risk_vetoes": 0,
+        "portfolio_holds": 0,
+        "buy_at_target_noop": 4,
+        "final_causes": {
+          "ACTION_BUY": 1,
+          "ACTION_SELL": 33,
+          "BUY_AT_TARGET_NOOP": 4,
+          "TECH_EXPLICIT_HOLD": 12
+        },
+        "risk_rule_counts": {
+          "None": 46,
+          "CONCENTRATION": 4
+        }
+      },
+      "operational": {
+        "decision_sessions": 50,
+        "logical_calls": 285,
+        "logical_calls_by_stage": {
+          "technical_analyst": 250,
+          "risk_manager": 1,
+          "portfolio_manager": 34
+        },
+        "provider_retries": 0,
+        "token_usage": {
+          "completion_tokens": 43266,
+          "prompt_tokens": 287046,
+          "total_tokens": 335550,
+          "thoughts_tokens": 5238
+        },
+        "call_latency_ms": {
+          "p50": 2817.15560000157,
+          "p90": 4118.583200001012,
+          "total": 865168.0
+        },
+        "wall_clock_seconds": 304.4
+      }
+    },
+    "S2-r1": {
+      "boundary_audit": {
+        "decision_sessions_equal_window": true,
+        "orders_outside_window": [],
+        "equity_first_last": [
+          "2018-03-29",
+          "2018-06-12"
+        ],
+        "equity_bounds_ok": true,
+        "settlement_is_window_end": true,
+        "data_end_is_window_end": true,
+        "trace_sessions_outside_decisions": [],
+        "cal_b_sessions_touched": [],
+        "validation_or_final_access": false,
+        "violations": 0
+      },
+      "risk_audit": {
+        "violations": [],
+        "trace_metric_mismatches": [],
+        "buy_decisions": 23,
+        "volatility_rule_exercised": "NO",
+        "buys_with_volatility_above_limit": 0,
+        "drawdown_rule_exercised": "NO",
+        "buys_with_drawdown_above_limit_deciding": 0,
+        "buys_with_drawdown_above_limit_masked_by_volatility": 0,
+        "breach_buys_by_final_cause": {}
+      },
+      "truncations": 0,
+      "final_failed_calls": 0,
+      "DESCRIPTIVE ONLY — NO SELECTION AUTHORITY": {
+        "scientific_sharpe": -1.4709038444775673,
+        "terminal_net_return": -0.18375135940647203,
+        "max_strategy_drawdown": 0.3813864526757886,
+        "sortino": -1.7136495543877077,
+        "turnover_traded_notional_over_capital": 1.8160991856239073,
+        "trades": 2,
+        "time_in_market": 0.52,
+        "max_current_drawdown_at_decisions": 0.381386,
+        "max_recent_volatility_at_decisions": 1.165012,
+        "technical_explicit_holds": 17,
+        "technical_no_majority": 0,
+        "hard_volatility_vetoes": 0,
+        "hard_drawdown_vetoes": 0,
+        "llm_risk_vetoes": 0,
+        "portfolio_holds": 0,
+        "buy_at_target_noop": 22,
+        "final_causes": {
+          "ACTION_BUY": 1,
+          "ACTION_SELL": 10,
+          "BUY_AT_TARGET_NOOP": 22,
+          "TECH_EXPLICIT_HOLD": 17
+        },
+        "risk_rule_counts": {
+          "None": 28,
+          "CONCENTRATION": 22
+        }
+      },
+      "operational": {
+        "decision_sessions": 50,
+        "logical_calls": 262,
+        "logical_calls_by_stage": {
+          "technical_analyst": 250,
+          "risk_manager": 1,
+          "portfolio_manager": 11
+        },
+        "provider_retries": 2,
+        "token_usage": {
+          "completion_tokens": 46532,
+          "prompt_tokens": 282379,
+          "total_tokens": 334456,
+          "thoughts_tokens": 5545
+        },
+        "call_latency_ms": {
+          "p50": 2983.662999999069,
+          "p90": 4140.459199999896,
+          "total": 821688.0
+        },
+        "wall_clock_seconds": 238.4
+      }
+    },
+    "S2-r2": {
+      "boundary_audit": {
+        "decision_sessions_equal_window": true,
+        "orders_outside_window": [],
+        "equity_first_last": [
+          "2018-03-29",
+          "2018-06-12"
+        ],
+        "equity_bounds_ok": true,
+        "settlement_is_window_end": true,
+        "data_end_is_window_end": true,
+        "trace_sessions_outside_decisions": [],
+        "cal_b_sessions_touched": [],
+        "validation_or_final_access": false,
+        "violations": 0
+      },
+      "risk_audit": {
+        "violations": [],
+        "trace_metric_mismatches": [],
+        "buy_decisions": 23,
+        "volatility_rule_exercised": "NO",
+        "buys_with_volatility_above_limit": 0,
+        "drawdown_rule_exercised": "NO",
+        "buys_with_drawdown_above_limit_deciding": 0,
+        "buys_with_drawdown_above_limit_masked_by_volatility": 0,
+        "breach_buys_by_final_cause": {}
+      },
+      "truncations": 0,
+      "final_failed_calls": 0,
+      "DESCRIPTIVE ONLY — NO SELECTION AUTHORITY": {
+        "scientific_sharpe": -1.4709038444775673,
+        "terminal_net_return": -0.18375135940647203,
+        "max_strategy_drawdown": 0.3813864526757886,
+        "sortino": -1.7136495543877077,
+        "turnover_traded_notional_over_capital": 1.8160991856239073,
+        "trades": 2,
+        "time_in_market": 0.52,
+        "max_current_drawdown_at_decisions": 0.381386,
+        "max_recent_volatility_at_decisions": 1.165012,
+        "technical_explicit_holds": 17,
+        "technical_no_majority": 0,
+        "hard_volatility_vetoes": 0,
+        "hard_drawdown_vetoes": 0,
+        "llm_risk_vetoes": 0,
+        "portfolio_holds": 0,
+        "buy_at_target_noop": 22,
+        "final_causes": {
+          "ACTION_BUY": 1,
+          "ACTION_SELL": 10,
+          "BUY_AT_TARGET_NOOP": 22,
+          "TECH_EXPLICIT_HOLD": 17
+        },
+        "risk_rule_counts": {
+          "None": 28,
+          "CONCENTRATION": 22
+        }
+      },
+      "operational": {
+        "decision_sessions": 50,
+        "logical_calls": 262,
+        "logical_calls_by_stage": {
+          "technical_analyst": 250,
+          "risk_manager": 1,
+          "portfolio_manager": 11
+        },
+        "provider_retries": 0,
+        "token_usage": {
+          "completion_tokens": 46317,
+          "prompt_tokens": 282334,
+          "total_tokens": 335233,
+          "thoughts_tokens": 6582
+        },
+        "call_latency_ms": {
+          "p50": 2991.835300003004,
+          "p90": 4907.154499996977,
+          "total": 975694.8
+        },
+        "wall_clock_seconds": 350.4
+      }
+    },
+    "S2-r3": {
+      "boundary_audit": {
+        "decision_sessions_equal_window": true,
+        "orders_outside_window": [],
+        "equity_first_last": [
+          "2018-03-29",
+          "2018-06-12"
+        ],
+        "equity_bounds_ok": true,
+        "settlement_is_window_end": true,
+        "data_end_is_window_end": true,
+        "trace_sessions_outside_decisions": [],
+        "cal_b_sessions_touched": [],
+        "validation_or_final_access": false,
+        "violations": 0
+      },
+      "risk_audit": {
+        "violations": [],
+        "trace_metric_mismatches": [],
+        "buy_decisions": 23,
+        "volatility_rule_exercised": "NO",
+        "buys_with_volatility_above_limit": 0,
+        "drawdown_rule_exercised": "NO",
+        "buys_with_drawdown_above_limit_deciding": 0,
+        "buys_with_drawdown_above_limit_masked_by_volatility": 0,
+        "breach_buys_by_final_cause": {}
+      },
+      "truncations": 0,
+      "final_failed_calls": 0,
+      "DESCRIPTIVE ONLY — NO SELECTION AUTHORITY": {
+        "scientific_sharpe": -1.4709038444775673,
+        "terminal_net_return": -0.18375135940647203,
+        "max_strategy_drawdown": 0.3813864526757886,
+        "sortino": -1.7136495543877077,
+        "turnover_traded_notional_over_capital": 1.8160991856239073,
+        "trades": 2,
+        "time_in_market": 0.52,
+        "max_current_drawdown_at_decisions": 0.381386,
+        "max_recent_volatility_at_decisions": 1.165012,
+        "technical_explicit_holds": 17,
+        "technical_no_majority": 0,
+        "hard_volatility_vetoes": 0,
+        "hard_drawdown_vetoes": 0,
+        "llm_risk_vetoes": 0,
+        "portfolio_holds": 0,
+        "buy_at_target_noop": 22,
+        "final_causes": {
+          "ACTION_BUY": 1,
+          "ACTION_SELL": 10,
+          "BUY_AT_TARGET_NOOP": 22,
+          "TECH_EXPLICIT_HOLD": 17
+        },
+        "risk_rule_counts": {
+          "None": 28,
+          "CONCENTRATION": 22
+        }
+      },
+      "operational": {
+        "decision_sessions": 50,
+        "logical_calls": 262,
+        "logical_calls_by_stage": {
+          "technical_analyst": 250,
+          "risk_manager": 1,
+          "portfolio_manager": 11
+        },
+        "provider_retries": 2,
+        "token_usage": {
+          "completion_tokens": 46105,
+          "prompt_tokens": 282394,
+          "total_tokens": 334387,
+          "thoughts_tokens": 5888
+        },
+        "call_latency_ms": {
+          "p50": 3359.2653999985487,
+          "p90": 4882.749699998385,
+          "total": 951512.8
+        },
+        "wall_clock_seconds": 291.6
+      }
+    },
+    "S3-r1": {
+      "boundary_audit": {
+        "decision_sessions_equal_window": true,
+        "orders_outside_window": [],
+        "equity_first_last": [
+          "2023-10-02",
+          "2023-12-13"
+        ],
+        "equity_bounds_ok": true,
+        "settlement_is_window_end": true,
+        "data_end_is_window_end": true,
+        "trace_sessions_outside_decisions": [],
+        "cal_b_sessions_touched": [],
+        "validation_or_final_access": false,
+        "violations": 0
+      },
+      "risk_audit": {
+        "violations": [],
+        "trace_metric_mismatches": [],
+        "buy_decisions": 26,
+        "volatility_rule_exercised": "NO",
+        "buys_with_volatility_above_limit": 0,
+        "drawdown_rule_exercised": "NO",
+        "buys_with_drawdown_above_limit_deciding": 0,
+        "buys_with_drawdown_above_limit_masked_by_volatility": 0,
+        "breach_buys_by_final_cause": {}
+      },
+      "truncations": 0,
+      "final_failed_calls": 0,
+      "DESCRIPTIVE ONLY — NO SELECTION AUTHORITY": {
+        "scientific_sharpe": 1.048213433361082,
+        "terminal_net_return": 0.05667942826566774,
+        "max_strategy_drawdown": 0.11292829246130746,
+        "sortino": 1.4990932090692652,
+        "turnover_traded_notional_over_capital": 0.9991806718490835,
+        "trades": 1,
+        "time_in_market": 0.9795918367346939,
+        "max_current_drawdown_at_decisions": 0.112928,
+        "max_recent_volatility_at_decisions": 0.404372,
+        "technical_explicit_holds": 23,
+        "technical_no_majority": 0,
+        "hard_volatility_vetoes": 0,
+        "hard_drawdown_vetoes": 0,
+        "llm_risk_vetoes": 0,
+        "portfolio_holds": 0,
+        "buy_at_target_noop": 25,
+        "final_causes": {
+          "ACTION_BUY": 1,
+          "BUY_AT_TARGET_NOOP": 25,
+          "TECH_EXPLICIT_HOLD": 23
+        },
+        "risk_rule_counts": {
+          "None": 24,
+          "CONCENTRATION": 25
+        }
+      },
+      "operational": {
+        "decision_sessions": 49,
+        "logical_calls": 247,
+        "logical_calls_by_stage": {
+          "technical_analyst": 245,
+          "risk_manager": 1,
+          "portfolio_manager": 1
+        },
+        "provider_retries": 0,
+        "token_usage": {
+          "completion_tokens": 41686,
+          "prompt_tokens": 274681,
+          "thoughts_tokens": 5029,
+          "total_tokens": 321396
+        },
+        "call_latency_ms": {
+          "p50": 3121.1934000020847,
+          "p90": 4734.274300000834,
+          "total": 852857.5
+        },
+        "wall_clock_seconds": 238.2
+      }
+    },
+    "S3-r2": {
+      "boundary_audit": {
+        "decision_sessions_equal_window": true,
+        "orders_outside_window": [],
+        "equity_first_last": [
+          "2023-10-02",
+          "2023-12-13"
+        ],
+        "equity_bounds_ok": true,
+        "settlement_is_window_end": true,
+        "data_end_is_window_end": true,
+        "trace_sessions_outside_decisions": [],
+        "cal_b_sessions_touched": [],
+        "validation_or_final_access": false,
+        "violations": 0
+      },
+      "risk_audit": {
+        "violations": [],
+        "trace_metric_mismatches": [],
+        "buy_decisions": 26,
+        "volatility_rule_exercised": "NO",
+        "buys_with_volatility_above_limit": 0,
+        "drawdown_rule_exercised": "NO",
+        "buys_with_drawdown_above_limit_deciding": 0,
+        "buys_with_drawdown_above_limit_masked_by_volatility": 0,
+        "breach_buys_by_final_cause": {}
+      },
+      "truncations": 0,
+      "final_failed_calls": 0,
+      "DESCRIPTIVE ONLY — NO SELECTION AUTHORITY": {
+        "scientific_sharpe": 1.048213433361082,
+        "terminal_net_return": 0.05667942826566774,
+        "max_strategy_drawdown": 0.11292829246130746,
+        "sortino": 1.4990932090692652,
+        "turnover_traded_notional_over_capital": 0.9991806718490835,
+        "trades": 1,
+        "time_in_market": 0.9795918367346939,
+        "max_current_drawdown_at_decisions": 0.112928,
+        "max_recent_volatility_at_decisions": 0.404372,
+        "technical_explicit_holds": 23,
+        "technical_no_majority": 0,
+        "hard_volatility_vetoes": 0,
+        "hard_drawdown_vetoes": 0,
+        "llm_risk_vetoes": 0,
+        "portfolio_holds": 0,
+        "buy_at_target_noop": 25,
+        "final_causes": {
+          "ACTION_BUY": 1,
+          "BUY_AT_TARGET_NOOP": 25,
+          "TECH_EXPLICIT_HOLD": 23
+        },
+        "risk_rule_counts": {
+          "None": 24,
+          "CONCENTRATION": 25
+        }
+      },
+      "operational": {
+        "decision_sessions": 49,
+        "logical_calls": 247,
+        "logical_calls_by_stage": {
+          "technical_analyst": 245,
+          "risk_manager": 1,
+          "portfolio_manager": 1
+        },
+        "provider_retries": 2,
+        "token_usage": {
+          "completion_tokens": 40742,
+          "prompt_tokens": 274628,
+          "total_tokens": 320817,
+          "thoughts_tokens": 5447
+        },
+        "call_latency_ms": {
+          "p50": 3213.5295999978553,
+          "p90": 4999.773700001242,
+          "total": 882334.9
+        },
+        "wall_clock_seconds": 258.7
+      }
+    },
+    "S3-r3": {
+      "boundary_audit": {
+        "decision_sessions_equal_window": true,
+        "orders_outside_window": [],
+        "equity_first_last": [
+          "2023-10-02",
+          "2023-12-13"
+        ],
+        "equity_bounds_ok": true,
+        "settlement_is_window_end": true,
+        "data_end_is_window_end": true,
+        "trace_sessions_outside_decisions": [],
+        "cal_b_sessions_touched": [],
+        "validation_or_final_access": false,
+        "violations": 0
+      },
+      "risk_audit": {
+        "violations": [],
+        "trace_metric_mismatches": [],
+        "buy_decisions": 26,
+        "volatility_rule_exercised": "NO",
+        "buys_with_volatility_above_limit": 0,
+        "drawdown_rule_exercised": "NO",
+        "buys_with_drawdown_above_limit_deciding": 0,
+        "buys_with_drawdown_above_limit_masked_by_volatility": 0,
+        "breach_buys_by_final_cause": {}
+      },
+      "truncations": 0,
+      "final_failed_calls": 0,
+      "DESCRIPTIVE ONLY — NO SELECTION AUTHORITY": {
+        "scientific_sharpe": 1.048213433361082,
+        "terminal_net_return": 0.05667942826566774,
+        "max_strategy_drawdown": 0.11292829246130746,
+        "sortino": 1.4990932090692652,
+        "turnover_traded_notional_over_capital": 0.9991806718490835,
+        "trades": 1,
+        "time_in_market": 0.9795918367346939,
+        "max_current_drawdown_at_decisions": 0.112928,
+        "max_recent_volatility_at_decisions": 0.404372,
+        "technical_explicit_holds": 23,
+        "technical_no_majority": 0,
+        "hard_volatility_vetoes": 0,
+        "hard_drawdown_vetoes": 0,
+        "llm_risk_vetoes": 0,
+        "portfolio_holds": 0,
+        "buy_at_target_noop": 25,
+        "final_causes": {
+          "ACTION_BUY": 1,
+          "BUY_AT_TARGET_NOOP": 25,
+          "TECH_EXPLICIT_HOLD": 23
+        },
+        "risk_rule_counts": {
+          "None": 24,
+          "CONCENTRATION": 25
+        }
+      },
+      "operational": {
+        "decision_sessions": 49,
+        "logical_calls": 247,
+        "logical_calls_by_stage": {
+          "technical_analyst": 245,
+          "risk_manager": 1,
+          "portfolio_manager": 1
+        },
+        "provider_retries": 3,
+        "token_usage": {
+          "completion_tokens": 41034,
+          "prompt_tokens": 274670,
+          "thoughts_tokens": 5676,
+          "total_tokens": 321380
+        },
+        "call_latency_ms": {
+          "p50": 3148.4444999987318,
+          "p90": 4911.36760000154,
+          "total": 848158.0
+        },
+        "wall_clock_seconds": 240.7
+      }
+    },
+    "S4-r1": {
+      "boundary_audit": {
+        "decision_sessions_equal_window": true,
+        "orders_outside_window": [],
+        "equity_first_last": [
+          "2018-08-24",
+          "2018-11-07"
+        ],
+        "equity_bounds_ok": true,
+        "settlement_is_window_end": true,
+        "data_end_is_window_end": true,
+        "trace_sessions_outside_decisions": [],
+        "cal_b_sessions_touched": [],
+        "validation_or_final_access": false,
+        "violations": 0
+      },
+      "risk_audit": {
+        "violations": [],
+        "trace_metric_mismatches": [],
+        "buy_decisions": 29,
+        "volatility_rule_exercised": "YES",
+        "buys_with_volatility_above_limit": 14,
+        "drawdown_rule_exercised": "NO",
+        "buys_with_drawdown_above_limit_deciding": 0,
+        "buys_with_drawdown_above_limit_masked_by_volatility": 0,
+        "breach_buys_by_final_cause": {
+          "BUY_AT_TARGET_NOOP": 14
+        }
+      },
+      "truncations": 0,
+      "final_failed_calls": 0,
+      "DESCRIPTIVE ONLY — NO SELECTION AUTHORITY": {
+        "scientific_sharpe": 3.3486790052658626,
+        "terminal_net_return": 0.3411265564612469,
+        "max_strategy_drawdown": 0.06605108761557978,
+        "sortino": 7.677024127027132,
+        "turnover_traded_notional_over_capital": 2.9895558995834812,
+        "trades": 3,
+        "time_in_market": 0.7,
+        "max_current_drawdown_at_decisions": 0.057047,
+        "max_recent_volatility_at_decisions": 0.631772,
+        "technical_explicit_holds": 17,
+        "technical_no_majority": 0,
+        "hard_volatility_vetoes": 0,
+        "hard_drawdown_vetoes": 0,
+        "llm_risk_vetoes": 0,
+        "portfolio_holds": 0,
+        "buy_at_target_noop": 27,
+        "final_causes": {
+          "ACTION_BUY": 2,
+          "ACTION_SELL": 4,
+          "BUY_AT_TARGET_NOOP": 27,
+          "TECH_EXPLICIT_HOLD": 17
+        },
+        "risk_rule_counts": {
+          "None": 23,
+          "CONCENTRATION": 13,
+          "VOLATILITY": 14
+        }
+      },
+      "operational": {
+        "decision_sessions": 50,
+        "logical_calls": 258,
+        "logical_calls_by_stage": {
+          "technical_analyst": 250,
+          "portfolio_manager": 6,
+          "risk_manager": 2
+        },
+        "provider_retries": 1,
+        "token_usage": {
+          "completion_tokens": 45023,
+          "prompt_tokens": 281759,
+          "total_tokens": 335892,
+          "thoughts_tokens": 9110
+        },
+        "call_latency_ms": {
+          "p50": 3267.107200001192,
+          "p90": 5320.571799999016,
+          "total": 918425.6
+        },
+        "wall_clock_seconds": 260.2
+      }
+    },
+    "S4-r2": {
+      "boundary_audit": {
+        "decision_sessions_equal_window": true,
+        "orders_outside_window": [],
+        "equity_first_last": [
+          "2018-08-24",
+          "2018-11-07"
+        ],
+        "equity_bounds_ok": true,
+        "settlement_is_window_end": true,
+        "data_end_is_window_end": true,
+        "trace_sessions_outside_decisions": [],
+        "cal_b_sessions_touched": [],
+        "validation_or_final_access": false,
+        "violations": 0
+      },
+      "risk_audit": {
+        "violations": [],
+        "trace_metric_mismatches": [],
+        "buy_decisions": 30,
+        "volatility_rule_exercised": "YES",
+        "buys_with_volatility_above_limit": 14,
+        "drawdown_rule_exercised": "NO",
+        "buys_with_drawdown_above_limit_deciding": 0,
+        "buys_with_drawdown_above_limit_masked_by_volatility": 0,
+        "breach_buys_by_final_cause": {
+          "BUY_AT_TARGET_NOOP": 14
+        }
+      },
+      "truncations": 0,
+      "final_failed_calls": 0,
+      "DESCRIPTIVE ONLY — NO SELECTION AUTHORITY": {
+        "scientific_sharpe": 3.3486790052658626,
+        "terminal_net_return": 0.3411265564612469,
+        "max_strategy_drawdown": 0.06605108761557978,
+        "sortino": 7.677024127027132,
+        "turnover_traded_notional_over_capital": 2.9895558995834812,
+        "trades": 3,
+        "time_in_market": 0.7,
+        "max_current_drawdown_at_decisions": 0.057047,
+        "max_recent_volatility_at_decisions": 0.631772,
+        "technical_explicit_holds": 15,
+        "technical_no_majority": 0,
+        "hard_volatility_vetoes": 0,
+        "hard_drawdown_vetoes": 0,
+        "llm_risk_vetoes": 0,
+        "portfolio_holds": 0,
+        "buy_at_target_noop": 28,
+        "final_causes": {
+          "ACTION_BUY": 2,
+          "ACTION_SELL": 5,
+          "BUY_AT_TARGET_NOOP": 28,
+          "TECH_EXPLICIT_HOLD": 15
+        },
+        "risk_rule_counts": {
+          "None": 22,
+          "CONCENTRATION": 14,
+          "VOLATILITY": 14
+        }
+      },
+      "operational": {
+        "decision_sessions": 50,
+        "logical_calls": 259,
+        "logical_calls_by_stage": {
+          "technical_analyst": 250,
+          "portfolio_manager": 7,
+          "risk_manager": 2
+        },
+        "provider_retries": 1,
+        "token_usage": {
+          "completion_tokens": 45961,
+          "prompt_tokens": 281938,
+          "total_tokens": 336315,
+          "thoughts_tokens": 8416
+        },
+        "call_latency_ms": {
+          "p50": 3176.1537000020326,
+          "p90": 4824.484400000074,
+          "total": 904128.4
+        },
+        "wall_clock_seconds": 261.0
+      }
+    },
+    "S4-r3": {
+      "boundary_audit": {
+        "decision_sessions_equal_window": true,
+        "orders_outside_window": [],
+        "equity_first_last": [
+          "2018-08-24",
+          "2018-11-07"
+        ],
+        "equity_bounds_ok": true,
+        "settlement_is_window_end": true,
+        "data_end_is_window_end": true,
+        "trace_sessions_outside_decisions": [],
+        "cal_b_sessions_touched": [],
+        "validation_or_final_access": false,
+        "violations": 0
+      },
+      "risk_audit": {
+        "violations": [],
+        "trace_metric_mismatches": [],
+        "buy_decisions": 27,
+        "volatility_rule_exercised": "YES",
+        "buys_with_volatility_above_limit": 12,
+        "drawdown_rule_exercised": "NO",
+        "buys_with_drawdown_above_limit_deciding": 0,
+        "buys_with_drawdown_above_limit_masked_by_volatility": 0,
+        "breach_buys_by_final_cause": {
+          "BUY_AT_TARGET_NOOP": 12
+        }
+      },
+      "truncations": 0,
+      "final_failed_calls": 0,
+      "DESCRIPTIVE ONLY — NO SELECTION AUTHORITY": {
+        "scientific_sharpe": 3.3486790052658626,
+        "terminal_net_return": 0.3411265564612469,
+        "max_strategy_drawdown": 0.06605108761557978,
+        "sortino": 7.677024127027132,
+        "turnover_traded_notional_over_capital": 2.9895558995834812,
+        "trades": 3,
+        "time_in_market": 0.7,
+        "max_current_drawdown_at_decisions": 0.057047,
+        "max_recent_volatility_at_decisions": 0.631772,
+        "technical_explicit_holds": 19,
+        "technical_no_majority": 0,
+        "hard_volatility_vetoes": 0,
+        "hard_drawdown_vetoes": 0,
+        "llm_risk_vetoes": 0,
+        "portfolio_holds": 0,
+        "buy_at_target_noop": 25,
+        "final_causes": {
+          "ACTION_BUY": 2,
+          "ACTION_SELL": 4,
+          "BUY_AT_TARGET_NOOP": 25,
+          "TECH_EXPLICIT_HOLD": 19
+        },
+        "risk_rule_counts": {
+          "None": 25,
+          "CONCENTRATION": 13,
+          "VOLATILITY": 12
+        }
+      },
+      "operational": {
+        "decision_sessions": 50,
+        "logical_calls": 258,
+        "logical_calls_by_stage": {
+          "technical_analyst": 250,
+          "portfolio_manager": 6,
+          "risk_manager": 2
+        },
+        "provider_retries": 3,
+        "token_usage": {
+          "completion_tokens": 45581,
+          "prompt_tokens": 281743,
+          "total_tokens": 335114,
+          "thoughts_tokens": 7790
+        },
+        "call_latency_ms": {
+          "p50": 3260.2722000010544,
+          "p90": 5429.91450000045,
+          "total": 944179.6
+        },
+        "wall_clock_seconds": 292.8
+      }
+    }
+  },
+  "stochastic_robustness_DESCRIPTIVE ONLY — NO SELECTION AUTHORITY": {
+    "S1": {
+      "sessions_technical_consensus_differs": 4,
+      "sessions_final_cause_differs": 4,
+      "first_decision_index_where_exposure_diverges": null,
+      "identical_trajectories": true,
+      "last_decision_final_cause_by_replicate": [
+        "TECH_EXPLICIT_HOLD",
+        "TECH_EXPLICIT_HOLD",
+        "TECH_EXPLICIT_HOLD"
+      ],
+      "trade_count": {
+        "min": 2,
+        "max": 2,
+        "range": 0
+      },
+      "scientific_sharpe": {
+        "min": -2.8400407838763724,
+        "max": -2.8400407838763724,
+        "range": 0.0
+      },
+      "terminal_net_return": {
+        "min": -0.1374584343899381,
+        "max": -0.1374584343899381,
+        "range": 0.0
+      },
+      "max_strategy_drawdown": {
+        "min": 0.15879175661990103,
+        "max": 0.15879175661990103,
+        "range": 0.0
+      }
+    },
+    "S2": {
+      "sessions_technical_consensus_differs": 0,
+      "sessions_final_cause_differs": 0,
+      "first_decision_index_where_exposure_diverges": null,
+      "identical_trajectories": true,
+      "last_decision_final_cause_by_replicate": [
+        "ACTION_SELL",
+        "ACTION_SELL",
+        "ACTION_SELL"
+      ],
+      "trade_count": {
+        "min": 2,
+        "max": 2,
+        "range": 0
+      },
+      "scientific_sharpe": {
+        "min": -1.4709038444775673,
+        "max": -1.4709038444775673,
+        "range": 0.0
+      },
+      "terminal_net_return": {
+        "min": -0.18375135940647203,
+        "max": -0.18375135940647203,
+        "range": 0.0
+      },
+      "max_strategy_drawdown": {
+        "min": 0.3813864526757886,
+        "max": 0.3813864526757886,
+        "range": 0.0
+      }
+    },
+    "S3": {
+      "sessions_technical_consensus_differs": 0,
+      "sessions_final_cause_differs": 0,
+      "first_decision_index_where_exposure_diverges": null,
+      "identical_trajectories": true,
+      "last_decision_final_cause_by_replicate": [
+        "TECH_EXPLICIT_HOLD",
+        "TECH_EXPLICIT_HOLD",
+        "TECH_EXPLICIT_HOLD"
+      ],
+      "trade_count": {
+        "min": 1,
+        "max": 1,
+        "range": 0
+      },
+      "scientific_sharpe": {
+        "min": 1.048213433361082,
+        "max": 1.048213433361082,
+        "range": 0.0
+      },
+      "terminal_net_return": {
+        "min": 0.05667942826566774,
+        "max": 0.05667942826566774,
+        "range": 0.0
+      },
+      "max_strategy_drawdown": {
+        "min": 0.11292829246130746,
+        "max": 0.11292829246130746,
+        "range": 0.0
+      }
+    },
+    "S4": {
+      "sessions_technical_consensus_differs": 6,
+      "sessions_final_cause_differs": 6,
+      "first_decision_index_where_exposure_diverges": null,
+      "identical_trajectories": true,
+      "last_decision_final_cause_by_replicate": [
+        "TECH_EXPLICIT_HOLD",
+        "TECH_EXPLICIT_HOLD",
+        "TECH_EXPLICIT_HOLD"
+      ],
+      "trade_count": {
+        "min": 3,
+        "max": 3,
+        "range": 0
+      },
+      "scientific_sharpe": {
+        "min": 3.3486790052658626,
+        "max": 3.3486790052658626,
+        "range": 0.0
+      },
+      "terminal_net_return": {
+        "min": 0.3411265564612469,
+        "max": 0.3411265564612469,
+        "range": 0.0
+      },
+      "max_strategy_drawdown": {
+        "min": 0.06605108761557978,
+        "max": 0.06605108761557978,
+        "range": 0.0
+      }
+    }
+  },
+  "operational": {
+    "live_calls": 3157,
+    "bank_hits": 0,
+    "every_call_live_and_independent": true,
+    "frozen_v2_hits_by_stage": {},
+    "http_attempts": 3172,
+    "attempt_outcomes": {
+      "http_200": 3157,
+      "ConnectionResetError": 1,
+      "ProviderTransportError": 14
+    },
+    "http_status_counts": {
+      "503": 14
+    },
+    "cost": "not computed: no versioned API pricing source in the repository"
+  },
+  "checker_freeze": {
+    "checker": {
+      "version": 3,
+      "source_sha256": {
+        "src/agents/feature_semantics.py": "fb2cfa36feba26b5e8f622828e03aa8fcfd25b1f7a0567d387f82baf9f056169",
+        "scripts/h2_v4.py": "630e7d8f862d4b5ffe5d8052911928e23f51634eaafcc88292ae0ef74a539f8e"
+      },
+      "source_blobs": {
+        "src/agents/feature_semantics.py": "57c0b1b0548455b897fdf0149c177a9bcd7b2557",
+        "scripts/h2_v4.py": "672f6931ce19254acb147a2bc93705f542018ea1"
+      },
+      "regression_report": "docs/evidence/h2_v4/technical_checker_v3/calibration_report.json"
+    },
+    "pre_live_audit": "docs/evidence/h2_v6/pre_live_audit.json",
+    "authorization": "docs/evidence/h2_v6/execution_authorization.json"
+  },
+  "technical_audit": {
+    "technical_votes": 2985,
+    "rates": {
+      "V6-S1": 0.0,
+      "V6-S2": 0.0,
+      "V6-S3": 0.0,
+      "V6-E": 0.0
+    },
+    "flagged": [],
+    "V6-S1": 0,
+    "V6-S2": 0,
+    "V6-S3": 0,
+    "V6-E": 0,
+    "invalid_evidence": [],
+    "technical_calls": 2985,
+    "evidence_validator_version": 1,
+    "technical_prompt_v5_only": true,
+    "natural_v5_failure_sessions": {
+      "2024-04-01": {
+        "technical_calls": 0,
+        "invalid_evidence": 0,
+        "linguistic_flags": []
+      },
+      "2024-05-16": {
+        "technical_calls": 0,
+        "invalid_evidence": 0,
+        "linguistic_flags": []
+      },
+      "2024-06-12": {
+        "technical_calls": 0,
+        "invalid_evidence": 0,
+        "linguistic_flags": []
+      },
+      "2024-08-06": {
+        "technical_calls": 0,
+        "invalid_evidence": 0,
+        "linguistic_flags": []
+      }
+    }
+  },
+  "cal_b_authorized": false,
+  "status": "STRESS PROBING COMPLETE — READY FOR CAL-B PROTOCOL",
+  "v6_phase_pass": true
+}
