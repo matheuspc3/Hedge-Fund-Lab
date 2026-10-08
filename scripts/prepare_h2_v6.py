@@ -126,7 +126,8 @@ def freeze():
     files = (*h2_v6.SOURCE_FILES, "scripts/prepare_h2_v6.py", "scripts/h2_v6_summary.py",
              "tests/agents/test_technical_evidence.py", "tests/experiments/test_v6_phase_routing.py",
              "docs/evidence/h2_v6/technical_prompt_v5.txt", "docs/evidence/h2_v6/technical_response_schema_v2.json",
-             "docs/evidence/h2_v6/cal_b4_carry_forward_audit.json", "docs/evidence/h2_v6/checker_regression.json")
+             "docs/evidence/h2_v6/cal_b4_carry_forward_audit.json", "docs/evidence/h2_v6/checker_regression.json",
+             "docs/evidence/h2_v6/offline_verification.json")
     write_once(ROOT / h2_v6.AUDIT,{
         "kind":"H2_V6_PRE_LIVE_FREEZE","created_utc":datetime.now(timezone.utc).isoformat(),
         "git_commit":h2_v4.git("rev-parse","HEAD"),"frozen_sources_sha256":hashes(files),

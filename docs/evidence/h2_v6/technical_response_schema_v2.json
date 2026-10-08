@@ -1,0 +1,84 @@
+{
+  "$defs": {
+    "TechnicalEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "CLOSE_ABOVE_SMA50",
+            "CLOSE_AT_SMA50",
+            "CLOSE_BELOW_SMA50",
+            "CLOSE_ABOVE_SMA200",
+            "CLOSE_AT_SMA200",
+            "CLOSE_BELOW_SMA200",
+            "CLOSE_ABOVE_BB_UPPER",
+            "CLOSE_AT_BB_UPPER",
+            "CLOSE_INSIDE_BOLLINGER",
+            "CLOSE_AT_BB_LOWER",
+            "CLOSE_BELOW_BB_LOWER",
+            "MACD_POSITIVE",
+            "MACD_ZERO",
+            "MACD_NEGATIVE",
+            "MACD_ABOVE_SIGNAL",
+            "MACD_AT_SIGNAL",
+            "MACD_BELOW_SIGNAL",
+            "RSI_CURRENT",
+            "BB_WIDTH_CURRENT"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "SUPPORTS_COMPRA",
+            "SUPPORTS_VENDA",
+            "CAUTION",
+            "NEUTRAL"
+          ],
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "role"
+      ],
+      "title": "TechnicalEvidence",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "signal": {
+      "enum": [
+        "COMPRA",
+        "VENDA",
+        "MANTER"
+      ],
+      "title": "Signal",
+      "type": "string"
+    },
+    "confidence": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/TechnicalEvidence"
+      },
+      "maxItems": 7,
+      "minItems": 1,
+      "title": "Evidence",
+      "type": "array"
+    }
+  },
+  "required": [
+    "signal",
+    "confidence",
+    "evidence"
+  ],
+  "title": "TechnicalEvidenceResponse",
+  "type": "object"
+}
