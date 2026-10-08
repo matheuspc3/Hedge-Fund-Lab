@@ -369,7 +369,13 @@ CAL_A_V5_SELECTED_CONFIG: Mapping[str, Any] | None = MappingProxyType({
     "tie": "ALL_SIX_IDENTICAL_FALLBACK_LOWEST_CONFIG_ID",
     "evidence": "docs/evidence/cal_a_v5/run_20261007T233451Z/summary.json",
 })
-SEQUENTIAL_DEV_V5_SELECTED_CONFIG: Mapping[str, Any] | None = None
+SEQUENTIAL_DEV_V5_SELECTED_CONFIG: Mapping[str, Any] | None = MappingProxyType({
+    "config_id": 2, "name": "D02", "risk_max_drawdown": 0.15,
+    "S2": 0.09194897902961162, "ranking": (2, 1, 3),
+    "discrimination": "YES", "selection_basis": "EMPIRICAL_S2",
+    "tie": "NO_TOP_TIE",
+    "evidence": "docs/evidence/sequential_dev_v5/run_20261007T234620Z/summary.json",
+})
 
 
 def stress_v5_params() -> dict[str, Any]:
