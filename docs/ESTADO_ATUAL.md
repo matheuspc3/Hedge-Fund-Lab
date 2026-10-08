@@ -7,11 +7,19 @@ preservadas. V5 altera exclusivamente o contrato snapshot/temporal do Technical
 entrada v3: 21 / 0,50 / 0,25 / 1,0. CAL-B4 carried forward, integrity PRESERVED,
 mesmo commitment, SEALED — NEVER EXECUTED; nenhuma CAL-B5.
 Pré-live audit e regressão offline reproduzem os 10/150 flags originais v4.
-Live v5 **NOT EXECUTED**: revisão automática bloqueou o envio de payloads à API
-Gemini até autorização explícita do destino; zero chamadas. Gates v5 ainda
-não medidos, nenhuma seleção final. Runners preparados para as fases
-condicionais; development exige PASS do hardening dirigido. Validation/Final
-intocados. [Entrega v5](evidence/h2_v5/DELIVERY.md).
+Após autorização explícita do destino Gemini, hardening dirigido v5 PASS:
+S1=S2=S3=0/150; falhas/truncamentos=0; HOLD=43,33%. As duas âncoras-alvo
+ficaram MANTER em R=3, com rationale restrito ao estado atual. Hardening/B0
+PASS; CAL-A 360/360 pareada, S1 idêntico nas seis configurações -> C1
+(21 / 0,40), PROTOCOL_TIE_FALLBACK. Sequential 9/9, 381/381 realizações
+pareadas, S2 selecionou D02 (drawdown 0,15), EMPIRICAL_S2; última barra
+2024-08-30. Seu audit Technical revelou 4/1905 claims de "enfraquecimento",
+S1=S2=0. Regra congelada de parar diante de qualquer S3 aplicada:
+`H2_V5 TEMPORAL CONTRACT FIX FAILED`. PASS dirigido e seleções preservados;
+v5 inelegível para System Freeze; Stress NOT EXECUTED; nenhum parâmetro final
+elegível para freeze. Nenhuma edição de prompt/checker ou rerun.
+CAL-B4 SEALED / NOT EXECUTED; Validation/Final intocados.
+[Entrega v5](evidence/h2_v5/DELIVERY.md).
 
 **Atualização científica — 07/10/2026 (Amendment 12).** CAL-B3 final:
 `CAL_B3_FAIL — HOLDOUT CONSUMED`; os dez gates automáticos passaram, mas a
