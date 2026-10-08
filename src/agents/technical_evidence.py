@@ -91,3 +91,42 @@ def validate_technical_evidence(response, features, allowed_codes) -> TechnicalE
     if len(codes) != len(set(codes)) or len(codes) > len(expected) or not set(codes) <= set(expected):
         raise ValueError("INVALID_RESPONSE: evidence must be unique and allowed for this request")
     return value
+
+
+EVIDENCE_DISPLAY = {
+    "CLOSE_ABOVE_SMA50": "fechamento acima da SMA50",
+    "CLOSE_AT_SMA50": "fechamento na SMA50",
+    "CLOSE_BELOW_SMA50": "fechamento abaixo da SMA50",
+    "CLOSE_ABOVE_SMA200": "fechamento acima da SMA200",
+    "CLOSE_AT_SMA200": "fechamento na SMA200",
+    "CLOSE_BELOW_SMA200": "fechamento abaixo da SMA200",
+    "CLOSE_ABOVE_BB_UPPER": "fechamento acima da banda superior de Bollinger",
+    "CLOSE_AT_BB_UPPER": "fechamento na banda superior de Bollinger",
+    "CLOSE_INSIDE_BOLLINGER": "fechamento dentro das bandas de Bollinger",
+    "CLOSE_AT_BB_LOWER": "fechamento na banda inferior de Bollinger",
+    "CLOSE_BELOW_BB_LOWER": "fechamento abaixo da banda inferior de Bollinger",
+    "MACD_POSITIVE": "MACD acima de zero",
+    "MACD_ZERO": "MACD em zero",
+    "MACD_NEGATIVE": "MACD abaixo de zero",
+    "MACD_ABOVE_SIGNAL": "MACD acima da linha de sinal",
+    "MACD_AT_SIGNAL": "MACD na linha de sinal",
+    "MACD_BELOW_SIGNAL": "MACD abaixo da linha de sinal",
+}
+ROLE_DISPLAY = {"SUPPORTS_COMPRA": "suporte à COMPRA", "SUPPORTS_VENDA": "suporte à VENDA",
+                "CAUTION": "cautela", "NEUTRAL": "neutro"}
+
+
+def technical_evidence_ui(response, features, allowed_codes) -> dict:
+    value = validate_technical_evidence(response, features, allowed_codes)
+    f = canonical_features(features)
+    displays = {**EVIDENCE_DISPLAY, "RSI_CURRENT": f"RSI atual = {f['rsi']}",
+                "BB_WIDTH_CURRENT": f"largura relativa atual das bandas = {f['bb_width']}"}
+    items = [{**item.model_dump(), "display": displays[item.code]} for item in value.evidence]
+    explanation = "; ".join(f"{item['display']} — classificado pelo analista como {ROLE_DISPLAY[item['role']]}"
+                            for item in items)
+    return {"signal": value.signal, "confidence": value.confidence, "evidence": items,
+            "display_explanation": explanation}
+
+
+def render_technical_evidence(response, original_feature_payload, allowed_facts) -> str:
+    return technical_evidence_ui(response, original_feature_payload, allowed_facts)["display_explanation"]
