@@ -1,0 +1,15 @@
+{
+  "kind": "CAL_B4_OFFLINE_VERIFICATION",
+  "command": ".venv/Scripts/python.exe -m pytest tests/experiments/test_cal_b4_protocol.py tests/experiments/test_cal_b4_safety.py tests/agents/test_technical_evidence.py -q -p no:cacheprovider --basetemp .pytest_temp/cal_b4_final_offline_20261008",
+  "tests_passed": 60,
+  "tests_failed": 0,
+  "elapsed_seconds": 5.84,
+  "external_calls": 0,
+  "cal_b4_features_computed": false,
+  "cal_b4_payloads_created": false,
+  "cal_b4_inference_executed": false,
+  "validation_final_access": false,
+  "system_freeze_executed": false,
+  "fixture_sources": "synthetic inputs and existing v6 Stress development records only",
+  "sandbox_note": "Initial workspace temp directory setup was denied by sandbox; scoped offline test execution with workspace temporaries passed. No scientific rerun."
+}

@@ -1,0 +1,25 @@
+{
+  "kind": "CAL_B4_LIMITED_AUTHORIZATION_GUARDS_FREEZE_V1",
+  "protocol_commit": "2e79e88",
+  "external_authorization": "PENDING",
+  "identity_clarification": "PENDING",
+  "cal_b4_status": "SEALED — NOT EXECUTED",
+  "sources_sha256": {
+    "scripts/run_cal_b4.py": "86acc9abd9a95464ade7cc7d979325dc51adeee5321690e80884ef7097191e56",
+    "tests/experiments/test_cal_b4_protocol.py": "d8aefcd3ef3b640cb9edd327eaa27c1eea244be76fff4a867132155c92e296b7",
+    "docs/evidence/cal_b4/protocol_freeze_v1.json": "587011e2e086ef8edc8af32c8100cb79950b66caf25abb1740e96cd99f643d86",
+    "docs/evidence/cal_b4/PROTOCOL_FREEZE_V1.md": "4a676658c9061551b5e85425abd1347cd3e6153566184827a1960a30e6261056",
+    "docs/evidence/cal_b4/authorization_request.json": "474e542348a0a584a7a513d304cf6551a8a4c469946683d140024bc3c55b0f3c",
+    "docs/evidence/cal_b4/offline_verification.json": "849c01702b960e0d8d3cbabcd9cde9b810aa07de9f58d6eb0c696df0cd79b352",
+    "docs/evidence/cal_b4/DELIVERY_PRE_LIVE.md": "92365da7b5243d9568c5293404a2fe20624fa8e6c25c5e03baebe6d422bd9c47"
+  },
+  "post_freeze_changes_permitted": [
+    "new CAL-B4 specific user authorization document",
+    "one raw sealed batch and hashes",
+    "one automatic audit packet and seal",
+    "primary review filled by user",
+    "derived final status"
+  ],
+  "global_cal_b_unlock": false,
+  "external_calls_in_preparation": 0
+}
