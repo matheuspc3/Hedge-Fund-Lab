@@ -1,0 +1,162 @@
+{
+  "status": "H2_V6 PREPARED OFFLINE — AWAITING SPECIFIC EXTERNAL AUTHORIZATION",
+  "treatment_version": 6,
+  "technical_prompt_version": 5,
+  "response_schema_version": 2,
+  "evidence_validator_version": 1,
+  "evidence_vocabulary_version": 1,
+  "v5_governance": {
+    "status": "H2_V5 TEMPORAL CONTRACT FIX FAILED",
+    "H2_V5_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE": true,
+    "reason": "SEQUENTIAL DEVELOPMENT V5 — S3 4/1905",
+    "source": "docs/evidence/h2_v5/final_governance.json",
+    "historical_artifacts": "PRESERVED BYTE-IDENTICAL",
+    "intermediate_selections": "PRESERVED — NOT ELIGIBLE FOR FINAL FREEZE",
+    "Stress": "NOT EXECUTED"
+  },
+  "phases": {
+    "defect": {
+      "status": "NOT EXECUTED",
+      "technical_votes": null,
+      "S3_rate": null,
+      "parameters": null
+    },
+    "hardening": {
+      "status": "NOT EXECUTED",
+      "technical_votes": null,
+      "S3_rate": null,
+      "parameters": null
+    },
+    "b0": {
+      "status": "NOT EXECUTED",
+      "technical_votes": null,
+      "S3_rate": null,
+      "parameters": null
+    },
+    "cal_a": {
+      "status": "NOT EXECUTED",
+      "technical_votes": null,
+      "S3_rate": null,
+      "parameters": null
+    },
+    "sequential": {
+      "status": "NOT EXECUTED",
+      "technical_votes": null,
+      "S3_rate": null,
+      "parameters": null
+    },
+    "stress": {
+      "status": "NOT EXECUTED",
+      "technical_votes": null,
+      "S3_rate": null,
+      "parameters": null
+    }
+  },
+  "entry_baseline_label": "V6_ENTRY_BASELINE_ONLY — NOT FINAL SELECTION",
+  "entry_baseline_params": {
+    "ticker": "PETR4.SA",
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "temperature": 1.0,
+    "max_output_tokens": 8192,
+    "analyst_count": 5,
+    "consensus_threshold": 0.6,
+    "require_all_votes": true,
+    "decision_frequency": 1,
+    "strict_inputs": true,
+    "portfolio_inversion_policy": "fail",
+    "long_target_weight": 1.0,
+    "risk_max_concentration": 1.0,
+    "risk_max_volatility": 0.4,
+    "risk_max_drawdown": 0.15,
+    "volatility_window": 21,
+    "retry_attempts": 6,
+    "retry_base_delay": 2.0,
+    "thinking_level": "low",
+    "technical_prompt_version": 5,
+    "risk_prompt_version": 2,
+    "technical_response_schema_version": 2
+  },
+  "final_v6_params": null,
+  "cal_b4": {
+    "status": "SEALED / NOT EXECUTED",
+    "commitment": "35d3d468a3253538392314c158c8605867c283c864fbd99c9499c8fd276f6ae7",
+    "carry_forward_integrity": "PRESERVED",
+    "executed": false
+  },
+  "validation_final": {
+    "executed": false,
+    "decision_sessions": []
+  },
+  "offline_verification": {
+    "kind": "H2_V6_OFFLINE_VERIFICATION",
+    "command": ".venv/Scripts/python.exe -m pytest tests/agents tests/experiments -q -p no:cacheprovider --basetemp .pytest_temp/h2_v6_final_20261008",
+    "tests_passed": 860,
+    "tests_failed": 0,
+    "elapsed_seconds": 37.51,
+    "external_provider_calls": 0,
+    "new_contract_checks": "truth/sign/zero/band boundaries; strict schema; unique request-specific subset; 1620 renderer fact-role combinations; failure recording; INVALID_RESPONSE without sizing; native mocked Gemini schema and raw preservation; graph Risk/Portfolio payload isolation; new and historical v1-v5 trace replay; guarded phase routing",
+    "checker_v3_modified": false,
+    "cal_b4_executed": false,
+    "validation_final_executed": false,
+    "infrastructure_note": "A targeted fixture initially failed on sandbox temporary-directory permission; the same targeted checks passed with an explicit workspace basetemp. The final complete suite passed with workspace temporaries.",
+    "live_scientific_status": "NOT EXECUTED — SPECIFIC H2 V6 AUTHORIZATION REQUIRED"
+  },
+  "temporal_rates": {
+    "v3_consumed": {
+      "S3": 16,
+      "N": 50,
+      "rate": 0.32
+    },
+    "v4_directed": {
+      "S3": 10,
+      "N": 150,
+      "rate": 0.06666666666666667
+    },
+    "v5_directed": {
+      "S3": 0,
+      "N": 150,
+      "rate": 0
+    },
+    "v5_hardening": {
+      "S3": 0,
+      "N": 300,
+      "rate": 0
+    },
+    "v5_b0": {
+      "S3": 0,
+      "N": 60,
+      "rate": 0
+    },
+    "v5_cal_a": {
+      "S3": 0,
+      "N": 300,
+      "rate": 0
+    },
+    "v5_sequential": {
+      "S3": 4,
+      "N": 1905,
+      "rate": 0.002099737532808399
+    },
+    "v6": {
+      "defect": null,
+      "hardening": null,
+      "b0": null,
+      "cal_a": null,
+      "sequential": null,
+      "stress": null
+    }
+  },
+  "commits_at_report_generation": [
+    "61d16aa Record canonical v5 failure governance for v6",
+    "ab7e84f Freeze H2 v6 structured Technical amendment",
+    "beccc3b Add strict Technical response schema v2",
+    "dd3eb17 Derive current facts and validate request-specific evidence",
+    "3a7844a Freeze Technical prompt v5 with structured current evidence",
+    "2977fc2 Render factual evidence and analyst roles for audit and UI",
+    "a71b5d7 Audit CAL-B4 carry-forward to H2 v6 without inference",
+    "9c3a462 Integrate v6 evidence validation, provenance and guarded phase runners",
+    "18a0aa1 Freeze offline v6 checks, schema, prompt and provenance hashes"
+  ],
+  "provider_calls_from_this_report": 0
+}
