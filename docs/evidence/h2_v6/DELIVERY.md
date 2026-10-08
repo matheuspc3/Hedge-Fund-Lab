@@ -121,11 +121,13 @@ Rates below describe different phase corpora; they are not a paired estimate of 
 
 ## HARDENING V6
 
-INCOMPLETE. Same 12 H states, R=5, original gates plus E/S1/S2/S3.
+PASS. Same 12 H states, R=5: 300 unique live Technical votes, E/S1/S2/S3=0, gates_pass=true. Verified by post_live_verification.json and scientific commit 3bbd423.
 
 ## B0 V6
 
-INCOMPLETE. Same H states, R=1, same ex ante baseline and gates.
+PASS. Same H states, R=1: 60 unique live Technical votes, E/S1/S2/S3=0, gates_pass=true. Verified by post_live_verification.json and scientific commit bb2febe.
+
+Documentation erratum: H2_V6_DELIVERY_ERRATUM = DOCUMENTATION_ONLY; SCIENTIFIC_ARTIFACTS_CHANGED = False; SCIENTIFIC_RESULTS_CHANGED = False. Only the two phase descriptions above were corrected; manifests, traces, scientific hashes and selections are unchanged.
 
 ## CAL-A V6
 
