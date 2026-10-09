@@ -311,7 +311,7 @@ def output_state():
     if not (root / "evaluation.sqlite").exists():
         return "NOT_STARTED"
     if (root / "execution.lock").exists():
-        return "LOCKED — running or abandoned; investigate before anything else"
+        return "LOCKED - running or abandoned; investigate before anything else"
     uri = (root / "evaluation.sqlite").as_uri() + "?mode=ro"
     with closing(sqlite3.connect(uri, uri=True)) as db:
         return dict(db.execute("SELECT slot,state FROM slots").fetchall())
@@ -354,7 +354,7 @@ def preflight():
         "snapshot_present": (ROOT / "data/snapshots" / RESERVED_SNAPSHOT).is_dir(),
         "gemini_api_key_present": load_key(),
         "estimate": estimate(document),
-        "final_test": "BLOCKED — not reachable through OA-1",
+        "final_test": "BLOCKED - not reachable through OA-1",
     }
     try:
         auth = check_authorization(document, sha, AUTHORIZATION)
@@ -369,7 +369,7 @@ def preflight():
             f"--confirm {sha_file(AUTHORIZATION)[:12]}"
         )
     except FileNotFoundError:
-        report["authorization"] = {"state": "ABSENT — awaiting author"}
+        report["authorization"] = {"state": "ABSENT - awaiting author"}
         report["command"] = (
             ".venv\\Scripts\\python.exe -B scripts/run_h2_v6_provisional.py authorize "
             f'--signatory "<nome completo>" --confirm "AUTORIZO OA-1 VALIDATION {sha_file(AMENDMENT)[:12]}"'
@@ -383,7 +383,7 @@ def preflight():
         and report["gemini_api_key_present"]
         and report["output_state"] == "NOT_STARTED"
     )
-    print("\nPREFLIGHT:", "READY" if ready else "NOT READY — no execution possible")
+    print("\nPREFLIGHT:", "READY" if ready else "NOT READY - no execution possible")
     return 0 if ready else 2
 
 
