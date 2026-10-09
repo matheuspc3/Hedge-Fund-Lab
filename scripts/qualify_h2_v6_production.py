@@ -311,11 +311,11 @@ def journal_checks(root, params):
     bank, client, factory = setup("concurrent_calls")
 
     async def ensemble():
-        return await asyncio.gather(*(call(client, str(i)) for i in range(5)))
+        return await asyncio.gather(*(call(client, str(i)) for i in range(30)))
 
-    assert len(asyncio.run(ensemble())) == 5
+    assert len(asyncio.run(ensemble())) == 30
     client.assert_complete()
-    assert factory.calls == 5 and len(bank.export("L01").splitlines()) == 5
+    assert factory.calls == 30 and len(bank.export("L01").splitlines()) == 30
     bank.db.execute("UPDATE calls SET raw_sha='corrupt' WHERE sequence=0")
     bank.db.commit()
     rejected(lambda: bank.export("L01"), JournalIntegrityError)

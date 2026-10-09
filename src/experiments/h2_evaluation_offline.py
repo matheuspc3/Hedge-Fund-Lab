@@ -2,7 +2,8 @@
 
 No CLI/live mode. Real reserved snapshot is refused before reading its prices.
 SQLite reserves each logical call before invoking a fresh mock; interrupted
-runs become replay-only. All historical source files remain unchanged.
+runs become replay-only. The two declared post-CAL-B4 infrastructure patches
+are verified separately; historical scientific artifacts remain unchanged.
 """
 
 import hashlib

@@ -232,6 +232,13 @@ class CallBank:
             (data, hashlib.sha256(data.encode()).hexdigest(), slot, sequence),
         )
 
+    def attempt_count(self, slot, sequence):
+        with self.lock:
+            return self.db.execute(
+                "SELECT count(*) FROM attempts WHERE slot=? AND sequence=?",
+                (slot, sequence),
+            ).fetchone()[0]
+
     def export(self, slot):
         with self.lock:
             sequences = [
@@ -352,14 +359,7 @@ class DurableGeminiClient(LLMClient):
             raise JournalIntegrityError(
                 "uncertain reserved response; no replacement transport"
             )
-        with self.bank.lock:
-            number = (
-                self.bank.db.execute(
-                    "SELECT count(*) FROM attempts WHERE slot=? AND sequence=?",
-                    (slot, sequence),
-                ).fetchone()[0]
-                + 1
-            )
+        number = self.bank.attempt_count(slot, sequence) + 1
         self.bank.attempt(slot, sequence, number, {"state": "RESERVED_BEFORE_TRANSPORT"})
         try:
             raw = self.delegate(method, url, headers, body)
@@ -468,10 +468,7 @@ class DurableGeminiClient(LLMClient):
                 record = replace(
                     recorder.records[0],
                     sequence=sequence,
-                    attempt_count=self.bank.db.execute(
-                        "SELECT count(*) FROM attempts WHERE slot=? AND sequence=?",
-                        (self.slot, sequence),
-                    ).fetchone()[0]
+                    attempt_count=self.bank.attempt_count(self.slot, sequence)
                     or recorder.records[0].attempt_count,
                     error_message=None
                     if recorder.records[0].error_message is None
