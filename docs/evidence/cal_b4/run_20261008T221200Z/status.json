@@ -1,9 +1,9 @@
 {
-  "status": "CAL_B4_AWAITING_PRIMARY_AUTHOR_REVIEW",
-  "SYSTEM_CALIBRATION_COMPLETE": false,
+  "status": "CAL_B4_PASS — SANITY CHECK ONLY",
+  "SYSTEM_CALIBRATION_COMPLETE": true,
   "H2_FINAL_TREATMENT_VERSION": 6,
   "H2_FINAL_PARAMETERS": "21 / 0.50 / 0.25 / 1.0",
-  "next_step": "STOP — NO RERUN",
+  "next_step": "READY FOR SYSTEM FREEZE DESIGN",
   "system_freeze_executed": false,
   "validation_final_access": false,
   "financial_outcome": "NOT COMPUTED"
