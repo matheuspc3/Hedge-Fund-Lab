@@ -1,67 +1,67 @@
 {
-  "reviewer": null,
-  "reviewed_utc": null,
+  "reviewer": "Lucas Pereira da Silva",
+  "reviewed_utc": "2026-10-08T23:10:22Z",
   "instructions": "PASS/FAIL por campo; apenas o usuário preenche. Incoerência material; discordância do sinal não é FAIL.",
   "anchors": {
     "2018-08-21": {
-      "technical_evidence_factual_validity": null,
-      "technical_role_signal_coherence": null,
-      "material_unsupported_claim": null,
-      "rationale_action_coherence": null
+      "technical_evidence_factual_validity": "PASS",
+      "technical_role_signal_coherence": "PASS",
+      "material_unsupported_claim": "PASS",
+      "rationale_action_coherence": "PASS"
     },
     "2019-01-29": {
-      "technical_evidence_factual_validity": null,
-      "technical_role_signal_coherence": null,
-      "material_unsupported_claim": null,
-      "rationale_action_coherence": null
+      "technical_evidence_factual_validity": "PASS",
+      "technical_role_signal_coherence": "PASS",
+      "material_unsupported_claim": "PASS",
+      "rationale_action_coherence": "PASS"
     },
     "2019-10-28": {
-      "technical_evidence_factual_validity": null,
-      "technical_role_signal_coherence": null,
-      "material_unsupported_claim": null,
-      "rationale_action_coherence": null
+      "technical_evidence_factual_validity": "PASS",
+      "technical_role_signal_coherence": "PASS",
+      "material_unsupported_claim": "PASS",
+      "rationale_action_coherence": "PASS"
     },
     "2020-06-03": {
-      "technical_evidence_factual_validity": null,
-      "technical_role_signal_coherence": null,
-      "material_unsupported_claim": null,
-      "rationale_action_coherence": null
+      "technical_evidence_factual_validity": "PASS",
+      "technical_role_signal_coherence": "PASS",
+      "material_unsupported_claim": "PASS",
+      "rationale_action_coherence": "PASS"
     },
     "2021-02-18": {
-      "technical_evidence_factual_validity": null,
-      "technical_role_signal_coherence": null,
-      "material_unsupported_claim": null,
-      "rationale_action_coherence": null
+      "technical_evidence_factual_validity": "PASS",
+      "technical_role_signal_coherence": "PASS",
+      "material_unsupported_claim": "PASS",
+      "rationale_action_coherence": "PASS"
     },
     "2021-09-02": {
-      "technical_evidence_factual_validity": null,
-      "technical_role_signal_coherence": null,
-      "material_unsupported_claim": null,
-      "rationale_action_coherence": null
+      "technical_evidence_factual_validity": "PASS",
+      "technical_role_signal_coherence": "PASS",
+      "material_unsupported_claim": "PASS",
+      "rationale_action_coherence": "PASS"
     },
     "2022-03-30": {
-      "technical_evidence_factual_validity": null,
-      "technical_role_signal_coherence": null,
-      "material_unsupported_claim": null,
-      "rationale_action_coherence": null
+      "technical_evidence_factual_validity": "PASS",
+      "technical_role_signal_coherence": "PASS",
+      "material_unsupported_claim": "PASS",
+      "rationale_action_coherence": "PASS"
     },
     "2022-10-03": {
-      "technical_evidence_factual_validity": null,
-      "technical_role_signal_coherence": null,
-      "material_unsupported_claim": null,
-      "rationale_action_coherence": null
+      "technical_evidence_factual_validity": "PASS",
+      "technical_role_signal_coherence": "PASS",
+      "material_unsupported_claim": "PASS",
+      "rationale_action_coherence": "PASS"
     },
     "2023-07-17": {
-      "technical_evidence_factual_validity": null,
-      "technical_role_signal_coherence": null,
-      "material_unsupported_claim": null,
-      "rationale_action_coherence": null
+      "technical_evidence_factual_validity": "PASS",
+      "technical_role_signal_coherence": "PASS",
+      "material_unsupported_claim": "PASS",
+      "rationale_action_coherence": "PASS"
     },
     "2024-01-12": {
-      "technical_evidence_factual_validity": null,
-      "technical_role_signal_coherence": null,
-      "material_unsupported_claim": null,
-      "rationale_action_coherence": null
+      "technical_evidence_factual_validity": "PASS",
+      "technical_role_signal_coherence": "PASS",
+      "material_unsupported_claim": "PASS",
+      "rationale_action_coherence": "PASS"
     }
   }
 }
