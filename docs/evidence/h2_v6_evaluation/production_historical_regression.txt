@@ -1,0 +1,23 @@
+........................................................................ [ 17%]
+........................................................................ [ 35%]
+........................................................................ [ 53%]
+........................................................................ [ 71%]
+........................................................................ [ 89%]
+..................................F......F                               [100%]
+================================== FAILURES ===================================
+____________ test_v5_development_s3_failure_blocks_further_phases _____________
+tests\experiments\test_cal_b4_safety.py:71: in test_v5_development_s3_failure_blocks_further_phases
+    with pytest.raises(ValueError, match="development S3 failure"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError: Regex pattern did not match.
+E     Expected regex: 'development S3 failure'
+E     Actual message: 'CAL-B4 must stay sealed during v5 development'
+______ test_structural_failure_prevents_phase_selection_and_progression _______
+tests\experiments\test_v6_phase_routing.py:60: in test_structural_failure_prevents_phase_selection_and_progression
+    with pytest.raises(ValueError,match="requires committed defect PASS"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE ValueError
+=========================== short test summary info ===========================
+FAILED tests/experiments/test_cal_b4_safety.py::test_v5_development_s3_failure_blocks_further_phases
+FAILED tests/experiments/test_v6_phase_routing.py::test_structural_failure_prevents_phase_selection_and_progression
+2 failed, 400 passed in 30.46s
