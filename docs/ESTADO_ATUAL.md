@@ -1,6 +1,25 @@
 # Estado atual do Hedge-Fund-Lab
 
-## H2 v6 — CAL-B4 aguardando revisão humana (08/10/2026)
+## H2 v6 — CAL-B4 aprovada; System Freeze bloqueado antes da avaliação
+
+**CAL_B4_PASS — SANITY CHECK ONLY**; **SYSTEM_CALIBRATION_COMPLETE=True**.
+Revisão manual assinada por Lucas Pereira da Silva em 2026-10-08T23:10:22Z:
+40/40 PASS, dez anchors e 12/12 gates automáticos PASS. Commits d71777b/9f4e1fb.
+One-shot consumida, raw/compromisso/hashes preservados.
+
+O pedido de System Freeze foi auditado sem chamadas externas ou acesso a resultados
+Validation/Final. Identidade v6 e integridade PASS; 381 testes offline PASS. O freeze
+definitivo parou antes de ser registrado: hipóteses/contrastes operacionais,
+replicações, agregação, procedimento estatístico, specs dos benchmarks e definições
+científicas de métricas secundárias ainda têm lacunas no protocolo aprovado.
+**H2_V6 SYSTEM FREEZE BLOCKED — EVALUATION PROTOCOL INCOMPLETE**.
+
+Relatório: [auditoria pré-freeze](evidence/h2_v6/SYSTEM_FREEZE_PRE_AUDIT.md).
+Validation/Final NOT EXECUTED; System Freeze NOT EXECUTED; zero novas chamadas Gemini.
+CAL-B4 FINANCIAL_OUTCOME=NOT COMPUTED. Próximo passo: aprovar amendment de avaliação
+antes de concluir o freeze; não liberar Validation nem Final silenciosamente.
+
+## Histórico — H2 v6 CAL-B4 antes da revisão humana (08/10/2026)
 
 **CAL_B4_AWAITING_PRIMARY_AUTHOR_REVIEW**.
 Após autorização externa específica e confirmação do ParticipantSpec hash final,
