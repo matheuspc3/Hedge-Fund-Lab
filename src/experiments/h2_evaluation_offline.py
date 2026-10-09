@@ -6,14 +6,12 @@ runs become replay-only. All historical source files remain unchanged.
 """
 
 import hashlib
-import inspect
 import ipaddress
 import json
 import os
 import socket
 import sqlite3
 import tempfile
-import threading
 from contextlib import contextmanager
 from dataclasses import replace
 from pathlib import Path
@@ -42,7 +40,6 @@ from src.experiments.context import RunContext
 from src.experiments.h2_evaluation import (
     AMENDMENT_STATUS,
     BASE_COSTS,
-    BENCHMARK_FACTORIES,
     BENCHMARK_SPECS,
     CAPITAL,
     COLUMNS,
@@ -58,14 +55,12 @@ from src.experiments.h2_evaluation import (
     phase_statistics,
     secondary_metrics,
 )
-from src.experiments.participants import PARTICIPANT_REGISTRY
 from src.experiments.phases import require_execution_within_phase
 from src.experiments.runner import ExperimentRunner, _write_equity, _write_trades
 from src.experiments.spec import CostSpec, ExperimentSpec, ParticipantSpec
 from src.pipeline.snapshot import create_dataset_snapshot, verify_snapshot_integrity
 
 ROOT = Path(__file__).resolve().parents[2]
-_FACTORY_LOCK = threading.RLock()
 _SOURCE_PATHS = (
     "scripts/qualify_h2_v6_evaluation.py",
     "src/experiments/h2_evaluation.py",
@@ -91,14 +86,9 @@ def sha_file(path):
 
 
 def source_hashes():
-    frozen = json.loads(
-        (ROOT / "docs/evidence/cal_b4/protocol_freeze_v1.json").read_text(
-            encoding="utf-8"
-        )
-    )
-    for path, expected in frozen["source_and_scientific_artifact_sha256"].items():
-        if path.startswith("src/") and sha_file(ROOT / path) != expected:
-            raise ValueError(f"frozen source changed: {path}")
+    from src.experiments.h2_evaluation_manifest import verify_preservation
+
+    verify_preservation()
     return {p: sha_file(ROOT / p) for p in _SOURCE_PATHS}
 
 
@@ -207,39 +197,10 @@ def _write_once(path, value):
         os.fsync(stream.fileno())
 
 
-class _InjectedFactory:
-    __signature__ = inspect.signature(LLMParticipant)
-    preflight = staticmethod(LLMParticipant.preflight)
-
-    def __init__(self, client):
-        self.client = client
-
-    def __call__(self, **params):
-        if digest(ParticipantSpec("llm_agent", params).to_dict()) != PARTICIPANT_SHA256:
-            raise ValueError("treatment identity changed; tuning forbidden")
-        return LLMParticipant(**params, llm_client=self.client)
-
-
-@contextmanager
-def _factories(client=None):
-    # ponytail: global registry bridge serialized for this offline harness.
-    # Ceiling: no concurrent foreign runner in this process; a future live
-    # runner needs an approved factory-injection hook, not this bridge.
-    with _FACTORY_LOCK:
-        additions = dict(BENCHMARK_FACTORIES)
-        if client is not None:
-            additions["llm_agent"] = _InjectedFactory(client)
-        previous = {key: PARTICIPANT_REGISTRY.get(key) for key in additions}
-        try:
-            PARTICIPANT_REGISTRY.update(additions)
-            with no_network():
-                yield
-        finally:
-            for key, original in previous.items():
-                if original is None:
-                    PARTICIPANT_REGISTRY.pop(key, None)
-                else:
-                    PARTICIPANT_REGISTRY[key] = original
+def build_with_client(spec, client):
+    if spec.kind != "llm_agent" or digest(spec.to_dict()) != PARTICIPANT_SHA256:
+        raise ValueError("only the unchanged H2 v6 participant can receive a client")
+    return LLMParticipant(**spec.params, llm_client=client)
 
 
 class _JournalClient(LLMClient):
@@ -459,15 +420,21 @@ class OfflineEvaluationBatch:
             evaluation=EVALUATION_WINDOWS[self.phase],
         )
 
-    def _runner(self, spec, slot):
+    def _context(self, slot):
+        return RunContext(self.phase, f"OFFLINE_SYNTHETIC:{slot}")
+
+    def _runner(self, spec, slot, client=None):
         return ExperimentRunner(
             spec,
-            context=RunContext(self.phase, f"OFFLINE_SYNTHETIC:{slot}"),
+            context=self._context(slot),
             snapshot_dir=self.snapshot.path.parent,
             runs_dir=self.root / "runs",
             repository_dir=ROOT,
             allow_dirty=True,
             boundaries=(PHASE_WINDOWS[self.phase],),
+            participant_factory=None
+            if client is None
+            else lambda participant: build_with_client(participant, client),
         )
 
     def _path(self, slot):
@@ -490,8 +457,7 @@ class OfflineEvaluationBatch:
         if (
             manifest["spec_hash"] != spec.spec_hash
             or manifest["experiment_spec"] != spec.to_dict()
-            or manifest["run_context"]
-            != RunContext(self.phase, f"OFFLINE_SYNTHETIC:{slot}").to_dict()
+            or manifest["run_context"] != self._context(slot).to_dict()
             or manifest["snapshot"]["identity_digest"] != self.snapshot.identity_digest
             or manifest["run_id"] != path.name
         ):
@@ -530,20 +496,24 @@ class OfflineEvaluationBatch:
         row = self.db.execute("SELECT state FROM slots WHERE slot=?", (slot,)).fetchone()
         if row is not None and row[0] == "COMPLETE":
             return self._load(slot, spec)
-        runner = self._runner(spec, slot)
-        with _factories(client):
-            result = runner.run()
-            require_execution_within_phase(
-                result.evaluation.settlement_session, PHASE_WINDOWS[self.phase]
-            )
-            secondary_metrics(result.backtest, self.equity_sessions)
-            if client is not None:
-                client.assert_complete()
-            result = replace(result, run_id=self._path(slot).name)
-            if self._path(slot).exists():
-                self._recover_published(result)
-            else:
-                runner.persist(result)
+        runner = self._runner(spec, slot, client)
+        result = runner.run()
+        require_execution_within_phase(
+            result.evaluation.settlement_session, PHASE_WINDOWS[self.phase]
+        )
+        secondary_metrics(result.backtest, self.equity_sessions)
+        if client is not None:
+            client.assert_complete()
+            journal_artifact = getattr(client, "journal_artifact", None)
+            if journal_artifact is not None:
+                result = replace(
+                    result, artifacts=(*result.artifacts, journal_artifact())
+                )
+        result = replace(result, run_id=self._path(slot).name)
+        if self._path(slot).exists():
+            self._recover_published(result)
+        else:
+            runner.persist(result)
         self._check_plan()
         seal = {p.name: sha_file(p) for p in self._path(slot).iterdir() if p.is_file()}
         self.db.execute(
@@ -719,6 +689,18 @@ class OfflineEvaluationBatch:
         self.summary()  # Completeness, seals and identity; no performance thresholds.
         return True
 
+    def _load_cost_disposition(self, identity):
+        row = self.db.execute(
+            "SELECT value FROM meta WHERE key=?", (identity,)
+        ).fetchone()
+        return None if row is None else json.loads(row[0])
+
+    def _save_cost_disposition(self, identity, value):
+        self.db.execute(
+            "INSERT INTO meta VALUES (?,?)", (identity, canonical_json(value))
+        )
+        self.db.commit()
+
     def cost_sensitivity(self):
         """All predeclared dispositions; strict replay, no subset aggregation."""
         with self._lease():
@@ -740,11 +722,9 @@ class OfflineEvaluationBatch:
                         )
                         continue
                     identity = f"{slot}-cost-{spread}"
-                    disposition = self.db.execute(
-                        "SELECT value FROM meta WHERE key=?", (identity,)
-                    ).fetchone()
+                    disposition = self._load_cost_disposition(identity)
                     if disposition is not None:
-                        value = json.loads(disposition[0])
+                        value = disposition
                         if value["status"] == "COMPLETE_EXACT_REPLAY":
                             value["result"] = self._load(
                                 identity, self._spec(self.llm_spec, spread)
@@ -766,7 +746,7 @@ class OfflineEvaluationBatch:
                         result = self._run_slot(
                             identity, self._spec(self.llm_spec, spread), replay
                         )
-                    except Exception as exc:
+                    except ReplayMismatchError as exc:
                         affected = replay.pending[0] if replay.pending else None
                         value = {
                             "slot": slot,
@@ -781,19 +761,11 @@ class OfflineEvaluationBatch:
                             else affected.call_id,
                             "consumed_calls": replay.consumed,
                         }
-                        self.db.execute(
-                            "INSERT INTO meta VALUES (?,?)",
-                            (identity, canonical_json(value)),
-                        )
-                        self.db.commit()
+                        self._save_cost_disposition(identity, value)
                         individual.append(value)
                     else:
                         value = {"slot": slot, "status": "COMPLETE_EXACT_REPLAY"}
-                        self.db.execute(
-                            "INSERT INTO meta VALUES (?,?)",
-                            (identity, canonical_json(value)),
-                        )
-                        self.db.commit()
+                        self._save_cost_disposition(identity, value)
                         individual.append({**value, "result": result})
                 for participant in BENCHMARK_SPECS:
                     slot = (

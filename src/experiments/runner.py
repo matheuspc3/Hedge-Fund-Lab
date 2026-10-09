@@ -14,7 +14,7 @@ import shutil
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any, Callable, Mapping
 from uuid import uuid4
 
 import pandas as pd
@@ -40,7 +40,7 @@ from src.experiments.participants import (
     required_tickers,
 )
 from src.experiments.phases import PhaseWindow, phase_of, require_execution_within_phase
-from src.experiments.spec import ExperimentSpec
+from src.experiments.spec import ExperimentSpec, ParticipantSpec
 from src.pipeline.snapshot import (
     PRICE_REPRESENTATION,
     DatasetSnapshot,
@@ -197,6 +197,7 @@ class ExperimentRunner:
         repository_dir: str | Path | None = None,
         allow_dirty: bool = False,
         boundaries: tuple[PhaseWindow, ...] = (),
+        participant_factory: Callable[[ParticipantSpec], Any] | None = None,
     ) -> None:
         # O contexto é congelado aqui, antes de qualquer execução: ``run()`` e
         # ``persist()`` apenas o leem. Não existe caminho que declare a fase
@@ -218,6 +219,7 @@ class ExperimentRunner:
         # Fronteiras declaradas pelo run (ex.: janela de Stress), com a mesma
         # regra de ``PHASES``: decisão e liquidação dentro, dados cortados no fim.
         self.boundaries = tuple(boundaries)
+        self.participant_factory = participant_factory or build_participant
 
     # ── Execução ─────────────────────────────────────────────────
 
@@ -263,7 +265,7 @@ class ExperimentRunner:
 
         # Instância nova a cada run: participantes clássicos carregam estado
         # entre sessões e não podem atravessar execuções.
-        participant = build_participant(self.spec.participant)
+        participant = self.participant_factory(self.spec.participant)
         window = self.spec.evaluation
         engine = ExecutionEngine(
             participant,

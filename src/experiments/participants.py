@@ -17,6 +17,7 @@ from typing import Any, Callable, Mapping
 from src.agents.participant import LLMParticipant
 from src.backtesting.arena import Participant
 from src.backtesting.portfolio import EqualWeightParticipant, MinVarianceParticipant
+from src.experiments.h2_evaluation import BollingerStateParticipant, SMARegimeParticipant
 from src.experiments.spec import ParticipantSpec
 from src.strategies.bollinger_bands import BollingerParticipant
 from src.strategies.buy_and_hold import BuyAndHoldParticipant
@@ -31,6 +32,8 @@ PARTICIPANT_REGISTRY: Mapping[str, Callable[..., Participant]] = {
     "llm_agent": LLMParticipant,
     "min_variance": MinVarianceParticipant,
     "sma_cross": SMACrossParticipant,
+    "sma_regime_h2_proposed": SMARegimeParticipant,
+    "bollinger_state_h2_proposed": BollingerStateParticipant,
 }
 
 # Participantes single-asset declaram o ativo neste parâmetro; os de carteira
