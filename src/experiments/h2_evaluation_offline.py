@@ -32,7 +32,7 @@ from src.agents.llm_trace import (
     schema_digest,
     schema_name,
 )
-from src.agents.participant import LLMParticipant
+from src.agents.participant import LLMDecisionError, LLMParticipant
 from src.artifacts import canonical_json
 from src.backtesting.b3_calendar import B3Calendar
 from src.backtesting.engine import BacktestResult, Trade
@@ -301,6 +301,21 @@ class _JournalClient(LLMClient):
             raise ReplayMismatchError(
                 "call bank incomplete, uncertain or contains leftover calls"
             )
+
+
+class _CostReplayClient(ReplayLLMClient):
+    """Keep typed matcher failures across the frozen participant's error wrapper."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.failures = []
+
+    async def generate(self, *args, **kwargs):
+        try:
+            return await super().generate(*args, **kwargs)
+        except Exception as exc:
+            self.failures.append(exc)
+            raise
 
 
 class OfflineEvaluationBatch:
@@ -735,7 +750,7 @@ class OfflineEvaluationBatch:
                     records = load_trace(
                         (Path(baseline["path"]) / "llm_calls.jsonl").read_bytes()
                     )
-                    replay = ReplayLLMClient(
+                    replay = _CostReplayClient(
                         records, provider="gemini", requested_model="gemini-3.8-flash"
                     )
                     self.db.execute(
@@ -747,12 +762,20 @@ class OfflineEvaluationBatch:
                         result = self._run_slot(
                             identity, self._spec(self.llm_spec, spread), replay
                         )
-                    except ReplayMismatchError as exc:
+                    except (ReplayMismatchError, LLMDecisionError) as exc:
+                        if isinstance(exc, LLMDecisionError):
+                            if not replay.failures or any(
+                                not isinstance(f, ReplayMismatchError)
+                                for f in replay.failures
+                            ):
+                                raise  # Never infer N/A from wrapper text or mixed failures.
+                            exc = replay.failures[0]
                         affected = replay.pending[0] if replay.pending else None
                         value = {
                             "slot": slot,
                             "status": INVALID_COST_REPLAY,
                             "metrics": None,
+                            "secondary": None,
                             "reason": type(exc).__name__ + ": " + str(exc),
                             "affected_identity": None
                             if affected is None

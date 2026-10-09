@@ -10,7 +10,7 @@ import json
 import os
 import sqlite3
 import threading
-from contextlib import contextmanager
+from contextlib import closing, contextmanager
 from contextvars import ContextVar
 from dataclasses import replace
 from pathlib import Path
@@ -85,7 +85,7 @@ class CallBank:
         self.manifest_sha, self.phase = manifest_sha, phase
         self.lock = threading.RLock()
         if Path(path).exists():
-            with sqlite3.connect(path) as existing:
+            with closing(sqlite3.connect(path)) as existing:
                 tables = {
                     r[0]
                     for r in existing.execute(
@@ -150,10 +150,12 @@ class CallBank:
                     )
                 self.db.commit()
             except (sqlite3.Error, OSError) as exc:
-                self.db.rollback()
-                raise JournalIntegrityError(
-                    "journal commit failed; no response delivery"
-                ) from exc
+                try:
+                    self.db.rollback()
+                finally:
+                    raise JournalIntegrityError(
+                        "journal commit failed; no response delivery"
+                    ) from exc
 
     def row(self, slot, sequence):
         with self.lock:
@@ -631,7 +633,11 @@ class EvaluationBatch(OfflineEvaluationBatch):
             raise JournalIntegrityError(
                 "existing batch lost its call bank; cannot infer again"
             )
-        self.bank = CallBank(self.root / "provider.sqlite", self.manifest_sha, phase)
+        try:
+            self.bank = CallBank(self.root / "provider.sqlite", self.manifest_sha, phase)
+        except Exception:
+            self.db.close()
+            raise
         self.transport_factory, self._transports = transport_factory, []
 
     def close(self):
@@ -841,7 +847,7 @@ class EvaluationBatch(OfflineEvaluationBatch):
                 or sha_file(target) != expected
             ):
                 raise ValueError("Validation artifact corrupted")
-        with sqlite3.connect(path.parent / "evaluation.sqlite") as db:
+        with closing(sqlite3.connect(path.parent / "evaluation.sqlite")) as db:
             for slot in expected_slots:
                 state = db.execute(
                     "SELECT state,seal FROM slots WHERE slot=?", (slot,)

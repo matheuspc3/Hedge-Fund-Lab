@@ -13,7 +13,7 @@ import tempfile
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
-from contextlib import ExitStack
+from contextlib import ExitStack, closing
 from pathlib import Path
 from unittest.mock import Mock, patch
 
@@ -28,6 +28,7 @@ from src.agents.llm_client import (
     ProviderRequestRejected,
     ProviderTransportError,
 )
+from src.agents.participant import LLMDecisionError
 from src.agents.state import PortfolioAction, RiskVerdict, TechnicalEvidenceResponse
 from src.experiments.h2_evaluation import (
     BENCHMARK_SPECS,
@@ -78,7 +79,7 @@ class NativeFactory:
 
                 pending = _PENDING_CALL.get()
                 # A separate connection observes the reservation committed before HTTP.
-                with sqlite3.connect(self.bank) as db:
+                with closing(sqlite3.connect(self.bank)) as db:
                     assert db.execute(
                         "SELECT identity FROM calls WHERE slot=? AND sequence=?", pending
                     ).fetchone()
@@ -217,6 +218,11 @@ def journal_checks(root, params):
     assert (
         bank.row("L01", 0) is None and bank.never_reserved("L01") and factory.calls == 0
     )
+    proxy.rollback.side_effect = OSError("synthetic rollback failure")
+    with patch.object(bank, "db", proxy):
+        rejected(lambda client=client: asyncio.run(call(client)), JournalIntegrityError)
+    real_db.rollback()
+    assert factory.calls == 0
     bank.close()
     bank, client, _ = setup("commit_rollback", factory=factory)
     assert bank.never_reserved("L01")
@@ -496,7 +502,11 @@ def integration(root, cleanup, document, sha):
         if i["status"].startswith("COST_SENSITIVITY_NOT_ESTIMABLE")
     ]
     assert len(invalid) == 9 and all(
-        i["metrics"] is None and i["reason"] and i["affected_identity"] for i in invalid
+        i["metrics"] is None
+        and i["secondary"] is None
+        and i["reason"]
+        and i["affected_identity"]
+        for i in invalid
     )
     assert all(divergent[s]["statistics"] is None for s in ("0", "10", "20"))
     buying.checkpoint()
@@ -535,6 +545,12 @@ def integration(root, cleanup, document, sha):
 
     with patch.object(baseline, "_run_slot", side_effect=cost_disk_failure):
         rejected(baseline.cost_sensitivity, OSError)
+    with patch.object(
+        baseline,
+        "_run_slot",
+        side_effect=LLMDecisionError("synthetic code failure without matcher cause"),
+    ):
+        rejected(baseline.cost_sensitivity, LLMDecisionError)
     assert (
         baseline.db.execute("SELECT value FROM meta WHERE key='L01-cost-0'").fetchone()
         is None
