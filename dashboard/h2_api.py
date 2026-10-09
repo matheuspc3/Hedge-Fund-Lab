@@ -343,8 +343,8 @@ def _costs(report):
             for r in scenario["individual"]
         ] + [
             {
-                "id": b["kind"],
-                "label": LABELS[b["kind"]],
+                "id": b["kind"].split("-cost-")[0],
+                "label": LABELS[b["kind"].split("-cost-")[0]],
                 "status": "COMPLETE_DETERMINISTIC",
                 "sharpe": b["metrics"]["sharpe_ratio"],
                 "net_return": b["metrics"]["total_return"],
