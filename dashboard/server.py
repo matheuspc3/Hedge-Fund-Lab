@@ -6,19 +6,29 @@ Uso:
 
 Acessar: http://localhost:8080 (ou porta especificada)
 
-Endpoints:
-    /           — Dashboard principal (Chart.js)
-    /logs       — Visualizador de logs em tempo real (SSE)
-    /api/logs   — SSE stream do arquivo de logs
+Endpoints (somente leitura; servidor escuta apenas em 127.0.0.1):
+    /h2                  — Dashboard H2 v6 (Validation, comparações, auditoria)
+    /api/h2/status       — identidade, governança e estado das fases
+    /api/h2/validation   — métricas, curvas, progresso e custos (?source=provisional|official|demo)
+    /api/h2/run          — decisões e trades de um run (?source&run)
+    /api/h2/trace        — chamadas LLM de uma sessão (?source&run&session)
+    /api/h2/artifact     — download de artifact selado (?source&run&name)
+    /                    — Dashboard legado (Chart.js)
+    /logs                — Visualizador de logs em tempo real (SSE)
+    /api/logs            — SSE stream do arquivo de logs
 """
 
 import http.server
 import json
 import logging
+import re
 import socketserver
 import sys
 import time
 from pathlib import Path
+from urllib.parse import parse_qs, urlsplit
+
+import h2_api
 
 logger = logging.getLogger("hedgefund.dashboard")
 
@@ -36,57 +46,57 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     # ── API ───────────────────────────────────────────────────────
 
-    def do_POST(self):
-        if self.path == "/api/run":
-            content_length = int(self.headers.get('Content-Length', 0))
-            post_data = self.rfile.read(content_length)
-            
-            try:
-                params = json.loads(post_data)
-                ticker = params.get("ticker", "WEGE3.SA")
-                days = str(params.get("days", 30))
-                analysts = str(params.get("analysts", 30))
-                freq = str(params.get("decision_frequency", 5))
-                provider = params.get("provider", "omnirouter")
-
-                import subprocess
-                # Zera o arquivo de log para que o terminal web comece limpo
-                if LOG_FILE.exists():
-                    LOG_FILE.write_text("")
-                
-                # Roda o script em background
-                subprocess.Popen([
-                    sys.executable, "scripts/run_agent_backtest.py",
-                    "--ticker", ticker,
-                    "--days", days,
-                    "--analysts", analysts,
-                    "--decision-frequency", freq,
-                    "--provider", provider
-                ], cwd=str(PROJECT_ROOT), close_fds=True)
-                
-                response_body = json.dumps({"status": "running"}).encode()
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self.send_header("Content-Length", str(len(response_body)))
-                self.end_headers()
-                self.wfile.write(response_body)
-            except Exception as e:
-                self.send_response(500)
-                self.send_header("Content-Type", "application/json")
-                self.end_headers()
-                self.wfile.write(json.dumps({"error": str(e)}).encode())
-        else:
-            self.send_response(404)
-            self.end_headers()
-
     def do_GET(self):
         if self.path == "/api/logs":
             return self._handle_logs_sse()
+        if self.path.startswith("/api/h2/"):
+            return self._handle_h2()
         if self.path in ("/logs", "/logs.html"):
             return self._serve_static("logs.html")
-        if self.path in ("/lab", "/lab.html"):
-            return self._serve_static("lab.html")
+        if self.path in ("/h2", "/h2/"):
+            return self._serve_static("h2.html")
         return super().do_GET()
+
+    def _handle_h2(self) -> None:
+        """Read-only H2 v6 API; every parameter is checked against a fixed set."""
+        url = urlsplit(self.path)
+        q = {k: v[0] for k, v in parse_qs(url.query).items()}
+        source, slot, session = q.get("source", "provisional"), q.get("run"), q.get("session")
+        if source not in (*h2_api.SOURCES, "demo") or (
+            slot is not None and slot not in (*h2_api.LLM, *h2_api.BENCHMARKS, "_root")
+        ):
+            return self._send_json(None, 400)
+        if url.path == "/api/h2/status":
+            return self._send_json(h2_api.status())
+        if url.path == "/api/h2/validation":
+            return self._send_json(h2_api.validation(source))
+        if url.path == "/api/h2/run" and slot:
+            return self._send_json(h2_api.run_detail(source, slot))
+        if url.path == "/api/h2/trace" and slot and re.fullmatch(r"\d{4}-\d{2}-\d{2}", session or ""):
+            return self._send_json(h2_api.trace(source, slot, session))
+        if url.path == "/api/h2/artifact" and slot:
+            path = h2_api.artifact_path(source, slot, q.get("name", ""))
+            if path is None:
+                return self._send_json(None, 404)
+            data = path.read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/octet-stream")
+            self.send_header("Content-Disposition", f'attachment; filename="{path.name}"')
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+            return None
+        return self._send_json(None, 404)
+
+    def _send_json(self, value, code=200) -> None:
+        code = 404 if value is None and code == 200 else code
+        body = json.dumps(value, ensure_ascii=False, allow_nan=False, default=str).encode()
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
 
     def _serve_static(self, filename: str) -> None:
         """Serve um arquivo HTML estático do diretório dashboard."""
@@ -94,7 +104,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         if not path.exists():
             self.send_error(404, "Not found")
             return
-        
+
         content = path.read_bytes()
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -173,9 +183,10 @@ def main():
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    with ReusableTCPServer(("", PORT), Handler) as httpd:
+    with ReusableTCPServer(("127.0.0.1", PORT), Handler) as httpd:
         logger.info("Servidor iniciado em http://localhost:%d", PORT)
-        logger.info("  Dashboard : http://localhost:%d/", PORT)
+        logger.info("  H2 v6     : http://localhost:%d/h2", PORT)
+        logger.info("  Legado    : http://localhost:%d/", PORT)
         logger.info("  Logs      : http://localhost:%d/logs", PORT)
         logger.info("  Ctrl+C para parar")
         try:
