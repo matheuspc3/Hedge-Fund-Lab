@@ -1,0 +1,14 @@
+{
+  "kind": "H2_V6_OFFLINE_VERIFICATION",
+  "command": ".venv/Scripts/python.exe -m pytest tests/agents tests/experiments -q -p no:cacheprovider --basetemp .pytest_temp/h2_v6_final_20261008",
+  "tests_passed": 860,
+  "tests_failed": 0,
+  "elapsed_seconds": 37.51,
+  "external_provider_calls": 0,
+  "new_contract_checks": "truth/sign/zero/band boundaries; strict schema; unique request-specific subset; 1620 renderer fact-role combinations; failure recording; INVALID_RESPONSE without sizing; native mocked Gemini schema and raw preservation; graph Risk/Portfolio payload isolation; new and historical v1-v5 trace replay; guarded phase routing",
+  "checker_v3_modified": false,
+  "cal_b4_executed": false,
+  "validation_final_executed": false,
+  "infrastructure_note": "A targeted fixture initially failed on sandbox temporary-directory permission; the same targeted checks passed with an explicit workspace basetemp. The final complete suite passed with workspace temporaries.",
+  "live_scientific_status": "NOT EXECUTED — SPECIFIC H2 V6 AUTHORIZATION REQUIRED"
+}

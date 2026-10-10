@@ -1,0 +1,125 @@
+{
+  "calendar_version": 2,
+  "scope": "B3 cash equity market (COTAHIST TPMERC 010), 2016-01-04..2026-08-31",
+  "official_source": "B3 Séries Históricas COTAHIST, https://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_A{YYYY}.ZIP",
+  "downloaded_utc": "2026-10-04",
+  "cotahist_sha256": {
+    "COTAHIST_A2016.ZIP": "ffc82a9b973cb5901e68dc11bea1bbc9bf0a2c46749e0efe5a7a89229bc0d81f",
+    "COTAHIST_A2017.ZIP": "af6aaa85187c1d58ec6565522644066da573a7dc5b579c1d4c906ae95a2dea86",
+    "COTAHIST_A2018.ZIP": "9d66136179d9822476c6035000167aecf2665f4396619e4d74c0011745a0c507",
+    "COTAHIST_A2019.ZIP": "5170d3f8f079c3306424b36c2fae9b467391f8fa37d16d389f487b4c5c28edb9",
+    "COTAHIST_A2020.ZIP": "86442168939b9da7b3cc1ec1662c333ee5ab4c75f2be1865b5bf55ba4c52168f",
+    "COTAHIST_A2021.ZIP": "b0d4aed17d609c7ba615a23320c2fd513b580a251ae7d884a5015ef8a3fe4705",
+    "COTAHIST_A2022.ZIP": "a4f9015b755f797d9c08b0d13f19dbfab18a6c75f379c0271a1cf1b5f6323cd8",
+    "COTAHIST_A2023.ZIP": "ad1603788d78aaa1de806498572277f1d9443f88ae116452751b5800cb23523e",
+    "COTAHIST_A2024.ZIP": "96a003d10fab0fa2ace0c64cdc2b892b4c111adf9da8e538aa0b28437bd2a172",
+    "COTAHIST_A2025.ZIP": "6cc0ad851c8f605ca30418acac48be81f1767f6ed05b4f563772d06ae448047d",
+    "COTAHIST_A2026.ZIP": "67a343ae7ecb74bf70f7ccccb1ba29cf6aefd388a37e7a633681e7fb98a2b4f4"
+  },
+  "session_rule": "a date is a B3 session iff COTAHIST has at least one TPMERC 010 record on it",
+  "session_count": 2649,
+  "sessions_per_year": {
+    "2016": 249,
+    "2017": 246,
+    "2018": 245,
+    "2019": 248,
+    "2020": 249,
+    "2021": 247,
+    "2022": 250,
+    "2023": 248,
+    "2024": 251,
+    "2025": 250,
+    "2026": 166
+  },
+  "sessions_sha256": "9f23b4b24f48537f90d8353c0820bdc0b2917a0bf1bfd40fca9d4364a9496619",
+  "rule_calendar_equivalence": "B3Calendar v2 sessions_between(2016-01-04, 2026-08-31) == this list (tests/backtesting/test_b3_calendar_history.py)",
+  "v1_rule_errors": [
+    {
+      "date": "2016-01-25",
+      "v1": "session",
+      "official": "closed"
+    },
+    {
+      "date": "2016-12-30",
+      "v1": "session",
+      "official": "closed"
+    },
+    {
+      "date": "2017-01-25",
+      "v1": "session",
+      "official": "closed"
+    },
+    {
+      "date": "2017-12-29",
+      "v1": "session",
+      "official": "closed"
+    },
+    {
+      "date": "2018-01-25",
+      "v1": "session",
+      "official": "closed"
+    },
+    {
+      "date": "2018-07-09",
+      "v1": "session",
+      "official": "closed"
+    },
+    {
+      "date": "2019-01-25",
+      "v1": "session",
+      "official": "closed"
+    },
+    {
+      "date": "2019-07-09",
+      "v1": "session",
+      "official": "closed"
+    },
+    {
+      "date": "2021-01-25",
+      "v1": "session",
+      "official": "closed"
+    },
+    {
+      "date": "2021-07-09",
+      "v1": "session",
+      "official": "closed"
+    },
+    {
+      "date": "2022-12-30",
+      "v1": "session",
+      "official": "closed"
+    },
+    {
+      "date": "2023-12-29",
+      "v1": "session",
+      "official": "closed"
+    },
+    {
+      "date": "2020-11-20",
+      "v1": "closed",
+      "official": "session"
+    },
+    {
+      "date": "2023-11-20",
+      "v1": "closed",
+      "official": "session"
+    }
+  ],
+  "policy_sources": {
+    "sao_paulo_holidays_open_from_2022": [
+      "https://borainvestir.b3.com.br/noticias/mercado/confira-o-funcionamento-da-bolsa-de-valores-nos-feriados-de-2023",
+      "https://www.suno.com.br/noticias/b3-b3sa3-pregao-em-feriados-municipais-2022/amp/",
+      "https://www.moneytimes.com.br/mercado-perde-tres-feriados-com-novo-calendario-da-b3-em-2022/"
+    ],
+    "2020_open_on_9_jul_and_20_nov": [
+      "https://investnews.com.br/financas/b3-informa-que-nao-havera-pregao-no-dia-11-mas-funcionara-em-9-07-e-20-11/amp/",
+      "https://www.suno.com.br/noticias/b3-b3sa3-funcionamento-9-julho-20-novembro/amp/"
+    ],
+    "20_nov_national_from_2024": [
+      "https://www.b3.com.br/data/files/75/C1/52/35/F854C810719CE3C8DC0D8AA8/OC%20207-2023-PRE%20Procedimentos%20para%20Tratamento%20de%20Novo%20Feriado%20Nacional%20no%20Dia%2020%20de%20Novembro%20(PT).pdf",
+      "https://www2.camara.leg.br/legin/fed/lei/2023/lei-14759-21-dezembro-2023-795091-norma-pl.html"
+    ],
+    "no_session_on_last_weekday_of_year": "observed in COTAHIST every year 2016-2025 (e.g. 2016-12-30, 2017-12-29, 2022-12-30, 2023-12-29)"
+  },
+  "note_on_requested_example": "09/07/2023 was a Sunday; it cannot be a session. 25/01/2023 and 20/11/2023 were sessions; 30/12/2022 was not."
+}

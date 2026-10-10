@@ -3,8 +3,7 @@
 import numpy as np
 import pandas as pd
 import pytest
-from hypothesis import given, settings
-from hypothesis import strategies as st
+from hypothesis import given, settings, strategies as st
 
 from src.indicators.sma import sma
 
@@ -66,7 +65,11 @@ class TestSMA:
     # ── Property-based tests ───────────────────────────────────
 
     @given(
-        values=st.lists(st.floats(min_value=1, max_value=1000, allow_nan=False), min_size=1, max_size=50),
+        values=st.lists(
+            st.floats(min_value=1, max_value=1000, allow_nan=False),
+            min_size=1,
+            max_size=50,
+        ),
         window=st.integers(min_value=1, max_value=30),
     )
     @settings(max_examples=50)

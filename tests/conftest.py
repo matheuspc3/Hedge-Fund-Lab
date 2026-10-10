@@ -13,6 +13,7 @@ sys.path.insert(0, str(SRC.parent))
 
 # ── Dados sintéticos ─────────────────────────────────────────────
 
+
 @pytest.fixture
 def synthetic_ohlcv() -> pd.DataFrame:
     """Gera ~5 anos de dados OHLCV sintéticos (random walk)."""
@@ -66,6 +67,7 @@ def synthetic_data_with_nan(synthetic_clean_data: pd.DataFrame) -> pd.DataFrame:
 
 
 # ── Mock helpers ─────────────────────────────────────────────────
+
 
 @pytest.fixture
 def mock_db_session():

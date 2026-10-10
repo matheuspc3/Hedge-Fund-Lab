@@ -1,0 +1,1299 @@
+{
+  "kind": "H2_V4_DEFECT_DIRECTED_HARDENING",
+  "treatment_version": 4,
+  "technical_prompt_version": 3,
+  "risk_prompt_version": 2,
+  "technical_prompt_sha256": "ca283bd920bbd0655d9c9a23eacd98fb6da48e6609097cb27cd835e9dee50759",
+  "risk_prompt_sha256": "990424e307e2c593afc40ebafef2c12387029ecf46a285f18a595c447e1e2151",
+  "checker_freeze": {
+    "version": 3,
+    "source_sha256": {
+      "src/agents/feature_semantics.py": "fb2cfa36feba26b5e8f622828e03aa8fcfd25b1f7a0567d387f82baf9f056169",
+      "scripts/h2_v4.py": "630e7d8f862d4b5ffe5d8052911928e23f51634eaafcc88292ae0ef74a539f8e"
+    },
+    "source_blobs": {
+      "src/agents/feature_semantics.py": "57c0b1b0548455b897fdf0149c177a9bcd7b2557",
+      "scripts/h2_v4.py": "672f6931ce19254acb147a2bc93705f542018ea1"
+    },
+    "regression_report": "docs/evidence/h2_v4/technical_checker_v3/calibration_report.json"
+  },
+  "participant_params": {
+    "ticker": "PETR4.SA",
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "temperature": 1.0,
+    "max_output_tokens": 8192,
+    "analyst_count": 5,
+    "consensus_threshold": 0.6,
+    "require_all_votes": true,
+    "decision_frequency": 1,
+    "strict_inputs": true,
+    "portfolio_inversion_policy": "fail",
+    "long_target_weight": 1.0,
+    "risk_max_concentration": 1.0,
+    "risk_max_volatility": 0.5,
+    "risk_max_drawdown": 0.25,
+    "volatility_window": 21,
+    "retry_attempts": 6,
+    "retry_base_delay": 2.0,
+    "thinking_level": "low",
+    "technical_prompt_version": 3,
+    "risk_prompt_version": 2
+  },
+  "participant_spec_sha256": "a75b9e783cdc48b1098267c64bd22f47f45157b8e2cc4898711e418b01ebeb19",
+  "git_commit": "eed7576d40e3f38f42dbafc2dcdc4dd0a9315a4e",
+  "cal_b4_commitment": "35d3d468a3253538392314c158c8605867c283c864fbd99c9499c8fd276f6ae7",
+  "started_utc": "2026-10-07T22:03:56.720614+00:00",
+  "finished_utc": "2026-10-07T22:07:18.836091+00:00",
+  "financial_metrics": "none computed (no settlement, no t+1)",
+  "states": [
+    "cal-b3:2018-08-03",
+    "cal-b3:2019-03-19",
+    "cal-b3:2019-10-18",
+    "cal-b3:2020-05-13",
+    "cal-b3:2021-01-06",
+    "cal-b3:2021-08-17",
+    "cal-b3:2022-03-11",
+    "cal-b3:2022-11-29",
+    "cal-b3:2023-05-12",
+    "cal-b3:2024-01-11"
+  ],
+  "repetitions": 3,
+  "complete": true,
+  "aborted": null,
+  "capability": {
+    "status": "QUALIFIED",
+    "qualified": [
+      "max_output_tokens",
+      "temperature",
+      "thinking_level"
+    ]
+  },
+  "diagnostics": {
+    "decision_count": 30,
+    "failure_count": 0,
+    "failure_causes": {},
+    "buy_at_target_noop_count": 0,
+    "explicit_hold_rate": 0.4,
+    "no_majority_abstention_rate": 0.0,
+    "risk_veto_rate": 0.0,
+    "portfolio_hold_rate": 0.0,
+    "total_hold_rate": 0.4,
+    "same_state_flip_rate": 0.0,
+    "same_state_disagreement_rate": 0.0,
+    "max_tokens_count": 0
+  },
+  "technical_audit": {
+    "technical_votes": 150,
+    "V4-S1": 0,
+    "V4-S2": 0,
+    "V4-S3": 10,
+    "rates": {
+      "V4-S1": 0.0,
+      "V4-S2": 0.0,
+      "V4-S3": 0.06666666666666667
+    },
+    "technical_prompt_v3_only": true,
+    "flagged": [
+      {
+        "call_id": "2020-05-13|technical_analyst|2|000001",
+        "decision_session": "2020-05-13",
+        "analyst_id": 2,
+        "confidence": 0.55,
+        "justification": "O preco esta contido dentro das bandas de Bollinger e acima da SMA50, com MACD positivo e acima de sua linha de sinal. Contudo, o preco permanece significativamente abaixo da SMA200 (gap de -29,69%) e o RSI esta proximo da faixa neutra (51,87), gerando um cenario tecnico misto e divergente entre o curto e o longo prazo.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": ", o preco permanece significativamente abaixo da SMA200 (gap de -29,69%) e o RSI esta proximo da faixa neutra (51,87), gerando um cenario tecnico misto e divergente entre o curto e o longo prazo",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2020-05-13|technical_analyst|4|000003",
+        "decision_session": "2020-05-13",
+        "analyst_id": 4,
+        "confidence": 0.6,
+        "justification": "O preço está dentro das bandas de Bollinger, com RSI neutro em 51,87 e MACD positivo acima da linha de sinal. Embora esteja acima da SMA50 (gap de 5,70%), permanece substancialmente abaixo da SMA200 (gap de -29,69%), caracterizando um cenário técnico misto entre o médio e o longo prazo.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "Embora esteja acima da SMA50 (gap de 5,70%), permanece substancialmente abaixo da SMA200 (gap de -29,69%), caracterizando um cenário técnico misto entre o médio e o longo prazo",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2020-05-13|technical_analyst|2|000001",
+        "decision_session": "2020-05-13",
+        "analyst_id": 2,
+        "confidence": 0.55,
+        "justification": "O fechamento esta dentro das bandas de Bollinger, acima da SMA50 mas significativamente abaixo da SMA200. O MACD esta positivo e acima de sua linha de sinal, enquanto o RSI permanece em regiao neutra (51,87). O cenario tecnico atual apresenta sinais mistos entre a tendencia de longo prazo e o momento de curto prazo.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "O MACD esta positivo e acima de sua linha de sinal, enquanto o RSI permanece em regiao neutra (51,87)",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2020-05-13|technical_analyst|3|000002",
+        "decision_session": "2020-05-13",
+        "analyst_id": 3,
+        "confidence": 0.55,
+        "justification": "O fechamento opera acima da SMA50 e dentro das bandas de Bollinger, com MACD positivo e acima de sua linha de sinal. Por outro lado, o fechamento permanece substancialmente abaixo da SMA200 (gap de -29,69%) e o RSI encontra-se em patamar neutro (51,87), caracterizando um contexto de sinais mistos entre curto e longo prazo.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "Por outro lado, o fechamento permanece substancialmente abaixo da SMA200 (gap de -29,69%) e o RSI encontra-se em patamar neutro (51,87), caracterizando um contexto de sinais mistos entre curto e longo prazo",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2020-05-13|technical_analyst|4|000003",
+        "decision_session": "2020-05-13",
+        "analyst_id": 4,
+        "confidence": 0.55,
+        "justification": "O preco esta dentro das bandas de Bollinger, acima da SMA50 mas significativamente abaixo da SMA200. O MACD esta positivo e acima da linha de sinal, enquanto o RSI permanece em regiao neutra, resultando em um cenario tecnico misto sem direcao predominante.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "O MACD esta positivo e acima da linha de sinal, enquanto o RSI permanece em regiao neutra, resultando em um cenario tecnico misto sem direcao predominante",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2020-05-13|technical_analyst|4|000003",
+        "decision_session": "2020-05-13",
+        "analyst_id": 4,
+        "confidence": 0.55,
+        "justification": "O preco esta dentro das bandas de Bollinger, acima da SMA50 mas significativamente abaixo da SMA200. O MACD e positivo e superior a linha de sinal, enquanto o RSI permanece em regiao neutra, resultando em um cenario tecnico misto sem direcao definida.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "O MACD e positivo e superior a linha de sinal, enquanto o RSI permanece em regiao neutra, resultando em um cenario tecnico misto sem direcao definida",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2022-03-11|technical_analyst|1|000000",
+        "decision_session": "2022-03-11",
+        "analyst_id": 1,
+        "confidence": 0.65,
+        "justification": "O preço está acima das médias móveis de 50 e 200 períodos, indicando uma estrutura técnica de longo prazo positiva. Contudo, o RSI está em patamar neutro (47,99) e a linha MACD situa-se abaixo da sua linha de sinal, demonstrando perda de alinhamento direcional no curto prazo. Como o preço permanece contido dentro das bandas de Bollinger sem rompimentos evidentes, o cenário atual é misto, justificando a manutenção.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "Como o preço permanece contido dentro das bandas de Bollinger sem rompimentos evidentes, o cenário atual é misto, justificando a manutenção",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2022-11-29|technical_analyst|4|000003",
+        "decision_session": "2022-11-29",
+        "analyst_id": 4,
+        "confidence": 0.6,
+        "justification": "O preço está contido dentro das bandas de Bollinger e acima da SMA200, porém opera significativamente abaixo da SMA50. O MACD permanece abaixo de zero, embora esteja acima da sua linha de sinal, e o RSI em 44,64 indica momentum neutro a levemente negativo. Essa divergência entre os horizontes de tendência e indicadores sugere um estado misto sem viés direcional claro.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "O MACD permanece abaixo de zero, embora esteja acima da sua linha de sinal, e o RSI em 44,64 indica momentum neutro a levemente negativo",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2022-11-29|technical_analyst|2|000001",
+        "decision_session": "2022-11-29",
+        "analyst_id": 2,
+        "confidence": 0.65,
+        "justification": "O preco esta posicionado entre as bandas de Bollinger e acima da SMA200, porem abaixo da SMA50. O MACD esta em territorio negativo, embora acima da sua linha de sinal, enquanto o RSI permanece neutro proximo a 44,6, configurando um cenario tecnico misto e sem direcional claro.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "O MACD esta em territorio negativo, embora acima da sua linha de sinal, enquanto o RSI permanece neutro proximo a 44,6, configurando um cenario tecnico misto e sem direcional claro",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2022-11-29|technical_analyst|5|000004",
+        "decision_session": "2022-11-29",
+        "analyst_id": 5,
+        "confidence": 0.65,
+        "justification": "O fechamento está acima da SMA200 (sma200_gap positivo) mas abaixo da SMA50 (sma50_gap negativo), configurando sinais de tendência conflitantes. O preço está contido dentro das bandas de Bollinger, o RSI em 44.64 reflete momento neutro a levemente negativo, e embora o MACD esteja acima de sua linha de sinal, ambos permanecem abaixo de zero.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "64 reflete momento neutro a levemente negativo, e embora o MACD esteja acima de sua linha de sinal, ambos permanecem abaixo de zero",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "gates": {
+    "V4-S1": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "V4-S2": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "V4-S3": {
+      "value": 10,
+      "threshold": "== 0",
+      "pass": false
+    },
+    "V4-A": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "V4-T": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "V4-D": {
+      "value": 0.4,
+      "threshold": "< 0.90",
+      "pass": true
+    }
+  },
+  "status": "H2_V4 TEMPORAL CONTRACT FIX FAILED",
+  "v3_consumed_reference_DESCRIPTIVE": {
+    "technical_votes": 50,
+    "V4-S1": 0,
+    "V4-S2": 0,
+    "V4-S3": 16,
+    "rates": {
+      "V4-S1": 0.0,
+      "V4-S2": 0.0,
+      "V4-S3": 0.32
+    },
+    "technical_prompt_v3_only": false,
+    "flagged": [
+      {
+        "call_id": "2018-08-03|technical_analyst|5|000004",
+        "decision_session": "2018-08-03",
+        "analyst_id": 5,
+        "confidence": 0.65,
+        "justification": "O preço está bem acima das médias de 50 e 200 períodos e o MACD permanece acima da linha de sinal em território positivo, indicando tendência de alta expressiva. Contudo, o RSI está em zona de sobrecompra (70,34) e o preço encosta na banda superior de Bollinger (bb_upper_gap próximo de zero), sugerindo risco de exaustão no curto prazo.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "O preço está bem acima das médias de 50 e 200 períodos e o MACD permanece acima da linha de sinal em território positivo, indicando tendência de alta expressiva",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2019-03-19|technical_analyst|4|000003",
+        "decision_session": "2019-03-19",
+        "analyst_id": 4,
+        "confidence": 0.65,
+        "justification": "O preço está acima das médias móveis de 50 e 200 períodos e o MACD permanece acima da linha de sinal, indicando forte tendência de alta. No entanto, o fechamento está acima da banda superior de Bollinger (bb_upper_gap > 0) e o RSI atinge 73,93, sugerindo condição de sobrecompra e desaconselhando novas compras no momento atual.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "O preço está acima das médias móveis de 50 e 200 períodos e o MACD permanece acima da linha de sinal, indicando forte tendência de alta",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2020-05-13|technical_analyst|1|000000",
+        "decision_session": "2020-05-13",
+        "analyst_id": 1,
+        "confidence": 0.6,
+        "justification": "O preço está contido dentro das Bandas de Bollinger, com RSI neutro em 51,87 e MACD positivo acima da linha de sinal. Embora o preço esteja acima da SMA50 (sma50_gap positivo de 5,7%), permanece substancialmente abaixo da SMA200 (sma200_gap de -29,69%), indicando conflito entre a tendência de médio e longo prazo.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "Embora o preço esteja acima da SMA50 (sma50_gap positivo de 5,7%), permanece substancialmente abaixo da SMA200 (sma200_gap de -29,69%), indicando conflito entre a tendência de médio e longo prazo",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2020-05-13|technical_analyst|3|000002",
+        "decision_session": "2020-05-13",
+        "analyst_id": 3,
+        "confidence": 0.65,
+        "justification": "O preço está contido dentro das bandas de Bollinger com RSI neutro (51.87). Embora o MACD esteja positivo e acima da linha de sinal e o preço esteja acima da SMA50 (sma50_gap = 0.057), a forte distância negativa em relação à SMA200 (sma200_gap = -0.297) aponta para uma tendência primária de baixa contrastando com a recuperação de curto prazo, sugerindo cautela e manutenção.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "297) aponta para uma tendência primária de baixa contrastando com a recuperação de curto prazo, sugerindo cautela e manutenção",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2020-05-13|technical_analyst|4|000003",
+        "decision_session": "2020-05-13",
+        "analyst_id": 4,
+        "confidence": 0.6,
+        "justification": "O preco esta dentro das bandas de Bollinger e acima da SMA50, com MACD positivo e acima do sinal. Contudo, o RSI permanece neutro (51.87) e a tendencia de longo prazo e fortemente baixista (sma200_gap de -29.69%), configurando sinais mistos que recomendam cautela.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": ", o RSI permanece neutro (51",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2020-05-13|technical_analyst|5|000004",
+        "decision_session": "2020-05-13",
+        "analyst_id": 5,
+        "confidence": 0.6,
+        "justification": "O preço está contido dentro das bandas de Bollinger com RSI neutro em 51,87. Embora o momentum de curto prazo seja positivo com o MACD acima da linha de sinal e o preço acima da SMA50 (gap de 5,7%), o ativo permanece significativamente abaixo da SMA200 (gap de -29,69%), indicando forte tendência de baixa no longo prazo que contrasta com a recuperação recente.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "Embora o momentum de curto prazo seja positivo com o MACD acima da linha de sinal e o preço acima da SMA50 (gap de 5,7%), o ativo permanece significativamente abaixo da SMA200 (gap de -29,69%), indicando forte tendência de baixa no longo prazo que contrasta com a recuperação recente",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2021-08-17|technical_analyst|1|000000",
+        "decision_session": "2021-08-17",
+        "analyst_id": 1,
+        "confidence": 0.75,
+        "justification": "O preço opera acima das médias móveis de 50 e 200 períodos (sma50_gap e sma200_gap positivos), confirmando tendência de alta no médio e longo prazo. O MACD está acima de zero e superior à linha de sinal, reforçando o momentum comprador, enquanto o RSI em 56,15 indica força positiva sem condições de sobrecompra. O ativo permanece dentro das bandas de Bollinger com espaço até a banda superior.",
+        "signal": "COMPRA",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "O ativo permanece dentro das bandas de Bollinger com espaço até a banda superior",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2022-03-11|technical_analyst|1|000000",
+        "decision_session": "2022-03-11",
+        "analyst_id": 1,
+        "confidence": 0.65,
+        "justification": "O preço permanece acima das médias móveis de 50 e 200 períodos (sma50_gap e sma200_gap positivos), mantendo a tendência estrutural de alta. No entanto, o MACD está abaixo de sua linha de sinal (macd_ratio < macd_signal_ratio), o RSI está neutro em 47.99 e o fechamento está contido dentro das bandas de Bollinger, sugerindo consolidação ou perda de momentum no curto prazo sem gatilho claro de compra ou venda.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "O preço permanece acima das médias móveis de 50 e 200 períodos (sma50_gap e sma200_gap positivos), mantendo a tendência estrutural de alta",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            },
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "99 e o fechamento está contido dentro das bandas de Bollinger, sugerindo consolidação ou perda de momentum no curto prazo sem gatilho claro de compra ou venda",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            },
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "99 e o fechamento está contido dentro das bandas de Bollinger, sugerindo consolidação ou perda de momentum no curto prazo sem gatilho claro de compra ou venda",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2022-03-11|technical_analyst|3|000002",
+        "decision_session": "2022-03-11",
+        "analyst_id": 3,
+        "confidence": 0.65,
+        "justification": "O preço permanece dentro das Bandas de Bollinger e acima das médias móveis de 50 e 200 períodos, indicando uma tendência estrutural positiva. Contudo, o MACD está abaixo da sua linha de sinal (macd_ratio < macd_signal_ratio) e o RSI encontra-se em patamar neutro (47,99), sugerindo perda de momento e falta de sinal claro de entrada no momento.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "O preço permanece dentro das Bandas de Bollinger e acima das médias móveis de 50 e 200 períodos, indicando uma tendência estrutural positiva",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            },
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": ", o MACD está abaixo da sua linha de sinal (macd_ratio < macd_signal_ratio) e o RSI encontra-se em patamar neutro (47,99), sugerindo perda de momento e falta de sinal claro de entrada no momento",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2022-03-11|technical_analyst|4|000003",
+        "decision_session": "2022-03-11",
+        "analyst_id": 4,
+        "confidence": 0.65,
+        "justification": "O preço permanece acima das médias móveis de 50 e 200 períodos, indicando uma tendência estrutural positiva no longo prazo. No entanto, no curto prazo o momentum enfraqueceu, com o MACD posicionado abaixo de sua linha de sinal e o RSI em zona neutra (47,99). O preço também opera confortavelmente dentro das bandas de Bollinger, sugerindo ausência de gatilhos imediatos de compra ou venda.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "O preço permanece acima das médias móveis de 50 e 200 períodos, indicando uma tendência estrutural positiva no longo prazo",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2022-03-11|technical_analyst|5|000004",
+        "decision_session": "2022-03-11",
+        "analyst_id": 5,
+        "confidence": 0.65,
+        "justification": "O preço permanece acima das médias móveis de 50 e 200 períodos (sma50_gap de +1,8% e sma200_gap de +23,0%), indicando tendência estrutural de alta. No entanto, o preço está contido dentro das Bandas de Bollinger, o RSI em 48 reflete neutralidade de momentum, e a linha MACD situa-se abaixo da sua linha de sinal (macd_ratio < macd_signal_ratio), sugerindo fraqueza no curto prazo que recomenda cautela sem configurar venda compulsória.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "O preço permanece acima das médias móveis de 50 e 200 períodos (sma50_gap de +1,8% e sma200_gap de +23,0%), indicando tendência estrutural de alta",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2022-11-29|technical_analyst|1|000000",
+        "decision_session": "2022-11-29",
+        "analyst_id": 1,
+        "confidence": 0.55,
+        "justification": "O ativo opera dentro das bandas de Bollinger, com RSI em patamar neutro (44.64). O preço está abaixo da SMA 50 (-10.48%), porém ainda acima da SMA 200 (+3.33%), indicando fraqueza no médio prazo mas sustentação no longo prazo. O MACD permanece negativo, embora ligeiramente acima da linha de sinal, sem clareza direcional forte.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "O MACD permanece negativo, embora ligeiramente acima da linha de sinal, sem clareza direcional forte",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2022-11-29|technical_analyst|3|000002",
+        "decision_session": "2022-11-29",
+        "analyst_id": 3,
+        "confidence": 0.65,
+        "justification": "O preço está contido dentro das bandas de Bollinger e acima da SMA200 (sma200_gap positivo de 3,3%), indicando suporte estrutural de longo prazo. No entanto, opera significativamente abaixo da SMA50 (-10,5%) com RSI em 44,64, refletindo fraqueza no médio prazo. Embora o MACD esteja acima de sua linha de sinal, ambos permanecem em território negativo. Os sinais mistos sugerem neutralidade.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "Embora o MACD esteja acima de sua linha de sinal, ambos permanecem em território negativo",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2022-11-29|technical_analyst|4|000003",
+        "decision_session": "2022-11-29",
+        "analyst_id": 4,
+        "confidence": 0.65,
+        "justification": "O preço opera dentro das bandas de Bollinger e acima da SMA200, porém permanece significativamente abaixo da SMA50 (-10,48%). O MACD está em território negativo, embora ligeiramente acima de sua linha de sinal, e o RSI em 44,64 indica neutralidade sem extremos definidos.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "permanece significativamente abaixo da SMA50 (-10,48%)",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2022-11-29|technical_analyst|5|000004",
+        "decision_session": "2022-11-29",
+        "analyst_id": 5,
+        "confidence": 0.65,
+        "justification": "O preço opera dentro das bandas de Bollinger e acima da SMA 200, porém abaixo da SMA 50 (-10.48%). O MACD permanece em território negativo, embora ligeiramente acima de sua linha de sinal, e o RSI em 44.64 reflete neutralidade sem sobrevenda extrema, configurando um cenário misto e sem tendência clara definida.",
+        "signal": "MANTER",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "O MACD permanece em território negativo, embora ligeiramente acima de sua linha de sinal, e o RSI em 44",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      },
+      {
+        "call_id": "2024-01-11|technical_analyst|1|000000",
+        "decision_session": "2024-01-11",
+        "analyst_id": 1,
+        "confidence": 0.75,
+        "justification": "O ativo opera com forte tendência de alta, com o preço significativamente acima das médias de 50 e 200 períodos (sma50_gap de 7,30% e sma200_gap de 30,54%). O MACD permanece positivo e acima de sua linha de sinal, enquanto o RSI em 62,94 indica força compradora sem atingir zona de sobrecompra extrema. O preço encontra-se dentro das bandas de Bollinger, com espaço até a banda superior.",
+        "signal": "COMPRA",
+        "findings": {
+          "V4-S1": [],
+          "V4-S2": [],
+          "V4-S3": [
+            {
+              "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+              "text": "O MACD permanece positivo e acima de sua linha de sinal, enquanto o RSI em 62,94 indica força compradora sem atingir zona de sobrecompra extrema",
+              "requires": "t-1 values (not in the payload)",
+              "holds": false
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "target_anchors": {
+    "2020-05-13": {
+      "v3_consumed": {
+        "technical_votes": 5,
+        "V4-S1": 0,
+        "V4-S2": 0,
+        "V4-S3": 4,
+        "rates": {
+          "V4-S1": 0.0,
+          "V4-S2": 0.0,
+          "V4-S3": 0.8
+        },
+        "technical_prompt_v3_only": false,
+        "flagged": [
+          {
+            "call_id": "2020-05-13|technical_analyst|1|000000",
+            "decision_session": "2020-05-13",
+            "analyst_id": 1,
+            "confidence": 0.6,
+            "justification": "O preço está contido dentro das Bandas de Bollinger, com RSI neutro em 51,87 e MACD positivo acima da linha de sinal. Embora o preço esteja acima da SMA50 (sma50_gap positivo de 5,7%), permanece substancialmente abaixo da SMA200 (sma200_gap de -29,69%), indicando conflito entre a tendência de médio e longo prazo.",
+            "signal": "MANTER",
+            "findings": {
+              "V4-S1": [],
+              "V4-S2": [],
+              "V4-S3": [
+                {
+                  "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+                  "text": "Embora o preço esteja acima da SMA50 (sma50_gap positivo de 5,7%), permanece substancialmente abaixo da SMA200 (sma200_gap de -29,69%), indicando conflito entre a tendência de médio e longo prazo",
+                  "requires": "t-1 values (not in the payload)",
+                  "holds": false
+                }
+              ]
+            }
+          },
+          {
+            "call_id": "2020-05-13|technical_analyst|3|000002",
+            "decision_session": "2020-05-13",
+            "analyst_id": 3,
+            "confidence": 0.65,
+            "justification": "O preço está contido dentro das bandas de Bollinger com RSI neutro (51.87). Embora o MACD esteja positivo e acima da linha de sinal e o preço esteja acima da SMA50 (sma50_gap = 0.057), a forte distância negativa em relação à SMA200 (sma200_gap = -0.297) aponta para uma tendência primária de baixa contrastando com a recuperação de curto prazo, sugerindo cautela e manutenção.",
+            "signal": "MANTER",
+            "findings": {
+              "V4-S1": [],
+              "V4-S2": [],
+              "V4-S3": [
+                {
+                  "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+                  "text": "297) aponta para uma tendência primária de baixa contrastando com a recuperação de curto prazo, sugerindo cautela e manutenção",
+                  "requires": "t-1 values (not in the payload)",
+                  "holds": false
+                }
+              ]
+            }
+          },
+          {
+            "call_id": "2020-05-13|technical_analyst|4|000003",
+            "decision_session": "2020-05-13",
+            "analyst_id": 4,
+            "confidence": 0.6,
+            "justification": "O preco esta dentro das bandas de Bollinger e acima da SMA50, com MACD positivo e acima do sinal. Contudo, o RSI permanece neutro (51.87) e a tendencia de longo prazo e fortemente baixista (sma200_gap de -29.69%), configurando sinais mistos que recomendam cautela.",
+            "signal": "MANTER",
+            "findings": {
+              "V4-S1": [],
+              "V4-S2": [],
+              "V4-S3": [
+                {
+                  "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+                  "text": ", o RSI permanece neutro (51",
+                  "requires": "t-1 values (not in the payload)",
+                  "holds": false
+                }
+              ]
+            }
+          },
+          {
+            "call_id": "2020-05-13|technical_analyst|5|000004",
+            "decision_session": "2020-05-13",
+            "analyst_id": 5,
+            "confidence": 0.6,
+            "justification": "O preço está contido dentro das bandas de Bollinger com RSI neutro em 51,87. Embora o momentum de curto prazo seja positivo com o MACD acima da linha de sinal e o preço acima da SMA50 (gap de 5,7%), o ativo permanece significativamente abaixo da SMA200 (gap de -29,69%), indicando forte tendência de baixa no longo prazo que contrasta com a recuperação recente.",
+            "signal": "MANTER",
+            "findings": {
+              "V4-S1": [],
+              "V4-S2": [],
+              "V4-S3": [
+                {
+                  "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+                  "text": "Embora o momentum de curto prazo seja positivo com o MACD acima da linha de sinal e o preço acima da SMA50 (gap de 5,7%), o ativo permanece significativamente abaixo da SMA200 (gap de -29,69%), indicando forte tendência de baixa no longo prazo que contrasta com a recuperação recente",
+                  "requires": "t-1 values (not in the payload)",
+                  "holds": false
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "v4_live": {
+        "technical_votes": 15,
+        "V4-S1": 0,
+        "V4-S2": 0,
+        "V4-S3": 6,
+        "rates": {
+          "V4-S1": 0.0,
+          "V4-S2": 0.0,
+          "V4-S3": 0.4
+        },
+        "technical_prompt_v3_only": true,
+        "flagged": [
+          {
+            "call_id": "2020-05-13|technical_analyst|2|000001",
+            "decision_session": "2020-05-13",
+            "analyst_id": 2,
+            "confidence": 0.55,
+            "justification": "O preco esta contido dentro das bandas de Bollinger e acima da SMA50, com MACD positivo e acima de sua linha de sinal. Contudo, o preco permanece significativamente abaixo da SMA200 (gap de -29,69%) e o RSI esta proximo da faixa neutra (51,87), gerando um cenario tecnico misto e divergente entre o curto e o longo prazo.",
+            "signal": "MANTER",
+            "findings": {
+              "V4-S1": [],
+              "V4-S2": [],
+              "V4-S3": [
+                {
+                  "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+                  "text": ", o preco permanece significativamente abaixo da SMA200 (gap de -29,69%) e o RSI esta proximo da faixa neutra (51,87), gerando um cenario tecnico misto e divergente entre o curto e o longo prazo",
+                  "requires": "t-1 values (not in the payload)",
+                  "holds": false
+                }
+              ]
+            }
+          },
+          {
+            "call_id": "2020-05-13|technical_analyst|4|000003",
+            "decision_session": "2020-05-13",
+            "analyst_id": 4,
+            "confidence": 0.6,
+            "justification": "O preço está dentro das bandas de Bollinger, com RSI neutro em 51,87 e MACD positivo acima da linha de sinal. Embora esteja acima da SMA50 (gap de 5,70%), permanece substancialmente abaixo da SMA200 (gap de -29,69%), caracterizando um cenário técnico misto entre o médio e o longo prazo.",
+            "signal": "MANTER",
+            "findings": {
+              "V4-S1": [],
+              "V4-S2": [],
+              "V4-S3": [
+                {
+                  "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+                  "text": "Embora esteja acima da SMA50 (gap de 5,70%), permanece substancialmente abaixo da SMA200 (gap de -29,69%), caracterizando um cenário técnico misto entre o médio e o longo prazo",
+                  "requires": "t-1 values (not in the payload)",
+                  "holds": false
+                }
+              ]
+            }
+          },
+          {
+            "call_id": "2020-05-13|technical_analyst|2|000001",
+            "decision_session": "2020-05-13",
+            "analyst_id": 2,
+            "confidence": 0.55,
+            "justification": "O fechamento esta dentro das bandas de Bollinger, acima da SMA50 mas significativamente abaixo da SMA200. O MACD esta positivo e acima de sua linha de sinal, enquanto o RSI permanece em regiao neutra (51,87). O cenario tecnico atual apresenta sinais mistos entre a tendencia de longo prazo e o momento de curto prazo.",
+            "signal": "MANTER",
+            "findings": {
+              "V4-S1": [],
+              "V4-S2": [],
+              "V4-S3": [
+                {
+                  "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+                  "text": "O MACD esta positivo e acima de sua linha de sinal, enquanto o RSI permanece em regiao neutra (51,87)",
+                  "requires": "t-1 values (not in the payload)",
+                  "holds": false
+                }
+              ]
+            }
+          },
+          {
+            "call_id": "2020-05-13|technical_analyst|3|000002",
+            "decision_session": "2020-05-13",
+            "analyst_id": 3,
+            "confidence": 0.55,
+            "justification": "O fechamento opera acima da SMA50 e dentro das bandas de Bollinger, com MACD positivo e acima de sua linha de sinal. Por outro lado, o fechamento permanece substancialmente abaixo da SMA200 (gap de -29,69%) e o RSI encontra-se em patamar neutro (51,87), caracterizando um contexto de sinais mistos entre curto e longo prazo.",
+            "signal": "MANTER",
+            "findings": {
+              "V4-S1": [],
+              "V4-S2": [],
+              "V4-S3": [
+                {
+                  "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+                  "text": "Por outro lado, o fechamento permanece substancialmente abaixo da SMA200 (gap de -29,69%) e o RSI encontra-se em patamar neutro (51,87), caracterizando um contexto de sinais mistos entre curto e longo prazo",
+                  "requires": "t-1 values (not in the payload)",
+                  "holds": false
+                }
+              ]
+            }
+          },
+          {
+            "call_id": "2020-05-13|technical_analyst|4|000003",
+            "decision_session": "2020-05-13",
+            "analyst_id": 4,
+            "confidence": 0.55,
+            "justification": "O preco esta dentro das bandas de Bollinger, acima da SMA50 mas significativamente abaixo da SMA200. O MACD esta positivo e acima da linha de sinal, enquanto o RSI permanece em regiao neutra, resultando em um cenario tecnico misto sem direcao predominante.",
+            "signal": "MANTER",
+            "findings": {
+              "V4-S1": [],
+              "V4-S2": [],
+              "V4-S3": [
+                {
+                  "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+                  "text": "O MACD esta positivo e acima da linha de sinal, enquanto o RSI permanece em regiao neutra, resultando em um cenario tecnico misto sem direcao predominante",
+                  "requires": "t-1 values (not in the payload)",
+                  "holds": false
+                }
+              ]
+            }
+          },
+          {
+            "call_id": "2020-05-13|technical_analyst|4|000003",
+            "decision_session": "2020-05-13",
+            "analyst_id": 4,
+            "confidence": 0.55,
+            "justification": "O preco esta dentro das bandas de Bollinger, acima da SMA50 mas significativamente abaixo da SMA200. O MACD e positivo e superior a linha de sinal, enquanto o RSI permanece em regiao neutra, resultando em um cenario tecnico misto sem direcao definida.",
+            "signal": "MANTER",
+            "findings": {
+              "V4-S1": [],
+              "V4-S2": [],
+              "V4-S3": [
+                {
+                  "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+                  "text": "O MACD e positivo e superior a linha de sinal, enquanto o RSI permanece em regiao neutra, resultando em um cenario tecnico misto sem direcao definida",
+                  "requires": "t-1 values (not in the payload)",
+                  "holds": false
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "v4_decisions": [
+        {
+          "state_id": "cal-b3:2020-05-13",
+          "repetition": 0,
+          "error": null,
+          "reason": null,
+          "trace_file": "traces/cal-b3_2020-05-13__r0.jsonl",
+          "decision": {
+            "schema_version": 1,
+            "decision_session": "2020-05-13",
+            "ticker": "PETR4.SA",
+            "eligible": true,
+            "vote_counts": {
+              "COMPRA": 0,
+              "VENDA": 0,
+              "MANTER": 5
+            },
+            "valid_votes": 5,
+            "analyst_count": 5,
+            "consensus_threshold": 0.6,
+            "consensus_reached": true,
+            "technical_outcome": "MANTER",
+            "risk_verdict": "APROVADO",
+            "risk_source": "AUTO_APPROVE",
+            "risk_rule": null,
+            "portfolio_called": false,
+            "portfolio_source": "RULE",
+            "portfolio_rule": "TECH_HOLD",
+            "portfolio_decision": "MANTER",
+            "observed_weight": 0.0,
+            "target_weight": null,
+            "final_cause": "TECH_EXPLICIT_HOLD",
+            "input_violations": [],
+            "errors": [],
+            "failures": []
+          }
+        },
+        {
+          "state_id": "cal-b3:2020-05-13",
+          "repetition": 1,
+          "error": null,
+          "reason": null,
+          "trace_file": "traces/cal-b3_2020-05-13__r1.jsonl",
+          "decision": {
+            "schema_version": 1,
+            "decision_session": "2020-05-13",
+            "ticker": "PETR4.SA",
+            "eligible": true,
+            "vote_counts": {
+              "COMPRA": 0,
+              "VENDA": 0,
+              "MANTER": 5
+            },
+            "valid_votes": 5,
+            "analyst_count": 5,
+            "consensus_threshold": 0.6,
+            "consensus_reached": true,
+            "technical_outcome": "MANTER",
+            "risk_verdict": "APROVADO",
+            "risk_source": "AUTO_APPROVE",
+            "risk_rule": null,
+            "portfolio_called": false,
+            "portfolio_source": "RULE",
+            "portfolio_rule": "TECH_HOLD",
+            "portfolio_decision": "MANTER",
+            "observed_weight": 0.0,
+            "target_weight": null,
+            "final_cause": "TECH_EXPLICIT_HOLD",
+            "input_violations": [],
+            "errors": [],
+            "failures": []
+          }
+        },
+        {
+          "state_id": "cal-b3:2020-05-13",
+          "repetition": 2,
+          "error": null,
+          "reason": null,
+          "trace_file": "traces/cal-b3_2020-05-13__r2.jsonl",
+          "decision": {
+            "schema_version": 1,
+            "decision_session": "2020-05-13",
+            "ticker": "PETR4.SA",
+            "eligible": true,
+            "vote_counts": {
+              "COMPRA": 0,
+              "VENDA": 0,
+              "MANTER": 5
+            },
+            "valid_votes": 5,
+            "analyst_count": 5,
+            "consensus_threshold": 0.6,
+            "consensus_reached": true,
+            "technical_outcome": "MANTER",
+            "risk_verdict": "APROVADO",
+            "risk_source": "AUTO_APPROVE",
+            "risk_rule": null,
+            "portfolio_called": false,
+            "portfolio_source": "RULE",
+            "portfolio_rule": "TECH_HOLD",
+            "portfolio_decision": "MANTER",
+            "observed_weight": 0.0,
+            "target_weight": null,
+            "final_cause": "TECH_EXPLICIT_HOLD",
+            "input_violations": [],
+            "errors": [],
+            "failures": []
+          }
+        }
+      ]
+    },
+    "2022-03-11": {
+      "v3_consumed": {
+        "technical_votes": 5,
+        "V4-S1": 0,
+        "V4-S2": 0,
+        "V4-S3": 4,
+        "rates": {
+          "V4-S1": 0.0,
+          "V4-S2": 0.0,
+          "V4-S3": 0.8
+        },
+        "technical_prompt_v3_only": false,
+        "flagged": [
+          {
+            "call_id": "2022-03-11|technical_analyst|1|000000",
+            "decision_session": "2022-03-11",
+            "analyst_id": 1,
+            "confidence": 0.65,
+            "justification": "O preço permanece acima das médias móveis de 50 e 200 períodos (sma50_gap e sma200_gap positivos), mantendo a tendência estrutural de alta. No entanto, o MACD está abaixo de sua linha de sinal (macd_ratio < macd_signal_ratio), o RSI está neutro em 47.99 e o fechamento está contido dentro das bandas de Bollinger, sugerindo consolidação ou perda de momentum no curto prazo sem gatilho claro de compra ou venda.",
+            "signal": "MANTER",
+            "findings": {
+              "V4-S1": [],
+              "V4-S2": [],
+              "V4-S3": [
+                {
+                  "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+                  "text": "O preço permanece acima das médias móveis de 50 e 200 períodos (sma50_gap e sma200_gap positivos), mantendo a tendência estrutural de alta",
+                  "requires": "t-1 values (not in the payload)",
+                  "holds": false
+                },
+                {
+                  "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+                  "text": "99 e o fechamento está contido dentro das bandas de Bollinger, sugerindo consolidação ou perda de momentum no curto prazo sem gatilho claro de compra ou venda",
+                  "requires": "t-1 values (not in the payload)",
+                  "holds": false
+                },
+                {
+                  "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+                  "text": "99 e o fechamento está contido dentro das bandas de Bollinger, sugerindo consolidação ou perda de momentum no curto prazo sem gatilho claro de compra ou venda",
+                  "requires": "t-1 values (not in the payload)",
+                  "holds": false
+                }
+              ]
+            }
+          },
+          {
+            "call_id": "2022-03-11|technical_analyst|3|000002",
+            "decision_session": "2022-03-11",
+            "analyst_id": 3,
+            "confidence": 0.65,
+            "justification": "O preço permanece dentro das Bandas de Bollinger e acima das médias móveis de 50 e 200 períodos, indicando uma tendência estrutural positiva. Contudo, o MACD está abaixo da sua linha de sinal (macd_ratio < macd_signal_ratio) e o RSI encontra-se em patamar neutro (47,99), sugerindo perda de momento e falta de sinal claro de entrada no momento.",
+            "signal": "MANTER",
+            "findings": {
+              "V4-S1": [],
+              "V4-S2": [],
+              "V4-S3": [
+                {
+                  "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+                  "text": "O preço permanece dentro das Bandas de Bollinger e acima das médias móveis de 50 e 200 períodos, indicando uma tendência estrutural positiva",
+                  "requires": "t-1 values (not in the payload)",
+                  "holds": false
+                },
+                {
+                  "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+                  "text": ", o MACD está abaixo da sua linha de sinal (macd_ratio < macd_signal_ratio) e o RSI encontra-se em patamar neutro (47,99), sugerindo perda de momento e falta de sinal claro de entrada no momento",
+                  "requires": "t-1 values (not in the payload)",
+                  "holds": false
+                }
+              ]
+            }
+          },
+          {
+            "call_id": "2022-03-11|technical_analyst|4|000003",
+            "decision_session": "2022-03-11",
+            "analyst_id": 4,
+            "confidence": 0.65,
+            "justification": "O preço permanece acima das médias móveis de 50 e 200 períodos, indicando uma tendência estrutural positiva no longo prazo. No entanto, no curto prazo o momentum enfraqueceu, com o MACD posicionado abaixo de sua linha de sinal e o RSI em zona neutra (47,99). O preço também opera confortavelmente dentro das bandas de Bollinger, sugerindo ausência de gatilhos imediatos de compra ou venda.",
+            "signal": "MANTER",
+            "findings": {
+              "V4-S1": [],
+              "V4-S2": [],
+              "V4-S3": [
+                {
+                  "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+                  "text": "O preço permanece acima das médias móveis de 50 e 200 períodos, indicando uma tendência estrutural positiva no longo prazo",
+                  "requires": "t-1 values (not in the payload)",
+                  "holds": false
+                }
+              ]
+            }
+          },
+          {
+            "call_id": "2022-03-11|technical_analyst|5|000004",
+            "decision_session": "2022-03-11",
+            "analyst_id": 5,
+            "confidence": 0.65,
+            "justification": "O preço permanece acima das médias móveis de 50 e 200 períodos (sma50_gap de +1,8% e sma200_gap de +23,0%), indicando tendência estrutural de alta. No entanto, o preço está contido dentro das Bandas de Bollinger, o RSI em 48 reflete neutralidade de momentum, e a linha MACD situa-se abaixo da sua linha de sinal (macd_ratio < macd_signal_ratio), sugerindo fraqueza no curto prazo que recomenda cautela sem configurar venda compulsória.",
+            "signal": "MANTER",
+            "findings": {
+              "V4-S1": [],
+              "V4-S2": [],
+              "V4-S3": [
+                {
+                  "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+                  "text": "O preço permanece acima das médias móveis de 50 e 200 períodos (sma50_gap de +1,8% e sma200_gap de +23,0%), indicando tendência estrutural de alta",
+                  "requires": "t-1 values (not in the payload)",
+                  "holds": false
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "v4_live": {
+        "technical_votes": 15,
+        "V4-S1": 0,
+        "V4-S2": 0,
+        "V4-S3": 1,
+        "rates": {
+          "V4-S1": 0.0,
+          "V4-S2": 0.0,
+          "V4-S3": 0.06666666666666667
+        },
+        "technical_prompt_v3_only": true,
+        "flagged": [
+          {
+            "call_id": "2022-03-11|technical_analyst|1|000000",
+            "decision_session": "2022-03-11",
+            "analyst_id": 1,
+            "confidence": 0.65,
+            "justification": "O preço está acima das médias móveis de 50 e 200 períodos, indicando uma estrutura técnica de longo prazo positiva. Contudo, o RSI está em patamar neutro (47,99) e a linha MACD situa-se abaixo da sua linha de sinal, demonstrando perda de alinhamento direcional no curto prazo. Como o preço permanece contido dentro das bandas de Bollinger sem rompimentos evidentes, o cenário atual é misto, justificando a manutenção.",
+            "signal": "MANTER",
+            "findings": {
+              "V4-S1": [],
+              "V4-S2": [],
+              "V4-S3": [
+                {
+                  "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+                  "text": "Como o preço permanece contido dentro das bandas de Bollinger sem rompimentos evidentes, o cenário atual é misto, justificando a manutenção",
+                  "requires": "t-1 values (not in the payload)",
+                  "holds": false
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "v4_decisions": [
+        {
+          "state_id": "cal-b3:2022-03-11",
+          "repetition": 0,
+          "error": null,
+          "reason": null,
+          "trace_file": "traces/cal-b3_2022-03-11__r0.jsonl",
+          "decision": {
+            "schema_version": 1,
+            "decision_session": "2022-03-11",
+            "ticker": "PETR4.SA",
+            "eligible": true,
+            "vote_counts": {
+              "COMPRA": 0,
+              "VENDA": 0,
+              "MANTER": 5
+            },
+            "valid_votes": 5,
+            "analyst_count": 5,
+            "consensus_threshold": 0.6,
+            "consensus_reached": true,
+            "technical_outcome": "MANTER",
+            "risk_verdict": "APROVADO",
+            "risk_source": "AUTO_APPROVE",
+            "risk_rule": null,
+            "portfolio_called": false,
+            "portfolio_source": "RULE",
+            "portfolio_rule": "TECH_HOLD",
+            "portfolio_decision": "MANTER",
+            "observed_weight": 0.0,
+            "target_weight": null,
+            "final_cause": "TECH_EXPLICIT_HOLD",
+            "input_violations": [],
+            "errors": [],
+            "failures": []
+          }
+        },
+        {
+          "state_id": "cal-b3:2022-03-11",
+          "repetition": 1,
+          "error": null,
+          "reason": null,
+          "trace_file": "traces/cal-b3_2022-03-11__r1.jsonl",
+          "decision": {
+            "schema_version": 1,
+            "decision_session": "2022-03-11",
+            "ticker": "PETR4.SA",
+            "eligible": true,
+            "vote_counts": {
+              "COMPRA": 0,
+              "VENDA": 0,
+              "MANTER": 5
+            },
+            "valid_votes": 5,
+            "analyst_count": 5,
+            "consensus_threshold": 0.6,
+            "consensus_reached": true,
+            "technical_outcome": "MANTER",
+            "risk_verdict": "APROVADO",
+            "risk_source": "AUTO_APPROVE",
+            "risk_rule": null,
+            "portfolio_called": false,
+            "portfolio_source": "RULE",
+            "portfolio_rule": "TECH_HOLD",
+            "portfolio_decision": "MANTER",
+            "observed_weight": 0.0,
+            "target_weight": null,
+            "final_cause": "TECH_EXPLICIT_HOLD",
+            "input_violations": [],
+            "errors": [],
+            "failures": []
+          }
+        },
+        {
+          "state_id": "cal-b3:2022-03-11",
+          "repetition": 2,
+          "error": null,
+          "reason": null,
+          "trace_file": "traces/cal-b3_2022-03-11__r2.jsonl",
+          "decision": {
+            "schema_version": 1,
+            "decision_session": "2022-03-11",
+            "ticker": "PETR4.SA",
+            "eligible": true,
+            "vote_counts": {
+              "COMPRA": 0,
+              "VENDA": 0,
+              "MANTER": 5
+            },
+            "valid_votes": 5,
+            "analyst_count": 5,
+            "consensus_threshold": 0.6,
+            "consensus_reached": true,
+            "technical_outcome": "MANTER",
+            "risk_verdict": "APROVADO",
+            "risk_source": "AUTO_APPROVE",
+            "risk_rule": null,
+            "portfolio_called": false,
+            "portfolio_source": "RULE",
+            "portfolio_rule": "TECH_HOLD",
+            "portfolio_decision": "MANTER",
+            "observed_weight": 0.0,
+            "target_weight": null,
+            "final_cause": "TECH_EXPLICIT_HOLD",
+            "input_violations": [],
+            "errors": [],
+            "failures": []
+          }
+        }
+      ]
+    }
+  },
+  "operational": {
+    "logical_calls": 186,
+    "http_attempts": 187,
+    "logical_calls_by_stage": {
+      "technical_analyst": 150,
+      "risk_manager": 18,
+      "portfolio_manager": 18
+    },
+    "attempt_outcomes": {
+      "http_200": 186,
+      "ConnectionResetError": 1
+    },
+    "wall_clock_seconds": 202.115477
+  }
+}

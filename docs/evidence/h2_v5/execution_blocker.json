@@ -1,0 +1,16 @@
+{
+  "kind": "H2_V5_LIVE_EXECUTION_BLOCKER",
+  "phase": "defect-directed hardening v5",
+  "command": ".\\.venv\\Scripts\\python.exe scripts/run_h2_v5_defect.py",
+  "status": "NOT EXECUTED — AWAITING PROVIDER EGRESS APPROVAL",
+  "process_started": false,
+  "provider_calls": 0,
+  "source": "automatic approval review",
+  "reason": "The command performs live external provider calls using local credentials and sends locally derived experimental payloads, but the user did not authorize that specific data disclosure to a named destination; the egress therefore remains unverified.",
+  "destination": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
+  "payload_scope": "System/user prompts, eight anonymous dimensionless current-session Technical features; conditional Risk/Portfolio stage consensus and portfolio metrics; response schemas and frozen generation settings",
+  "credential_scope": "GEMINI_API_KEY used locally for Google API authentication; no credential printed or persisted in evidence",
+  "requested_approval": "Live v5 hardening and conditional development at the existing Gemini provider; normal API billing; no CAL-B4, Validation or Final execution",
+  "checker_version": 3,
+  "scientific_results": "No v5 live results or gate verdicts exist"
+}

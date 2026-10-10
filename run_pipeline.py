@@ -1,11 +1,10 @@
-from src.db.models import Base
-from src.db.connection import engine
-Base.metadata.create_all(engine)
+from src.db.connection import SessionLocal, engine, get_session
+from src.db.models import Ativo, Base, CotacaoDiaria, IndicadorTecnico
 from src.pipeline.extract import DataExtractor
-from src.pipeline.transform import DataTransformer
 from src.pipeline.load import DataLoader
-from src.db.connection import get_session, SessionLocal
-from src.db.models import Ativo, CotacaoDiaria, IndicadorTecnico
+from src.pipeline.transform import DataTransformer
+
+Base.metadata.create_all(engine)
 
 print("Baixando PETR4.SA...")
 extractor = DataExtractor()

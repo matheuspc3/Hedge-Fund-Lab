@@ -27,9 +27,7 @@ class EqualWeight(Strategy):
 
     def __init__(self, rebalance_freq: int = 63):
         self.rebalance_freq = rebalance_freq
-        logger.info(
-            "EqualWeight criada: rebalance_freq=%d", rebalance_freq
-        )
+        logger.info("EqualWeight criada: rebalance_freq=%d", rebalance_freq)
 
     def generate_signals(self, data: pd.DataFrame) -> pd.Series:
         if data.empty:
@@ -43,7 +41,8 @@ class EqualWeight(Strategy):
         signals.iloc[0] = 1
         logger.info(
             "EqualWeight: entrada inicial em %s a R$ %.2f",
-            data.index[0], data["fechamento"].iloc[0],
+            data.index[0],
+            data["fechamento"].iloc[0],
         )
 
         # Rebalanceamento trimestral (reenvia sinal de COMPRA)
@@ -53,12 +52,15 @@ class EqualWeight(Strategy):
             n_rebal += 1
             logger.debug(
                 "EqualWeight: rebalanceamento %d em %s (preço=%.2f)",
-                n_rebal, data.index[i], data["fechamento"].iloc[i],
+                n_rebal,
+                data.index[i],
+                data["fechamento"].iloc[i],
             )
 
         logger.info(
             "EqualWeight: 1 entrada + %d rebalanceamento(s) em %d dias",
-            n_rebal, len(signals),
+            n_rebal,
+            len(signals),
         )
         return signals
 

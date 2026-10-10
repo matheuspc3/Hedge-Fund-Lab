@@ -1,0 +1,260 @@
+{
+  "kind": "CAL_B_AUTOMATIC_GATES",
+  "freeze": "CAL_B_PROTOCOL_FREEZE_V1",
+  "computed_utc": "2026-10-05T02:16:12Z",
+  "git_commit": "33785f98ee558bfdeb9e0d47b927fc6642e9de0b",
+  "batch_commit": "02ab735683cd2bd7c982b5f930ab62612a4fb49f",
+  "anchors_x_repetitions": "10 x 1",
+  "gates": {
+    "CB-A": {
+      "issues": {},
+      "pass": true
+    },
+    "CB-S": {
+      "issues": {},
+      "pass": true
+    },
+    "CB-C": {
+      "issues": {},
+      "pass": true
+    },
+    "CB-R": {
+      "issues": {},
+      "pass": true
+    },
+    "CB-D": {
+      "total_hold_rate": 0.9,
+      "threshold": ">= 0.90 fails",
+      "pass": false
+    }
+  },
+  "automatic_pass": false,
+  "hold_rates": {
+    "explicit_hold_rate": 0.8,
+    "no_majority_abstention_rate": 0.0,
+    "risk_veto_rate": 0.1,
+    "portfolio_hold_rate": 0.0,
+    "total_hold_rate": 0.9,
+    "total_holds": 9,
+    "decisions": 10,
+    "degenerate_inactive": true
+  },
+  "action_distribution": {
+    "final_cause": {
+      "ACTION_SELL": 1,
+      "RISK_VETO_VOLATILITY": 1,
+      "TECH_EXPLICIT_HOLD": 8
+    },
+    "technical_outcome": {
+      "COMPRA": 1,
+      "MANTER": 8,
+      "VENDA": 1
+    }
+  },
+  "prescreen_flags_by_anchor": {
+    "2018-07-19": [],
+    "2019-03-07": [],
+    "2019-10-15": [],
+    "2020-06-01": [],
+    "2021-01-13": [],
+    "2021-08-20": [],
+    "2022-03-31": [],
+    "2022-11-04": [],
+    "2023-06-15": [],
+    "2024-01-22": []
+  },
+  "prescreen_note": "lexical flags only point reviewers to text; classification is human",
+  "operational": [
+    {
+      "anchor": "2018-07-19",
+      "logical_calls": 5,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 5,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 5
+      },
+      "input_tokens": 1215,
+      "output_tokens": 559,
+      "thinking_tokens": 0,
+      "latency_ms_total": 9802.6,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2019-03-07",
+      "logical_calls": 5,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 5,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 5
+      },
+      "input_tokens": 1210,
+      "output_tokens": 558,
+      "thinking_tokens": 0,
+      "latency_ms_total": 7407.4,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2019-10-15",
+      "logical_calls": 5,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 5,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 5
+      },
+      "input_tokens": 1215,
+      "output_tokens": 554,
+      "thinking_tokens": 0,
+      "latency_ms_total": 8155.4,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2020-06-01",
+      "logical_calls": 5,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 5,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 5
+      },
+      "input_tokens": 1215,
+      "output_tokens": 569,
+      "thinking_tokens": 0,
+      "latency_ms_total": 7990.5,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2021-01-13",
+      "logical_calls": 5,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 5,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 5
+      },
+      "input_tokens": 1215,
+      "output_tokens": 490,
+      "thinking_tokens": 0,
+      "latency_ms_total": 7199.6,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2021-08-20",
+      "logical_calls": 5,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 5,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 5
+      },
+      "input_tokens": 1210,
+      "output_tokens": 533,
+      "thinking_tokens": 0,
+      "latency_ms_total": 9304.4,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2022-03-31",
+      "logical_calls": 5,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 5,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 5
+      },
+      "input_tokens": 1205,
+      "output_tokens": 591,
+      "thinking_tokens": 0,
+      "latency_ms_total": 11883.9,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2022-11-04",
+      "logical_calls": 5,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 5,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 5
+      },
+      "input_tokens": 1210,
+      "output_tokens": 601,
+      "thinking_tokens": 0,
+      "latency_ms_total": 9629.8,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2023-06-15",
+      "logical_calls": 6,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 1
+      },
+      "http_attempts": 6,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 6
+      },
+      "input_tokens": 1415,
+      "output_tokens": 571,
+      "thinking_tokens": 0,
+      "latency_ms_total": 10308.8,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2024-01-22",
+      "logical_calls": 5,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 5,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 5
+      },
+      "input_tokens": 1210,
+      "output_tokens": 534,
+      "thinking_tokens": 0,
+      "latency_ms_total": 9474.1,
+      "recovery_used": false
+    }
+  ],
+  "financial_outcome": "NOT COMPUTED (no t+1 price read, no return/P&L/Sharpe/Sortino/MDD/accuracy)"
+}

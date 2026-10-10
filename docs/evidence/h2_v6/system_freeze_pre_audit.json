@@ -1,0 +1,246 @@
+{
+  "kind": "H2_V6_SYSTEM_FREEZE_PRE_AUDIT_NOT_A_FREEZE_MANIFEST",
+  "status": "H2_V6 SYSTEM FREEZE BLOCKED — EVALUATION PROTOCOL INCOMPLETE",
+  "system_freeze_complete": false,
+  "ready_for_validation": false,
+  "reference_commit": "9f4e1fb465225384f61bf3d509b931fda9f0e985",
+  "stop_rule": "User item 3: necessary absent/ambiguous evaluation definitions must be reported before freeze; no silent gap filling",
+  "calibration_preconditions": {
+    "status": "CAL_B4_PASS — SANITY CHECK ONLY",
+    "SYSTEM_CALIBRATION_COMPLETE": true,
+    "anchors": 10,
+    "automatic_PASS": 12,
+    "human_PASS": 40,
+    "reviewer": "Lucas Pereira da Silva",
+    "reviewed_utc": "2026-10-08T23:10:22Z",
+    "signed_review_commit": "d71777b",
+    "formal_cal_b4_closure_commit": "9f4e1fb",
+    "baseline_files_preserved": 6752,
+    "raw_and_audit_seals_verified": true,
+    "raw_unchanged_since_sealed_commit": true,
+    "commitment": "35d3d468a3253538392314c158c8605867c283c864fbd99c9499c8fd276f6ae7"
+  },
+  "approved_treatment_identity": {
+    "treatment_version": 6,
+    "technical_prompt_version": 5,
+    "technical_response_schema_version": 2,
+    "technical_evidence_vocabulary_version": 1,
+    "technical_evidence_validator_version": 1,
+    "risk_prompt_version": 2,
+    "participant_spec_sha256": "7858beb47ea9b2be9ac870f4abb72f9422782e7ff30c975eba8f3255babe4938",
+    "participant_spec": {
+      "kind": "llm_agent",
+      "params": {
+        "ticker": "PETR4.SA",
+        "provider": "gemini",
+        "model": "gemini-3.8-flash",
+        "temperature": 1.0,
+        "max_output_tokens": 8192,
+        "analyst_count": 5,
+        "consensus_threshold": 0.6,
+        "require_all_votes": true,
+        "decision_frequency": 1,
+        "strict_inputs": true,
+        "portfolio_inversion_policy": "fail",
+        "long_target_weight": 1.0,
+        "risk_max_concentration": 1.0,
+        "risk_max_volatility": 0.5,
+        "risk_max_drawdown": 0.25,
+        "volatility_window": 21,
+        "retry_attempts": 6,
+        "retry_base_delay": 2.0,
+        "thinking_level": "low",
+        "technical_prompt_version": 5,
+        "risk_prompt_version": 2,
+        "technical_response_schema_version": 2
+      }
+    }
+  },
+  "checker_version": 3,
+  "observed_contract_hashes": {
+    "system_prompts_sha256": {
+      "Technical_v5": "b041c5f03e20296f06f254629227b6a55978eb2aefccd1ba5eade33aac520a5d",
+      "Risk_v2": "990424e307e2c593afc40ebafef2c12387029ecf46a285f18a595c447e1e2151",
+      "Portfolio": "497b56e89f1f2fc193f999e6bc23c88cccb7a2c6da96de5c11f09417482ae68a"
+    },
+    "response_schemas_sha256": {
+      "TechnicalEvidenceResponse_v2": "e7c50f92fecb48508e6531cf30c4de2a857a47a76646be371e43ea7482276712",
+      "RiskVerdict": "482b3eaee55f3d6dbce991e5f72bf340d5841ed6542a8aa9691ab8052e0e9c53",
+      "PortfolioAction": "5fda582a11b128eb75c91758ae380f8eecfb999d277a36cd6f6b4ddda0ad9ad4"
+    },
+    "evidence_vocabulary_sha256": "c40cf7f2d9064305346ac065da9fac61e3b76c7a3dc659d689adcef756bf6da0"
+  },
+  "eight_feature_keys": [
+    "bb_lower_gap",
+    "bb_upper_gap",
+    "bb_width",
+    "macd_ratio",
+    "macd_signal_ratio",
+    "rsi",
+    "sma200_gap",
+    "sma50_gap"
+  ],
+  "source_and_protocol_sha256": {
+    "src/agents/features.py": "4fbf0e82fabdca190d484b7abbc0e77f70ad953dd5e61211c8c15c828bd37cd7",
+    "src/pipeline/transform.py": "8f41cad27b49cebab472b1d8573b6369d21ecb31a1e85cea14e7c6752f128c1c",
+    "src/agents/technical_prompt_v5.py": "94cebd8087d740c869a4edd947c501c329196d07301fa579049575b596934435",
+    "src/agents/technical_evidence.py": "81f696758e25c5661175f726571f18704f850e8cf67f1345e32247d9aa9f632b",
+    "src/agents/technical_analyst.py": "3752e12afd6f13404bbe8b28b2ee06c607f0cd0bfe9f2b22db2f29047ef639bc",
+    "src/agents/risk_contract.py": "524d1159235b7dfb9f92432952f58cc93b866138463a8d06dca434b2f1beb24b",
+    "src/agents/risk_manager.py": "f3be859af70aa6d929a9694f16c7b0d53c3bdd52dca413faa7c0526cdbca9b87",
+    "src/agents/portfolio_manager.py": "d09a44b508440405dad63eb7d381cdd5ad00a3daf5d15b36fb2bed2a9efff0c4",
+    "src/agents/participant.py": "58f540623790e33051e059a672d9b1d4bf5139d78e7ec43cb98198bea4b05913",
+    "src/agents/state.py": "29b6dd7a7a0372ac17c13c32d44ac9edc40687b6df74df6643590af883794474",
+    "src/agents/feature_semantics.py": "fb2cfa36feba26b5e8f622828e03aa8fcfd25b1f7a0567d387f82baf9f056169",
+    "src/agents/llm_client.py": "c25fda0d3751075a3390107600fcc2d5c9770d82920291b2f737670e8fd1ad47",
+    "src/agents/llm_trace.py": "54474a0ffdf598b1b2f2a2a132367e24ee65151992ee6c3dd253d8c153e38c8f",
+    "src/experiments/spec.py": "c0549a7c633e3226cd674a726f4b7f3ac3c9bce61c4fbb8d530b0e70c3e6caca",
+    "src/experiments/runner.py": "a969d9fe0b3d813394de22f5fb1736849cb48092d21d8eb39dd4a2263f6f6d6b",
+    "src/experiments/phases.py": "789b28e4869436b5432de38e7e91dd2741750171107df1dcef4a95d7e0c7f806",
+    "src/experiments/participants.py": "02aa8bb058611fcf635b8e084ecc0077a35832c5c0bceb50fe073650b908ae04",
+    "src/backtesting/arena.py": "cc54dab8fc7c37a3682e607c3a783b9bfe22834061cab8c6e10c692f2e5b676e",
+    "src/backtesting/costs.py": "ec2f7a86799918d1b6020fa9f68b452971d42bff8e413a7ff0c0efc8b227de2e",
+    "src/backtesting/metrics.py": "7da3c64a6f22a3094ab7acfff81413264becce3bb4fd575e93abb695d01ab387",
+    "src/pipeline/snapshot.py": "a536aeca4564815e54fbaad567549b91a0922459214602f34f2822b7c7412dca",
+    "src/strategies/buy_and_hold.py": "4192493d7b13de53e3df729f726ea2471c64973388fe0e4d82f95ed8fd200259",
+    "src/strategies/sma_cross.py": "394c4d6220ac81f5ac2e51847e93778728505e30a039710b8f81a8f8e0120d55",
+    "src/strategies/bollinger_bands.py": "3402a08906f0e7b162480bf47c12020c083105cc354396caf3fd5b79cb614df6",
+    "docs/EXPERIMENT_PROTOCOL.md": "42b8d21a35c3f8bb1ab74b968711aa99bb8a98a76ef470eebde64da5b8128e0c",
+    "docs/H2_METHODOLOGICAL_FREEZE_V1.md": "3846c3fc33940891f2a8e9aa6c69ac41e9b4b10207e17b47e7e08e6dd00c021e",
+    "docs/H2_V6_AMENDMENT_14.md": "ad5856cf353ef7bd7633b6887874b59ebc564b359fab2efdcc385236bfefc3d5",
+    "docs/faculdade/monografia/main.tex": "6f7f87781c5e9a7ba75dc0d98c548330e79d2b5485dfcd84a39c093e10542369",
+    "docs/evidence/calendar/b3_official_sessions_2016-01-04_2026-08-31.txt": "c4af99f8807975bbdcdadcdd86a4d0e1f30a45a701ed7b2ed5657ed9bb4f0508"
+  },
+  "snapshot_metadata_integrity_only": {
+    "snapshot_id": "20261004T201258177516Z-b4cf39fc761f251d2dd18e787008345a",
+    "identity_digest": "b4cf39fc761f251d2dd18e787008345aaf02bd9e19f913390c510338b84ee7d4",
+    "files": [
+      {
+        "path": "data/PETR4.SA.csv",
+        "sha256": "7b6a0018191028ecea2ee66785c27f771a721aa4a96c4953ca87ac6d688c3ffa",
+        "size": 252665,
+        "ticker": "PETR4.SA"
+      }
+    ],
+    "ohlcv_features_or_results_computed": false
+  },
+  "approved_evaluation_elements": {
+    "primary_metric": "H2_SCIENTIFIC_SHARPE_DEFINITION_V1 net annualized Sharpe",
+    "rf_annual": 0.0,
+    "cash_return": 0.0,
+    "periods_per_year": 252,
+    "std_ddof": 1,
+    "primary_benchmark": "Buy & Hold",
+    "secondary_benchmark_families": [
+      "SMA",
+      "Bollinger"
+    ],
+    "cost_baseline": {
+      "brokerage_fixed": 0.0,
+      "spread_bps": 5.0,
+      "tax_rate": 0.00032
+    },
+    "cost_sensitivity_predeclared": {
+      "spread_bps": [
+        0,
+        5,
+        10,
+        20
+      ],
+      "authority": "DESCRIPTIVE ONLY — NO SELECTION"
+    },
+    "initial_capital": 100000.0,
+    "execution": "fractional_notional; decide close(t), execute open(t+1)",
+    "minimum_history_sessions": 504,
+    "negative_financial_results_are_valid": true
+  },
+  "requested_windows_and_calendar_only_boundary_audit": {
+    "VALIDATION": {
+      "domain_start": "2024-09-02",
+      "domain_end": "2025-08-29",
+      "source": "Explicit current user request",
+      "calendar_sessions": 248,
+      "first_decision": "2024-09-02",
+      "last_decision_under_existing_boundary_rule": "2025-08-28",
+      "settlement_session": "2025-08-29",
+      "reserved_results_accessed": false,
+      "executed": false
+    },
+    "FINAL_TEST": {
+      "domain_start": "2025-09-01",
+      "domain_end": "2026-08-31",
+      "source": "Explicit current user request",
+      "calendar_sessions": 250,
+      "first_decision": "2025-09-01",
+      "last_decision_under_existing_boundary_rule": "2026-08-28",
+      "settlement_session": "2026-08-31",
+      "reserved_results_accessed": false,
+      "executed": false
+    }
+  },
+  "blockers": [
+    {
+      "id": "SF-B1",
+      "topic": "Formal H0/H1 and exact H2 v6 comparison",
+      "source": "docs/EXPERIMENT_PROTOCOL.md:80; docs/faculdade/monografia/main.tex:255",
+      "finding": "Canonical hypotheses and acceptance/rejection criteria remain TBD. Monograph H1 concerns momentum/trend vs equal weight, H2 concerns LLM vs benchmarks, and broad H0 does not operationalize the final v6 contrast. No approved amendment resolves test direction or formal estimand."
+    },
+    {
+      "id": "SF-B2",
+      "topic": "Exact Validation/Final replication count",
+      "source": "docs/EXPERIMENT_PROTOCOL.md:2278; docs/EXPERIMENT_PROTOCOL.md:2326",
+      "finding": "Number remains TBD; 2-3 Validation live runs is explicitly a non-frozen proposal. Development R=3 and CAL-B4 R=1 do not freeze evaluation R."
+    },
+    {
+      "id": "SF-B3",
+      "topic": "Aggregation across evaluation replicates",
+      "source": "docs/EXPERIMENT_PROTOCOL.md:2354",
+      "finding": "First run/median/mean/other remains TBD and must be declared before Validation."
+    },
+    {
+      "id": "SF-B4",
+      "topic": "Statistical comparison procedure",
+      "source": "docs/EXPERIMENT_PROTOCOL.md:2586",
+      "finding": "Test, significance level, confidence intervals, multiple comparisons, temporal dependence and resampling unit remain TBD. No procedure or threshold was selected in this audit."
+    },
+    {
+      "id": "SF-B5",
+      "topic": "Benchmark ParticipantSpecs",
+      "source": "docs/EXPERIMENT_PROTOCOL.md:2023; docs/faculdade/monografia/main.tex:388",
+      "finding": "Buy & Hold primary and SMA/Bollinger secondary families are approved, but exact benchmark parameters/frequencies remain TBD. SMA50/200 and Bollinger20/2 in the frozen indicator-family control or constructor defaults do not constitute separate benchmark ParticipantSpecs."
+    },
+    {
+      "id": "SF-B6",
+      "topic": "Scientific secondary metric definitions",
+      "source": "src/backtesting/metrics.py:167; src/backtesting/metrics.py:210; docs/EXPERIMENT_PROTOCOL.md:2583",
+      "finding": "Sharpe v1 is approved. Sortino MAR policy is still documented as technical rather than scientific; turnover implemented as mean observed weight changes includes market drift and is explicitly not frozen scientific order turnover. Do not silently promote defaults or invent replacements."
+    }
+  ],
+  "offline_checks": {
+    "command": ".venv/Scripts/python.exe -m pytest tests/experiments/test_runner.py tests/experiments/test_runner_evaluation.py tests/experiments/test_llm_runner.py tests/experiments/test_llm_run_artifacts.py tests/experiments/test_phases.py tests/experiments/test_evaluation_spec.py tests/experiments/test_execution_mode.py tests/backtesting/test_arena_evaluation_window.py tests/backtesting/test_costs.py tests/backtesting/test_fractional_execution.py tests/backtesting/test_metrics.py tests/backtesting/test_scientific_sharpe.py tests/agents/test_llm_trace.py tests/agents/test_causal_contract.py tests/agents/test_technical_evidence.py -q -p no:cacheprovider --basetemp .pytest_temp/h2_v6_system_freeze_audit_20261009",
+    "passed": 381,
+    "failed": 0,
+    "elapsed_seconds": 48.07,
+    "input_sources": "mocks and synthetic fixtures, no real reserved Validation/Final data",
+    "coverage": [
+      "snapshot/code/spec integrity guards",
+      "causal observations and warmup",
+      "phase settlement boundary",
+      "strict v6 contract",
+      "trace and exact replay equality of decisions/trades/equity/metrics",
+      "replay mismatch fail closed",
+      "atomic artifact persistence",
+      "separate run IDs and manifests",
+      "fractional execution and costs",
+      "canonical metric functions and scientific Sharpe"
+    ],
+    "limitation": "Passing generic infrastructure tests does not qualify a frozen Validation/Final protocol or a phase-specific execution command."
+  },
+  "post_freeze_guards_and_evaluation_cli": "NOT CREATED — BLOCKED BEFORE DEFINITIVE FREEZE",
+  "external_calls": 0,
+  "validation_executed": false,
+  "final_test_executed": false,
+  "cal_b4_financial_outcome": "NOT COMPUTED",
+  "canonical_cal_b4_status_changed": false,
+  "next_step": "Explicitly approve an evaluation protocol amendment resolving SF-B1..SF-B6, then resume System Freeze; do not execute reserved phases."
+}

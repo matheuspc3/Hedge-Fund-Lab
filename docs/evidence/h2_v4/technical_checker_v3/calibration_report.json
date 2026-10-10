@@ -1,0 +1,379 @@
+{
+  "kind": "TECHNICAL_CHECKER_V3_REGRESSION_REPORT",
+  "checker_version": 3,
+  "v2_source_blob": "7a086701afda203a415cf1f9b67912d4788b3e56",
+  "unique_consumed_technical_responses": 11400,
+  "golden_fail": 48,
+  "golden_pass": 31,
+  "human_cal_b3_golden": [
+    {
+      "source": "v3 CAL-B3 (consumed, primary review FAIL)",
+      "decision_session": "2020-05-13",
+      "analyst_id": 3,
+      "call_id": "2020-05-13|technical_analyst|3|000002",
+      "text": "O preço está contido dentro das bandas de Bollinger com RSI neutro (51.87). Embora o MACD esteja positivo e acima da linha de sinal e o preço esteja acima da SMA50 (sma50_gap = 0.057), a forte distância negativa em relação à SMA200 (sma200_gap = -0.297) aponta para uma tendência primária de baixa contrastando com a recuperação de curto prazo, sugerindo cautela e manutenção.",
+      "features": {
+        "bb_lower_gap": 0.140387,
+        "bb_upper_gap": -0.067655,
+        "bb_width": 0.200742,
+        "macd_ratio": 0.017201,
+        "macd_signal_ratio": 0.008314,
+        "rsi": 51.867798,
+        "sma200_gap": -0.296947,
+        "sma50_gap": 0.057002
+      },
+      "observed_temporal_findings": [
+        {
+          "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+          "text": "297) aponta para uma tendência primária de baixa contrastando com a recuperação de curto prazo, sugerindo cautela e manutenção",
+          "requires": "t-1 values (not in the payload)",
+          "holds": false
+        }
+      ],
+      "expected_temporal_fail": true
+    },
+    {
+      "source": "v3 CAL-B3 (consumed, primary review FAIL)",
+      "decision_session": "2020-05-13",
+      "analyst_id": 5,
+      "call_id": "2020-05-13|technical_analyst|5|000004",
+      "text": "O preço está contido dentro das bandas de Bollinger com RSI neutro em 51,87. Embora o momentum de curto prazo seja positivo com o MACD acima da linha de sinal e o preço acima da SMA50 (gap de 5,7%), o ativo permanece significativamente abaixo da SMA200 (gap de -29,69%), indicando forte tendência de baixa no longo prazo que contrasta com a recuperação recente.",
+      "features": {
+        "bb_lower_gap": 0.140387,
+        "bb_upper_gap": -0.067655,
+        "bb_width": 0.200742,
+        "macd_ratio": 0.017201,
+        "macd_signal_ratio": 0.008314,
+        "rsi": 51.867798,
+        "sma200_gap": -0.296947,
+        "sma50_gap": 0.057002
+      },
+      "observed_temporal_findings": [
+        {
+          "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+          "text": "Embora o momentum de curto prazo seja positivo com o MACD acima da linha de sinal e o preço acima da SMA50 (gap de 5,7%), o ativo permanece significativamente abaixo da SMA200 (gap de -29,69%), indicando forte tendência de baixa no longo prazo que contrasta com a recuperação recente",
+          "requires": "t-1 values (not in the payload)",
+          "holds": false
+        }
+      ],
+      "expected_temporal_fail": true
+    },
+    {
+      "source": "v3 CAL-B3 (consumed, primary review FAIL)",
+      "decision_session": "2022-03-11",
+      "analyst_id": 1,
+      "call_id": "2022-03-11|technical_analyst|1|000000",
+      "text": "O preço permanece acima das médias móveis de 50 e 200 períodos (sma50_gap e sma200_gap positivos), mantendo a tendência estrutural de alta. No entanto, o MACD está abaixo de sua linha de sinal (macd_ratio < macd_signal_ratio), o RSI está neutro em 47.99 e o fechamento está contido dentro das bandas de Bollinger, sugerindo consolidação ou perda de momentum no curto prazo sem gatilho claro de compra ou venda.",
+      "features": {
+        "bb_lower_gap": 0.024909,
+        "bb_upper_gap": -0.068405,
+        "bb_width": 0.095389,
+        "macd_ratio": 0.008259,
+        "macd_signal_ratio": 0.014978,
+        "rsi": 47.993308,
+        "sma200_gap": 0.230443,
+        "sma50_gap": 0.018157
+      },
+      "observed_temporal_findings": [
+        {
+          "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+          "text": "O preço permanece acima das médias móveis de 50 e 200 períodos (sma50_gap e sma200_gap positivos), mantendo a tendência estrutural de alta",
+          "requires": "t-1 values (not in the payload)",
+          "holds": false
+        },
+        {
+          "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+          "text": "99 e o fechamento está contido dentro das bandas de Bollinger, sugerindo consolidação ou perda de momentum no curto prazo sem gatilho claro de compra ou venda",
+          "requires": "t-1 values (not in the payload)",
+          "holds": false
+        },
+        {
+          "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+          "text": "99 e o fechamento está contido dentro das bandas de Bollinger, sugerindo consolidação ou perda de momentum no curto prazo sem gatilho claro de compra ou venda",
+          "requires": "t-1 values (not in the payload)",
+          "holds": false
+        }
+      ],
+      "expected_temporal_fail": true
+    },
+    {
+      "source": "v3 CAL-B3 (consumed, primary review FAIL)",
+      "decision_session": "2022-03-11",
+      "analyst_id": 4,
+      "call_id": "2022-03-11|technical_analyst|4|000003",
+      "text": "O preço permanece acima das médias móveis de 50 e 200 períodos, indicando uma tendência estrutural positiva no longo prazo. No entanto, no curto prazo o momentum enfraqueceu, com o MACD posicionado abaixo de sua linha de sinal e o RSI em zona neutra (47,99). O preço também opera confortavelmente dentro das bandas de Bollinger, sugerindo ausência de gatilhos imediatos de compra ou venda.",
+      "features": {
+        "bb_lower_gap": 0.024909,
+        "bb_upper_gap": -0.068405,
+        "bb_width": 0.095389,
+        "macd_ratio": 0.008259,
+        "macd_signal_ratio": 0.014978,
+        "rsi": 47.993308,
+        "sma200_gap": 0.230443,
+        "sma50_gap": 0.018157
+      },
+      "observed_temporal_findings": [
+        {
+          "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+          "text": "O preço permanece acima das médias móveis de 50 e 200 períodos, indicando uma tendência estrutural positiva no longo prazo",
+          "requires": "t-1 values (not in the payload)",
+          "holds": false
+        }
+      ],
+      "expected_temporal_fail": true
+    }
+  ],
+  "golden_misses": [],
+  "semantic_and_explicit_transition_regressions": [],
+  "state_vs_transition_pass": true,
+  "source_sha256": {
+    "src/agents/feature_semantics.py": "fb2cfa36feba26b5e8f622828e03aa8fcfd25b1f7a0567d387f82baf9f056169",
+    "scripts/h2_v4.py": "630e7d8f862d4b5ffe5d8052911928e23f51634eaafcc88292ae0ef74a539f8e"
+  },
+  "acceptance_pass": true,
+  "provider_calls": 0,
+  "cal_b4_used": false,
+  "future_returns_used": false,
+  "descriptive_baseline_by_phase": {
+    "v1 Hardening": {
+      "technical_votes": 300,
+      "V4-S1": 95,
+      "V4-S2": 125,
+      "V4-S3": 86,
+      "rates": {
+        "V4-S1": 0.31666666666666665,
+        "V4-S2": 0.4166666666666667,
+        "V4-S3": 0.2866666666666667
+      },
+      "technical_prompt_v3_only": false
+    },
+    "v2 Hardening": {
+      "technical_votes": 300,
+      "V4-S1": 0,
+      "V4-S2": 2,
+      "V4-S3": 84,
+      "rates": {
+        "V4-S1": 0.0,
+        "V4-S2": 0.006666666666666667,
+        "V4-S3": 0.28
+      },
+      "technical_prompt_v3_only": false
+    },
+    "v3 Hardening": {
+      "technical_votes": 300,
+      "V4-S1": 0,
+      "V4-S2": 2,
+      "V4-S3": 84,
+      "rates": {
+        "V4-S1": 0.0,
+        "V4-S2": 0.006666666666666667,
+        "V4-S3": 0.28
+      },
+      "technical_prompt_v3_only": false
+    },
+    "v1 B0": {
+      "technical_votes": 60,
+      "V4-S1": 20,
+      "V4-S2": 24,
+      "V4-S3": 20,
+      "rates": {
+        "V4-S1": 0.3333333333333333,
+        "V4-S2": 0.4,
+        "V4-S3": 0.3333333333333333
+      },
+      "technical_prompt_v3_only": false
+    },
+    "v2 B0": {
+      "technical_votes": 60,
+      "V4-S1": 0,
+      "V4-S2": 0,
+      "V4-S3": 17,
+      "rates": {
+        "V4-S1": 0.0,
+        "V4-S2": 0.0,
+        "V4-S3": 0.2833333333333333
+      },
+      "technical_prompt_v3_only": false
+    },
+    "v3 B0": {
+      "technical_votes": 60,
+      "V4-S1": 0,
+      "V4-S2": 0,
+      "V4-S3": 17,
+      "rates": {
+        "V4-S1": 0.0,
+        "V4-S2": 0.0,
+        "V4-S3": 0.2833333333333333
+      },
+      "technical_prompt_v3_only": false
+    },
+    "v1 CAL-B1 (sealed one-shot)": {
+      "technical_votes": 50,
+      "V4-S1": 32,
+      "V4-S2": 33,
+      "V4-S3": 24,
+      "rates": {
+        "V4-S1": 0.64,
+        "V4-S2": 0.66,
+        "V4-S3": 0.48
+      },
+      "technical_prompt_v3_only": false
+    },
+    "v2 defect hardening (CAL-B1 x R=3)": {
+      "technical_votes": 150,
+      "V4-S1": 0,
+      "V4-S2": 0,
+      "V4-S3": 59,
+      "rates": {
+        "V4-S1": 0.0,
+        "V4-S2": 0.0,
+        "V4-S3": 0.3933333333333333
+      },
+      "technical_prompt_v3_only": false
+    },
+    "v2 CAL-B2 (consumed one-shot, now development)": {
+      "technical_votes": 50,
+      "V4-S1": 0,
+      "V4-S2": 0,
+      "V4-S3": 18,
+      "rates": {
+        "V4-S1": 0.0,
+        "V4-S2": 0.0,
+        "V4-S3": 0.36
+      },
+      "technical_prompt_v3_only": false
+    },
+    "v3 defect hardening (CAL-B2 x R=3)": {
+      "technical_votes": 50,
+      "V4-S1": 0,
+      "V4-S2": 0,
+      "V4-S3": 18,
+      "rates": {
+        "V4-S1": 0.0,
+        "V4-S2": 0.0,
+        "V4-S3": 0.36
+      },
+      "technical_prompt_v3_only": false
+    },
+    "v1 CAL-A": {
+      "technical_votes": 300,
+      "V4-S1": 115,
+      "V4-S2": 115,
+      "V4-S3": 86,
+      "rates": {
+        "V4-S1": 0.38333333333333336,
+        "V4-S2": 0.38333333333333336,
+        "V4-S3": 0.2866666666666667
+      },
+      "technical_prompt_v3_only": false
+    },
+    "v2 CAL-A": {
+      "technical_votes": 300,
+      "V4-S1": 1,
+      "V4-S2": 0,
+      "V4-S3": 114,
+      "rates": {
+        "V4-S1": 0.0033333333333333335,
+        "V4-S2": 0.0,
+        "V4-S3": 0.38
+      },
+      "technical_prompt_v3_only": false
+    },
+    "v3 CAL-A": {
+      "technical_votes": 300,
+      "V4-S1": 1,
+      "V4-S2": 0,
+      "V4-S3": 114,
+      "rates": {
+        "V4-S1": 0.0033333333333333335,
+        "V4-S2": 0.0,
+        "V4-S3": 0.38
+      },
+      "technical_prompt_v3_only": false
+    },
+    "v1 Sequential Dev": {
+      "technical_votes": 1905,
+      "V4-S1": 668,
+      "V4-S2": 789,
+      "V4-S3": 713,
+      "rates": {
+        "V4-S1": 0.3506561679790026,
+        "V4-S2": 0.4141732283464567,
+        "V4-S3": 0.3742782152230971
+      },
+      "technical_prompt_v3_only": false
+    },
+    "v2 Sequential Dev": {
+      "technical_votes": 1905,
+      "V4-S1": 0,
+      "V4-S2": 7,
+      "V4-S3": 723,
+      "rates": {
+        "V4-S1": 0.0,
+        "V4-S2": 0.003674540682414698,
+        "V4-S3": 0.3795275590551181
+      },
+      "technical_prompt_v3_only": false
+    },
+    "v3 Sequential Dev": {
+      "technical_votes": 1905,
+      "V4-S1": 0,
+      "V4-S2": 7,
+      "V4-S3": 723,
+      "rates": {
+        "V4-S1": 0.0,
+        "V4-S2": 0.003674540682414698,
+        "V4-S3": 0.3795275590551181
+      },
+      "technical_prompt_v3_only": false
+    },
+    "v1 Stress": {
+      "technical_votes": 2985,
+      "V4-S1": 1001,
+      "V4-S2": 1114,
+      "V4-S3": 904,
+      "rates": {
+        "V4-S1": 0.3353433835845896,
+        "V4-S2": 0.37319932998324956,
+        "V4-S3": 0.30284757118927974
+      },
+      "technical_prompt_v3_only": false
+    },
+    "v2 Stress": {
+      "technical_votes": 2985,
+      "V4-S1": 0,
+      "V4-S2": 27,
+      "V4-S3": 1264,
+      "rates": {
+        "V4-S1": 0.0,
+        "V4-S2": 0.009045226130653266,
+        "V4-S3": 0.4234505862646566
+      },
+      "technical_prompt_v3_only": false
+    },
+    "v3 Stress": {
+      "technical_votes": 2985,
+      "V4-S1": 0,
+      "V4-S2": 27,
+      "V4-S3": 1264,
+      "rates": {
+        "V4-S1": 0.0,
+        "V4-S2": 0.009045226130653266,
+        "V4-S3": 0.4234505862646566
+      },
+      "technical_prompt_v3_only": false
+    },
+    "v3 CAL-B3 (consumed, primary review FAIL)": {
+      "technical_votes": 50,
+      "V4-S1": 0,
+      "V4-S2": 0,
+      "V4-S3": 16,
+      "rates": {
+        "V4-S1": 0.0,
+        "V4-S2": 0.0,
+        "V4-S3": 0.32
+      },
+      "technical_prompt_v3_only": false
+    }
+  }
+}

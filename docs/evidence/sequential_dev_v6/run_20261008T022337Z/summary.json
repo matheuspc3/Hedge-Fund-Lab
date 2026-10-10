@@ -1,0 +1,681 @@
+{
+  "kind": "SEQUENTIAL_DEVELOPMENT_V6",
+  "treatment_version": 6,
+  "base_volatility_config": {
+    "volatility_window": 21,
+    "risk_max_volatility": 0.5
+  },
+  "resumed_from": null,
+  "started_utc": "2026-10-08T02:23:37Z",
+  "finished_utc": "2026-10-08T02:51:00Z",
+  "wall_clock_seconds": 1643.6,
+  "git_commit": "0f757eb6f967b882307cda513fe954b5df1597ab",
+  "snapshot_id": "20261004T201258177516Z-b4cf39fc761f251d2dd18e787008345a",
+  "phase": {
+    "start": "2024-03-01",
+    "last_decision": "2024-08-29",
+    "end": "2024-08-30"
+  },
+  "grid": [
+    {
+      "config_id": 1,
+      "name": "D01",
+      "risk_max_drawdown": 0.25
+    },
+    {
+      "config_id": 2,
+      "name": "D02",
+      "risk_max_drawdown": 0.15
+    },
+    {
+      "config_id": 3,
+      "name": "D03",
+      "risk_max_drawdown": 0.35
+    }
+  ],
+  "repetitions": 3,
+  "sharpe_definition": "H2_SCIENTIFIC_SHARPE_DEFINITION_V1",
+  "cost_spec": {
+    "brokerage_fixed": 0.0,
+    "spread_bps": 5.0,
+    "tax_rate": 0.00032
+  },
+  "failure": null,
+  "complete": true,
+  "evaluations": [
+    {
+      "replicate": 1,
+      "config_id": 1,
+      "name": "D01",
+      "risk_max_drawdown": 0.25,
+      "spec_hash": "b97d06d51d0d7efad3e029783ca690a9b23b56a8953df99ac66f4e3b7d165bc6",
+      "run_id": "20261008T023234743249Z-819ad51bb681",
+      "run_dir": "20261008T023234743249Z-819ad51bb681",
+      "runs_root": "docs/evidence/sequential_dev_v6/run_20261008T022337Z/runs",
+      "settlement_session": "2024-08-30",
+      "data_end": "2024-08-30",
+      "sharpe": {
+        "observations": 127,
+        "mean_excess": 5.0491577480261176e-05,
+        "sample_std": 0.012253115040791459,
+        "annualization_factor": 15.874507866387544,
+        "convention_zero": false,
+        "sharpe": 0.06541430005581254,
+        "definition": "H2_SCIENTIFIC_SHARPE_DEFINITION_V1"
+      }
+    },
+    {
+      "replicate": 1,
+      "config_id": 2,
+      "name": "D02",
+      "risk_max_drawdown": 0.15,
+      "spec_hash": "68aecf1ca64916809c9d99d3e525e714a26f2a755adf1f3fd1a96019a5764d72",
+      "run_id": "20261008T023246829823Z-c4f21e579a17",
+      "run_dir": "20261008T023246829823Z-c4f21e579a17",
+      "runs_root": "docs/evidence/sequential_dev_v6/run_20261008T022337Z/runs",
+      "settlement_session": "2024-08-30",
+      "data_end": "2024-08-30",
+      "sharpe": {
+        "observations": 127,
+        "mean_excess": -0.00029532691795380476,
+        "sample_std": 0.008979948014211883,
+        "annualization_factor": 15.874507866387544,
+        "convention_zero": false,
+        "sharpe": -0.5220708933719941,
+        "definition": "H2_SCIENTIFIC_SHARPE_DEFINITION_V1"
+      }
+    },
+    {
+      "replicate": 1,
+      "config_id": 3,
+      "name": "D03",
+      "risk_max_drawdown": 0.35,
+      "spec_hash": "5c87ff1359abbc92f93abc147987327379f474d2dbfa7c92bf1158c762a09238",
+      "run_id": "20261008T023249309351Z-2ce4a5321f8c",
+      "run_dir": "20261008T023249309351Z-2ce4a5321f8c",
+      "runs_root": "docs/evidence/sequential_dev_v6/run_20261008T022337Z/runs",
+      "settlement_session": "2024-08-30",
+      "data_end": "2024-08-30",
+      "sharpe": {
+        "observations": 127,
+        "mean_excess": 5.0491577480261176e-05,
+        "sample_std": 0.012253115040791459,
+        "annualization_factor": 15.874507866387544,
+        "convention_zero": false,
+        "sharpe": 0.06541430005581254,
+        "definition": "H2_SCIENTIFIC_SHARPE_DEFINITION_V1"
+      }
+    },
+    {
+      "replicate": 2,
+      "config_id": 1,
+      "name": "D01",
+      "risk_max_drawdown": 0.25,
+      "spec_hash": "b97d06d51d0d7efad3e029783ca690a9b23b56a8953df99ac66f4e3b7d165bc6",
+      "run_id": "20261008T024121948408Z-04309cae7f91",
+      "run_dir": "20261008T024121948408Z-04309cae7f91",
+      "runs_root": "docs/evidence/sequential_dev_v6/run_20261008T022337Z/runs",
+      "settlement_session": "2024-08-30",
+      "data_end": "2024-08-30",
+      "sharpe": {
+        "observations": 127,
+        "mean_excess": 0.00012520525327731213,
+        "sample_std": 0.012254072414633348,
+        "annualization_factor": 15.874507866387544,
+        "convention_zero": false,
+        "sharpe": 0.16219683635052243,
+        "definition": "H2_SCIENTIFIC_SHARPE_DEFINITION_V1"
+      }
+    },
+    {
+      "replicate": 2,
+      "config_id": 2,
+      "name": "D02",
+      "risk_max_drawdown": 0.15,
+      "spec_hash": "68aecf1ca64916809c9d99d3e525e714a26f2a755adf1f3fd1a96019a5764d72",
+      "run_id": "20261008T024124432268Z-c81f234d09fd",
+      "run_dir": "20261008T024124432268Z-c81f234d09fd",
+      "runs_root": "docs/evidence/sequential_dev_v6/run_20261008T022337Z/runs",
+      "settlement_session": "2024-08-30",
+      "data_end": "2024-08-30",
+      "sharpe": {
+        "observations": 127,
+        "mean_excess": -0.00038000856380231444,
+        "sample_std": 0.010168622301061506,
+        "annualization_factor": 15.874507866387544,
+        "convention_zero": false,
+        "sharpe": -0.5932415185432489,
+        "definition": "H2_SCIENTIFIC_SHARPE_DEFINITION_V1"
+      }
+    },
+    {
+      "replicate": 2,
+      "config_id": 3,
+      "name": "D03",
+      "risk_max_drawdown": 0.35,
+      "spec_hash": "5c87ff1359abbc92f93abc147987327379f474d2dbfa7c92bf1158c762a09238",
+      "run_id": "20261008T024126774776Z-6e52a15d1c6b",
+      "run_dir": "20261008T024126774776Z-6e52a15d1c6b",
+      "runs_root": "docs/evidence/sequential_dev_v6/run_20261008T022337Z/runs",
+      "settlement_session": "2024-08-30",
+      "data_end": "2024-08-30",
+      "sharpe": {
+        "observations": 127,
+        "mean_excess": 0.00012520525327731213,
+        "sample_std": 0.012254072414633348,
+        "annualization_factor": 15.874507866387544,
+        "convention_zero": false,
+        "sharpe": 0.16219683635052243,
+        "definition": "H2_SCIENTIFIC_SHARPE_DEFINITION_V1"
+      }
+    },
+    {
+      "replicate": 3,
+      "config_id": 1,
+      "name": "D01",
+      "risk_max_drawdown": 0.25,
+      "spec_hash": "b97d06d51d0d7efad3e029783ca690a9b23b56a8953df99ac66f4e3b7d165bc6",
+      "run_id": "20261008T025041246598Z-5bd97b59e2be",
+      "run_dir": "20261008T025041246598Z-5bd97b59e2be",
+      "runs_root": "docs/evidence/sequential_dev_v6/run_20261008T022337Z/runs",
+      "settlement_session": "2024-08-30",
+      "data_end": "2024-08-30",
+      "sharpe": {
+        "observations": 127,
+        "mean_excess": 5.0491577480261176e-05,
+        "sample_std": 0.012253115040791459,
+        "annualization_factor": 15.874507866387544,
+        "convention_zero": false,
+        "sharpe": 0.06541430005581254,
+        "definition": "H2_SCIENTIFIC_SHARPE_DEFINITION_V1"
+      }
+    },
+    {
+      "replicate": 3,
+      "config_id": 2,
+      "name": "D02",
+      "risk_max_drawdown": 0.15,
+      "spec_hash": "68aecf1ca64916809c9d99d3e525e714a26f2a755adf1f3fd1a96019a5764d72",
+      "run_id": "20261008T025057261366Z-479bf8a46af3",
+      "run_dir": "20261008T025057261366Z-479bf8a46af3",
+      "runs_root": "docs/evidence/sequential_dev_v6/run_20261008T022337Z/runs",
+      "settlement_session": "2024-08-30",
+      "data_end": "2024-08-30",
+      "sharpe": {
+        "observations": 127,
+        "mean_excess": -0.00029532691795380476,
+        "sample_std": 0.008979948014211883,
+        "annualization_factor": 15.874507866387544,
+        "convention_zero": false,
+        "sharpe": -0.5220708933719941,
+        "definition": "H2_SCIENTIFIC_SHARPE_DEFINITION_V1"
+      }
+    },
+    {
+      "replicate": 3,
+      "config_id": 3,
+      "name": "D03",
+      "risk_max_drawdown": 0.35,
+      "spec_hash": "5c87ff1359abbc92f93abc147987327379f474d2dbfa7c92bf1158c762a09238",
+      "run_id": "20261008T025100569789Z-4261f029354c",
+      "run_dir": "20261008T025100569789Z-4261f029354c",
+      "runs_root": "docs/evidence/sequential_dev_v6/run_20261008T022337Z/runs",
+      "settlement_session": "2024-08-30",
+      "data_end": "2024-08-30",
+      "sharpe": {
+        "observations": 127,
+        "mean_excess": 5.0491577480261176e-05,
+        "sample_std": 0.012253115040791459,
+        "annualization_factor": 15.874507866387544,
+        "convention_zero": false,
+        "sharpe": 0.06541430005581254,
+        "definition": "H2_SCIENTIFIC_SHARPE_DEFINITION_V1"
+      }
+    }
+  ],
+  "sharpe_by_replicate": {
+    "1": [
+      0.06541430005581254,
+      0.16219683635052243,
+      0.06541430005581254
+    ],
+    "2": [
+      -0.5220708933719941,
+      -0.5932415185432489,
+      -0.5220708933719941
+    ],
+    "3": [
+      0.06541430005581254,
+      0.16219683635052243,
+      0.06541430005581254
+    ]
+  },
+  "S2": {
+    "1": 0.0976751454873825,
+    "2": -0.5457944350957457,
+    "3": 0.0976751454873825
+  },
+  "ranking": [
+    1,
+    3,
+    2
+  ],
+  "selected_config_id": 1,
+  "tie_at_top": true,
+  "sequential_dev_discrimination": "YES",
+  "selection_basis": "EMPIRICAL_S2",
+  "descriptive_metrics_NOT_USED_FOR_SELECTION": {
+    "1-r1": {
+      "terminal_return": -0.0030127549870504478,
+      "max_drawdown": -0.17730077370186123,
+      "sortino": 0.09444737642803565,
+      "turnover_traded_notional_over_capital": 6.777961891766095,
+      "trades": 7,
+      "time_in_market": 0.5433070866141733,
+      "hard_risk_vetoes": 0,
+      "llm_risk_vetoes": 0,
+      "final_causes": {
+        "ACTION_BUY": 4,
+        "ACTION_SELL": 17,
+        "BUY_AT_TARGET_NOOP": 49,
+        "TECH_EXPLICIT_HOLD": 57
+      },
+      "decision_sessions": 127,
+      "first_decision": "2024-03-01",
+      "last_decision": "2024-08-29",
+      "last_curve_session": "2024-08-30",
+      "drawdown_audit": {
+        "limit": 0.25,
+        "max_canonical_drawdown": 0.17730077370186123,
+        "first_session_above_limit": null,
+        "drawdown_vetoes": 0,
+        "drawdown_vetoes_all_above_limit": true,
+        "buys_with_drawdown_above_limit": 0,
+        "buys_above_limit_by_cause": {},
+        "buy_orders_above_limit": []
+      }
+    },
+    "2-r1": {
+      "terminal_return": -0.04178416036164201,
+      "max_drawdown": -0.15198749958436683,
+      "sortino": -0.622858268770184,
+      "turnover_traded_notional_over_capital": 3.9452005879673515,
+      "trades": 4,
+      "time_in_market": 0.2755905511811024,
+      "hard_risk_vetoes": 28,
+      "llm_risk_vetoes": 0,
+      "final_causes": {
+        "ACTION_BUY": 2,
+        "ACTION_SELL": 17,
+        "BUY_AT_TARGET_NOOP": 23,
+        "RISK_VETO_DRAWDOWN": 28,
+        "TECH_EXPLICIT_HOLD": 57
+      },
+      "decision_sessions": 127,
+      "first_decision": "2024-03-01",
+      "last_decision": "2024-08-29",
+      "last_curve_session": "2024-08-30",
+      "drawdown_audit": {
+        "limit": 0.15,
+        "max_canonical_drawdown": 0.15198749958436683,
+        "first_session_above_limit": "2024-06-12",
+        "drawdown_vetoes": 28,
+        "drawdown_vetoes_all_above_limit": true,
+        "buys_with_drawdown_above_limit": 28,
+        "buys_above_limit_by_cause": {
+          "RISK_VETO_DRAWDOWN": 28
+        },
+        "buy_orders_above_limit": []
+      }
+    },
+    "3-r1": {
+      "terminal_return": -0.0030127549870504478,
+      "max_drawdown": -0.17730077370186123,
+      "sortino": 0.09444737642803565,
+      "turnover_traded_notional_over_capital": 6.777961891766095,
+      "trades": 7,
+      "time_in_market": 0.5433070866141733,
+      "hard_risk_vetoes": 0,
+      "llm_risk_vetoes": 0,
+      "final_causes": {
+        "ACTION_BUY": 4,
+        "ACTION_SELL": 17,
+        "BUY_AT_TARGET_NOOP": 49,
+        "TECH_EXPLICIT_HOLD": 57
+      },
+      "decision_sessions": 127,
+      "first_decision": "2024-03-01",
+      "last_decision": "2024-08-29",
+      "last_curve_session": "2024-08-30",
+      "drawdown_audit": {
+        "limit": 0.35,
+        "max_canonical_drawdown": 0.17730077370186123,
+        "first_session_above_limit": null,
+        "drawdown_vetoes": 0,
+        "drawdown_vetoes_all_above_limit": true,
+        "buys_with_drawdown_above_limit": 0,
+        "buys_above_limit_by_cause": {},
+        "buy_orders_above_limit": []
+      }
+    },
+    "1-r2": {
+      "terminal_return": 0.0064901235657666145,
+      "max_drawdown": -0.16945913794161047,
+      "sortino": 0.23458243509067067,
+      "turnover_traded_notional_over_capital": 6.833042893444763,
+      "trades": 7,
+      "time_in_market": 0.5354330708661418,
+      "hard_risk_vetoes": 0,
+      "llm_risk_vetoes": 0,
+      "final_causes": {
+        "ACTION_BUY": 4,
+        "ACTION_SELL": 16,
+        "BUY_AT_TARGET_NOOP": 49,
+        "TECH_EXPLICIT_HOLD": 58
+      },
+      "decision_sessions": 127,
+      "first_decision": "2024-03-01",
+      "last_decision": "2024-08-29",
+      "last_curve_session": "2024-08-30",
+      "drawdown_audit": {
+        "limit": 0.25,
+        "max_canonical_drawdown": 0.16945913794161047,
+        "first_session_above_limit": null,
+        "drawdown_vetoes": 0,
+        "drawdown_vetoes_all_above_limit": true,
+        "buys_with_drawdown_above_limit": 0,
+        "buys_above_limit_by_cause": {},
+        "buy_orders_above_limit": []
+      }
+    },
+    "2-r2": {
+      "terminal_return": -0.05339791220909207,
+      "max_drawdown": -0.16945913794161047,
+      "sortino": -0.7247296937429404,
+      "turnover_traded_notional_over_capital": 5.887216383392098,
+      "trades": 6,
+      "time_in_market": 0.44881889763779526,
+      "hard_risk_vetoes": 12,
+      "llm_risk_vetoes": 0,
+      "final_causes": {
+        "ACTION_BUY": 3,
+        "ACTION_SELL": 16,
+        "BUY_AT_TARGET_NOOP": 38,
+        "RISK_VETO_DRAWDOWN": 12,
+        "TECH_EXPLICIT_HOLD": 58
+      },
+      "decision_sessions": 127,
+      "first_decision": "2024-03-01",
+      "last_decision": "2024-08-29",
+      "last_curve_session": "2024-08-30",
+      "drawdown_audit": {
+        "limit": 0.15,
+        "max_canonical_drawdown": 0.16945913794161047,
+        "first_session_above_limit": "2024-07-04",
+        "drawdown_vetoes": 12,
+        "drawdown_vetoes_all_above_limit": true,
+        "buys_with_drawdown_above_limit": 12,
+        "buys_above_limit_by_cause": {
+          "RISK_VETO_DRAWDOWN": 12
+        },
+        "buy_orders_above_limit": []
+      }
+    },
+    "3-r2": {
+      "terminal_return": 0.0064901235657666145,
+      "max_drawdown": -0.16945913794161047,
+      "sortino": 0.23458243509067067,
+      "turnover_traded_notional_over_capital": 6.833042893444763,
+      "trades": 7,
+      "time_in_market": 0.5354330708661418,
+      "hard_risk_vetoes": 0,
+      "llm_risk_vetoes": 0,
+      "final_causes": {
+        "ACTION_BUY": 4,
+        "ACTION_SELL": 16,
+        "BUY_AT_TARGET_NOOP": 49,
+        "TECH_EXPLICIT_HOLD": 58
+      },
+      "decision_sessions": 127,
+      "first_decision": "2024-03-01",
+      "last_decision": "2024-08-29",
+      "last_curve_session": "2024-08-30",
+      "drawdown_audit": {
+        "limit": 0.35,
+        "max_canonical_drawdown": 0.16945913794161047,
+        "first_session_above_limit": null,
+        "drawdown_vetoes": 0,
+        "drawdown_vetoes_all_above_limit": true,
+        "buys_with_drawdown_above_limit": 0,
+        "buys_above_limit_by_cause": {},
+        "buy_orders_above_limit": []
+      }
+    },
+    "1-r3": {
+      "terminal_return": -0.0030127549870504478,
+      "max_drawdown": -0.17730077370186123,
+      "sortino": 0.09444737642803565,
+      "turnover_traded_notional_over_capital": 6.777961891766095,
+      "trades": 7,
+      "time_in_market": 0.5433070866141733,
+      "hard_risk_vetoes": 0,
+      "llm_risk_vetoes": 0,
+      "final_causes": {
+        "ACTION_BUY": 4,
+        "ACTION_SELL": 17,
+        "BUY_AT_TARGET_NOOP": 48,
+        "TECH_EXPLICIT_HOLD": 58
+      },
+      "decision_sessions": 127,
+      "first_decision": "2024-03-01",
+      "last_decision": "2024-08-29",
+      "last_curve_session": "2024-08-30",
+      "drawdown_audit": {
+        "limit": 0.25,
+        "max_canonical_drawdown": 0.17730077370186123,
+        "first_session_above_limit": null,
+        "drawdown_vetoes": 0,
+        "drawdown_vetoes_all_above_limit": true,
+        "buys_with_drawdown_above_limit": 0,
+        "buys_above_limit_by_cause": {},
+        "buy_orders_above_limit": []
+      }
+    },
+    "2-r3": {
+      "terminal_return": -0.04178416036164201,
+      "max_drawdown": -0.15198749958436683,
+      "sortino": -0.622858268770184,
+      "turnover_traded_notional_over_capital": 3.9452005879673515,
+      "trades": 4,
+      "time_in_market": 0.2755905511811024,
+      "hard_risk_vetoes": 28,
+      "llm_risk_vetoes": 0,
+      "final_causes": {
+        "ACTION_BUY": 2,
+        "ACTION_SELL": 17,
+        "BUY_AT_TARGET_NOOP": 22,
+        "RISK_VETO_DRAWDOWN": 28,
+        "TECH_EXPLICIT_HOLD": 58
+      },
+      "decision_sessions": 127,
+      "first_decision": "2024-03-01",
+      "last_decision": "2024-08-29",
+      "last_curve_session": "2024-08-30",
+      "drawdown_audit": {
+        "limit": 0.15,
+        "max_canonical_drawdown": 0.15198749958436683,
+        "first_session_above_limit": "2024-06-12",
+        "drawdown_vetoes": 28,
+        "drawdown_vetoes_all_above_limit": true,
+        "buys_with_drawdown_above_limit": 28,
+        "buys_above_limit_by_cause": {
+          "RISK_VETO_DRAWDOWN": 28
+        },
+        "buy_orders_above_limit": []
+      }
+    },
+    "3-r3": {
+      "terminal_return": -0.0030127549870504478,
+      "max_drawdown": -0.17730077370186123,
+      "sortino": 0.09444737642803565,
+      "turnover_traded_notional_over_capital": 6.777961891766095,
+      "trades": 7,
+      "time_in_market": 0.5433070866141733,
+      "hard_risk_vetoes": 0,
+      "llm_risk_vetoes": 0,
+      "final_causes": {
+        "ACTION_BUY": 4,
+        "ACTION_SELL": 17,
+        "BUY_AT_TARGET_NOOP": 48,
+        "TECH_EXPLICIT_HOLD": 58
+      },
+      "decision_sessions": 127,
+      "first_decision": "2024-03-01",
+      "last_decision": "2024-08-29",
+      "last_curve_session": "2024-08-30",
+      "drawdown_audit": {
+        "limit": 0.35,
+        "max_canonical_drawdown": 0.17730077370186123,
+        "first_session_above_limit": null,
+        "drawdown_vetoes": 0,
+        "drawdown_vetoes_all_above_limit": true,
+        "buys_with_drawdown_above_limit": 0,
+        "buys_above_limit_by_cause": {},
+        "buy_orders_above_limit": []
+      }
+    }
+  },
+  "paired_technical_audit": {
+    "session_replicates": 381,
+    "decision_sessions": 127,
+    "same_five_technical_responses_in_all_configs": true,
+    "mismatched": []
+  },
+  "operational": {
+    "logical_calls": 5927,
+    "live_calls": 1989,
+    "bank_hits": 3938,
+    "frozen_v2_hits_by_stage": {},
+    "calls_by_config_stage_source": {
+      "1/portfolio_manager/live": 62,
+      "1/risk_manager/live": 12,
+      "1/technical_analyst/live": 1905,
+      "2/portfolio_manager/bank": 47,
+      "2/portfolio_manager/live": 10,
+      "2/risk_manager/bank": 7,
+      "2/technical_analyst/bank": 1905,
+      "3/portfolio_manager/bank": 62,
+      "3/risk_manager/bank": 12,
+      "3/technical_analyst/bank": 1905
+    },
+    "http_attempts": 1990,
+    "attempt_outcomes": {
+      "http_200": 1989,
+      "ProviderTransportError": 1
+    },
+    "http_status_counts": {
+      "503": 1
+    },
+    "attempt_latency_ms": {
+      "p50": 2774.7,
+      "p90": 3722.9
+    },
+    "live_token_usage": {
+      "prompt_tokens": 2150823,
+      "completion_tokens": 344981,
+      "total_tokens": 2524546,
+      "thoughts_tokens": 28742
+    },
+    "cost": "not computed: no versioned API pricing source in the repository"
+  },
+  "checker_freeze": {
+    "checker": {
+      "version": 3,
+      "source_sha256": {
+        "src/agents/feature_semantics.py": "fb2cfa36feba26b5e8f622828e03aa8fcfd25b1f7a0567d387f82baf9f056169",
+        "scripts/h2_v4.py": "630e7d8f862d4b5ffe5d8052911928e23f51634eaafcc88292ae0ef74a539f8e"
+      },
+      "source_blobs": {
+        "src/agents/feature_semantics.py": "57c0b1b0548455b897fdf0149c177a9bcd7b2557",
+        "scripts/h2_v4.py": "672f6931ce19254acb147a2bc93705f542018ea1"
+      },
+      "regression_report": "docs/evidence/h2_v4/technical_checker_v3/calibration_report.json"
+    },
+    "pre_live_audit": "docs/evidence/h2_v6/pre_live_audit.json",
+    "authorization": "docs/evidence/h2_v6/execution_authorization.json"
+  },
+  "technical_audit": {
+    "technical_votes": 1905,
+    "rates": {
+      "V6-S1": 0.0,
+      "V6-S2": 0.0,
+      "V6-S3": 0.0,
+      "V6-E": 0.0
+    },
+    "flagged": [],
+    "V6-S1": 0,
+    "V6-S2": 0,
+    "V6-S3": 0,
+    "V6-E": 0,
+    "invalid_evidence": [],
+    "technical_calls": 1905,
+    "evidence_validator_version": 1,
+    "technical_prompt_v5_only": true,
+    "natural_v5_failure_sessions": {
+      "2024-04-01": {
+        "technical_calls": 15,
+        "invalid_evidence": 0,
+        "linguistic_flags": []
+      },
+      "2024-05-16": {
+        "technical_calls": 15,
+        "invalid_evidence": 0,
+        "linguistic_flags": []
+      },
+      "2024-06-12": {
+        "technical_calls": 15,
+        "invalid_evidence": 0,
+        "linguistic_flags": []
+      },
+      "2024-08-06": {
+        "technical_calls": 15,
+        "invalid_evidence": 0,
+        "linguistic_flags": []
+      }
+    }
+  },
+  "gates": {
+    "V6-E": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "V6-S1": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "V6-S2": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "V6-S3": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    }
+  },
+  "v6_phase_pass": true,
+  "cal_b_audit": {
+    "cal_b_authorized": false,
+    "decision_sessions_reaching_provider_or_bank": 127,
+    "cal_b_sessions_touched": []
+  },
+  "validation_audit": {
+    "last_decision_session": "2024-08-29",
+    "max_settlement_session": "2024-08-30",
+    "max_data_end": "2024-08-30",
+    "phase_end": "2024-08-30"
+  }
+}

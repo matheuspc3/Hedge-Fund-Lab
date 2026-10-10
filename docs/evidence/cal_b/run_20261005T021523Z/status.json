@@ -1,0 +1,9 @@
+{
+  "kind": "CAL_B_STATUS",
+  "computed_utc": "2026-10-05T02:16:55Z",
+  "status": "CAL_B_FAIL — HOLDOUT CONSUMED",
+  "automatic_pass": false,
+  "consumption": "CONSUMED (10/10 anchors, R=1)",
+  "system_calibration_complete": false,
+  "next": null
+}

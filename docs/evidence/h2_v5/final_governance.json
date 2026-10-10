@@ -1,0 +1,111 @@
+{
+  "kind": "H2_V5_FINAL_GOVERNANCE",
+  "recorded_utc": "2026-10-08T00:14:21.990666+00:00",
+  "status": "H2_V5 TEMPORAL CONTRACT FIX FAILED",
+  "H2_V5_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE": true,
+  "reason": "DEVELOPMENT S3 FAILURE — SEQUENTIAL DEVELOPMENT (4/1905)",
+  "frozen_stop_rule": "Amendment 13: Any S3 occurrence: H2_V5 TEMPORAL CONTRACT FIX FAILED, STOP",
+  "defect_directed_result_preserved": "H2_V5 MINIMAL DEFECT FIX PASSED (S3=0/150)",
+  "sequential_result_preserved": "9/9 runs complete; pairing intact; D02 selected by frozen S2",
+  "source": "docs/evidence/sequential_dev_v5/run_20261007T234620Z/summary.json",
+  "technical_checker_version": 3,
+  "S1": 0,
+  "S2": 0,
+  "S3": 4,
+  "technical_outputs": 1905,
+  "S3_rate": 0.002099737532808399,
+  "flagged": [
+    {
+      "call_id": "2024-04-01|technical_analyst|4|000103",
+      "decision_session": "2024-04-01",
+      "analyst_id": 4,
+      "confidence": 0.6,
+      "justification": "O preço está dentro das bandas de Bollinger e acima da SMA200 (sma200_gap de 0.106), porém situa-se abaixo da SMA50 (sma50_gap negativo de -0.044). O MACD opera abaixo de zero, mas está acima de sua linha de sinal, enquanto o RSI em 48.85 indica neutralidade. Os sinais são mistos entre a tendência mais longa e o enfraquecimento de médio prazo, justificando manutenção.",
+      "signal": "MANTER",
+      "findings": {
+        "V5-S1": [],
+        "V5-S2": [],
+        "V5-S3": [
+          {
+            "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+            "text": "Os sinais são mistos entre a tendência mais longa e o enfraquecimento de médio prazo, justificando manutenção",
+            "requires": "t-1 values (not in the payload)",
+            "holds": false
+          }
+        ]
+      }
+    },
+    {
+      "call_id": "2024-06-12|technical_analyst|1|000352",
+      "decision_session": "2024-06-12",
+      "analyst_id": 1,
+      "confidence": 0.6,
+      "justification": "O preço está acima da SMA200 (gap positivo de 6,14%), indicando tendência estrutural favorável no longo prazo, porém opera abaixo da SMA50 (gap de -3,22%). O MACD apresenta valor negativo e está abaixo de sua linha de sinal, com RSI em 41,75 apontando fraqueza no momentum de curto prazo. O fechamento situa-se no interior das bandas de Bollinger. Diante do conflito entre a tendência de longo prazo e o enfraquecimento do momentum intermediário, a recomendação atual é MANTER.",
+      "signal": "MANTER",
+      "findings": {
+        "V5-S1": [],
+        "V5-S2": [],
+        "V5-S3": [
+          {
+            "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+            "text": "Diante do conflito entre a tendência de longo prazo e o enfraquecimento do momentum intermediário, a recomendação atual é MANTER",
+            "requires": "t-1 values (not in the payload)",
+            "holds": false
+          }
+        ]
+      }
+    },
+    {
+      "call_id": "2024-08-06|technical_analyst|3|000551",
+      "decision_session": "2024-08-06",
+      "analyst_id": 3,
+      "confidence": 0.65,
+      "justification": "O preço está acima da SMA200 (sma200_gap > 0), mas abaixo da SMA50 (sma50_gap < 0). O MACD apresenta valor negativo e está abaixo de sua linha de sinal, indicando momentum negativo no curto prazo. O RSI em 41,67 está em patamar neutro/baixo, e o fechamento está dentro das bandas de Bollinger, próximo à banda inferior. Diante de sinais divergentes entre tendência de longo prazo e enfraquecimento no médio prazo, a recomendação é manter.",
+      "signal": "MANTER",
+      "findings": {
+        "V5-S1": [],
+        "V5-S2": [],
+        "V5-S3": [
+          {
+            "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+            "text": "Diante de sinais divergentes entre tendência de longo prazo e enfraquecimento no médio prazo, a recomendação é manter",
+            "requires": "t-1 values (not in the payload)",
+            "holds": false
+          }
+        ]
+      }
+    },
+    {
+      "call_id": "2024-05-16|technical_analyst|2|000263",
+      "decision_session": "2024-05-16",
+      "analyst_id": 2,
+      "confidence": 0.6,
+      "justification": "O preço está acima das médias móveis de 50 e 200 períodos (sma50_gap positivo e sma200_gap positivo), indicando contexto estrutural altista. No entanto, o MACD está abaixo da sua linha de sinal (macd_ratio < macd_signal_ratio), o RSI em 39.02 indica predominância de perdas recentes e o preço está próximo da banda inferior de Bollinger (bb_lower_gap de 0.013 e bb_upper_gap de -0.124). Essa divergência entre tendência de longo prazo e enfraquecimento dos indicadores de curto prazo justifica uma postura de cautela.",
+      "signal": "MANTER",
+      "findings": {
+        "V5-S1": [],
+        "V5-S2": [],
+        "V5-S3": [
+          {
+            "claim": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+            "text": "Essa divergência entre tendência de longo prazo e enfraquecimento dos indicadores de curto prazo justifica uma postura de cautela",
+            "requires": "t-1 values (not in the payload)",
+            "holds": false
+          }
+        ]
+      }
+    }
+  ],
+  "stress": "NOT EXECUTED — STOP after temporal claims discovered in Sequential Development",
+  "CAL_B4_CARRIED_FORWARD_TO_H2_V5": true,
+  "CAL_B4_HOLDOUT_INTEGRITY": "PRESERVED",
+  "CAL_B4": "SEALED / NOT EXECUTED",
+  "validation_final": "NOT EXECUTED",
+  "prompt_checker_gates_thresholds": "unchanged; no fix or rerun",
+  "phase_selections_recorded": {
+    "CAL_A": "C1: 21 / 0.40, PROTOCOL_TIE_FALLBACK",
+    "sequential": "D02: 0.15, EMPIRICAL_S2"
+  },
+  "final_parameters_eligible_for_freeze": false,
+  "next_step": "Stop v5; preserve all evidence. A new user-authorized treatment/protocol decision is required; do not open CAL-B4."
+}

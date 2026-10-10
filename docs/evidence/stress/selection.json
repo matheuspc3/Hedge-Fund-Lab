@@ -1,0 +1,385 @@
+{
+  "kind": "STRESS_WINDOW_SELECTION",
+  "freeze": "STRESS_PROBING_FREEZE_V1",
+  "computed_utc": "2026-10-05T01:11:44Z",
+  "git_commit": "2b4f578439091636bd7b753c8ef4356b39fe6001",
+  "inputs": "market data only (adjusted close/open inside each eligible stratum); no LLM response, no treatment result; CAL-B strata never read for any metric",
+  "snapshot": {
+    "snapshot_id": "20261004T201258177516Z-b4cf39fc761f251d2dd18e787008345a",
+    "identity_digest": "b4cf39fc761f251d2dd18e787008345aaf02bd9e19f913390c510338b84ee7d4",
+    "files": [
+      {
+        "path": "data/PETR4.SA.csv",
+        "sha256": "7b6a0018191028ecea2ee66785c27f771a721aa4a96c4953ca87ac6d688c3ffa",
+        "size": 252665,
+        "ticker": "PETR4.SA"
+      }
+    ],
+    "source": {
+      "adjustment_factor": "yfinance auto_adjust=False, Adj Close / Close per session",
+      "corporate_actions_captured": true,
+      "cotahist_sha256": {
+        "COTAHIST_A2016.ZIP": "ffc82a9b973cb5901e68dc11bea1bbc9bf0a2c46749e0efe5a7a89229bc0d81f",
+        "COTAHIST_A2017.ZIP": "af6aaa85187c1d58ec6565522644066da573a7dc5b579c1d4c906ae95a2dea86",
+        "COTAHIST_A2018.ZIP": "9d66136179d9822476c6035000167aecf2665f4396619e4d74c0011745a0c507",
+        "COTAHIST_A2019.ZIP": "5170d3f8f079c3306424b36c2fae9b467391f8fa37d16d389f487b4c5c28edb9",
+        "COTAHIST_A2020.ZIP": "86442168939b9da7b3cc1ec1662c333ee5ab4c75f2be1865b5bf55ba4c52168f",
+        "COTAHIST_A2021.ZIP": "b0d4aed17d609c7ba615a23320c2fd513b580a251ae7d884a5015ef8a3fe4705",
+        "COTAHIST_A2022.ZIP": "a4f9015b755f797d9c08b0d13f19dbfab18a6c75f379c0271a1cf1b5f6323cd8",
+        "COTAHIST_A2023.ZIP": "ad1603788d78aaa1de806498572277f1d9443f88ae116452751b5800cb23523e",
+        "COTAHIST_A2024.ZIP": "96a003d10fab0fa2ace0c64cdc2b892b4c111adf9da8e538aa0b28437bd2a172",
+        "COTAHIST_A2025.ZIP": "6cc0ad851c8f605ca30418acac48be81f1767f6ed05b4f563772d06ae448047d",
+        "COTAHIST_A2026.ZIP": "67a343ae7ecb74bf70f7ccccb1ba29cf6aefd388a37e7a633681e7fb98a2b4f4"
+      },
+      "cotahist_url": "https://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_A{year}.ZIP",
+      "currency": "BRL",
+      "exchange_timezone": "America/Sao_Paulo",
+      "factor_neighbor_tolerance": 1e-06,
+      "inherited_factors": {
+        "PETR4.SA": [
+          "2017-05-29",
+          "2020-11-20"
+        ]
+      },
+      "name": "b3_cotahist_ohlcv+yfinance_adjustment_factor",
+      "price_adjustment": "auto_adjust=true",
+      "price_representation": "adjusted_total_return",
+      "raw_ohlcv": "B3 COTAHIST, TPMERC 010, CODBDI 02 (official)",
+      "version": "1.5.1"
+    },
+    "price_representation": "adjusted_total_return"
+  },
+  "eligible_strata": [
+    1,
+    2,
+    4,
+    5,
+    7,
+    8,
+    10,
+    11,
+    13,
+    14,
+    16,
+    17,
+    19,
+    20,
+    22,
+    23,
+    25,
+    26,
+    28,
+    29
+  ],
+  "excluded_cal_b_strata": [
+    3,
+    6,
+    9,
+    12,
+    15,
+    18,
+    21,
+    24,
+    27,
+    30
+  ],
+  "tie_break": "LOWEST_STRATUM_ID",
+  "categories": [
+    {
+      "category": "MAX_DRAWDOWN",
+      "metric": "market_max_drawdown",
+      "adverse_order": "descending"
+    },
+    {
+      "category": "MAX_REALIZED_VOLATILITY",
+      "metric": "realized_volatility",
+      "adverse_order": "descending"
+    },
+    {
+      "category": "WORST_DAILY_RETURN",
+      "metric": "worst_daily_return",
+      "adverse_order": "ascending"
+    },
+    {
+      "category": "MAX_ABS_OVERNIGHT_GAP",
+      "metric": "max_abs_overnight_gap",
+      "adverse_order": "descending"
+    }
+  ],
+  "metrics_by_stratum": {
+    "1": {
+      "market_max_drawdown": 0.08528215336654987,
+      "realized_volatility": 0.37366670404033747,
+      "worst_daily_return": -0.04781081056980285,
+      "max_abs_overnight_gap": 0.019957629055920134
+    },
+    "2": {
+      "market_max_drawdown": 0.4421137572275978,
+      "realized_volatility": 0.7984230364753621,
+      "worst_daily_return": -0.14857760587664637,
+      "max_abs_overnight_gap": 0.13837560439944252
+    },
+    "4": {
+      "market_max_drawdown": 0.06605108761557965,
+      "realized_volatility": 0.5168512557122844,
+      "worst_daily_return": -0.042753808343384825,
+      "max_abs_overnight_gap": 0.12437432848274144
+    },
+    "5": {
+      "market_max_drawdown": 0.17154977175326613,
+      "realized_volatility": 0.3800689376301785,
+      "worst_daily_return": -0.05369444114269628,
+      "max_abs_overnight_gap": 0.034615704896288624
+    },
+    "7": {
+      "market_max_drawdown": 0.11160726114515906,
+      "realized_volatility": 0.2770679809722228,
+      "worst_daily_return": -0.029235329652258613,
+      "max_abs_overnight_gap": 0.02280397986355509
+    },
+    "8": {
+      "market_max_drawdown": 0.15534869125999462,
+      "realized_volatility": 0.3014122153477573,
+      "worst_daily_return": -0.03727220231187889,
+      "max_abs_overnight_gap": 0.03007789563688501
+    },
+    "10": {
+      "market_max_drawdown": 0.0902305339146664,
+      "realized_volatility": 0.22968655436065952,
+      "worst_daily_return": -0.04334456798453068,
+      "max_abs_overnight_gap": 0.02286674924713228
+    },
+    "11": {
+      "market_max_drawdown": 0.6304418642835597,
+      "realized_volatility": 1.3071360844742241,
+      "worst_daily_return": -0.29697761780753396,
+      "max_abs_overnight_gap": 0.2198860668630641
+    },
+    "13": {
+      "market_max_drawdown": 0.07793863764049713,
+      "realized_volatility": 0.3286940868452448,
+      "worst_daily_return": -0.028837526421607085,
+      "max_abs_overnight_gap": 0.02066085330982137
+    },
+    "14": {
+      "market_max_drawdown": 0.10669850167087458,
+      "realized_volatility": 0.47603225638080393,
+      "worst_daily_return": -0.060865207373492436,
+      "max_abs_overnight_gap": 0.06886085968220534
+    },
+    "16": {
+      "market_max_drawdown": 0.13524589727522085,
+      "realized_volatility": 0.40182465531964323,
+      "worst_daily_return": -0.05761504400149298,
+      "max_abs_overnight_gap": 0.025180017843019042
+    },
+    "17": {
+      "market_max_drawdown": 0.10016869923143812,
+      "realized_volatility": 0.2813332133803714,
+      "worst_daily_return": -0.04090131847089573,
+      "max_abs_overnight_gap": 0.03241285498438762
+    },
+    "19": {
+      "market_max_drawdown": 0.1290433462764191,
+      "realized_volatility": 0.4272707548674758,
+      "worst_daily_return": -0.059046803220670574,
+      "max_abs_overnight_gap": 0.04152601722225868
+    },
+    "20": {
+      "market_max_drawdown": 0.060507925876412294,
+      "realized_volatility": 0.28840647309581696,
+      "worst_daily_return": -0.03955165558576379,
+      "max_abs_overnight_gap": 0.01897205327407292
+    },
+    "22": {
+      "market_max_drawdown": 0.1906911499094205,
+      "realized_volatility": 0.35575201849235005,
+      "worst_daily_return": -0.060866639202447614,
+      "max_abs_overnight_gap": 0.0472355096050624
+    },
+    "23": {
+      "market_max_drawdown": 0.15110199791410595,
+      "realized_volatility": 0.42176906774064493,
+      "worst_daily_return": -0.06261757690292202,
+      "max_abs_overnight_gap": 0.04056979982889808
+    },
+    "25": {
+      "market_max_drawdown": 0.11066887796195113,
+      "realized_volatility": 0.37961157363470965,
+      "worst_daily_return": -0.06448965135624507,
+      "max_abs_overnight_gap": 0.03918352499677191
+    },
+    "26": {
+      "market_max_drawdown": 0.12848964469305535,
+      "realized_volatility": 0.34532115155074705,
+      "worst_daily_return": -0.04050601647621932,
+      "max_abs_overnight_gap": 0.027292015402758718
+    },
+    "28": {
+      "market_max_drawdown": 0.051935515986527125,
+      "realized_volatility": 0.28493499495319696,
+      "worst_daily_return": -0.051935515986527125,
+      "max_abs_overnight_gap": 0.04601810183162325
+    },
+    "29": {
+      "market_max_drawdown": 0.11292829246130731,
+      "realized_volatility": 0.3185780616571387,
+      "worst_daily_return": -0.06605042741788614,
+      "max_abs_overnight_gap": 0.033289537177382034
+    }
+  },
+  "rankings": {
+    "MAX_DRAWDOWN": [
+      11,
+      2,
+      22,
+      5,
+      8,
+      23,
+      16,
+      19,
+      26,
+      29,
+      7,
+      25,
+      14,
+      17,
+      10,
+      1,
+      13,
+      4,
+      20,
+      28
+    ],
+    "MAX_REALIZED_VOLATILITY": [
+      11,
+      2,
+      4,
+      14,
+      19,
+      23,
+      16,
+      5,
+      25,
+      1,
+      22,
+      26,
+      13,
+      29,
+      8,
+      20,
+      28,
+      17,
+      7,
+      10
+    ],
+    "WORST_DAILY_RETURN": [
+      11,
+      2,
+      29,
+      25,
+      23,
+      22,
+      14,
+      19,
+      16,
+      5,
+      28,
+      1,
+      10,
+      4,
+      17,
+      26,
+      20,
+      8,
+      7,
+      13
+    ],
+    "MAX_ABS_OVERNIGHT_GAP": [
+      11,
+      2,
+      4,
+      14,
+      22,
+      28,
+      19,
+      23,
+      25,
+      5,
+      29,
+      17,
+      8,
+      26,
+      16,
+      10,
+      7,
+      13,
+      1,
+      20
+    ]
+  },
+  "ranking_sha256": {
+    "MAX_DRAWDOWN": "115581dcb873f346a9ba71a0bff06b652db902648a56ad34cb47f3ca7eec4579",
+    "MAX_REALIZED_VOLATILITY": "94f78f72b11e0ad9eb58d8d42a84d5ad46cab24957c595a1bab4c4b8a75d168e",
+    "WORST_DAILY_RETURN": "cc37085527d10689a36359c9031e9c8700d2aea64f097263757d9fe5ddaca60e",
+    "MAX_ABS_OVERNIGHT_GAP": "f1083616e8e9fe86d608af6d4366e6ec27738a8ea1aac346a8be738b1f33cb20"
+  },
+  "windows": [
+    {
+      "stress_id": "S1",
+      "category": "MAX_DRAWDOWN",
+      "stratum_id": 11,
+      "start": "2020-02-07",
+      "last_decision": "2020-04-22",
+      "end": "2020-04-23",
+      "decision_sessions": 50,
+      "stratum_sessions": 51,
+      "market_score_metric": "market_max_drawdown",
+      "market_score": 0.6304418642835597,
+      "next_session_after_window": "2020-04-24",
+      "next_session_stratum_is_cal_b": true
+    },
+    {
+      "stress_id": "S2",
+      "category": "MAX_REALIZED_VOLATILITY",
+      "stratum_id": 2,
+      "start": "2018-03-29",
+      "last_decision": "2018-06-11",
+      "end": "2018-06-12",
+      "decision_sessions": 50,
+      "stratum_sessions": 51,
+      "market_score_metric": "realized_volatility",
+      "market_score": 0.7984230364753621,
+      "next_session_after_window": "2018-06-13",
+      "next_session_stratum_is_cal_b": true
+    },
+    {
+      "stress_id": "S3",
+      "category": "WORST_DAILY_RETURN",
+      "stratum_id": 29,
+      "start": "2023-10-02",
+      "last_decision": "2023-12-12",
+      "end": "2023-12-13",
+      "decision_sessions": 49,
+      "stratum_sessions": 50,
+      "market_score_metric": "worst_daily_return",
+      "market_score": -0.06605042741788614,
+      "next_session_after_window": "2023-12-14",
+      "next_session_stratum_is_cal_b": true
+    },
+    {
+      "stress_id": "S4",
+      "category": "MAX_ABS_OVERNIGHT_GAP",
+      "stratum_id": 4,
+      "start": "2018-08-24",
+      "last_decision": "2018-11-06",
+      "end": "2018-11-07",
+      "decision_sessions": 50,
+      "stratum_sessions": 51,
+      "market_score_metric": "max_abs_overnight_gap",
+      "market_score": 0.12437432848274144,
+      "next_session_after_window": "2018-11-08",
+      "next_session_stratum_is_cal_b": false
+    }
+  ]
+}

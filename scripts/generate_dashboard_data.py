@@ -19,16 +19,22 @@ import math
 import sys
 import time
 from pathlib import Path
+from typing import cast
 
-import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from src.backtesting.metrics import (
+    drawdown_series,
+    performance_metrics,
+    total_transaction_cost,
+    validate_equity_curve,
+)
 from src.config import TICKER_INFO, settings
-from src.logger import setup_logger
 from src.db.connection import engine, get_session
 from src.db.models import Ativo, CotacaoDiaria, IndicadorTecnico
+from src.logger import setup_logger
 from src.pipeline.transform import DataTransformer
 
 setup_logger(level="INFO", log_file=settings.log_file)
@@ -50,7 +56,9 @@ def _log_tick(label: str) -> None:
         if elapsed < 60:
             logger.info("⏱  %s  [%ds]", label, round(elapsed))
         else:
-            logger.info("⏱  %s  [%dm %ds]", label, int(elapsed // 60), round(elapsed % 60))
+            logger.info(
+                "⏱  %s  [%dm %ds]", label, int(elapsed // 60), round(elapsed % 60)
+            )
         _t_start = now
 
 
@@ -79,9 +87,11 @@ def check_db_has_data() -> bool:
                 if ativo is None:
                     problems.append(f"{ticker}: ativo não encontrado")
                     continue
-                count = session.query(CotacaoDiaria).filter(
-                    CotacaoDiaria.ativo_id == ativo.id
-                ).count()
+                count = (
+                    session.query(CotacaoDiaria)
+                    .filter(CotacaoDiaria.ativo_id == ativo.id)
+                    .count()
+                )
                 if count < 100:
                     problems.append(f"{ticker}: apenas {count} registros (< 100)")
 
@@ -104,6 +114,7 @@ def run_pipeline_etl() -> None:
     logger.info("=" * 50)
 
     from src.db.models import Base
+
     Base.metadata.create_all(engine)
 
     from src.pipeline.extract import DataExtractor
@@ -124,34 +135,72 @@ def run_pipeline_etl() -> None:
             df_clean = transformer.clean(df)
             df_result = transformer.calculate_indicators(df_clean)
 
-            cotacoes_cols = ["data", "abertura", "maxima", "minima", "fechamento", "volume"]
+            cotacoes_cols = [
+                "data",
+                "abertura",
+                "maxima",
+                "minima",
+                "fechamento",
+                "volume",
+            ]
             indicadores_cols = [
-                "data", "sma_50", "sma_200", "bb_upper", "bb_middle",
-                "bb_lower", "rsi", "macd", "macd_sinal",
+                "data",
+                "sma_50",
+                "sma_200",
+                "bb_upper",
+                "bb_middle",
+                "bb_lower",
+                "rsi",
+                "macd",
+                "macd_sinal",
             ]
 
-            cotacoes_to_insert = df_result[[c for c in cotacoes_cols if c in df_result.columns]]
-            indicadores_to_insert = df_result[[c for c in indicadores_cols if c in df_result.columns]]
+            cotacoes_to_insert = cast(
+                pd.DataFrame,
+                df_result[[c for c in cotacoes_cols if c in df_result.columns]],
+            )
+            indicadores_to_insert = cast(
+                pd.DataFrame,
+                df_result[[c for c in indicadores_cols if c in df_result.columns]],
+            )
 
             loader.upsert_cotacoes(ticker, cotacoes_to_insert)
-            loader.batch_insert_indicators(ticker, indicadores_to_insert)
+            loader.upsert_indicators(ticker, indicadores_to_insert)
 
             elapsed = time.perf_counter() - t0
-            logger.info("[%d/%d] %s concluído — %d registros em %.1fs",
-                        i, len(settings.default_tickers), ticker, len(df_result), elapsed)
+            logger.info(
+                "[%d/%d] %s concluído — %d registros em %.1fs",
+                i,
+                len(settings.default_tickers),
+                ticker,
+                len(df_result),
+                elapsed,
+            )
             n_ok += 1
         except Exception as exc:
             elapsed = time.perf_counter() - t0
-            logger.error("[%d/%d] %s FALHOU após %.1fs: %s",
-                         i, len(settings.default_tickers), ticker, elapsed, exc)
+            logger.error(
+                "[%d/%d] %s FALHOU após %.1fs: %s",
+                i,
+                len(settings.default_tickers),
+                ticker,
+                elapsed,
+                exc,
+            )
             n_fail += 1
             failed_tickers.append(ticker)
 
     if n_fail:
-        logger.warning("Pipeline ETL finalizado com falhas. OK=%d  FALHA=%d  Fail: %s",
-                       n_ok, n_fail, ", ".join(failed_tickers))
+        logger.warning(
+            "Pipeline ETL finalizado com falhas. OK=%d  FALHA=%d  Fail: %s",
+            n_ok,
+            n_fail,
+            ", ".join(failed_tickers),
+        )
     else:
-        logger.info("Pipeline ETL finalizado com sucesso. %d ticker(s) processados.", n_ok)
+        logger.info(
+            "Pipeline ETL finalizado com sucesso. %d ticker(s) processados.", n_ok
+        )
 
 
 def read_ticker_from_db(ticker: str) -> pd.DataFrame | None:
@@ -175,23 +224,25 @@ def read_ticker_from_db(ticker: str) -> pd.DataFrame | None:
 
             rows = []
             for c in cots:
-                rows.append({
-                    "data": c.data,
-                    "fechamento": c.fechamento,
-                    "abertura": c.abertura,
-                    "maxima": c.maxima,
-                    "minima": c.minima,
-                    "volume": c.volume,
-                })
+                rows.append(
+                    {
+                        "data": c.data,
+                        "fechamento": c.fechamento,
+                        "abertura": c.abertura,
+                        "maxima": c.maxima,
+                        "minima": c.minima,
+                        "volume": c.volume,
+                    }
+                )
 
-            df = pd.DataFrame(rows).set_index("data")
+            df = cast(pd.DataFrame, pd.DataFrame(rows).set_index("data"))
             df.index = pd.DatetimeIndex(df.index)
             df.sort_index(inplace=True)
 
             dup_count = df.index.duplicated(keep="last").sum()
             if dup_count:
                 logger.info("  %s: removendo %d linhas duplicadas", ticker, dup_count)
-                df = df[~df.index.duplicated(keep="last")]
+                df = cast(pd.DataFrame, df[~df.index.duplicated(keep="last")])
 
             inds = (
                 session.query(IndicadorTecnico)
@@ -202,35 +253,51 @@ def read_ticker_from_db(ticker: str) -> pd.DataFrame | None:
             if inds:
                 ind_rows = []
                 for ind in inds:
-                    ind_rows.append({
-                        "data": ind.data,
-                        "sma_50": ind.sma_50,
-                        "sma_200": ind.sma_200,
-                        "bb_upper": ind.bb_upper,
-                        "bb_middle": ind.bb_middle,
-                        "bb_lower": ind.bb_lower,
-                        "rsi": ind.rsi,
-                        "macd": ind.macd,
-                        "macd_sinal": ind.macd_sinal,
-                    })
-                df_inds = pd.DataFrame(ind_rows).set_index("data")
+                    ind_rows.append(
+                        {
+                            "data": ind.data,
+                            "sma_50": ind.sma_50,
+                            "sma_200": ind.sma_200,
+                            "bb_upper": ind.bb_upper,
+                            "bb_middle": ind.bb_middle,
+                            "bb_lower": ind.bb_lower,
+                            "rsi": ind.rsi,
+                            "macd": ind.macd,
+                            "macd_sinal": ind.macd_sinal,
+                        }
+                    )
+                df_inds = cast(
+                    pd.DataFrame, pd.DataFrame(ind_rows).set_index("data")
+                )
                 df_inds.index = pd.DatetimeIndex(df_inds.index)
                 dup_ind = df_inds.index.duplicated(keep="last").sum()
                 if dup_ind:
-                    df_inds = df_inds[~df_inds.index.duplicated(keep="last")]
-                df = df.join(df_inds)
+                    df_inds = cast(
+                        pd.DataFrame,
+                        df_inds[~df_inds.index.duplicated(keep="last")],
+                    )
+                df = cast(pd.DataFrame, df.join(df_inds))
 
             transformer = DataTransformer()
-            has_indicators = "sma_50" in df.columns and df["sma_50"].notna().any()
+            has_indicators = "sma_50" in df.columns and bool(
+                cast(pd.Series, df["sma_50"]).notna().any()
+            )
             if not has_indicators:
-                logger.info("  %s: calculando indicadores (SMA, BB, RSI, MACD)...", ticker)
-                df = transformer.calculate_indicators(df)
+                logger.info(
+                    "  %s: calculando indicadores (SMA, BB, RSI, MACD)...", ticker
+                )
+                df = cast(pd.DataFrame, transformer.calculate_indicators(df))
             else:
                 logger.info("  %s: indicadores já existentes no banco", ticker)
 
             # Loga período
-            logger.info("  %s: período %s → %s  (%d pregões)",
-                        ticker, df.index[0].date(), df.index[-1].date(), len(df))
+            logger.info(
+                "  %s: período %s → %s  (%d pregões)",
+                ticker,
+                pd.Timestamp(str(df.index[0])).date(),
+                pd.Timestamp(str(df.index[-1])).date(),
+                len(df),
+            )
             return df
 
     except Exception as exc:
@@ -248,13 +315,17 @@ def ticker_to_json(ticker: str, df: pd.DataFrame) -> dict | None:
         fech = sanitize(row.get("fechamento"))
         if fech is None:
             continue
+        volume = cast(float | None, row.get("volume"))
         rec = {
-            "Data": str(date.date()),
+            "Data": str(pd.Timestamp(str(date)).date()),
             "fechamento": fech,
             "abertura": sanitize(row.get("abertura")),
             "maxima": sanitize(row.get("maxima")),
             "minima": sanitize(row.get("minima")),
-            "volume": int(row.get("volume")) if row.get("volume") is not None and not (isinstance(row.get("volume"), float) and math.isnan(row["volume"])) else None,
+            "volume": int(volume)
+            if volume is not None
+            and not (isinstance(volume, float) and math.isnan(volume))
+            else None,
             "sma_50": sanitize(row.get("sma_50")),
             "sma_200": sanitize(row.get("sma_200")),
             "bb_upper": sanitize(row.get("bb_upper")),
@@ -268,7 +339,9 @@ def ticker_to_json(ticker: str, df: pd.DataFrame) -> dict | None:
         records.append(rec)
 
     if not records:
-        logger.warning("  %s: nenhum registro com fechamento válido após sanitização", ticker)
+        logger.warning(
+            "  %s: nenhum registro com fechamento válido após sanitização", ticker
+        )
         return None
 
     ultimo = records[-1].copy()
@@ -281,76 +354,79 @@ def ticker_to_json(ticker: str, df: pd.DataFrame) -> dict | None:
         "data": records,
         "ultimo": ultimo,
         "total_dias": len(records),
-        "periodo": {"inicio": settings.start_date, "fim": settings.end_date},
+        "periodo": {"inicio": records[0]["Data"], "fim": records[-1]["Data"]},
     }
 
 
-def compute_metrics(equity_curve: pd.Series, rf: float = 0.0) -> dict:
-    """Calcula métricas de uma série de equity."""
-    if len(equity_curve) < 2:
-        return {
-            "sharpe": None, "sortino": None, "max_drawdown": None,
-            "volatilidade": None, "retorno_acumulado": None, "retorno_percent": None,
-        }
-
-    rets = equity_curve.pct_change().dropna()
-    if len(rets) == 0:
-        return {
-            "sharpe": None, "sortino": None, "max_drawdown": None,
-            "volatilidade": None,
-            "retorno_acumulado": float(equity_curve.iloc[-1] - equity_curve.iloc[0]),
-            "retorno_percent": None,
-        }
-
-    mean_ret = rets.mean()
-    vol = rets.std()
-    annual_vol = vol * math.sqrt(252)
-    annual_ret = mean_ret * 252
-    sharpe = (annual_ret - rf) / annual_vol if annual_vol > 1e-15 else (0.0 if abs(annual_ret - rf) < 1e-10 else None)
-
-    downside = rets[rets < 0]
-    downside_vol = downside.std() * math.sqrt(252) if len(downside) > 0 else 0.0
-    sortino = (annual_ret - rf) / downside_vol if downside_vol > 1e-15 else (
-        0.0 if abs(annual_ret - rf) < 1e-10 else None
-    )
-
-    peak = equity_curve.expanding().max()
-    dd = (equity_curve - peak) / peak
-    max_dd = dd.min()
-
-    retorno_pct = float((equity_curve.iloc[-1] / equity_curve.iloc[0] - 1) * 100)
-
+def _observed_period(equity_curve: pd.Series) -> dict[str, str]:
+    curve = validate_equity_curve(equity_curve)
     return {
-        "sharpe": round(sharpe, 4) if sharpe is not None else None,
-        "sortino": round(sortino, 4) if sortino is not None else None,
-        "max_drawdown": round(float(max_dd), 6),
-        "volatilidade": round(float(annual_vol * 100), 2),
-        "retorno_acumulado": round(retorno_pct, 2),
-        "retorno_percent": round(retorno_pct, 2),
+        "inicio": str(pd.Timestamp(str(curve.index[0])).date()),
+        "fim": str(pd.Timestamp(str(curve.index[-1])).date()),
     }
+
+
+def _dashboard_metrics(equity_curve: pd.Series, trades: list) -> dict:
+    """Adapta unidades do contrato canônico para o JSON legado do dashboard."""
+    canonical = performance_metrics(equity_curve)
+    return {
+        "sharpe": round(float(canonical["sharpe_ratio"]), 4),
+        "sortino": round(float(canonical["sortino_ratio"]), 4),
+        "max_drawdown": round(float(canonical["max_drawdown"]), 6),
+        "max_drawdown_duration": int(canonical["max_drawdown_duration"]),
+        "retorno_percent": round(float(canonical["total_return"]) * 100, 2),
+        "cagr_percent": round(float(canonical["annualized_return"]) * 100, 2),
+        "volatilidade": round(float(canonical["annualized_volatility"]) * 100, 2),
+        "final_equity": round(float(equity_curve.iloc[-1]), 2),
+        "n_trades": len(trades),
+        "total_transaction_cost": round(total_transaction_cost(trades), 2),
+    }
+
+
+def _aggregate_equity_curves(curves: dict[str, pd.Series]) -> pd.Series:
+    """Média apenas na interseção temporal comum a todos os tickers."""
+    if not curves:
+        raise ValueError("cannot aggregate an empty equity curve collection")
+    validated = {ticker: validate_equity_curve(curve) for ticker, curve in curves.items()}
+    aligned = pd.concat(validated, axis=1, join="inner").sort_index()
+    if aligned.empty:
+        raise ValueError("equity curves have no dates in common")
+    return aligned.mean(axis=1)
 
 
 # ── Helpers novos ────────────────────────────────────────────────
 
+
 def _compute_drawdown_series(equity_curve: pd.Series) -> list[float]:
     """Calcula a série de drawdown a partir da curva de equity."""
-    if len(equity_curve) < 2:
-        return [0.0] * len(equity_curve)
-    peak = equity_curve.expanding().max()
-    dd = (equity_curve - peak) / peak
-    return [round(float(v), 6) for v in dd]
+    return [round(float(v), 6) for v in drawdown_series(equity_curve)]
 
 
 def _aggregate_ticker_metrics(metrics_list: list[dict]) -> tuple[dict, dict]:
     """Calcula média e desvio padrão das métricas entre tickers."""
-    keys = ["sharpe", "sortino", "max_drawdown", "retorno_percent", "volatilidade", "n_trades"]
+    keys = [
+        "sharpe",
+        "sortino",
+        "max_drawdown",
+        "retorno_percent",
+        "volatilidade",
+        "n_trades",
+    ]
     avg_m = {}
     std_m = {}
     for key in keys:
-        vals = [m[key] for m in metrics_list if m[key] is not None and not (isinstance(m[key], float) and (math.isnan(m[key]) or math.isinf(m[key])))]
+        vals = [
+            m[key]
+            for m in metrics_list
+            if m[key] is not None
+            and not (
+                isinstance(m[key], float) and (math.isnan(m[key]) or math.isinf(m[key]))
+            )
+        ]
         if vals:
-            avg_m[key] = round(float(pd.Series(vals).mean()), 4)
-            std_m[key] = round(float(pd.Series(vals).std()), 4)
+            values = pd.Series(vals, dtype=float)
+            avg_m[key] = round(float(cast(float, values.mean())), 4)
+            std_m[key] = round(float(cast(float, values.std())), 4)
         else:
             avg_m[key] = None
             std_m[key] = None
@@ -359,11 +435,14 @@ def _aggregate_ticker_metrics(metrics_list: list[dict]) -> tuple[dict, dict]:
 
 # ── Format helpers (log) ─────────────────────────────────────────
 
+
 def _fmt(v):
     return f"{v:.4f}" if v is not None else "N/A"
 
+
 def _fmt_ret(v):
     return f"{v:.2f}" if v is not None else "N/A"
+
 
 def _fmt_dd(v):
     if v is None:
@@ -373,8 +452,10 @@ def _fmt_dd(v):
 
 # ── Backtests ────────────────────────────────────────────────────
 
-def run_single_asset_backtests(all_data: dict[str, pd.DataFrame],
-                                tickers: list[str]) -> dict[str, dict]:
+
+def run_single_asset_backtests(
+    all_data: dict[str, pd.DataFrame], tickers: list[str]
+) -> dict[str, dict]:
     """Roda backtests single-asset em TODOS os tickers e agrega.
 
     Para cada estratégia, executa o backtest em cada ticker individualmente,
@@ -395,7 +476,6 @@ def run_single_asset_backtests(all_data: dict[str, pd.DataFrame],
             }}
     """
     from src.backtesting.engine import BacktestEngine
-    from src.backtesting.metrics import max_drawdown, sharpe_ratio, sortino_ratio
     from src.strategies.bollinger_bands import BollingerBandsStrategy
     from src.strategies.buy_and_hold import BuyAndHold
     from src.strategies.sma_cross import SMACross
@@ -422,32 +502,18 @@ def run_single_asset_backtests(all_data: dict[str, pd.DataFrame],
     for name, ticker_results in per_ticker.items():
         # Alinha curvas de equity pela interseção das datas
         curves = {t: r.equity_curve for t, r in ticker_results.items()}
-        df_curves = pd.DataFrame(curves)
-        avg_eq = df_curves.mean(axis=1)
-
-        # Métricas da curva média
-        avg_rets = avg_eq.pct_change().dropna()
-        avg_sharpe = round(float(sharpe_ratio(avg_rets)), 4) if len(avg_rets) > 0 else None
-        avg_sortino = round(float(sortino_ratio(avg_rets)), 4) if len(avg_rets) > 0 else None
-        avg_dd = round(float(max_drawdown(avg_eq)), 6)
-        avg_ret = round(float((avg_eq.iloc[-1] / avg_eq.iloc[0] - 1) * 100), 2)
+        avg_eq = _aggregate_equity_curves(curves)
+        all_trades = [
+            trade for result in ticker_results.values() for trade in result.trades
+        ]
+        aggregate_metrics = _dashboard_metrics(avg_eq, all_trades)
 
         # Métricas por ticker
         ticker_metrics = {}
         metrics_list = []
         for ticker, result in ticker_results.items():
             eq = result.equity_curve
-            rets = result.returns
-            vol = round(float(rets.std() * math.sqrt(252) * 100), 2) if len(rets) > 0 else None
-            m = {
-                "sharpe": round(float(sharpe_ratio(rets)), 4),
-                "sortino": round(float(sortino_ratio(rets)), 4),
-                "max_drawdown": round(float(max_drawdown(eq)), 6),
-                "retorno_percent": round(float((result.final_equity / result.initial_capital - 1) * 100), 2),
-                "final_equity": round(float(result.final_equity), 2),
-                "n_trades": len(result.trades),
-                "volatilidade": vol,
-            }
+            m = _dashboard_metrics(eq, result.trades)
             ticker_metrics[ticker] = m
             metrics_list.append(m)
 
@@ -458,24 +524,24 @@ def run_single_asset_backtests(all_data: dict[str, pd.DataFrame],
         logger.info("  ▌ Estratégia: %s", name)
         logger.info("  ▌   Sharpe médio     = %s", _fmt(avg_m.get("sharpe")))
         logger.info("  ▌   Sortino médio     = %s", _fmt(avg_m.get("sortino")))
-        logger.info("  ▌   Retorno médio     = %s%%", _fmt_ret(avg_m.get("retorno_percent")))
+        logger.info(
+            "  ▌   Retorno médio     = %s%%", _fmt_ret(avg_m.get("retorno_percent"))
+        )
         logger.info("  ▌   Drawdown médio    = %s%%", _fmt_dd(avg_m.get("max_drawdown")))
         logger.info("  ▌   Volatilidade méd  = %s%%", _fmt(avg_m.get("volatilidade")))
-        logger.info("  ▌   Trades (total)    = %s", sum(m["n_trades"] for m in metrics_list))
-        logger.info("  ▌   Tickers           = %s", ", ".join(sorted(ticker_results.keys())))
+        logger.info(
+            "  ▌   Trades (total)    = %s", sum(m["n_trades"] for m in metrics_list)
+        )
+        logger.info(
+            "  ▌   Tickers           = %s", ", ".join(sorted(ticker_results.keys()))
+        )
         logger.info("  ▌ %s", "─" * 55)
 
         results[name] = {
-            "metrics": {
-                "sharpe": avg_sharpe,
-                "sortino": avg_sortino,
-                "max_drawdown": avg_dd,
-                "retorno_percent": avg_ret,
-                "final_equity": round(float(avg_eq.iloc[-1]), 2),
-                "n_trades": sum(m["n_trades"] for m in metrics_list),
-            },
+            "metrics": aggregate_metrics,
             "equity": [round(float(v), 2) for v in avg_eq.values],
-            "dates": [str(d.date()) for d in avg_eq.index],
+            "dates": [str(pd.Timestamp(d).date()) for d in avg_eq.index],
+            "periodo": _observed_period(avg_eq),
             "drawdown": _compute_drawdown_series(avg_eq),
             "avg_ticker_metrics": avg_m,
             "std_ticker_metrics": std_m,
@@ -487,9 +553,10 @@ def run_single_asset_backtests(all_data: dict[str, pd.DataFrame],
 
 def run_portfolio_backtests(all_data: dict[str, pd.DataFrame]) -> dict[str, dict]:
     """Roda backtests multi-ativo (Equal Weight, Min Variance)."""
-    from src.backtesting.metrics import max_drawdown, sharpe_ratio, sortino_ratio
     from src.backtesting.portfolio import (
-        EqualWeightPortfolio, MinVariancePortfolio, PortfolioBacktestEngine,
+        EqualWeightPortfolio,
+        MinVariancePortfolio,
+        PortfolioBacktestEngine,
     )
 
     capital = 100_000.0
@@ -509,17 +576,13 @@ def run_portfolio_backtests(all_data: dict[str, pd.DataFrame]) -> dict[str, dict
 
         elapsed = time.perf_counter() - t0
         eq = result.equity_curve
-        rets = eq.pct_change().dropna()
-        metrics = {
-            "sharpe": round(float(sharpe_ratio(rets)), 4),
-            "sortino": round(float(sortino_ratio(rets)), 4),
-            "max_drawdown": round(float(max_drawdown(eq)), 6),
-            "retorno_percent": round(float((result.final_equity / result.initial_capital - 1) * 100), 2),
-            "final_equity": round(float(result.final_equity), 2),
-            "n_trades": sum(1 for t in result.trades if t.type == "BUY"),
-        }
+        metrics = _dashboard_metrics(eq, result.trades)
 
-        latest_weights = result.weights_history.iloc[-1].to_dict() if len(result.weights_history) > 0 else {}
+        latest_weights = (
+            result.weights_history.iloc[-1].to_dict()
+            if len(result.weights_history) > 0
+            else {}
+        )
         top_weights = sorted(latest_weights.items(), key=lambda x: -x[1])[:5]
 
         logger.info("  ▌   Sharpe        = %s", _fmt(metrics["sharpe"]))
@@ -530,22 +593,29 @@ def run_portfolio_backtests(all_data: dict[str, pd.DataFrame]) -> dict[str, dict
         logger.info("  ▌   Trades        = %s", metrics["n_trades"])
         logger.info("  ▌   Tempo         = %.1fs", elapsed)
         if top_weights:
-            logger.info("  ▌   Top pesos     = %s", ", ".join(f"{t}: {w*100:.0f}%" for t, w in top_weights))
+            logger.info(
+                "  ▌   Top pesos     = %s",
+                ", ".join(f"{t}: {w*100:.0f}%" for t, w in top_weights),
+            )
         logger.info("  ▌ %s", "─" * 55)
 
         results[name] = {
             "metrics": metrics,
             "equity": [round(float(v), 2) for v in eq.values],
-            "dates": [str(d.date()) for d in eq.index],
+            "dates": [str(pd.Timestamp(d).date()) for d in eq.index],
+            "periodo": _observed_period(eq),
             "drawdown": _compute_drawdown_series(eq),
-            "latest_weights": {k: round(float(v) * 100, 1) for k, v in latest_weights.items() if v > 0.01},
+            "latest_weights": {
+                k: round(float(v) * 100, 1) for k, v in latest_weights.items() if v > 0.01
+            },
         }
 
     return results
 
 
-def build_comparison_table(single_results: dict[str, dict],
-                           portfolio_results: dict[str, dict]) -> list[dict]:
+def build_comparison_table(
+    single_results: dict[str, dict], portfolio_results: dict[str, dict]
+) -> list[dict]:
     """Monta tabela comparativa de todas as estratégias.
 
     Single-asset agora mostra média ± desvio entre os tickers.
@@ -556,36 +626,41 @@ def build_comparison_table(single_results: dict[str, dict],
         m = data["metrics"]
         avg = data.get("avg_ticker_metrics", {})
         std = data.get("std_ticker_metrics", {})
-        table.append({
-            "estrategia": strat_name,
-            "tipo": "Single-Asset (média 10 ativos)",
-            "sharpe": m["sharpe"],
-            "sharpe_avg": avg.get("sharpe"),
-            "sharpe_std": std.get("sharpe"),
-            "sortino": m["sortino"],
-            "max_drawdown": m["max_drawdown"],
-            "retorno_percent": m["retorno_percent"],
-            "retorno_avg": avg.get("retorno_percent"),
-            "retorno_std": std.get("retorno_percent"),
-            "n_trades": m["n_trades"],
-        })
+        table.append(
+            {
+                "estrategia": strat_name,
+                "tipo": "Single-Asset (média 10 ativos)",
+                "sharpe": m["sharpe"],
+                "sharpe_avg": avg.get("sharpe"),
+                "sharpe_std": std.get("sharpe"),
+                "sortino": m["sortino"],
+                "max_drawdown": m["max_drawdown"],
+                "retorno_percent": m["retorno_percent"],
+                "retorno_avg": avg.get("retorno_percent"),
+                "retorno_std": std.get("retorno_percent"),
+                "n_trades": m["n_trades"],
+            }
+        )
     for strat_name, data in portfolio_results.items():
         m = data["metrics"]
-        table.append({
-            "estrategia": strat_name,
-            "tipo": "Portfólio (10 Ativos)",
-            "sharpe": m["sharpe"],
-            "sortino": m["sortino"],
-            "max_drawdown": m["max_drawdown"],
-            "retorno_percent": m["retorno_percent"],
-            "n_trades": m["n_trades"],
-        })
+        table.append(
+            {
+                "estrategia": strat_name,
+                "tipo": "Portfólio (10 Ativos)",
+                "sharpe": m["sharpe"],
+                "sortino": m["sortino"],
+                "max_drawdown": m["max_drawdown"],
+                "retorno_percent": m["retorno_percent"],
+                "n_trades": m["n_trades"],
+            }
+        )
     return table
 
 
-def build_scatter_data(single_results: dict[str, dict],
-                       portfolio_results: dict[str, dict]) -> list[dict]:
-    """Constrói dados para scatter plot risco × retorno.
+def build_scatter_data(
+    single_results: dict[str, dict], portfolio_results: dict[str, dict]
+) -> list[dict]:
+    """Constrói dados para scatter plot risco x retorno.
 
     Cada estratégia gera um ponto com:
       - volatilidade (x)
@@ -596,23 +671,26 @@ def build_scatter_data(single_results: dict[str, dict],
     points = []
     for strat_name, data in single_results.items():
         m = data["metrics"]
-        avg = data.get("avg_ticker_metrics", {})
-        points.append({
-            "estrategia": strat_name,
-            "tipo": "Single-Asset (média)",
-            "volatilidade": avg.get("volatilidade"),
-            "retorno": m["retorno_percent"],
-            "sharpe": m["sharpe"],
-        })
+        points.append(
+            {
+                "estrategia": strat_name,
+                "tipo": "Single-Asset (média)",
+                "volatilidade": m.get("volatilidade"),
+                "retorno": m["retorno_percent"],
+                "sharpe": m["sharpe"],
+            }
+        )
     for strat_name, data in portfolio_results.items():
         m = data["metrics"]
-        points.append({
-            "estrategia": strat_name,
-            "tipo": "Portfólio (10 Ativos)",
-            "volatilidade": round(float(m.get("retorno_percent", 0) / m.get("sharpe", 1)) if m.get("sharpe") and m.get("sharpe") != 0 else 0, 2),
-            "retorno": m["retorno_percent"],
-            "sharpe": m["sharpe"],
-        })
+        points.append(
+            {
+                "estrategia": strat_name,
+                "tipo": "Portfólio (10 Ativos)",
+                "volatilidade": m.get("volatilidade"),
+                "retorno": m["retorno_percent"],
+                "sharpe": m["sharpe"],
+            }
+        )
     return points
 
 
@@ -627,6 +705,7 @@ def main():
 
     # ── 1. Verifica / popula o banco ─────────────────────────────
     from src.db.models import Base
+
     Base.metadata.create_all(engine)
 
     if not check_db_has_data():
@@ -647,16 +726,18 @@ def main():
             result = ticker_to_json(ticker, df)
             if result is not None:
                 assets_json.append(result)
-                df_dedup = df[["fechamento"]].copy()
-                df_dedup = df_dedup[~df_dedup.index.duplicated(keep="last")]
-                all_data[ticker] = df_dedup
+                all_data[ticker] = df
                 tickers_ok.append(ticker)
 
     if not tickers_ok:
         logger.error("Nenhum ticker com dados válidos. Abortando.")
         sys.exit(1)
 
-    logger.info("Dados OK: %d/%d tickers (fonte: banco)", len(tickers_ok), len(settings.default_tickers))
+    logger.info(
+        "Dados OK: %d/%d tickers (fonte: banco)",
+        len(tickers_ok),
+        len(settings.default_tickers),
+    )
     logger.info("Tickers OK: %s", ", ".join(tickers_ok))
     _log_tick("Dados lidos do banco")
 
@@ -678,14 +759,20 @@ def main():
     logger.info("Montando tabela comparativa e scatter plot...")
     comparison = build_comparison_table(single_results, portfolio_results)
     scatter_data = build_scatter_data(single_results, portfolio_results)
-    logger.info("Comparação: %d estratégias | Scatter: %d pontos", len(comparison), len(scatter_data))
+    logger.info(
+        "Comparação: %d estratégias | Scatter: %d pontos",
+        len(comparison),
+        len(scatter_data),
+    )
     _log_tick("Tabela e scatter montados")
 
     # ── 6. Monta JSON final ──────────────────────────────────────
     portfolio_output = {}
     for name, data in portfolio_results.items():
         portfolio_output[name] = {
-            "equity": data["equity"], "dates": data["dates"],
+            "equity": data["equity"],
+            "dates": data["dates"],
+            "periodo": data["periodo"],
             "drawdown": data.get("drawdown", []),
             "metrics": data["metrics"],
             "latest_weights": data.get("latest_weights", {}),
@@ -694,7 +781,9 @@ def main():
     single_output = {}
     for name, data in single_results.items():
         single_output[name] = {
-            "equity": data["equity"], "dates": data["dates"],
+            "equity": data["equity"],
+            "dates": data["dates"],
+            "periodo": data["periodo"],
             "drawdown": data.get("drawdown", []),
             "metrics": data["metrics"],
         }
@@ -727,21 +816,35 @@ def main():
 
     logger.info("=" * 60)
     logger.info("ARQUIVO SALVO: %s  (%d KB)", output_path, len(json_bytes) // 1024)
-    logger.info("Tickers: %d | Estratégias: %d single + %d portfólio",
-                len(assets_json), len(single_output), len(portfolio_output))
+    logger.info(
+        "Tickers: %d | Estratégias: %d single + %d portfólio",
+        len(assets_json),
+        len(single_output),
+        len(portfolio_output),
+    )
     _log_tick("Arquivo salvo")
 
     # ── Resumo final (console + log) ─────────────────────────────
     logger.info("")
     logger.info("📊 RESULTADOS — Tabela Comparativa")
     logger.info("")
-    logger.info("  %-30s %8s %8s %10s %8s", "Estratégia", "Sharpe", "Sortino", "MaxDD", "Retorno")
+    logger.info(
+        "  %-30s %8s %8s %10s %8s", "Estratégia", "Sharpe", "Sortino", "MaxDD", "Retorno"
+    )
     logger.info("  " + "-" * 68)
     for row in comparison:
         s = row["sharpe"] if row["sharpe"] is not None else 0
         so = row["sortino"] if row["sortino"] is not None else 0
-        dd = f"{row['max_drawdown']*100:.1f}%" if row["max_drawdown"] is not None else "N/A"
-        ret = f"{row['retorno_percent']:.1f}%" if row["retorno_percent"] is not None else "N/A"
+        dd = (
+            f"{row['max_drawdown']*100:.1f}%"
+            if row["max_drawdown"] is not None
+            else "N/A"
+        )
+        ret = (
+            f"{row['retorno_percent']:.1f}%"
+            if row["retorno_percent"] is not None
+            else "N/A"
+        )
         logger.info("  %-30s %8.4f %8.4f %10s %8s", row["estrategia"], s, so, dd, ret)
     logger.info("")
 
