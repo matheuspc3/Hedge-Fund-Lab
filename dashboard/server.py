@@ -30,8 +30,9 @@ import time
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
 
-import h2_api
 import forward_api
+import forward_jobs
+import h2_api
 
 logger = logging.getLogger("hedgefund.dashboard")
 
@@ -46,6 +47,16 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(DIR), **kwargs)
+
+    def end_headers(self):
+        self.send_header("X-Frame-Options", "DENY")
+        self.send_header(
+            "Content-Security-Policy",
+            "frame-ancestors 'none'; object-src 'none'; base-uri 'self'",
+        )
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Referrer-Policy", "same-origin")
+        super().end_headers()
 
     # ── API ───────────────────────────────────────────────────────
 
@@ -81,7 +92,29 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return False
         if origins and origins[0] != f"http://{values[0]}":
             return False
-        return self.headers.get("Sec-Fetch-Site") not in ("cross-site", "same-site")
+        if self.headers.get("Sec-Fetch-Site") in ("cross-site", "same-site"):
+            # Opening a public HTML entry point from another tab is safe. APIs,
+            # subresources and every POST still require a same-origin request.
+            return (
+                not post
+                and self.command == "GET"
+                and self.headers.get("Sec-Fetch-Mode") == "navigate"
+                and self.headers.get("Sec-Fetch-Dest") == "document"
+                and urlsplit(self.path).path
+                in (
+                    "/",
+                    "/h2",
+                    "/h2/",
+                    "/h2.html",
+                    "/paper",
+                    "/paper/",
+                    "/paper.html",
+                    "/logs",
+                    "/logs.html",
+                    "/index.html",
+                )
+            )
+        return True
 
     def _static_allowed(self):
         path = urlsplit(self.path).path
@@ -115,9 +148,18 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     def _handle_forward(self):
         url = urlsplit(self.path)
         q = parse_qs(url.query, keep_blank_values=True)
-        if set(q) - {"session"} or any(len(v) != 1 for v in q.values()):
+        allowed = (
+            {"job"}
+            if url.path == "/api/forward/status"
+            else {"session"}
+            if url.path == "/api/forward/decision"
+            else set()
+        )
+        if set(q) - allowed or any(len(v) != 1 for v in q.values()):
             return self._send_json({"error": "invalid_query"}, 400)
         try:
+            if url.path == "/api/forward/status":
+                return self._send_json(forward_jobs.JOBS.status(q.get("job", [None])[0]))
             if url.path == "/api/forward/history" and not q:
                 return self._send_json(forward_api.history())
             if url.path == "/api/forward/decision":
@@ -127,6 +169,84 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         except (ValueError, KeyError, OSError):
             return self._send_json({"error": "invalid_or_incomplete_record"}, 400)
         return self._send_json(None, 404)
+
+    def do_POST(self):
+        lengths = self.headers.get_all("Content-Length", [])
+        body = None
+        # Consume bounded bodies even on a rejected request. Closing a Windows
+        # socket with unread bytes can reset it before the JSON error arrives.
+        if (
+            len(lengths) == 1
+            and re.fullmatch(r"[0-9]{1,5}", lengths[0])
+            and int(lengths[0]) <= 65536
+            and not self.headers.get("Transfer-Encoding")
+        ):
+            try:
+                self.connection.settimeout(3)
+                body = self.rfile.read(int(lengths[0]))
+            except OSError:
+                return self._send_json({"error": "incomplete_payload"}, 400)
+        jobs = forward_jobs.JOBS
+        if not self._local_request(post=True):
+            return self._send_json({"error": "local_origin_required"}, 403)
+        tokens = self.headers.get_all("X-CSRF-Token", [])
+        import hmac
+
+        if len(tokens) != 1 or not hmac.compare_digest(tokens[0], jobs.csrf):
+            return self._send_json({"error": "invalid_csrf"}, 403)
+        url = urlsplit(self.path)
+        command = url.path.removeprefix("/api/forward/")
+        if (
+            url.query
+            or url.path != f"/api/forward/{command}"
+            or command not in ("prepare", "preflight", "run", "benchmarks")
+        ):
+            return self._send_json(None, 404)
+        if (
+            len(lengths) != 1
+            or not re.fullmatch(r"[0-9]{1,4}", lengths[0])
+            or not 0 < int(lengths[0]) <= 4096
+            or self.headers.get("Transfer-Encoding")
+            or self.headers.get("Content-Type") != "application/json"
+        ):
+            return self._send_json({"error": "invalid_payload"}, 400)
+        try:
+            # Bound slow local clients as well as payload size.
+            self.connection.settimeout(3)
+
+            def unique(pairs):
+                result = {}
+                for k, v in pairs:
+                    if k in result:
+                        raise ValueError("duplicate_key")
+                    result[k] = v
+                return result
+
+            payload = json.loads(
+                body,
+                object_pairs_hook=unique,
+                parse_constant=lambda _: (_ for _ in ()).throw(ValueError("nonfinite")),
+            )
+            if (
+                not isinstance(payload, dict)
+                or (command != "run" and payload)
+                or (
+                    command == "run"
+                    and (
+                        set(payload) != {"confirm", "confirmation_token"}
+                        or payload["confirm"] is not True
+                        or not isinstance(payload["confirmation_token"], str)
+                    )
+                )
+            ):
+                raise ValueError("invalid_payload")
+            return self._send_json(
+                jobs.start(command, payload.get("confirmation_token")), 202
+            )
+        except forward_jobs.Conflict as exc:
+            return self._send_json({"error": str(exc)}, 409)
+        except (ValueError, TypeError, OSError):
+            return self._send_json({"error": "invalid_payload_or_local_state"}, 400)
 
     def _handle_h2(self) -> None:
         """Read-only H2 v6 API; every parameter is checked against a fixed set."""
@@ -176,8 +296,6 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.send_response(code)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Cache-Control", "no-store")
-        self.send_header("X-Content-Type-Options", "nosniff")
-        self.send_header("Referrer-Policy", "same-origin")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)

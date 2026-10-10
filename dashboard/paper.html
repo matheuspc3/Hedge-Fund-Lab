@@ -17,7 +17,12 @@
     <section id="room" aria-labelledby="room-title">
       <div class="section-head"><div><p class="eyebrow">FECHAMENTO → PRÓXIMA ABERTURA</p><h1 id="room-title">Sala de Decisão</h1></div><label>Histórico prospectivo <select id="session" aria-label="Sessão da decisão"></select></label><button id="refresh">Consultar registros</button></div>
       <div id="decision" aria-live="polite"><p class="empty">Lendo registros prospectivos…</p></div>
-      <div class="card" id="operation"><h2>Operação com confirmação humana</h2><p>Consulta disponível. Integração operacional em preparação.</p></div>
+      <div class="card" id="operation"><h2>Operação com confirmação humana</h2>
+        <p class="steps">Atualizar dados → Preflight → Confirmar e executar agentes → Acompanhar → Resultado</p>
+        <p class="muted">Atualização congela dados oficiais, sem inferência. Preflight é offline. Executar agentes faz uma nova chamada paga ao Gemini; uma decisão já gravada só permite consulta.</p>
+        <div class="row"><button id="prepare">1. Atualizar dados</button><button id="preflight">2. Preflight</button><button id="execute" class="primary" disabled>3. Confirmar e executar agentes</button><button id="benchmarks">Sincronizar SMA e Bollinger · grátis</button></div>
+        <div id="job" aria-live="polite"></div><div id="preflight-report"></div>
+      </div>
     </section>
     <section id="wallets" aria-labelledby="wallets-title"><div class="section-head"><div><p class="eyebrow">MESMO CAPITAL · MESMOS PREÇOS OBSERVADOS</p><h1 id="wallets-title">Carteiras virtuais</h1></div><label>Composição individual <select id="strategy" aria-label="Estratégia"></select></label></div>
       <p class="muted">PETR4 e caixa. A marcação usa o último fechamento reconciliado; uma recomendação futura ainda não muda a composição.</p>
@@ -25,6 +30,8 @@
       <div class="card"><h2>Evolução prospectiva do patrimônio</h2><p id="comparison-note" class="muted"></p><div class="chart"><canvas id="equity" role="img" aria-label="Patrimônio prospectivo por estratégia"></canvas></div><div id="curve-table"></div></div>
       <div id="composition"></div>
     </section>
-  </main><footer>H2 v6 · Paper trading single-asset · Sem retuning · Sem Final Test · Chart.js local</footer>
+  </main>
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title"><h2 id="confirm-title">Autorizar inferência nova e paga</h2><div id="confirm-details"></div><p>Uma única tentativa operacional para esta sessão. Erros e interrupções exigem diagnóstico local; nenhuma repetição paga automática será permitida.</p><label class="inline"><input id="accept-charges" type="checkbox" /> Autorizo explicitamente executar os agentes H2 v6 e aceito o custo estimado do Gemini para este input.</label><div class="row"><button id="cancel-confirm">Cancelar</button><button id="submit-confirm" class="primary" disabled>Autorizar e executar Gemini</button></div></dialog>
+  <footer>H2 v6 · Paper trading single-asset · Sem retuning · Sem Final Test · Chart.js local</footer>
 </body>
 </html>

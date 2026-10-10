@@ -50,6 +50,7 @@ def history(root=OUTPUT):
             "session": session,
             "status": d["status"] if d else "AGUARDANDO",
             "target_session": read(path)["target_session"],
+            "has_decision": d is not None,
         }
     return sorted(result.values(), key=lambda r: r["session"])
 
@@ -106,7 +107,9 @@ def decision(session=None, root=OUTPUT):
         ("DRAWDOWN", "current_drawdown", "risk_max_drawdown", ">"),
         ("CONCENTRATION", "current_concentration", "risk_max_concentration", ">="),
     )
-    stopped = record.get("risk_source") == "AUTO_APPROVE"
+    stopped = record.get("risk_source") not in ("LLM", "HARD_RULE") or record.get(
+        "risk_rule"
+    ) in ("MISSING_SIGNAL", "MISSING_METRICS")
     for name, metric, limit, operator in chain:
         status = (
             "NÃO AVALIADA"
@@ -243,14 +246,25 @@ def wallet(key, book, rows, mark, pending, initial, decisions):
             for r in rows
         ],
         "trades": trades,
-        "pending": pending,
-        "last_decision": decisions[-1] if decisions else None,
-        "mark": mark,
+        "pending": pick(pending, "decision_session", "target_session", "target_weight")
+        if pending
+        else None,
+        "last_decision": pick(
+            decisions[-1],
+            "session",
+            "status",
+            "target_weight",
+            "target_session",
+            "generated_at",
+        )
+        if decisions
+        else None,
+        "mark": pick(mark, "session", "close") if mark else None,
         "initial_capital": initial,
     }
 
 
-def portfolios(root=OUTPUT):
+def portfolios(root=OUTPUT, benchmark_root=None):
     state = read(root / "state.json")
     if state is None:
         return {"classification": fwd.CLASSIFICATION, "wallets": []}
@@ -285,18 +299,57 @@ def portfolios(root=OUTPUT):
             [],
         ),
     ]
-    wallets.extend(
-        {
-            "key": k,
-            "label": STRATEGIES[k],
-            "available": False,
-            "reason": "Carteira prospectiva ainda não inicializada; nenhuma curva histórica utilizada.",
-        }
-        for k in tuple(STRATEGIES)[2:]
-    )
+    benchmark_root = benchmark_root or ROOT / "data/forward/h2_v6_benchmarks"
+    notes = []
+    for key in tuple(STRATEGIES)[2:]:
+        benchmark = read(benchmark_root / key / "state.json")
+        if benchmark is None:
+            wallets.append(
+                {
+                    "key": key,
+                    "label": STRATEGIES[key],
+                    "available": False,
+                    "reason": "Sem carteira prospectiva. Inicialização só é permitida antes da primeira abertura; backfill e ordens retroativas são proibidos.",
+                }
+            )
+            continue
+        comparable = (
+            benchmark["strategy"] == key
+            and benchmark["strategy_sha256"]
+            == next(
+                b["sha256"]
+                for b in read(fwd.CANDIDATE)["protocol"]["benchmarks"]
+                if b["spec"]["kind"] == key
+            )
+            and benchmark["inception"] == rows[0]["session"]
+            and benchmark["initial_capital"] == state["initial_capital"]
+            and benchmark["costs"] == state["costs"]
+            and benchmark["execution"] == state["execution"]
+            and benchmark["manifest_sha256"] == state["manifest_sha256"]
+            and [(r["session"], r["open"], r["close"]) for r in benchmark["sessions"]]
+            == [(r["session"], r["open"], r["close"]) for r in rows]
+        )
+        item = wallet(
+            key,
+            benchmark["portfolio"],
+            benchmark["sessions"],
+            benchmark["mark"],
+            benchmark["pending"],
+            benchmark["initial_capital"],
+            benchmark["decisions"],
+        )
+        item["comparable"] = comparable
+        item["initialized_at"] = benchmark["initialized_at"]
+        if not comparable:
+            notes.append(
+                f"{STRATEGIES[key]}: marcação/início/identidade divergente; excluída do gráfico comparativo. Sincronize os ledgers com os mesmos inputs observados."
+            )
+        wallets.append(item)
     return {
         "classification": fwd.CLASSIFICATION,
         "paper_only": True,
         "wallets": wallets,
-        "mark": mark,
+        "mark": pick(mark, "session", "close") if mark else None,
+        "comparison_note": " ".join(notes)
+        or "Curvas prospectivas na mesma data de início, com mesmo capital, custos e preços observados. Um único fechamento não permite medir evolução.",
     }

@@ -8,7 +8,7 @@ const num = (v) => v == null ? "Não registrado" : Number(v).toLocaleString("pt-
 const chip = (v) => `<span class="chip">${esc(v)}</span>`;
 const facts = (rows) => `<dl>${rows.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${v}</dd>`).join("")}</dl>`;
 const metric = (label,value,sub="") => `<div class="card"><small>${esc(label)}</small><div class="value">${value}</div><small>${esc(sub)}</small></div>`;
-let wallets = [], chart, decisionVersion = 0;
+let wallets = [], chart, decisionVersion = 0, refreshVersion = 0;
 async function api(path, options) {
   const r = await fetch(`/api/forward/${path}`, {cache:"no-store",...options});
   const value = await r.json();
@@ -51,7 +51,7 @@ function renderWallets(data) {
   const selected=$("strategy").value;
   $("strategy").innerHTML=wallets.map(w=>`<option value="${esc(w.key)}">${esc(w.label)}</option>`).join("");
   if(wallets.some(w=>w.key===selected)) $("strategy").value=selected;
-  $("wallet-cards").innerHTML=wallets.map(w=>`<article class="card" data-wallet="${esc(w.key)}"><h3>${esc(w.label)}</h3>${w.available?`<div class="value">${money(w.equity)}</div><p class="${w.return<0?"bad":"good"}">${pct(w.return)} acumulado</p><small>${w.pending?"Ordem pendente":"Sem ordem pendente"} · ${w.trades.length} operações</small>`:`<p class="warn">Não disponível para comparação</p><small>${esc(w.reason)}</small>`}</article>`).join("");
+  $("wallet-cards").innerHTML=wallets.map(w=>`<article class="card" data-wallet="${esc(w.key)}"><h3>${esc(w.label)}</h3>${w.available?`${w.comparable===false?'<p class="warn">Fora da comparação: marcação ou identidade divergente</p>':""}<div class="value">${money(w.equity)}</div><p class="${w.return<0?"bad":"good"}">${pct(w.return)} acumulado</p><small>${w.pending?"Ordem pendente":"Sem ordem pendente"} · ${w.trades.length} operações</small>`:`<p class="warn">Não disponível para comparação</p><small>${esc(w.reason)}</small>`}</article>`).join("");
   $("comparison-note").textContent=data.comparison_note||"Somente curvas dos registros prospectivos. Um único fechamento ainda não permite medir evolução; não há retornos anteriores à inicialização.";
   const available=wallets.filter(w=>w.available && w.comparable!==false), colors=["#3987e5","#c98500","#d55181","#199e70"];
   if(chart) chart.destroy();
@@ -67,12 +67,15 @@ function renderWallets(data) {
   renderComposition();
 }
 async function refresh() {
+  const version=++refreshVersion;
   $("error").hidden=true;
   try {
     const [history,data]=await Promise.all([api("history"),api("portfolios")]);
+    if(version!==refreshVersion) return;
     const selected=$("session").value;
     $("session").innerHTML=history.map(r=>`<option value="${esc(r.session)}">${esc(r.session)} · ${esc(r.status)}</option>`).reverse().join("");
     if(history.some(r=>r.session===selected)) $("session").value=selected;
+    else if(history.some(r=>r.has_decision)) $("session").value=history.filter(r=>r.has_decision).at(-1).session;
     renderWallets(data); await loadDecision($("session").value);
   } catch(e) { error(e); }
 }
@@ -80,3 +83,58 @@ $("session").addEventListener("change",()=>loadDecision($("session").value));
 $("strategy").addEventListener("change",renderComposition);
 $("refresh").addEventListener("click",refresh);
 refresh();
+
+let csrf, busy=false, posting=false, report=null, completedJob=null, confirmationToken=null;
+const checkLabels={treatment_identity:"Identidade H2 v6 e Git limpo",after_reserved_windows:"Fora das janelas reservadas",before_target_open:"Antes da abertura-alvo",not_yet_decided:"Decisão ainda não existe",no_active_lock:"Ledger sem lock ativo",gemini_api_key_present:"Chave configurada no backend",input_frozen:"Input congelado e íntegro",ledger_reconciles:"Carteira reconciliável"};
+function controls() {
+  ["prepare","preflight","benchmarks"].forEach(id=>$(id).disabled=busy||posting||!csrf);
+  $("execute").disabled=busy||posting||!report?.ready||!report?.confirmation_token;
+}
+function renderReport() {
+  if(!report) { $("preflight-report").innerHTML=""; return; }
+  const c=report.calendar||{}, input=report.input||{}, m=report.model||{}, estimate=report.estimate||{};
+  $("preflight-report").innerHTML=`<hr/><h3>Preflight ${chip(report.state)}</h3>${facts([["Referência → data-alvo",`${esc(c.decision_session)} → ${esc(c.target_session)}`],["Prazo",esc(c.target_open_deadline)],["Input SHA256",esc(input.sha256?.slice(0,12))],["Modelo registrado",`${esc(m.model)} · T=${num(m.temperature)} · thinking ${esc(m.thinking_level)} · ${report.identity_verified?"identidade verificada":"identidade ainda não verificada"}`],["Custo estimado (USD)",`${num(estimate.usd_expected)} esperado · ${num(estimate.usd_prudent_budget)} orçamento prudente · ${num(estimate.usd_theoretical_ceiling)} teto teórico`]])}<p class="muted">Estimativa registrada pelo runner, não cotação em tempo real. ${esc(estimate.price_note)}</p><details><summary>Verificações do backend</summary>${Object.entries(report.checks||{}).map(([key,ok])=>`<p class="${ok?"good":"bad"}">${ok?"✓":"×"} ${esc(checkLabels[key]||key)}</p>`).join("")}</details>${report.state==="DECISION_EXISTS"?'<p class="callout">Decisão já existente: somente consulta, sem nova chamada Gemini.</p>':report.state==="RECOVERY_REQUIRED"?'<p class="callout bad">Tentativa/journal anterior encontrado. Recuperação só por diagnóstico e replay offline; chamadas pagas bloqueadas.</p>':!report.ready?'<p class="muted">Execução bloqueada. Corrija os gates indicados e repita o preflight. Não remova registros ou locks sem diagnóstico local.</p>':'<p class="good">READY · confirmação válida por até 10 minutos e vinculada ao input e ao ledger.</p>'}`;
+}
+async function submit(command,payload={}) {
+  if(posting||busy) return;
+  posting=true; controls(); $("error").hidden=true;
+  try {
+    const job=await api(command,{method:"POST",headers:{"Content-Type":"application/json","X-CSRF-Token":csrf},body:JSON.stringify(payload)});
+    report=null; renderReport(); busy=true;
+    $("job").textContent=`${job.command}: solicitado · ${job.session}. Acompanhe abaixo.`;
+  } catch(e) { error(e); report=null; renderReport(); }
+  finally { posting=false; controls(); await pollStatus(false); }
+}
+async function pollStatus(schedule=true) {
+  try {
+    const state=await api("status"); csrf=state.csrf_token; busy=state.busy;
+    const j=state.job;
+    if(j) {
+      const progress=j.progress;
+      $("job").innerHTML=`<p>${chip(j.command)} ${chip(j.state==="RUNNING" && j.command==="run"?"EXECUTANDO":j.state)} · ${esc(j.session)}</p><p>${esc(j.stage)}${j.error?` · <span class="bad">${esc(j.error)}</span>`:""}</p>${progress?`<p class="muted">Progresso observado no journal: ${progress.unavailable?esc(progress.message):`${progress.recorded} respostas gravadas / ${progress.reserved} chamadas reservadas. Total final depende dos gates do tratamento.`}</p>${(progress.stages||[]).map(s=>chip(`#${s.sequence} ${s.stage||"reservada / em andamento"} · ${s.status||"sem resposta gravada"}`)).join(" ")}`:""}${j.recovery_note?`<details><summary>Interrupção e recuperação</summary><p>${esc(j.recovery_note)}</p></details>`:""}${j.benchmarks?Object.entries(j.benchmarks).map(([k,v])=>`<p class="muted">${esc(k)}: ${esc(v)}</p>`).join(""):""}`;
+      if(j.command==="preflight" && j.state==="COMPLETE") { report=j.report; renderReport(); }
+      if(j.state!=="RUNNING" && completedJob!==j.id) { completedJob=j.id; await refresh(); }
+    } else if(busy) $("job").textContent="Bloqueio persistente sem job disponível: recuperação local necessária. Nenhuma inferência será repetida.";
+    controls();
+  } catch(e) { error(e); csrf=null; controls(); }
+  if(schedule) setTimeout(()=>pollStatus(),2000);
+}
+$("prepare").addEventListener("click",()=>submit("prepare"));
+$("preflight").addEventListener("click",()=>submit("preflight"));
+$("benchmarks").addEventListener("click",()=>submit("benchmarks"));
+$("execute").addEventListener("click",()=>{
+  if(!report?.ready||busy||posting) return;
+  confirmationToken=report.confirmation_token;
+  $("confirm-details").innerHTML=facts([["Data-alvo",esc(report.calendar.target_session)],["Input SHA256",esc(report.input.sha256.slice(0,12))],["Modelo",esc(report.model.model)],["USD esperado / prudente",`${num(report.estimate.usd_expected)} / ${num(report.estimate.usd_prudent_budget)}`]]);
+  $("accept-charges").checked=false; $("submit-confirm").disabled=true;
+  $("confirm-dialog").showModal();
+});
+$("accept-charges").addEventListener("change",()=>$("submit-confirm").disabled=!$("accept-charges").checked);
+$("cancel-confirm").addEventListener("click",()=>$("confirm-dialog").close());
+$("submit-confirm").addEventListener("click",()=>{
+  if(!$("accept-charges").checked||posting||busy||!confirmationToken) return;
+  $("confirm-dialog").close();
+  const token=confirmationToken; confirmationToken=null;
+  submit("run",{confirm:true,confirmation_token:token});
+});
+controls(); pollStatus();
