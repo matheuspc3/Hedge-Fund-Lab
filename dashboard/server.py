@@ -12,6 +12,8 @@ Endpoints (somente leitura; servidor escuta apenas em 127.0.0.1):
     /api/h2/validation   — métricas, curvas, progresso e custos (?source=provisional|official|demo)
     /api/h2/run          — decisões e trades de um run (?source&run)
     /api/h2/trace        — chamadas LLM de uma sessão (?source&run&session)
+    /api/h2/analysis     — preço x decisões, ciclos, exposição, multiagente (?source)
+    /api/h2/decision     — Technical → Risk → Portfolio → execução de uma sessão (?source&run&session)
     /api/h2/artifact     — download de artifact selado (?source&run&name)
     /                    — Dashboard legado (Chart.js)
     /logs                — Visualizador de logs em tempo real (SSE)
@@ -72,8 +74,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return self._send_json(h2_api.validation(source))
         if url.path == "/api/h2/run" and slot:
             return self._send_json(h2_api.run_detail(source, slot))
-        if url.path == "/api/h2/trace" and slot and re.fullmatch(r"\d{4}-\d{2}-\d{2}", session or ""):
+        if url.path == "/api/h2/analysis":
+            return self._send_json(h2_api.analysis(source))
+        is_session = re.fullmatch(r"\d{4}-\d{2}-\d{2}", session or "")
+        if url.path == "/api/h2/trace" and slot and is_session:
             return self._send_json(h2_api.trace(source, slot, session))
+        if url.path == "/api/h2/decision" and slot and is_session:
+            return self._send_json(h2_api.decision(source, slot, session))
         if url.path == "/api/h2/artifact" and slot:
             path = h2_api.artifact_path(source, slot, q.get("name", ""))
             if path is None:

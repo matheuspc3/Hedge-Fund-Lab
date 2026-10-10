@@ -15,7 +15,7 @@
   --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
   --good: #0ca30c; --warning: #fab219; --serious: #ec835a; --critical: #d03b3b;
   --s-L01: #3987e5; --s-L02: #d95926; --s-L03: #199e70;
-  --s-buy_and_hold: #c98500; --s-sma_regime_h2_proposed: #d55181; --s-bollinger_state_h2_proposed: #008300;
+  --s-buy_and_hold: #c98500; --s-price: #c3c2b7; --s-sma_regime_h2_proposed: #d55181; --s-bollinger_state_h2_proposed: #008300;
   --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
   --r: 12px;
@@ -58,6 +58,7 @@ h3 { font-size: 13px; font-weight: 600; color: var(--text-2); text-transform: up
 .g-kpi { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
 .g-2 { grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); }
 .g-3 { grid-template-columns: 2fr 1fr; }
+
 @media (max-width: 900px) { .g-3, .g-2 { grid-template-columns: 1fr; } }
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 18px; min-width: 0; transition: border-color .2s; }
 .card:hover { border-color: rgba(255,255,255,0.16); }
@@ -67,6 +68,30 @@ h3 { font-size: 13px; font-weight: 600; color: var(--text-2); text-transform: up
 .up { color: var(--good); } .down { color: var(--serious); }
 .chart { position: relative; height: 340px; }
 .chart.sm { height: 260px; }
+.chart.lg { height: 460px; }
+.chart.xs { height: 170px; }
+.chart.strip { height: 230px; }
+.note { color: var(--text-2); font-size: 13px; margin: -6px 0 14px; max-width: 1000px; }
+.note b { color: var(--text); font-weight: 600; }
+.nr { color: var(--muted); font-style: italic; }
+.sep { width: 1px; height: 22px; background: var(--axis); margin: 0 4px; }
+.tag { font: 600 10px/1.6 var(--mono); padding: 0 6px; border-radius: 4px; border: 1px solid currentColor; vertical-align: 1px; }
+.tag.f { color: var(--good); } .tag.h { color: var(--warning); } .tag.l { color: var(--serious); }
+.callout { border-left: 3px solid var(--s-L01); background: var(--surface-2); padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; }
+.callout p + p { margin-top: 6px; }
+.votebar { display: flex; gap: 2px; height: 10px; border-radius: 5px; overflow: hidden; margin: 6px 0 4px; }
+.votebar span { display: block; height: 100%; }
+.ev { display: inline-block; font: 11px/1.5 var(--mono); padding: 0 6px; margin: 2px 3px 0 0; border-radius: 4px; background: var(--surface-2); border: 1px solid var(--border); color: var(--text-2); }
+.ev.buy { color: var(--good); } .ev.sell { color: var(--serious); } .ev.caution { color: var(--warning); }
+.panel-head { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+.panel-head .title { font-weight: 600; font-size: 15px; }
+.panel-head .muted, .muted { color: var(--muted); font-size: 12px; }
+.card.sub { background: var(--surface-2); padding: 14px; }
+.card.sub h3 { margin-bottom: 8px; }
+.card.sub table td, .card.sub table th { padding: 5px 6px; }
+.loading { opacity: .45; transition: opacity .2s; }
+input[type=date] { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 4px 8px; font: inherit; font-size: 13px; color-scheme: dark; }
+.lines div { white-space: nowrap; display: flex; gap: 6px; align-items: center; }
 .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
 .chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--surface-2); border: 1px solid var(--border); color: var(--text-2); white-space: nowrap; }
 .chip.good { color: var(--good); border-color: rgba(12,163,12,.4); }
@@ -108,8 +133,10 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 24px
     <div class="brand">HEDGE-FUND-LAB<small>H2 v6 · PETR4.SA · Validation</small></div>
     <nav role="tablist" aria-label="Seções">
       <button role="tab" data-tab="overview" aria-selected="true">Visão geral</button>
-      <button role="tab" data-tab="experiments" aria-selected="false">Experimentos</button>
+      <button role="tab" data-tab="decisions" aria-selected="false">Decisões</button>
       <button role="tab" data-tab="compare" aria-selected="false">Comparações</button>
+      <button role="tab" data-tab="agents" aria-selected="false">Multiagente</button>
+      <button role="tab" data-tab="experiments" aria-selected="false">Experimentos</button>
       <button role="tab" data-tab="audit" aria-selected="false">Auditoria</button>
     </nav>
     <div class="spacer"></div>
@@ -124,8 +151,10 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 24px
 <main>
   <div id="banner"></div>
   <section id="tab-overview"></section>
-  <section id="tab-experiments" hidden></section>
+  <section id="tab-decisions" hidden></section>
   <section id="tab-compare" hidden></section>
+  <section id="tab-agents" hidden></section>
+  <section id="tab-experiments" hidden></section>
   <section id="tab-audit" hidden></section>
 </main>
 <footer>Painel somente leitura · cálculos e validação no backend · nenhum controle dispara inferência · Final Test bloqueado</footer>

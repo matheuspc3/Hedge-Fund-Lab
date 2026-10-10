@@ -21,10 +21,34 @@ sintéticos, faixa `DEMONSTRAÇÃO — DADOS SINTÉTICOS`, nunca misturados com 
 | `/api/h2/run?source=&run=` | decisions e timeline de trades de um run |
 | `/api/h2/trace?source=&run=&session=` | chamadas Technical/Risk/Portfolio de uma sessão |
 | `/api/h2/artifact?source=&run=&name=` | download de artifact selado (lista branca) |
+| `/api/h2/analysis?source=` | preço × decisões, ciclos, exposição, comportamento multiagente |
+| `/api/h2/decision?source=&run=&session=` | Technical → Risk → Portfolio → execução de uma sessão |
 
 Durante a execução, abra **Experimentos**: atualização a cada 10 s. Ela mostra sessões, chamadas,
 tentativas HTTP, retries, erros de transporte e chamadas em voo por run. O journal é lido com
 `immutable=1`, sem locks, e nunca bloqueia os commits FULL do run.
+
+## Análise pós-Validation
+
+Abra `http://localhost:8081/h2#provisional/decisions` com a fonte **Provisória OA-1**. A faixa
+`VALIDATION OA-1 — NÃO RATIFICADA ACADEMICAMENTE` fica visível em todas as abas.
+
+- **Decisões.** O gráfico mostra o fechamento de PETR4, as SMA50/200 reconstruídas, a decisão
+  em *t* (marcador vazado) e a execução em *t+1* (marcador cheio). Os botões filtram L01, L02,
+  L03 e os trades do Bollinger. Clicar num marcador ou numa data abre a sessão com os cinco
+  votos, o Risk (regras, veto efetivo ou sem efeito), o PM e a execução; ←/→ e o campo de data
+  navegam. Clicar num ciclo da timeline o destaca no gráfico.
+- **Comparações.** Mostra o patrimônio dos seis participantes (o tooltip traz o retorno
+  acumulado), as métricas, a exposição ao mercado com os dois denominadores e a grade de
+  custos, que exibe `N/A — EXACT_REPLAY_INVALID` onde o replay é inválido.
+- **Multiagente.** Para cada camada mostra se foi chamada, se produziu decisão e se alterou a
+  trajetória. Traz ainda votos por analista, frequência de consenso, divergência entre runs e o
+  fluxo sinal → decisão → ordem.
+
+Tudo é calculado no backend a partir dos artifacts `COMPLETE` da fonte. Nenhum preço externo é
+usado e o snapshot não é aberto. A demonstração não tem traces e mostra um estado vazio.
+Verificação: `.venv\Scripts\python.exe -B -m pytest tests/test_h2_dashboard_analysis.py`.
+Síntese: [H2_V6_OA1_VALIDATION_SCIENTIFIC_SUMMARY.md](H2_V6_OA1_VALIDATION_SCIENTIFIC_SUMMARY.md).
 
 ## Validation provisória: passos exatos
 
