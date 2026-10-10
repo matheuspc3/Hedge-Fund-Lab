@@ -171,7 +171,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
 
 class ReusableTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
-    allow_reuse_address = True
+    # On Windows SO_REUSEADDR lets a second server bind a port already in use; an
+    # old server kept answering the API while a new one started silently.
+    allow_reuse_address = sys.platform != "win32"
     # The default listen backlog (5) refuses connections when rapid source/run
     # switches fire parallel requests; refused fetches looked like "API down".
     request_queue_size = 64
