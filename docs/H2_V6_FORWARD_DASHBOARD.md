@@ -41,10 +41,10 @@ existentes, inclusive a decisão de 09/10. Conferência repetível:
 
 ```powershell
 .venv/Scripts/python.exe -B scripts/check_h2_forward_dashboard.py
-.venv/Scripts/python.exe -B dashboard/server.py 8081
+.venv/Scripts/python.exe -B dashboard/server.py 8082
 ```
 
-Abrir `http://127.0.0.1:8081/paper`. Abrir ou consultar a página nunca chama Gemini.
+Abrir `http://127.0.0.1:8082/paper`. Abrir ou consultar a página nunca chama Gemini.
 
 ## Fase B — operação
 
@@ -86,6 +86,10 @@ Jobs e progresso sobrevivem à recarga. Contagens vêm apenas das linhas `calls`
 do SQLite em modo read-only: sequência, etapa, status e presença de resposta.
 O HTTP não retorna stdout/stderr, requests, raw, record, prompts ou journal.
 Prepare e preflight mostram início e conclusão reais, sem percentuais inventados.
+No Windows, o leitor JSON compartilha exclusão e fecha o handle antes de fazer
+o parse; a gravação atômica de jobs tolera recusas transitórias por até 190 ms.
+Erros persistentes continuam sendo reportados. Um teste concorre 500 leituras
+com 100 substituições, verificando que cada registro permanece completo.
 Erros de gate têm identificação; erros do runner oferecem código de saída e
 orientação para diagnóstico local, sem expor envelopes.
 
@@ -142,7 +146,7 @@ benchmarks. O harness Node executa o `paper.js` real e exige checkbox e clique
 final; abrir/recarregar não produz POST. Gemini não foi executado.
 
 ```powershell
-.venv/Scripts/python.exe -B -m pytest tests/test_h2_forward_dashboard.py tests/test_h2_dashboard_async.py tests/test_h2_dashboard_analysis.py tests/test_h2_v6_forward.py -q -p no:cacheprovider --basetemp=./data/forward/dashboard_checks
+.venv/Scripts/python.exe -B -m pytest tests/test_h2_forward_dashboard.py tests/test_h2_dashboard_async.py tests/test_h2_dashboard_analysis.py tests/test_h2_v6_forward.py tests/test_generate_dashboard_data.py -q -p no:cacheprovider --basetemp=./data/forward/dashboard_checks
 .venv/Scripts/python.exe -B scripts/check_h2_forward_dashboard.py
 ```
 
@@ -156,6 +160,8 @@ Screenshots de Chrome: [1440 px](evidence/h2_forward_dashboard/paper-1440.jpg),
 de 09/10 e distinguem alvo 100% da posição observada em caixa.
 As quatro carteiras estão na [captura de Carteiras](evidence/h2_forward_dashboard/paper-wallets-1440.jpg).
 Medições DOM e navegação das seis abas: `evidence/h2_forward_dashboard/browser-checks.json`.
+O [preflight final](evidence/h2_forward_dashboard/paper-final-preflight.jpg), após
+reiniciar a versão final com Git limpo, confirmou identidade e DECISION_EXISTS.
 
 SMA e Bollinger foram inicializadas de fato em 10/10/2026, antes da abertura de
 13/10, a partir do input congelado `8acf2b53eb36…`. Ambas começam no fechamento
@@ -177,16 +183,18 @@ e em `docs/evidence/h2_forward_dashboard/`.
 ### Resultados de regressão
 
 Regressão focada (dashboard operacional, seis abas, forward e geração histórica):
-**36 passed**, sem Gemini. Ruff e `node --check` aprovados. Chrome confirmou as
+**40 passed**, sem Gemini. Ruff e `node --check` aprovados. Chrome confirmou as
 seis abas, dados OA-1 carregados e console sem erros. Layout verificado em
 1440, 640 e 420 px; sem overflow horizontal após a atualização de tamanho.
 Prepare real reaproveitou o input existente; preflight real retornou
 DECISION_EXISTS e manteve a inferência desabilitada.
 
-A primeira execução integral teve 1451 passed / 12 failed. Um teste do novo
-harness precisava inicializar o stub de `<dialog>` e foi corrigido; outro gate
-exigia a árvore Git limpa durante desenvolvimento. Os dez casos restantes
-estão fora do patch: sete testes ETL exigem PostgreSQL em `127.0.0.1:5435`,
-ausente, e três testes antigos esperam estados anteriores do registry e das
-evidências v5/v6. Seus módulos e evidências não foram alterados. Não se mudaram
-os arquivos científicos para adaptar essas expectativas.
+A última execução integral teve **1451 passed / 12 failed**, com rede externa
+bloqueada e loopback permitido. Sete testes ETL exigem PostgreSQL em
+`127.0.0.1:5435`, ausente; três testes antigos esperam estados anteriores do
+registry e das evidências v5/v6. Outros dois dependem da configuração da fixture:
+o teste sintético OA-1 rejeitou o diretório temporário escolhido dentro de
+`data/`, e o teste de adulteração `code` escreve `git_dirty=false`, que já era
+false na árvore limpa e portanto não altera a identidade. A suíte completa
+não está verde. Seus módulos e evidências científicas foram preservados.
+Os identificadores completos estão em `evidence/h2_forward_dashboard/verification.json`.

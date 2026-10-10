@@ -2,6 +2,7 @@
 
 import collections
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -20,7 +21,39 @@ STRATEGIES = {
 
 
 def read(path):
-    return json.loads(path.read_text(encoding="utf-8")) if path.is_file() else None
+    if os.name != "nt":
+        return json.loads(path.read_text(encoding="utf-8")) if path.is_file() else None
+    # Windows readers must share DELETE or they can block the runner's atomic
+    # state.json replacement. O_TEMPORARY also shares DELETE but deletes data.
+    import ctypes
+    import msvcrt
+    from ctypes import wintypes
+
+    create = ctypes.WinDLL("kernel32", use_last_error=True).CreateFileW
+    create.argtypes = (
+        wintypes.LPCWSTR,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.LPVOID,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.HANDLE,
+    )
+    create.restype = wintypes.HANDLE
+    handle = create(str(path), 0x80000000, 7, None, 3, 0x80, None)
+    if handle == wintypes.HANDLE(-1).value:
+        error = ctypes.get_last_error()
+        if error in (2, 3):
+            return None
+        raise ctypes.WinError(error)
+    try:
+        fd = msvcrt.open_osfhandle(handle, os.O_RDONLY | os.O_BINARY)
+    except OSError:
+        ctypes.windll.kernel32.CloseHandle(wintypes.HANDLE(handle))
+        raise
+    with os.fdopen(fd, "r", encoding="utf-8") as stream:
+        contents = stream.read()
+    return json.loads(contents)
 
 
 def pick(value, *keys):
@@ -57,10 +90,11 @@ def history(root=OUTPUT):
 
 def decision(session=None, root=OUTPUT):
     entries = history(root)
+    recorded = [entry for entry in entries if entry.get("has_decision")]
     session = (
         session_name(session)
         if session
-        else (entries[-1]["session"] if entries else None)
+        else ((recorded or entries)[-1]["session"] if entries else None)
     )
     if session is None:
         return None
@@ -134,6 +168,9 @@ def decision(session=None, root=OUTPUT):
         and before is not None
         and before < params.get("long_target_weight", 1)
     )
+    known_effect = record.get("technical_outcome") in ("VENDA", "MANTER") or (
+        record.get("technical_outcome") == "COMPRA" and before is not None
+    )
     return {
         "session": session,
         "ticker": data["ticker"],
@@ -172,7 +209,7 @@ def decision(session=None, root=OUTPUT):
             **pick(record, "risk_source", "risk_rule"),
             "rules": rules,
             "veto_effect": ("EFETIVO" if effective else "SEM EFEITO")
-            if risk.get("verdict") == "VETADO"
+            if risk.get("verdict") == "VETADO" and known_effect
             else None,
         },
         "portfolio": {

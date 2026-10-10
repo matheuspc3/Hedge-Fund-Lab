@@ -192,7 +192,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         tokens = self.headers.get_all("X-CSRF-Token", [])
         import hmac
 
-        if len(tokens) != 1 or not hmac.compare_digest(tokens[0], jobs.csrf):
+        if len(tokens) != 1 or not hmac.compare_digest(
+            tokens[0].encode("utf-8"), jobs.csrf.encode("utf-8")
+        ):
             return self._send_json({"error": "invalid_csrf"}, 403)
         url = urlsplit(self.path)
         command = url.path.removeprefix("/api/forward/")

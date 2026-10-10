@@ -166,7 +166,16 @@ class Jobs:
             json.dump(job, stream, ensure_ascii=False, allow_nan=False)
             stream.flush()
             os.fsync(stream.fileno())
-        temporary.replace(path)
+        # Windows can transiently deny replacement while a status reader closes.
+        # Keep the old complete record and retry briefly; persistent errors escape.
+        for attempt in range(20):
+            try:
+                temporary.replace(path)
+                break
+            except PermissionError:
+                if os.name != "nt" or attempt == 19:
+                    raise
+                time.sleep(0.01)
 
     def start(self, command, token=None):
         if command not in ("prepare", "preflight", "run", "benchmarks"):

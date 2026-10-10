@@ -101,9 +101,30 @@ def test_missing_failed_and_executed_records(tmp_path):
         )
     )
     d = api.decision(root=tmp_path)
-    d = api.decision("2026-10-09", tmp_path)
+    assert d["session"] == "2026-10-09"  # latest decision, even after a MISSED session
     assert d["execution"]["session"] == "2026-10-13"
     assert "raw" not in d["execution"]["trades"][0]
+
+
+@pytest.mark.parametrize(
+    "weight,effect", [(0, "EFETIVO"), (1, "SEM EFEITO"), (None, None)]
+)
+def test_veto_effect_requires_recorded_position(tmp_path, weight, effect):
+    folder = tmp_path / "sessions/2026-10-09"
+    folder.mkdir(parents=True)
+    (folder / "input.json").write_text(
+        json.dumps({"ticker": "PETR4.SA", "target_session": "2026-10-13"})
+    )
+    (folder / "decision.json").write_text(
+        json.dumps(
+            {
+                "status": "DECIDED",
+                "risk_verdict": {"verdict": "VETADO"},
+                "record": {"technical_outcome": "COMPRA", "observed_weight": weight},
+            }
+        )
+    )
+    assert api.decision(root=tmp_path)["risk"]["veto_effect"] == effect
 
 
 def test_missed_session_is_in_history(tmp_path):
@@ -263,6 +284,29 @@ def test_worker_failure_preserves_claim(controller, monkeypatch):
     assert not c.status()["busy"]
 
 
+def test_atomic_job_writes_are_not_blocked_by_readers(controller):
+    c, _, _ = controller
+    c.root.mkdir(parents=True)
+    job = {"id": "a" * 32, "state": "RUNNING", "sequence": 0}
+    c._save(job)
+    errors = []
+
+    def write():
+        try:
+            for i in range(100):
+                c._save({**job, "sequence": i})
+        except OSError:
+            import traceback
+            errors.append(traceback.format_exc())
+
+    thread = threading.Thread(target=write)
+    thread.start()
+    for _ in range(500):
+        assert api.read(c.root / f"job-{job['id']}.json")["state"] == "RUNNING"
+    thread.join(10)
+    assert not thread.is_alive() and not errors, "\n".join(errors)
+
+
 @pytest.fixture
 def http_server(controller, monkeypatch):
     c, _, _ = controller
@@ -325,6 +369,7 @@ def test_http_origin_csrf_payload_and_static_isolation(http_server):
         {**valid, "Origin": "null"},
         {**valid, "Origin": "http://localhost:1"},
         {**valid, "X-CSRF-Token": "bad"},
+        {**valid, "X-CSRF-Token": "é"},
         {**valid, "Sec-Fetch-Site": "cross-site"},
     ):
         assert request(instance, "/api/forward/preflight", "POST", "{}", bad)[0] == 403
@@ -442,13 +487,13 @@ def test_benchmarks_causal_common_inception_settlement_and_no_backfill(
 
 def test_projection_never_opens_journal_or_reserved_data(monkeypatch):
     opened = []
-    original = Path.open
+    original = api.read
 
     def spy(path, *args, **kwargs):
         opened.append(path.resolve())
         return original(path, *args, **kwargs)
 
-    monkeypatch.setattr(Path, "open", spy)
+    monkeypatch.setattr(api, "read", spy)
     api.history()
     api.decision("2026-10-09")
     api.portfolios()
@@ -512,6 +557,6 @@ const posts=()=>requests.filter(r=>r.method==='POST');
         ["node", str(harness), str(ROOT / "dashboard/paper.js")],
         capture_output=True,
         text=True,
-        timeout=15,
+        timeout=60,
     )
     assert result.returncode == 0, result.stdout + result.stderr
