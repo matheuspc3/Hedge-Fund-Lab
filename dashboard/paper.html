@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>H2 v6 · Operação Paper Trading</title>
+  <link rel="stylesheet" href="/paper.css" />
+  <script src="/vendor/chart.umd.js" defer></script>
+  <script src="/paper.js" defer></script>
+</head>
+<body>
+  <div class="workspace"><a href="/h2">← Análise Histórica · Validation OA-1</a><strong>Operação Paper Trading</strong></div>
+  <header><div class="bar"><div class="brand">HEDGE-FUND-LAB<small>H2 v6 · PETR4.SA</small></div><nav aria-label="Operação"><a href="#room">Sala de Decisão</a><a href="#wallets">Carteiras</a></nav><span class="badge">PAPER · EXPLORATÓRIO</span></div></header>
+  <main>
+    <p class="callout">Avaliação prospectiva exploratória. Patrimônio virtual; nenhuma ordem real é enviada ao mercado. Os resultados históricos da Validation OA-1 permanecem no espaço de análise.</p>
+    <p id="error" role="alert" hidden></p>
+    <section id="room" aria-labelledby="room-title">
+      <div class="section-head"><div><p class="eyebrow">FECHAMENTO → PRÓXIMA ABERTURA</p><h1 id="room-title">Sala de Decisão</h1></div><label>Histórico prospectivo <select id="session" aria-label="Sessão da decisão"></select></label><button id="refresh">Consultar registros</button></div>
+      <div id="decision" aria-live="polite"><p class="empty">Lendo registros prospectivos…</p></div>
+      <div class="card" id="operation"><h2>Operação com confirmação humana</h2><p>Consulta disponível. Integração operacional em preparação.</p></div>
+    </section>
+    <section id="wallets" aria-labelledby="wallets-title"><div class="section-head"><div><p class="eyebrow">MESMO CAPITAL · MESMOS PREÇOS OBSERVADOS</p><h1 id="wallets-title">Carteiras virtuais</h1></div><label>Composição individual <select id="strategy" aria-label="Estratégia"></select></label></div>
+      <p class="muted">PETR4 e caixa. A marcação usa o último fechamento reconciliado; uma recomendação futura ainda não muda a composição.</p>
+      <div id="wallet-cards" class="wallet-grid"></div>
+      <div class="card"><h2>Evolução prospectiva do patrimônio</h2><p id="comparison-note" class="muted"></p><div class="chart"><canvas id="equity" role="img" aria-label="Patrimônio prospectivo por estratégia"></canvas></div><div id="curve-table"></div></div>
+      <div id="composition"></div>
+    </section>
+  </main><footer>H2 v6 · Paper trading single-asset · Sem retuning · Sem Final Test · Chart.js local</footer>
+</body>
+</html>
