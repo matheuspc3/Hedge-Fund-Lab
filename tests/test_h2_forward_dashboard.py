@@ -497,6 +497,7 @@ def test_projection_never_opens_journal_or_reserved_data(monkeypatch):
     api.history()
     api.decision("2026-10-09")
     api.portfolios()
+    api.agents()
     assert all("FINAL_TEST" not in str(p) and "snapshots" not in p.parts for p in opened)
     assert all(
         p.name not in ("provider.sqlite", "provider_journal.jsonl", ".env")
@@ -548,6 +549,16 @@ const posts=()=>requests.filter(r=>r.method==='POST');
   assert.deepEqual(JSON.parse(posts()[0].body),{confirm:true,confirmation_token:'SIGNED_OFFLINE_TOKEN'});
   assert.equal(posts()[0].headers['X-CSRF-Token'],'OFFLINE_CSRF');
   assert.equal(elements.execute.disabled,true);
+  // Local quorum simulator mirrors src/agents/technical_analyst.py and never fetches.
+  const before=requests.length, q=(...a)=>vm.runInContext(`quorum(${a.map(v=>JSON.stringify(v)).join(',')})`,ctx);
+  assert.equal(q(5,.6,{COMPRA:3,VENDA:2,MANTER:0},true).winner,'COMPRA');
+  assert.equal(q(5,.6,{COMPRA:2,VENDA:2,MANTER:1},true).reached,false);
+  assert.equal(q(5,.6,{COMPRA:4,VENDA:0,MANTER:0},true).reached,false);
+  assert.equal(q(5,.6,{COMPRA:3,VENDA:0,MANTER:0},false).winner,'COMPRA');
+  assert.equal(q(10,.6,{COMPRA:3,VENDA:3,MANTER:3},false).share,1/3);
+  assert.equal(q(4,.5,{COMPRA:2,VENDA:0,MANTER:2},false).winner,'MANTER');
+  assert.ok(q(5,.6,{COMPRA:6,VENDA:0,MANTER:0},true).error);
+  assert.equal(requests.length,before);
   console.log('OFFLINE HUMAN CONFIRMATION OK');
 })().catch(e=>{console.error(e);process.exit(1)});
 """,
@@ -560,3 +571,212 @@ const posts=()=>requests.filter(r=>r.method==='POST');
         timeout=60,
     )
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+# ── Premium UI v1: presentation projections over synthetic ledgers ──────────
+
+
+def write_session(root, session, decision=None, trace=(), target="2026-10-13"):
+    folder = root / "sessions" / session
+    folder.mkdir(parents=True)
+    (folder / "input.json").write_text(
+        json.dumps({"ticker": "PETR4.SA", "target_session": target, "close_used": 56})
+    )
+    if decision is not None:
+        (folder / "decision.json").write_text(json.dumps(decision))
+    (folder / "llm_trace.jsonl").write_text(
+        "".join(json.dumps(r) + "\n" for r in trace), encoding="utf-8"
+    )
+
+
+def analyst(i, signal="COMPRA", status="ok", evidence=None, **extra):
+    evidence = evidence or [
+        {"code": "CLOSE_ABOVE_SMA50", "role": "SUPPORTS_COMPRA"},
+        {"code": "RSI_CURRENT", "role": "CAUTION"},
+    ]
+    return {
+        "stage": "technical_analyst",
+        "analyst_id": i,
+        "sequence": i - 1,
+        "status": status,
+        "retry_count": 0,
+        "attempt_count": 1,
+        "token_usage": {"prompt_tokens": 1000, "completion_tokens": 100, "total_tokens": 1100},
+        "system_prompt": "DO NOT SERVE",
+        "raw_response": "DO NOT SERVE",
+        "validated_response": {"signal": signal, "confidence": 0.75, "evidence": evidence}
+        if status == "ok"
+        else None,
+        "technical_evidence": {
+            "rendered_explanation": "fechamento acima da SMA50 — classificado pelo analista como suporte à COMPRA; "
+            "RSI atual = 74.9 — classificado pelo analista como cautela"
+        },
+        **extra,
+    }
+
+
+def decided(outcome="COMPRA", reached=True, votes=None, verdict="APROVADO", final=None, status="DECIDED"):
+    votes = votes or {"COMPRA": 5, "MANTER": 0, "VENDA": 0}
+    return {
+        "status": status,
+        "record": {
+            "vote_counts": votes,
+            "valid_votes": sum(votes.values()),
+            "consensus_threshold": 0.6,
+            "consensus_reached": reached,
+            "technical_outcome": outcome,
+            "observed_weight": 0.0,
+            "target_weight": 1.0 if (final or outcome) == "COMPRA" else 0.0,
+            "risk_source": "LLM",
+            "final_cause": "ACTION_BUY",
+        },
+        "risk_verdict": {"verdict": verdict},
+        "portfolio_action": {"decision": final or outcome},
+        "technical_signal": {"signal": outcome, "confidence": 0.75},
+        "intents": [{"ticker": "PETR4.SA", "target_weight": 1.0}],
+    }
+
+
+def test_consensus_flow_evidence_synthesis_and_order_states(tmp_path):
+    write_session(tmp_path, "2026-10-09", decided(), [analyst(i) for i in range(1, 6)])
+    pending = {"decision_session": "2026-10-09", "target_session": "2026-10-13", "target_weight": 1.0}
+    (tmp_path / "state.json").write_text(
+        json.dumps({"sessions": [{"session": "2026-10-09", "decision": "DECIDED"}], "pending": pending})
+    )
+    d = api.decision("2026-10-09", tmp_path)
+    assert [s["changed"] for s in d["flow"]][2:4] == [False, False]  # Risk/Portfolio kept the signal
+    assert d["order"]["state"] == "PENDENTE" and "13/10/2026" in d["order"]["detail"]
+    assert d["committee"] == {
+        "analyst_count": 5, "consensus_threshold": 0.6, "require_all_votes": True, "responded": 5
+    }
+    by_code = {e["code"]: e for e in d["evidence_summary"]}
+    assert by_code["CLOSE_ABOVE_SMA50"]["stance"] == "favorable"
+    rsi = by_code["RSI_CURRENT"]
+    assert (rsi["stance"], rsi["count"], rsi["label"]) == ("caution", 5, "RSI atual = 74.9")
+    assert rsi["analysts"] == [1, 2, 3, 4, 5] and d["divergences"] == []
+    assert "DO NOT SERVE" not in json.dumps(d)
+    assert api.history(tmp_path)[0]["vote_counts"] == {"COMPRA": 5, "MANTER": 0, "VENDA": 0}
+
+    # Executed, late and failed sessions never look like a pending order.
+    trade = {"type": "BUY", "price": 55, "quantity": 10, "cost": 1}
+    (tmp_path / "state.json").write_text(
+        json.dumps({"sessions": [{"session": "2026-10-13", "executed_decision": "2026-10-09", "trades": [trade]}]})
+    )
+    assert api.decision("2026-10-09", tmp_path)["order"]["state"] == "EXECUTADA"
+    write_session(tmp_path, "2026-10-14", decided(status="FAILED"))
+    write_session(tmp_path, "2026-10-15", decided(status="LATE_NOT_EXECUTABLE"))
+    assert api.decision("2026-10-14", tmp_path)["order"]["state"] == "SEM_ORDEM"
+    assert api.decision("2026-10-15", tmp_path)["order"]["state"] == "NAO_EXECUTAVEL"
+
+
+def test_no_consensus_missing_and_invalid_analysts_are_not_votes(tmp_path):
+    trace = [
+        analyst(1),
+        analyst(2, "VENDA", evidence=[{"code": "CLOSE_ABOVE_SMA50", "role": "SUPPORTS_VENDA"}]),
+        analyst(3, "MANTER"),
+        analyst(4, status="error", error_type="INVALID_RESPONSE"),
+    ]  # analyst 5 never answered
+    votes = {"COMPRA": 1, "VENDA": 1, "MANTER": 1}
+    write_session(tmp_path, "2026-10-09", decided("MANTER", False, votes, verdict=None), trace)
+    d = api.decision("2026-10-09", tmp_path)
+    assert d["committee"]["responded"] == 3 and len(d["analysts"]) == 4
+    assert d["analysts"][3]["signal"] is None
+    assert d["analysts"][3]["error_type"] == "INVALID_RESPONSE"
+    assert d["flow"][1]["result"] == "SEM CONSENSO" and d["flow"][2]["changed"] is None
+    stances = {(e["code"], e["role"]): e["stance"] for e in d["evidence_summary"]}
+    # No directional outcome: evidences keep their literal role instead of "favorable".
+    assert stances["CLOSE_ABOVE_SMA50", "SUPPORTS_COMPRA"] == "supports_compra"
+    assert any("Votos divididos" in t for t in d["divergences"])
+    assert any("classificada de formas diferentes" in t for t in d["divergences"])
+
+
+def ledger_row(session, equity, trades=(), executed=None):
+    return {
+        "session": session, "open": 55, "close": 56, "executed_decision": executed,
+        "trades": list(trades), "benchmark_trades": [], "equity": equity, "benchmark_equity": 100000.0,
+    }
+
+
+def test_wallet_metrics_pending_composition_and_short_history(tmp_path):
+    state = {
+        "initial_capital": 100000.0, "costs": {}, "execution": {}, "manifest_sha256": "x",
+        "portfolio": {"cash": 100000.0, "units": 0.0},
+        "benchmark": {"cash": 100000.0, "units": 0.0, "invested": False},
+        "mark": {"session": "2026-10-09", "close": 56.0},
+        "pending": {"decision_session": "2026-10-09", "target_session": "2026-10-13", "target_weight": 1.0},
+        "sessions": [ledger_row("2026-10-09", 100000.0)],
+        "decisions": [],
+    }
+    (tmp_path / "state.json").write_text(json.dumps(state))
+    ai = api.portfolios(tmp_path, tmp_path / "none")["wallets"][0]
+    # A 100% buy intention is not a 100% stock position.
+    assert ai["pending"]["target_weight"] == 1 and ai["exposure"] == 0
+    assert [c["weight"] for c in ai["composition"]] == [0, 1]
+    assert ai["observations"] == 1 and ai["max_drawdown"] is None and ai["dividends"] is None
+
+    trade = {"type": "BUY", "price": 55.0, "quantity": 1800.0, "cost": 50.0}
+    state.update(
+        portfolio={"cash": 950.0, "units": 1800.0},
+        pending=None,
+        mark={"session": "2026-10-14", "close": 54.0},
+        sessions=[
+            ledger_row("2026-10-09", 100000.0),
+            ledger_row("2026-10-13", 101750.0, [trade], "2026-10-09"),
+            ledger_row("2026-10-14", 98150.0),
+        ],
+    )
+    (tmp_path / "state.json").write_text(json.dumps(state))
+    ai = api.portfolios(tmp_path, tmp_path / "none")["wallets"][0]
+    assert ai["equity"] == 950 + 1800 * 54 and ai["pnl"] == ai["equity"] - 100000
+    assert ai["max_drawdown"] == pytest.approx((101750 - 98150) / 101750)
+    assert ai["trades"] == [
+        {"session": "2026-10-13", "decision_session": "2026-10-09", "asset": "PETR4", **trade, "equity_after": 101750.0}
+    ]
+    assert sum(c["weight"] for c in ai["composition"]) == pytest.approx(1)
+    assert ai["costs"] == 50 and ai["cash"] == 950
+
+
+def test_agent_catalog_separates_active_slots_from_future_ones(tmp_path):
+    rm = {
+        "stage": "risk_manager", "status": "ok", "retry_count": 1,
+        "validated_response": {"verdict": "APROVADO"}, "token_usage": None,
+    }
+    write_session(tmp_path, "2026-10-09", decided(), [analyst(i) for i in range(1, 6)] + [rm])
+    a = api.agents(tmp_path)
+    assert a["configuration"]["frozen"] and a["configuration"]["analyst_count"] == 5
+    slots = a["agents"]
+    assert len(slots) == 32 and [s["id"] for s in slots[-2:]] == ["RM", "PM"]
+    assert sum(s["active"] for s in slots if s["role"] == "Technical Analyst") == 5
+    assert all(s["observations"] is None and s["params"] is None for s in slots[5:30])
+    ta = slots[0]["observations"]
+    assert ta["outputs"] == {"COMPRA": 1} and ta["agreement"] == 1 and ta["tokens"] == 1100
+    assert ta["cost_usd"] == pytest.approx((1000 * 0.75 + 100 * 3.75) / 1e6)
+    risk = slots[30]["observations"]
+    assert risk["agreement"] is None and risk["tokens"] is None and risk["retry_rate"] == 1
+    assert slots[31]["observations"] is None and slots[31]["prompt_version"] is None
+    assert "DO NOT SERVE" not in json.dumps(a)
+
+
+def test_read_projections_make_no_network_calls(monkeypatch):
+    if not (api.OUTPUT / "state.json").exists():
+        pytest.skip("local forward records absent")
+    import socket
+
+    def refuse(*_args, **_kwargs):
+        raise AssertionError("dashboard read attempted a network call")
+
+    monkeypatch.setattr(socket.socket, "connect", refuse)
+    monkeypatch.setattr(socket, "create_connection", refuse)
+    api.history(), api.decision(), api.portfolios()
+    text = json.dumps(api.agents())
+    for forbidden in ("system_prompt", "user_prompt", "raw_response", "api_key", "provider_journal"):
+        assert forbidden not in text
+
+
+def test_agents_endpoint_is_read_only(http_server):
+    instance, c = http_server
+    origin = f"http://127.0.0.1:{instance.server_address[1]}"
+    assert request(instance, "/api/forward/agents")[0] == 200
+    assert request(instance, "/api/forward/agents?session=2026-10-09")[0] == 400
+    headers = {"Origin": origin, "X-CSRF-Token": c.csrf, "Content-Type": "application/json"}
+    assert request(instance, "/api/forward/agents", "POST", "{}", headers)[0] == 404

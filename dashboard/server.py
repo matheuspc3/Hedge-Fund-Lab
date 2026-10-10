@@ -166,6 +166,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 return self._send_json(forward_api.decision(q.get("session", [None])[0]))
             if url.path == "/api/forward/portfolios" and not q:
                 return self._send_json(forward_api.portfolios())
+            if url.path == "/api/forward/agents" and not q:
+                return self._send_json(forward_api.agents())
         except (ValueError, KeyError, OSError):
             return self._send_json({"error": "invalid_or_incomplete_record"}, 400)
         return self._send_json(None, 404)

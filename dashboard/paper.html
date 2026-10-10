@@ -9,14 +9,34 @@
   <script src="/paper.js" defer></script>
 </head>
 <body>
-  <div class="workspace"><a href="/h2">← Análise Histórica · Validation OA-1</a><strong>Operação Paper Trading</strong></div>
-  <header><div class="bar"><div class="brand">HEDGE-FUND-LAB<small>H2 v6 · PETR4.SA</small></div><nav aria-label="Operação"><a href="#room">Sala de Decisão</a><a href="#wallets">Carteiras</a></nav><span class="badge">PAPER · EXPLORATÓRIO</span></div></header>
-  <main>
-    <p class="callout">Avaliação prospectiva exploratória. Patrimônio virtual; nenhuma ordem real é enviada ao mercado. Os resultados históricos da Validation OA-1 permanecem no espaço de análise.</p>
-    <p id="error" role="alert" hidden></p>
-    <section id="room" aria-labelledby="room-title">
-      <div class="section-head"><div><p class="eyebrow">FECHAMENTO → PRÓXIMA ABERTURA</p><h1 id="room-title">Sala de Decisão</h1></div><label>Histórico prospectivo <select id="session" aria-label="Sessão da decisão"></select></label><button id="refresh">Consultar registros</button></div>
-      <div id="decision" aria-live="polite"><p class="empty">Lendo registros prospectivos…</p></div>
+  <a class="skip" href="#main">Pular para o conteúdo</a>
+  <div class="workspace"><a href="/h2">← Análise Histórica · Validation OA-1</a><span class="badge">PAPER · EXPLORATÓRIO · SEM ORDENS REAIS</span></div>
+  <header>
+    <div class="bar"><div class="brand">HEDGE-FUND-LAB<small>H2 v6 · PETR4.SA · Operação prospectiva</small></div><p id="updated" class="updated" aria-live="polite"></p></div>
+    <nav class="tabs" aria-label="Áreas da operação">
+      <a href="#visao" data-tab="visao">Visão Geral</a>
+      <a href="#sala" data-tab="sala">Sala de Decisão</a>
+      <a href="#carteiras" data-tab="carteiras">Carteiras</a>
+      <a href="#agentes" data-tab="agentes">Agentes</a>
+    </nav>
+  </header>
+  <main id="main">
+    <div id="error" role="alert" hidden></div>
+
+    <section id="visao" data-view aria-labelledby="visao-title">
+      <div class="section-head"><div><p class="eyebrow">MESMO CAPITAL INICIAL · SIMULAÇÕES ALTERNATIVAS</p><h1 id="visao-title">Visão Geral</h1></div></div>
+      <p class="lead">Quatro estratégias virtuais acompanham os mesmos preços observados de PETR4. São alternativas paralelas: os patrimônios não se somam.</p>
+      <div id="overview-wallets" class="kpi-grid"><p class="state" role="status">Carregando carteiras…</p></div>
+      <div class="overview-grid">
+        <article class="card"><div class="card-head"><h2>Evolução do patrimônio</h2><small class="muted">Somente fechamentos prospectivos reconciliados</small></div><div id="overview-series" class="toggles" role="group" aria-label="Estratégias exibidas no gráfico"></div><div id="overview-chart"></div></article>
+        <article class="card" id="last-decision"><h2>Última deliberação</h2><p class="state" role="status">Carregando…</p></article>
+      </div>
+    </section>
+
+    <section id="sala" data-view aria-labelledby="sala-title" hidden>
+      <div class="section-head"><div><p class="eyebrow">FECHAMENTO → PRÓXIMA ABERTURA</p><h1 id="sala-title">Sala de Decisão</h1></div><label>Deliberação registrada <select id="session" aria-label="Sessão da decisão"></select></label><button id="refresh">Consultar registros</button></div>
+      <div id="decision" aria-live="polite"><p class="state" role="status">Lendo registros prospectivos…</p></div>
+      <article class="card"><h2>Histórico de deliberações</h2><p class="muted">Consulta de decisões já gravadas. Abrir uma deliberação nunca executa os agentes novamente.</p><div id="history"></div></article>
       <div class="card" id="operation"><h2>Operação com confirmação humana</h2>
         <p class="steps">Atualizar dados → Preflight → Confirmar e executar agentes → Acompanhar → Resultado</p>
         <p class="muted">Atualização congela dados oficiais, sem inferência. Preflight é offline. Executar agentes faz uma nova chamada paga ao Gemini; uma decisão já gravada só permite consulta.</p>
@@ -24,11 +44,33 @@
         <div id="job" aria-live="polite"></div><div id="preflight-report"></div>
       </div>
     </section>
-    <section id="wallets" aria-labelledby="wallets-title"><div class="section-head"><div><p class="eyebrow">MESMO CAPITAL · MESMOS PREÇOS OBSERVADOS</p><h1 id="wallets-title">Carteiras virtuais</h1></div><label>Composição individual <select id="strategy" aria-label="Estratégia"></select></label></div>
-      <p class="muted">PETR4 e caixa. A marcação usa o último fechamento reconciliado; uma recomendação futura ainda não muda a composição.</p>
-      <div id="wallet-cards" class="wallet-grid"></div>
-      <div class="card"><h2>Evolução prospectiva do patrimônio</h2><p id="comparison-note" class="muted"></p><div class="chart"><canvas id="equity" role="img" aria-label="Patrimônio prospectivo por estratégia"></canvas></div><div id="curve-table"></div></div>
+
+    <section id="carteiras" data-view aria-labelledby="carteiras-title" hidden>
+      <div class="section-head"><div><p class="eyebrow">MESMO CAPITAL · MESMOS PREÇOS OBSERVADOS</p><h1 id="carteiras-title">Carteiras</h1></div><label>Carteira detalhada <select id="strategy" aria-label="Estratégia"></select></label></div>
+      <article class="card"><h2>Comparação entre estratégias</h2><div id="wallet-table"><p class="state" role="status">Carregando…</p></div></article>
       <div id="composition"></div>
+      <article class="card"><div class="card-head"><h2>Evolução prospectiva do patrimônio</h2></div><p id="comparison-note" class="muted"></p><div id="wallet-chart"></div></article>
+      <div id="trades"></div>
+      <article class="card"><h2>Dividendos e proventos</h2><p><strong>Proventos ainda não contabilizados.</strong></p><p class="muted">O ledger marca PETR4 por preços ajustados: proventos já reescalam as unidades (unidades × fechamento anterior ÷ fechamento novo), preservando o valor marcado. Lançá-los também como caixa contaria o mesmo provento duas vezes. A metodologia necessária está documentada em <code>docs/H2_V6_PREMIUM_UI.md</code>.</p></article>
+    </section>
+
+    <section id="agentes" data-view aria-labelledby="agentes-title" hidden>
+      <div class="section-head"><div><p class="eyebrow">CATÁLOGO · CONFIGURAÇÃO · OBSERVABILIDADE</p><h1 id="agentes-title">Agentes</h1></div></div>
+      <div class="agents-grid"><div id="committee"><p class="state" role="status">Carregando…</p></div>
+        <article class="card" id="simulator"><h2>Simulador local de quórum</h2><p class="muted">Aplica a regra de agregação do comitê a votos hipotéticos. Não chama modelos e não altera a H2 v6.</p>
+          <form id="sim-form" class="sim">
+            <label>Analistas <select id="sim-n"><option>5</option><option>10</option><option>15</option><option>20</option><option>30</option></select></label>
+            <label>Limiar <select id="sim-threshold"><option value="0.6">60%</option><option value="0.6666666666666666">2/3</option><option value="0.75">75%</option><option value="0.8333333333333334">5/6</option><option value="1">100%</option></select></label>
+            <label>COMPRA <input id="sim-compra" type="number" min="0" step="1" value="5" inputmode="numeric" /></label>
+            <label>VENDA <input id="sim-venda" type="number" min="0" step="1" value="0" inputmode="numeric" /></label>
+            <label>MANTER <input id="sim-manter" type="number" min="0" step="1" value="0" inputmode="numeric" /></label>
+            <label class="inline"><input id="sim-all" type="checkbox" checked /> Exigir todas as respostas</label>
+          </form>
+          <p id="sim-out" role="status"></p>
+        </article>
+      </div>
+      <div id="catalog"></div>
+      <div id="profile" aria-live="polite"></div>
     </section>
   </main>
   <dialog id="confirm-dialog" aria-labelledby="confirm-title"><h2 id="confirm-title">Autorizar inferência nova e paga</h2><div id="confirm-details"></div><p>Uma única tentativa operacional para esta sessão. Erros e interrupções exigem diagnóstico local; nenhuma repetição paga automática será permitida.</p><label class="inline"><input id="accept-charges" type="checkbox" /> Autorizo explicitamente executar os agentes H2 v6 e aceito o custo estimado do Gemini para este input.</label><div class="row"><button id="cancel-confirm">Cancelar</button><button id="submit-confirm" class="primary" disabled>Autorizar e executar Gemini</button></div></dialog>
