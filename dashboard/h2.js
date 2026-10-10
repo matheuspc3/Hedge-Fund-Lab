@@ -11,7 +11,7 @@ const INK = { text2: "#c3c2b7", muted: "#898781", grid: "#2c2c2a", axis: "#38383
 const state = {
   tab: "overview", source: "provisional", status: null, data: null, focus: "L01", auditRun: "L01", detail: null, trace: null, session: null,
   // post-Validation analysis: undefined = not requested, "loading", null = unavailable
-  analysis: undefined, runsOn: new Set(LLM), showBoll: true, showSma: true, dRun: "L01", decision: null, pending: null, bollEvent: null, cycle: null, agentRun: "L01",
+  analysis: undefined, runsOn: new Set(["L01"]), showBoll: true, showSma: true, dRun: "L01", decision: null, pending: null, bollEvent: null, cycle: null, agentRun: "L01",
 };
 const charts = {};
 
@@ -27,10 +27,18 @@ const sw = (id) => `<span class="swatch" style="background:${color(id)}"></span>
 const card = (title, body, extra = "") => `<div class="card" ${extra}>${title ? `<h3>${esc(title)}</h3>` : ""}${body}</div>`;
 const kpi = (label, value, sub = "", cls = "") => `<div class="card kpi"><div class="label">${esc(label)}</div><div class="value ${cls}">${value}</div><div class="sub">${sub}</div></div>`;
 const empty = (text) => `<div class="empty">${esc(text)}</div>`;
+const brk = (s) => esc(s).replace(/([_-])/g, "$1<wbr>"); // long identifiers wrap at separators
+const copy = (value) => `<button class="copy" data-copy="${esc(value)}" title="Copiar valor completo" aria-label="Copiar valor completo">⧉</button>`;
+const hash = (h) => (h ? `<span class="mono" title="${esc(h)}">${short(h)}</span>${copy(h)}` : "—");
+function runId(id) {
+  const m = /^H2-V6(?:-OA1)?-VALIDATION-(.+)-([0-9a-f]{12})$/.exec(id || "");
+  return id ? `<span class="mono" title="${esc(id)}">${m ? `${esc(m[1])} · ${m[2].slice(0, 8)}…` : brk(id)}</span>${copy(id)}` : "—";
+}
 function chip(text) {
   const t = String(text);
-  const cls = /BLOQUEADO|INTERROMPIDA|INVALID|NOT_ESTIMABLE|ERRO|DISPAROU|EFETIVO/.test(t) ? "bad"
-    : /EXECUÇÃO|PENDENTE|PENDING|STARTED|AUSENTE|NÃO APROVADO|NOT APPROVED|NÃO RATIFICADA|VETADO|SEM EFEITO/.test(t) ? "warn"
+  const cls = /SEM EFEITO/.test(t) ? "" // a no-effect veto is information, not an alarm
+    : /BLOQUEADO|INTERROMPIDA|INVALID|NOT_ESTIMABLE|ERRO|DISPAROU|EFETIVO/.test(t) ? "bad"
+    : /EXECUÇÃO|PENDENTE|PENDING|STARTED|AUSENTE|NÃO APROVADO|NOT APPROVED|NÃO RATIFICADA|VETADO/.test(t) ? "warn"
     : /COMPLETE|SELADA|CONCLU|REUSED|VALID|PRESENTE|PASSOU|APLICADA|APROVADO|SEGUIU/.test(t) ? "good"
     : /PROVIS/.test(t) ? "serious" : "";
   const icon = { bad: "✕", warn: "◐", good: "✓", serious: "!" }[cls] || "•";
@@ -39,7 +47,7 @@ function chip(text) {
 function table(cols, rows, opts = {}) {
   const head = cols.map((c) => `<th class="${c.n ? "n" : ""}">${esc(c.label)}</th>`).join("");
   const body = rows.map((r, i) => `<tr class="${opts.click ? "click" : ""} ${opts.selected?.(r) ? "sel" : ""}" ${opts.click ? `data-i="${i}"` : ""}>${cols.map((c) => `<td class="${c.n ? "n" : ""}">${c.render(r)}</td>`).join("")}</tr>`).join("");
-  return `<div class="scroll"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+  return `<div class="scroll ${opts.full ? "full" : ""}"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
 }
 
 // ── data ────────────────────────────────────────────────────────────────────
@@ -210,15 +218,15 @@ function renderOverview() {
   const id = s?.identity;
   el.innerHTML = `
     <div class="row">${picks}</div>
-    <div class="grid g-kpi">${kpis}</div>
+    <div class="grid g-kpi7">${kpis}</div>
     <div class="grid g-kpi" style="margin-top:16px">${agg}</div>
     <div class="grid g-3" style="margin-top:16px">
       ${card("Curva de patrimônio vs Buy & Hold", d.curves ? `${legend([...LLM, "buy_and_hold"])}<div class="chart"><canvas id="c-overview"></canvas></div>` : empty("Nenhum run selado nesta fonte."))}
       ${card("Status e identidade científica", id ? `<dl>
         <dt>Fonte</dt><dd>${chip(d.state)}</dd>
         <dt>Acadêmico</dt><dd>${chip(id.state)}</dd>
-        <dt>Manifesto</dt><dd class="mono" title="${esc(id.manifest_sha256)}">${short(id.manifest_sha256)}</dd>
-        <dt>Tratamento</dt><dd class="mono" title="${esc(id.participant_sha256)}">${short(id.participant_sha256)}</dd>
+        <dt>Manifesto</dt><dd>${hash(id.manifest_sha256)}</dd>
+        <dt>Tratamento</dt><dd>${hash(id.participant_sha256)}</dd>
         <dt>Modelo</dt><dd>${esc(id.model.model)} · T=${id.model.temperature} · thinking ${esc(id.model.thinking_level)}</dd>
         <dt>Janela</dt><dd>${esc(id.windows.VALIDATION.decision_start)} → ${esc(id.windows.VALIDATION.decision_end)}</dd>
         <dt>R / agregação</dt><dd>${id.R} · média aritmética dos Sharpes</dd>
@@ -250,7 +258,7 @@ function renderExperiments() {
     rows,
   );
   const bench = table(
-    [{ label: "Benchmark", render: (r) => `${sw(r.id)} ${esc(r.label)}` }, { label: "Estado", render: (r) => chip(r.state) }, { label: "Run ID", render: (r) => `<span class="mono">${esc(r.run_id || "—")}</span>` }],
+    [{ label: "Benchmark", render: (r) => `${sw(r.id)} ${esc(r.label)}` }, { label: "Estado", render: (r) => chip(r.state) }, { label: "Run ID", render: (r) => runId(r.run_id) }],
     BENCH.map(part),
   );
   const g = s.governance, a = g.author_authorization;
@@ -259,19 +267,21 @@ function renderExperiments() {
     <h2>Validation · R=3</h2>
     ${card("Runs L01 / L02 / L03", runTable)}
     <div class="grid g-2" style="margin-top:16px">
+      <div class="stack">
       ${card("Benchmarks determinísticos", bench)}
+      ${card("Journal e selos", d.root_files.length ? table([{ label: "Arquivo", render: (r) => esc(r.name) }, { label: "SHA256", render: (r) => hash(r.sha256) }], d.root_files) : empty(d.synthetic ? "Demonstração não possui selos." : "Nenhum selo de fase ainda."))}
+      </div>
+      <div class="stack">
       ${card("Autorização e execução", `<dl>
         <dt>Aprovação acadêmica</dt><dd>${chip(g.academic)}</dd>
-        <dt>Amendment OA-1</dt><dd>${g.amendment.present ? `<span class="mono">${short(g.amendment.sha256)}</span> · aceite manual exigido` : chip("AUSENTE")}</dd>
-        <dt>Autorização do autor</dt><dd>${a ? `${chip("PRESENTE")} ${esc(a.signatory)} · ${esc(a.recorded_at)}${a.binds_current_amendment ? "" : ` ${chip("INVALID — amendment divergente")}`}<br><span class="mono">${short(a.sha256)}</span> · ${esc(a.note)}` : chip("AUSENTE — aguardando autor")}</dd>
+        <dt>Amendment OA-1</dt><dd>${g.amendment.present ? `${hash(g.amendment.sha256)} · aceite manual exigido` : chip("AUSENTE")}</dd>
+        <dt>Autorização do autor</dt><dd>${a ? `${chip("PRESENTE")} ${esc(a.signatory)} · ${esc(a.recorded_at)}${a.binds_current_amendment ? "" : ` ${chip("INVALID — amendment divergente")}`}<br>${hash(a.sha256)} · ${esc(a.note)}` : chip("AUSENTE — aguardando autor")}</dd>
         <dt>Validation provisória</dt><dd>${chip(s.phases.VALIDATION.provisional)}</dd>
         <dt>Validation oficial</dt><dd>${chip(s.phases.VALIDATION.official)}</dd>
-        <dt>Checkpoint provisório</dt><dd>${g.provisional_checkpoint_sha256 ? `<span class="mono">${short(g.provisional_checkpoint_sha256)}</span>` : "—"}</dd>
+        <dt>Checkpoint provisório</dt><dd>${hash(g.provisional_checkpoint_sha256)}</dd>
         <dt>Final Test</dt><dd>${chip("BLOQUEADO")} <span style="color:var(--muted)">${esc(s.phases.FINAL_TEST)}</span></dd></dl>`)}
-    </div>
-    <div class="grid g-2" style="margin-top:16px">
-      ${card("Journal e selos", d.root_files.length ? table([{ label: "Arquivo", render: (r) => esc(r.name) }, { label: "SHA256", render: (r) => `<span class="mono" title="${esc(r.sha256)}">${short(r.sha256)}</span>` }], d.root_files) : empty(d.synthetic ? "Demonstração não possui selos." : "Nenhum selo de fase ainda."))}
       ${card("Disposições de custo (24)", Object.keys(disp).length ? Object.entries(disp).map(([k, v]) => `<div class="row">${chip(k)} <b>${v}</b></div>`).join("") : empty("Sem disposições registradas."))}
+      </div>
     </div>`;
 }
 
@@ -342,7 +352,7 @@ function renderAudit() {
           { label: "Technical", render: (r) => esc(r.technical_outcome) },
           { label: "Risk", render: (r) => `${esc(r.risk_verdict)} <span style="color:var(--muted)">${esc(r.risk_source)}</span>` },
           { label: "Portfolio", render: (r) => `${esc(r.portfolio_decision)} <span style="color:var(--muted)">${esc(r.portfolio_source)}</span>` },
-          { label: "Causa", render: (r) => `<span class="mono">${esc(r.final_cause)}</span>` },
+          { label: "Causa", render: (r) => `<span class="mono wrap">${brk(r.final_cause)}</span>` },
           { label: "Erros", n: 1, render: (r) => r.errors },
         ],
         det.decisions,
@@ -366,6 +376,7 @@ function renderAudit() {
           { label: "Custo", n: 1, render: (r) => brl(r.cost) },
         ],
         det.trades,
+        { full: true }, // all 12-14 orders, no inner scroll
       )
     : empty("Sem operações.");
   const files = d.files[state.auditRun] || [];
@@ -373,31 +384,34 @@ function renderAudit() {
   const downloads = d.synthetic
     ? empty("Downloads indisponíveis na demonstração.")
     : files.length || d.root_files.length
-      ? table([{ label: "Arquivo", render: (f) => dl(f.run, f) }, { label: "Bytes", n: 1, render: (f) => f.bytes?.toLocaleString("pt-BR") ?? "—" }, { label: "SHA256", render: (f) => `<span class="mono" title="${esc(f.sha256)}">${short(f.sha256)}</span>` }], [...d.root_files.map((f) => ({ ...f, run: "_root" })), ...files.map((f) => ({ ...f, run: state.auditRun }))])
+      ? table([{ label: "Arquivo", render: (f) => dl(f.run, f) }, { label: "Bytes", n: 1, render: (f) => f.bytes?.toLocaleString("pt-BR") ?? "—" }, { label: "SHA256", render: (f) => hash(f.sha256) }], [...d.root_files.map((f) => ({ ...f, run: "_root" })), ...files.map((f) => ({ ...f, run: state.auditRun }))])
       : empty("Nenhum artifact selado.");
   el.innerHTML = `
     <h2>Auditoria</h2>
     <div class="grid g-2">
       ${card("Manifesto e hashes", `<dl>
-        <dt>Manifesto (SHA externo)</dt><dd class="mono">${esc(id.manifest_sha256)}</dd>
+        <dt>Manifesto (SHA externo)</dt><dd><span class="mono">${esc(id.manifest_sha256)}</span>${copy(id.manifest_sha256)}</dd>
         <dt>Estado</dt><dd>${chip(id.state)} live_authorized=${id.live_authorized}</dd>
         <dt>Aprovações</dt><dd>autor ${id.approvals.author ? "✓" : "—"} · coautor ${id.approvals.coauthor ? "✓" : "—"} · orientador ${id.approvals.advisor ? "✓" : "—"} · freeze ${id.freeze_record ? "✓" : "—"}</dd>
-        <dt>ParticipantSpec</dt><dd class="mono">${esc(id.participant_sha256)}</dd>
-        <dt>Snapshot</dt><dd class="mono">${esc(id.snapshot.id)}<br>${esc(id.snapshot.identity)}</dd>
+        <dt>ParticipantSpec</dt><dd><span class="mono">${esc(id.participant_sha256)}</span>${copy(id.participant_sha256)}</dd>
+        <dt>Snapshot</dt><dd><span class="mono">${brk(id.snapshot.id)}</span>${copy(id.snapshot.id)}<br><span class="mono">${esc(id.snapshot.identity)}</span>${copy(id.snapshot.identity)}</dd>
         <dt>Inventário</dt><dd>${id.inventory_sizes.sources_sha256} fontes · ${id.inventory_sizes.documents_sha256} documentos · ${id.inventory_sizes.historical_bindings_sha256} bindings CAL-B4</dd>
         <dt>Ambiente</dt><dd>Python ${esc(id.environment.python)} · SQLite ${esc(id.environment.sqlite_version)} (${esc(id.environment.sqlite_synchronous)}) · ${esc(id.environment.platform)}</dd>
         <dt>Custos</dt><dd>spread ${id.costs.spread_bps} bps · taxa ${num(id.costs.tax_rate * 100, 3)}% · grade ${id.cost_grid.join("/")} bps</dd>
         <dt>Teste</dt><dd>Bootstrap ${esc(id.test.candidate)} · B=${id.test.B} · seed ${id.test.seed} · bloco ${id.test.mean_block} · α=${id.test.alpha}</dd>
-        <dt>Benchmarks</dt><dd>${id.benchmarks.map((b) => `${esc(b.spec.kind)} <span class="mono">${short(b.sha256)}</span>`).join("<br>")}</dd></dl>`)}
+        <dt>Benchmarks</dt><dd>${id.benchmarks.map((b) => `${esc(b.spec.kind)} ${hash(b.sha256)}`).join("<br>")}</dd></dl>`)}
       ${card("Downloads de artifacts", downloads)}
     </div>
     <div class="row" style="margin-top:16px">${picks}</div>
     <div class="grid g-2">
-      ${card("Decisions", decisions, 'id="decisions-card"')}
+      ${card("Decisions", decisions + (det?.decisions?.length ? `<p class="muted" style="margin-top:6px">${det.decisions.length} sessões · role a tabela para ver todas · clique numa linha para abrir o trace</p>` : ""), 'id="decisions-card"')}
       ${card(state.session ? `Traces · ${state.session}` : "Traces", `<div class="scroll">${traceHtml}</div>`)}
     </div>
     <div style="margin-top:16px">${card("Timeline de operações", trades)}</div>`;
   el.querySelectorAll("#decisions-card tr.click").forEach((row) => row.addEventListener("click", () => loadTrace(det.decisions[row.dataset.i].decision_session)));
+  // re-rendering resets the inner scroll: bring the selected session back into view
+  const sel = el.querySelector("#decisions-card tr.sel"), box = sel?.closest(".scroll");
+  if (box) box.scrollTop = sel.offsetTop - box.clientHeight / 2;
 }
 
 // ── post-Validation analysis ────────────────────────────────────────────────
@@ -439,6 +453,21 @@ function spans(flags) {
   if (start != null) out.push([start, flags.length - 1]);
   return out;
 }
+// Presentation only: with several marker groups on screen, events on the same date
+// are spread a few pixels apart so each stays visible and clickable. Data x/y and
+// tooltips keep the real date and price.
+const spreadPlugin = {
+  id: "spread",
+  afterDatasetsUpdate(chart) {
+    const groups = [...new Set(chart.data.datasets.filter((d) => d.run).map((d) => d.run))];
+    if (groups.length < 2) return;
+    chart.data.datasets.forEach((ds, i) => {
+      if (!ds.run) return;
+      const dx = (groups.indexOf(ds.run) - (groups.length - 1) / 2) * 8;
+      for (const pt of chart.getDatasetMeta(i).data) pt.x += dx;
+    });
+  },
+};
 // Shades index ranges behind the data: long periods, the selected cycle, t → t+1.
 const bandsPlugin = {
   id: "bands",
@@ -504,9 +533,9 @@ function priceChart() {
   charts["c-price"] = new Chart(el, {
     type: "line",
     data: { labels: m.dates, datasets },
-    plugins: [bandsPlugin],
+    plugins: [bandsPlugin, spreadPlugin],
     options: {
-      responsive: true, maintainAspectRatio: false, animation: { duration: 300 },
+      responsive: true, maintainAspectRatio: false, animation: false, // an animation would undo the spread offsets
       interaction: { mode: "x", intersect: false },
       onHover: (_e, _els, ch) => { ch.canvas.style.cursor = "pointer"; },
       onClick: (e, _els, ch) => {
@@ -564,7 +593,7 @@ function renderDecisions() {
       <button class="pick" data-toggle="showSma" aria-pressed="${state.showSma}">SMA50 / SMA200</button>
       <span class="sep"></span><span class="muted">Painel e faixa:</span>${focus}</div>
     ${card("Preço × decisões · PETR4.SA · Validation 2024-09-02 → 2025-08-29", `<div class="legend">${legendItems}</div><div class="chart lg"><canvas id="c-price"></canvas></div>
-      <p class="muted" style="margin-top:8px">Preços: fechamentos ajustados implícitos na curva selada do Buy &amp; Hold (2024-09-03 → 2025-08-29; o fechamento de 2024-09-02 não é recuperável, por isso a decisão dessa data não tem marcador) e aberturas apenas nos dias com execução. SMA = fechamento / (1 + gap enviado aos analistas, 6 casas). Nenhum preço externo; o snapshot não é aberto.</p>`)}
+      <p class="muted" style="margin-top:8px">Preços: fechamentos ajustados implícitos na curva selada do Buy &amp; Hold (2024-09-03 → 2025-08-29; o fechamento de 2024-09-02 não é recuperável, por isso a decisão dessa data não tem marcador) e aberturas apenas nos dias com execução. SMA = fechamento / (1 + gap enviado aos analistas, 6 casas). Nenhum preço externo; o snapshot não é aberto. Com mais de um run ativo, marcadores da mesma data são afastados alguns pixels só na tela; data e preço reais ficam no tooltip.</p>`)}
     <div id="decision-panel" style="margin-top:16px"></div>
     <div id="cycles" style="margin-top:16px"></div>`;
   priceChart();
@@ -602,7 +631,7 @@ function renderDecisionPanel() {
     ? `<table><thead><tr><th>#</th><th>Voto</th><th class="n">Conf.</th><th>Evidências citadas</th></tr></thead><tbody>${t.analysts.map((c) => `<tr><td>${c.analyst_id}</td><td>${sig(c.signal)}</td><td class="n">${nr(c.confidence, (v) => num(v, 2))}</td><td>${(c.evidence || []).map((e) => `<span class="ev ${roleCls(e.role)}" title="${esc(e.role)}">${esc(e.code)}</span>`).join("") || nr(null)}${c.explanation ? `<details><summary class="muted" style="cursor:pointer">justificativa registrada</summary><div class="muted" style="margin-top:4px">${esc(c.explanation)}</div></details>` : ""}</td></tr>`).join("")}</tbody></table>`
     : empty("Nenhuma chamada técnica registrada.");
   const feats = t.features ? `<table><tbody>${Object.entries(t.features).map(([k, v]) => `<tr><td class="muted">${esc(FEATURE[k]?.[0] || k)}</td><td class="n mono">${FEATURE[k]?.[1] === "num" ? num(v, 2) : signed(v, (z) => pct(z, 2))}</td></tr>`).join("")}</tbody></table>` : nr(null);
-  const rules = `<table><thead><tr><th>Regra</th><th>Limite</th><th class="n">Valor</th><th>Status</th></tr></thead><tbody>${r.rules.map((q) => `<tr><td class="mono">${esc(q.rule)}</td><td class="mono">${esc(q.limit || "—")}</td><td class="n mono">${q.rule === "AUTO_APPROVE" || q.rule === "RISK_LLM" ? "—" : nr(q.value, (v) => num(v, 6))}</td><td>${chip(q.status)}</td></tr>`).join("")}</tbody></table>`;
+  const rules = `<table><thead><tr><th>Regra</th><th>Limite</th><th class="n">Valor</th><th>Status</th></tr></thead><tbody>${r.rules.map((q) => `<tr><td class="mono">${esc(q.rule)}</td><td class="mono">${esc(q.limit || "—")}</td><td class="n mono">${q.rule === "AUTO_APPROVE" || q.rule === "RISK_LLM" ? "—" : nr(q.value, (v) => num(v, 6))}</td><td>${chip(q.status === "DISPAROU" && r.veto_effect === "SEM EFEITO" ? "DISPAROU · SEM EFEITO" : q.status)}</td></tr>`).join("")}</tbody></table>`;
   const veto = r.veto_effect === "SEM EFEITO"
     ? "Veto <b>sem efeito</b>: a carteira já estava no alvo de 100%; sem o veto também não haveria ordem."
     : r.veto_effect === "EFETIVO" ? "<b>Intervenção efetiva</b>: sem o veto o consenso COMPRA geraria uma ordem." : "Sem veto nesta sessão.";
@@ -625,7 +654,7 @@ function renderDecisionPanel() {
         <div style="margin-top:8px" class="muted">Indicadores citados: ${t.evidence_summary.length ? t.evidence_summary.map((e) => `<span class="ev ${roleCls(e.role)}" title="${esc(e.role)}">${esc(e.code)} ×${e.count}</span>`).join("") : nr(null)}</div>
       </div>
       <div class="card sub"><h3>Risk Manager</h3>
-        <div class="row">${chip(r.verdict)}<span class="muted">fonte ${esc(r.source)}${r.rule ? ` · regra ${esc(r.rule)}` : ""}</span></div>
+        <div class="row">${chip(r.veto_effect ? `VETADO · ${r.veto_effect}` : r.verdict)}<span class="muted">fonte ${esc(r.source)}${r.rule ? ` · regra ${esc(r.rule)}` : ""}</span></div>
         ${rules}
         <p class="muted" style="margin-top:6px">VENDA/MANTER são auto-aprovadas; uma COMPRA passa por volatilidade → drawdown → concentração → Risk LLM. "PASSOU" sem valor: verificada antes da regra que disparou, mas a métrica não foi gravada.</p>
         <dl style="margin-top:10px"><dt>Drawdown em t</dt><dd>${pct(r.drawdown, 2)} <span class="muted">(recalculado de equity.csv; igual ao enviado nos prompts)</span></dd><dt>Efeito do veto</dt><dd>${veto}</dd><dt>Parecer LLM</dt><dd>${nr(r.analysis)}</dd></dl>
@@ -802,12 +831,12 @@ function renderAgents() {
       ...runs.map((id) => ({ label: id, n: 1, render: (k) => g(id).risk.rules.find((r) => `${r.source}|${r.rule ?? ""}|${r.verdict}` === k)?.count ?? 0 })),
     ],
     ruleKeys,
-  ) + `<p class="muted" style="margin-top:8px">Risk LLM (COMPRA com carteira em caixa): ${runs.map((id) => `${id} ${g(id).risk.llm_approved}/${g(id).risk.llm_calls} aprovações`).join(" · ")}.</p>`;
+  ) + `<p class="muted" style="margin-top:8px">Vetos efetivos / sem efeito: ${runs.map((id) => `${id} ${g(id).risk.vetoes_effective} / ${g(id).risk.vetoes - g(id).risk.vetoes_effective}`).join(" · ")}. Risk LLM (COMPRA com carteira em caixa): ${runs.map((id) => `${id} ${g(id).risk.llm_approved}/${g(id).risk.llm_calls} aprovações`).join(" · ")}.</p>`;
   const flowKeys = [...new Set(runs.flatMap((id) => g(id).flow.map((f) => `${f.technical}|${f.final}|${f.executed}`)))].sort();
   const flow = table(
     [
       { label: "Sinal técnico", render: (k) => sig(k.split("|")[0]) },
-      { label: "Decisão final (Risk/PM)", render: (k) => { const v = k.split("|")[1]; return v === "VETADO" ? chip("VETADO pelo Risk") : sig(v); } },
+      { label: "Decisão final (Risk/PM)", render: (k) => { const [tech, v] = k.split("|"); return v === "VETO_SEM_EFEITO" ? chip(tech === "COMPRA" ? "Veto sem efeito — carteira já no alvo" : "Veto sem efeito") : v === "VETO_EFETIVO" ? chip("VETO EFETIVO — ordem bloqueada") : sig(v); } },
       { label: "Ação executada", render: (k) => { const v = k.split("|")[2]; return SIDE[v] ? `<b class="${v === "BUY" ? "up" : "down"}">${SIDE[v]}</b>` : `<span class="muted">nenhuma ordem</span>`; } },
       ...runs.map((id) => ({ label: id, n: 1, render: (k) => g(id).flow.find((f) => `${f.technical}|${f.final}|${f.executed}` === k)?.count ?? 0 })),
     ],
@@ -817,13 +846,13 @@ function renderAgents() {
     ${card("Chamado · decidiu · alterou", concepts)}
     <div class="grid g-2" style="margin-top:16px">
       ${card("Votos por analista", `<div class="row">${picks}</div><div class="legend">${["COMPRA", "VENDA", "MANTER"].map((k) => `<span><i class="swatch" style="background:${SIG[k]}"></i>${k}</span>`).join("")}</div><div class="chart sm"><canvas id="c-votes"></canvas></div><div style="margin-top:10px">${voteTable}</div>`)}
-      ${card("Frequência de consenso (maioria vencedora)", margins)}
+      <div class="stack">
+        ${card("Frequência de consenso (maioria vencedora)", margins)}
+        ${card("Risk Manager · vereditos por fonte", risk)}
+      </div>
     </div>
-    <div style="margin-top:16px">${card("Divergência entre L01 / L02 / L03", cross)}</div>
-    <div class="grid g-2" style="margin-top:16px">
-      ${card("Sinal técnico → decisão final → ação executada", flow)}
-      ${card("Risk Manager · vereditos por fonte", risk)}
-    </div>`;
+    <div style="margin-top:16px">${card("Sinal técnico → decisão final → ação executada", flow)}</div>
+    <div style="margin-top:16px">${card("Divergência entre L01 / L02 / L03", cross)}</div>`;
   charts["c-votes"]?.destroy();
   charts["c-votes"] = new Chart(document.getElementById("c-votes"), {
     type: "bar",
@@ -865,6 +894,8 @@ document.addEventListener("click", (e) => {
   if (dr) { Object.assign(state, { cycle: null }); loadDecision(dr.dataset.drun, state.decision?.session || A().participants[dr.dataset.drun].trades[0].decision_session); renderDecisions(); }
   const ss = e.target.closest("[data-session]");
   if (ss?.dataset.session) loadDecision(state.dRun, ss.dataset.session);
+  const cp = e.target.closest("[data-copy]");
+  if (cp) navigator.clipboard?.writeText(cp.dataset.copy).then(() => { cp.textContent = "✓"; setTimeout(() => (cp.textContent = "⧉"), 1200); });
   const ar = e.target.closest("[data-agent-run]");
   if (ar) { state.agentRun = ar.dataset.agentRun; renderAgents(); }
 });

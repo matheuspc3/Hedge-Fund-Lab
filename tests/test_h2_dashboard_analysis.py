@@ -108,6 +108,10 @@ def test_layers_called_decided_changed(analysis):
         assert a["technical"]["implied_orders"] == a["orders"]["executed"]
     assert analysis["agents"]["L01"]["portfolio"]["called"] == 80
     assert analysis["agents"]["L01"]["risk"]["vetoes"] == 76
+    vetoes = [
+        f for f in analysis["agents"]["L01"]["flow"] if f["final"].startswith("VETO")
+    ]
+    assert [(f["final"], f["count"]) for f in vetoes] == [("VETO_SEM_EFEITO", 76)]
 
 
 def test_decision_detail_and_missing_data():
@@ -152,3 +156,21 @@ def test_http_exposes_no_prompts_envelopes_or_journal():
         assert leak not in payload
     assert trace["calls"][0]["inputs"]["features"] and trace["calls"][0]["explanation"]
     assert "analysis" not in trace["calls"][-1]["inputs"]["risk_verdict"]
+
+
+def test_effective_veto_keeps_its_own_label():
+    # Not observed in this Validation; a COMPRA vetoed while in cash would block an order.
+    d = {
+        "technical_outcome": "COMPRA",
+        "risk_verdict": "VETADO",
+        "risk_source": "HARD_RULE",
+        "risk_rule": "DRAWDOWN",
+        "observed_weight": 0.0,
+        "vote_counts": {"COMPRA": 5, "VENDA": 0, "MANTER": 0},
+        "valid_votes": 5,
+        "consensus_reached": True,
+    }
+    run = {"decisions": {"2024-09-02": d}, "params": {}, "trades": [], "calls": {}}
+    agents = h2_api._agents(run, {"2024-09-02": "2024-09-03"})
+    assert agents["flow"][0]["final"] == "VETO_EFETIVO"
+    assert agents["risk"]["vetoes_effective"] == 1

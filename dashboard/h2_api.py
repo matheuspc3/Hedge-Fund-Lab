@@ -709,12 +709,13 @@ def _agents(run, nxt):
         f"{max(d['vote_counts'].values())}/{d['valid_votes']}" if d.get("consensus_reached") else "sem maioria"
         for d in decisions.values()
     )
+    def final(s, d):  # a veto is effective only if the consensus alone would have bought
+        if d["risk_verdict"] == "VETADO":
+            return "VETO_EFETIVO" if implied[s] == "BUY" else "VETO_SEM_EFEITO"
+        return d.get("portfolio_decision") or "—"
+
     flow = collections.Counter(
-        (
-            d["technical_outcome"],
-            "VETADO" if d["risk_verdict"] == "VETADO" else d.get("portfolio_decision") or "—",
-            executed[s] or "—",
-        )
+        (d["technical_outcome"], final(s, d), executed[s] or "—")
         for s, d in decisions.items()
     )
     return {
