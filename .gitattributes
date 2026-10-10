@@ -7,3 +7,5 @@ docs/evidence/cal_b3/run_*/** -text
 docs/H2_V6_OPERATIONAL_AMENDMENT_OA1.md -text
 scripts/run_h2_v6_provisional.py -text
 docs/evidence/h2_v6_provisional/** -text
+# Biblioteca de terceiros servida localmente: bytes exatos do pacote npm.
+dashboard/vendor/** -text

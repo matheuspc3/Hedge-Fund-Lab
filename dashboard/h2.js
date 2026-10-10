@@ -43,16 +43,31 @@ function table(cols, rows, opts = {}) {
 }
 
 // ── data ────────────────────────────────────────────────────────────────────
-async function get(path) {
-  const r = await fetch(path, { cache: "no-store" });
-  return r.ok ? r.json() : null;
+// Each request owns a slot: a newer request in the same slot, or a source switch,
+// aborts the older one, and an aborted or stale answer is never applied.
+const STALE = Symbol("stale");
+const inflight = new Map();
+async function request(slot, path) {
+  inflight.get(slot)?.abort();
+  const ctl = new AbortController(), source = state.source;
+  inflight.set(slot, ctl);
+  try {
+    const r = await fetch(path, { cache: "no-store", signal: ctl.signal });
+    const body = r.ok ? await r.json() : null;
+    return ctl.signal.aborted || source !== state.source ? STALE : body;
+  } catch (e) {
+    return ctl.signal.aborted || source !== state.source ? STALE : null;
+  } finally {
+    if (inflight.get(slot) === ctl) inflight.delete(slot);
+  }
 }
+const abort = (slot) => inflight.get(slot)?.abort();
 async function load() {
   const source = state.source;
-  const [status, data] = await Promise.all([get("/api/h2/status"), get(`/api/h2/validation?source=${source}`)]);
-  if (source !== state.source) return; // a newer switch won
-  state.status = status;
-  state.data = data;
+  state.loading = true;
+  const [status, data] = await Promise.all([request("status", "/api/h2/status"), request("validation", `/api/h2/validation?source=${source}`)]);
+  if (status === STALE || data === STALE) return; // a newer switch won
+  Object.assign(state, { status, data, loading: false });
   render();
   const running = data?.state === "EM EXECUÇÃO";
   document.getElementById("live-dot").classList.toggle("on", running);
@@ -60,34 +75,55 @@ async function load() {
   clearTimeout(state.timer);
   if (running) state.timer = setTimeout(load, 10000);
 }
+function setSource(source) {
+  inflight.forEach((c) => c.abort());
+  clearTimeout(state.timer);
+  history.replaceState(null, "", `#${source}/${state.tab}`);
+  document.querySelectorAll("[data-source]").forEach((x) => x.setAttribute("aria-pressed", x.dataset.source === source));
+  // never mix sources: drop everything the previous source produced before rendering
+  Object.assign(state, { source, status: null, data: null, detail: null, trace: null, session: null, analysis: undefined, decision: null, pending: null, bollEvent: null, cycle: null });
+  render();
+  return load().then(() => {
+    if (source !== state.source || !state.data) return;
+    if (state.tab === "audit") loadDetail();
+    if (["decisions", "compare", "agents"].includes(state.tab) && !state.data.synthetic) loadAnalysis();
+    else if (state.data.synthetic) { state.analysis = null; render(); }
+  });
+}
 async function loadAnalysis() {
   if (state.analysis !== undefined) return;
-  const source = state.source;
   state.analysis = "loading";
   render();
-  const a = await get(`/api/h2/analysis?source=${source}`);
-  if (source !== state.source) return;
+  const a = await request("analysis", `/api/h2/analysis?source=${state.source}`);
+  if (a === STALE) return;
   state.analysis = a;
   render();
 }
 async function loadDecision(run, session) {
   Object.assign(state, { dRun: run, bollEvent: null, pending: session });
   renderDecisionPanel();
-  const d = await get(`/api/h2/decision?source=${state.source}&run=${run}&session=${session}`);
-  if (state.pending !== session || state.dRun !== run) return; // a newer click won
+  const d = await request("decision", `/api/h2/decision?source=${state.source}&run=${run}&session=${session}`);
+  if (d === STALE) return; // a newer click or source won
   Object.assign(state, { decision: d || { missing: session, run }, pending: null });
   renderDecisionPanel();
   renderCycles();
   updateBands();
 }
 async function loadDetail() {
-  state.detail = await get(`/api/h2/run?source=${state.source}&run=${state.auditRun}`);
-  state.trace = null; state.session = null;
+  abort("trace"); // a trace belongs to the previous run
+  Object.assign(state, { detail: null, trace: null, session: null });
+  const pending = request("detail", `/api/h2/run?source=${state.source}&run=${state.auditRun}`);
+  renderAudit();
+  const d = await pending;
+  if (d === STALE) return;
+  state.detail = d;
   renderAudit();
 }
 async function loadTrace(session) {
   state.session = session;
-  state.trace = await get(`/api/h2/trace?source=${state.source}&run=${state.auditRun}&session=${session}`);
+  const t = await request("trace", `/api/h2/trace?source=${state.source}&run=${state.auditRun}&session=${session}`);
+  if (t === STALE) return;
+  state.trace = t;
   renderAudit();
 }
 
@@ -144,7 +180,7 @@ const curveSeries = (ids, key = "equity") => ids.filter((id) => state.data.curve
 function renderBanner() {
   const d = state.data;
   const el = document.getElementById("banner");
-  if (!d) return (el.innerHTML = `<div class="banner info">API indisponível — inicie <code>python dashboard/server.py</code>.</div>`);
+  if (!d) return (el.innerHTML = state.loading ? `<div class="banner info">Carregando fonte ${esc(state.source)}…</div>` : `<div class="banner info">API indisponível — inicie <code>python dashboard/server.py</code>.</div>`);
   if (d.synthetic) return (el.innerHTML = `<div class="banner demo">▨ ${esc(d.banner)} — valores fictícios gerados para prévia visual; não são resultados do experimento.</div>`);
   if (d.source === "provisional") return (el.innerHTML = `<div class="banner prov">! VALIDATION OA-1 — NÃO RATIFICADA ACADEMICAMENTE · execução provisória autorizada somente pelo autor; análise exploratória, não confirmatória. Estado: ${esc(d.state)}</div>`);
   el.innerHTML = `<div class="banner info">Validation oficial — exige aprovação de autor, coautor e orientador, System Freeze e consentimento próprio. Estado: ${esc(d.state)}</div>`;
@@ -312,11 +348,11 @@ function renderAudit() {
         det.decisions,
         { click: true, selected: (r) => r.decision_session === state.session },
       )
-    : empty(det ? "Sem decisões LLM (benchmark determinístico)." : "Run não selado nesta fonte.");
+    : empty(inflight.has("detail") ? "Carregando…" : det ? "Sem decisões LLM (benchmark determinístico)." : "Run não selado nesta fonte.");
   const tr = state.trace;
   const traceHtml = tr
     ? tr.calls.length
-      ? tr.calls.map((c) => `<div class="card" style="margin-bottom:10px;padding:12px"><div class="row" style="margin-bottom:6px">${chip(c.status === "ok" ? "VALID" : `ERRO ${c.error_type || ""}`)}<b>${esc({ technical_analyst: "Technical", risk_manager: "Risk", portfolio_manager: "Portfolio" }[c.stage] || c.stage)}</b>${c.analyst_id ? `analista ${c.analyst_id}` : ""}<span style="color:var(--muted)">seq ${c.sequence} · ${num(c.duration_ms / 1000, 1)} s · tentativas ${c.attempt_count ?? "—"} · tokens ${c.token_usage?.prompt_tokens ?? "—"}/${c.token_usage?.completion_tokens ?? "—"}</span></div><pre>${esc(JSON.stringify(c.validated_response ?? c.error_message, null, 2))}</pre>${c.technical_evidence ? `<details><summary style="cursor:pointer;color:var(--muted);font-size:12px">evidência técnica</summary><pre>${esc(JSON.stringify(c.technical_evidence, null, 2))}</pre></details>` : ""}<details><summary style="cursor:pointer;color:var(--muted);font-size:12px">prompt do usuário</summary><pre>${esc(c.user_prompt)}</pre></details></div>`).join("")
+      ? tr.calls.map((c) => `<div class="card" style="margin-bottom:10px;padding:12px"><div class="row" style="margin-bottom:6px">${chip(c.status === "ok" ? "VALID" : `ERRO ${c.error_type || ""}`)}<b>${esc({ technical_analyst: "Technical", risk_manager: "Risk", portfolio_manager: "Portfolio" }[c.stage] || c.stage)}</b>${c.analyst_id ? `analista ${c.analyst_id}` : ""}<span style="color:var(--muted)">seq ${c.sequence} · ${num(c.duration_ms / 1000, 1)} s · tentativas ${c.attempt_count ?? "—"} · tokens ${c.token_usage?.prompt_tokens ?? "—"}/${c.token_usage?.completion_tokens ?? "—"}</span></div><pre>${esc(JSON.stringify(c.response ?? c.error_message, null, 2))}</pre>${c.explanation ? `<details><summary style="cursor:pointer;color:var(--muted);font-size:12px">justificativa registrada</summary><pre>${esc(c.explanation)}</pre></details>` : ""}${c.inputs ? `<details><summary style="cursor:pointer;color:var(--muted);font-size:12px">entradas estruturadas</summary><pre>${esc(JSON.stringify(c.inputs, null, 2))}</pre></details>` : ""}</div>`).join("")
       : empty("Nenhuma chamada LLM nesta sessão.")
     : empty("Clique numa sessão para ver as evidências Technical, Risk e Portfolio.");
   const trades = det?.trades?.length
@@ -478,7 +514,7 @@ function priceChart() {
           .map((x) => ({ ds: ch.data.datasets[x.datasetIndex], raw: ch.data.datasets[x.datasetIndex].data[x.index] }))
           .find((h) => h.raw?.ev);
         if (hit && LLM.includes(hit.ds.run)) return loadDecision(hit.ds.run, hit.raw.ev.decision_session);
-        if (hit) { Object.assign(state, { bollEvent: hit.raw.ev, decision: null, pending: null }); updateBands(); return renderDecisionPanel(); }
+        if (hit) { abort("decision"); Object.assign(state, { bollEvent: hit.raw.ev, decision: null, pending: null }); updateBands(); return renderDecisionPanel(); }
         const i = Math.round(ch.scales.x.getValueForPixel(e.x));
         if (i >= 0 && i < m.dates.length - 1) loadDecision(state.dRun, m.dates[i]);
       },
@@ -731,7 +767,7 @@ function renderAgents() {
   const untested = ["DRAWDOWN", "VOLATILITY"].filter((r) => !fired.has(r));
   const callout = `<div class="callout">
     <p>${tag("f")} ${inert
-      ? `<b>Risk Manager e Portfolio Manager foram chamados e produziram decisões, mas não alteraram nenhuma ordem executada</b> em ${runs.join(", ")}. Os vetos (${runs.map((id) => g(id).risk.vetoes).join(" / ")}) ocorreram em COMPRA com a carteira já no alvo; o PM seguiu o consenso em ${runs.map((id) => `${g(id).portfolio.followed}/${g(id).portfolio.called}`).join(", ")} chamadas. A trajetória financeira foi função do consenso técnico e do sizing 0%/100%.`
+      ? `<b>Nesta janela, Risk Manager e Portfolio Manager foram chamados e produziram decisões, mas não alteraram nenhuma ordem executada</b> em ${runs.join(", ")}: nenhuma contribuição incremental observada. Os vetos (${runs.map((id) => g(id).risk.vetoes).join(" / ")}) ocorreram em COMPRA com a carteira já no alvo; o PM seguiu o consenso em ${runs.map((id) => `${g(id).portfolio.followed}/${g(id).portfolio.called}`).join(", ")} chamadas. A trajetória financeira foi função do consenso técnico e do sizing 0%/100%.`
       : "Há sessões em que Risk ou PM alteraram a ordem executada; ver a coluna 3."}</p>
     ${untested.length ? `<p>${tag("l")} As regras ${untested.join(" e ")} nunca dispararam; a Validation não traz evidência sobre o efeito delas.</p>` : ""}
     <p>${tag("h")} Se essas camadas agiriam em outro regime de mercado (drawdown > 25% sob consenso COMPRA, volatilidade > 50%) não pode ser afirmado com esta janela.</p></div>`;
@@ -758,7 +794,7 @@ function renderAgents() {
       { label: "equity/trades", render: (r) => (r.identical_equity_and_trades ? chip("IDÊNTICOS (bytes)") : "distintos") },
     ],
     c.pairs,
-  ) + `<p class="muted" style="margin-top:8px">Trajetórias financeiras idênticas com respostas amostradas independentemente: as divergências caíram em sessões em que nenhuma alternativa muda a posição (VENDA × MANTER em caixa, COMPRA × MANTER já comprado).</p>` : empty("Requer ao menos dois runs selados.");
+  ) + `<p class="muted" style="margin-top:8px">Trajetórias financeiras idênticas com chamadas operacionalmente independentes (sem reuso de respostas; independência estatística não testada): as divergências caíram em sessões em que nenhuma alternativa muda a posição (VENDA × MANTER em caixa, COMPRA × MANTER já comprado).</p>` : empty("Requer ao menos dois runs selados.");
   const ruleKeys = [...new Set(runs.flatMap((id) => g(id).risk.rules.map((r) => `${r.source}|${r.rule ?? ""}|${r.verdict}`)))];
   const risk = table(
     [
@@ -815,17 +851,7 @@ document.querySelectorAll("nav [data-tab]").forEach((b) => b.addEventListener("c
   render();
   if (["decisions", "compare", "agents"].includes(state.tab) && !state.data?.synthetic) loadAnalysis();
 }));
-document.querySelectorAll("[data-source]").forEach((b) => b.addEventListener("click", () => {
-  state.source = b.dataset.source;
-  history.replaceState(null, "", `#${state.source}/${state.tab}`);
-  document.querySelectorAll("[data-source]").forEach((x) => x.setAttribute("aria-pressed", x === b));
-  Object.assign(state, { data: null, detail: null, trace: null, session: null, analysis: undefined, decision: null, pending: null, bollEvent: null, cycle: null }); // never mix sources
-  load().then(() => {
-    if (state.tab === "audit") loadDetail();
-    if (["decisions", "compare", "agents"].includes(state.tab) && !state.data?.synthetic) loadAnalysis();
-    else if (state.data?.synthetic) { state.analysis = null; render(); }
-  });
-}));
+document.querySelectorAll("[data-source]").forEach((b) => b.addEventListener("click", () => setSource(b.dataset.source)));
 document.addEventListener("click", (e) => {
   const f = e.target.closest("[data-focus]");
   if (f) { state.focus = f.dataset.focus; renderOverview(); }

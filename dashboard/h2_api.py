@@ -49,6 +49,9 @@ LABELS = {
     "bollinger_state_h2_proposed": "Bollinger Estado",
 }
 ROOT_FILES = ("summary.json", "cost_closure.json", "validation_release.json")
+# Per-run files served over HTTP. llm_calls.jsonl (full prompts, raw responses) and
+# provider_journal.jsonl (HTTP envelopes) are deliberately absent: offline audit only.
+RUN_FILES = ("manifest.json", "equity.csv", "trades.csv", "decisions.jsonl")
 CAPITAL = 100000.0
 DEMO_BANNER = "DEMONSTRAÇÃO — DADOS SINTÉTICOS"
 
@@ -304,9 +307,9 @@ def validation(source):
             }
         )
         files[slot] = [
-            {"name": p.name, "sha256": _sha(p), "bytes": p.stat().st_size}
-            for p in sorted(run.iterdir())
-            if p.is_file()
+            {"name": n, "sha256": _sha(run / n), "bytes": (run / n).stat().st_size}
+            for n in RUN_FILES
+            if (run / n).is_file()
         ]
     summary = _json(root / "summary.json")
     closure = _json(root / "cost_closure.json")
@@ -412,38 +415,18 @@ def run_detail(source, slot):
 
 
 def trace(source, slot, session):
-    """LLM calls (Technical/Risk/Portfolio evidence) for one decision session."""
+    """LLM calls (Technical/Risk/Portfolio evidence) for one decision session.
+
+    Structured inputs and validated outputs only: full prompts, raw envelopes and
+    the provider journal stay on disk for offline audit.
+    """
     if source == "demo":
         return demo_trace(slot, session)
     run = _run_dir(SOURCES[source], slot)
-    if run is None or not (run / "llm_calls.jsonl").is_file():
+    calls = _load(run / "llm_calls.jsonl", _parse_calls) if run else None
+    if calls is None:
         return None
-    keys = (
-        "sequence",
-        "stage",
-        "analyst_id",
-        "status",
-        "validated_response",
-        "technical_evidence",
-        "token_usage",
-        "attempt_count",
-        "retry_count",
-        "duration_ms",
-        "error_type",
-        "error_message",
-        "resolved_model",
-        "provider_response_id",
-        "finish_reason",
-        "identity_digest",
-        "user_prompt",
-    )
-    calls = []
-    with (run / "llm_calls.jsonl").open(encoding="utf-8") as stream:
-        for line in stream:
-            if f'"decision_session":"{session}"' in line:
-                record = json.loads(line)
-                calls.append({k: record.get(k) for k in keys})
-    return {"slot": slot, "session": session, "calls": calls}
+    return {"slot": slot, "session": session, "calls": calls.get(session, [])}
 
 
 def artifact_path(source, slot, name):
@@ -454,10 +437,9 @@ def artifact_path(source, slot, name):
     if slot == "_root":
         return root / name if name in ROOT_FILES and (root / name).is_file() else None
     run = _run_dir(root, slot) if slot in (*LLM, *BENCHMARKS) else None
-    if run is None:
+    if run is None or name not in RUN_FILES:
         return None
-    names = {p.name for p in run.iterdir() if p.is_file()}
-    return run / name if name in names else None
+    return run / name if (run / name).is_file() else None
 
 
 # ── Post-Validation analysis (sealed artifacts only) ───────────────────────
@@ -497,15 +479,22 @@ def _parse_decisions(path):
     return {d["decision_session"]: d for d in map(json.loads, filter(None, lines))}
 
 
-def _prompt(text):
+def _inputs(text):
+    """Structured inputs of a prompt (features, signal, risk metrics), not its text."""
     try:
-        return json.loads(text)
+        prompt = json.loads(text)
     except (TypeError, ValueError):
         return None
+    if not isinstance(prompt, dict):
+        return None
+    out = {k: prompt[k] for k in ("features", "technical_signal", "risk_metrics") if k in prompt}
+    if isinstance(prompt.get("risk_verdict"), dict):
+        out["risk_verdict"] = {k: v for k, v in prompt["risk_verdict"].items() if k != "analysis"}
+    return out
 
 
 def _parse_calls(path):
-    """LLM trace slimmed to what the analysis shows; raw envelopes stay on disk."""
+    """LLM trace slimmed to what the dashboard shows; prompts and envelopes stay on disk."""
     sessions = collections.defaultdict(list)
     with path.open(encoding="utf-8") as stream:
         for line in filter(str.strip, stream):
@@ -517,11 +506,23 @@ def _parse_calls(path):
                     "analyst_id": r.get("analyst_id"),
                     "status": r.get("status"),
                     "response": r.get("validated_response"),
-                    "prompt": _prompt(r.get("user_prompt")),
+                    "inputs": _inputs(r.get("user_prompt")),
                     "explanation": (r.get("technical_evidence") or {}).get(
                         "rendered_explanation"
                     ),
                     "response_id": r.get("provider_response_id"),
+                    **{
+                        k: r.get(k)
+                        for k in (
+                            "token_usage",
+                            "attempt_count",
+                            "duration_ms",
+                            "error_type",
+                            "error_message",
+                            "finish_reason",
+                            "resolved_model",
+                        )
+                    },
                 }
             )
     return dict(sessions)
@@ -561,7 +562,7 @@ def _market(runs):
     features = next(
         (
             {
-                s: next(((c["prompt"] or {}).get("features") for c in cs if c["stage"] == TA), None)
+                s: next(((c["inputs"] or {}).get("features") for c in cs if c["stage"] == TA), None)
                 or {}
                 for s, cs in runs[slot]["calls"].items()
             }
@@ -860,10 +861,10 @@ def decision(source, slot, session):
     pm = next((c for c in calls if c["stage"] == PM), None)
     equity = list(run["equity"].values())[: i + 1]
     drawdown = round(1 - equity[-1] / max(equity), 6) + 0.0  # canonical_number
-    recorded = (risk and (risk["prompt"] or {}).get("risk_metrics")) or (
-        pm and ((pm["prompt"] or {}).get("risk_verdict") or {}).get("risk_metrics")
+    recorded = (risk and (risk["inputs"] or {}).get("risk_metrics")) or (
+        pm and ((pm["inputs"] or {}).get("risk_verdict") or {}).get("risk_metrics")
     )
-    sent = ((pm or risk or {}).get("prompt") or {}).get("technical_signal")
+    sent = ((pm or risk or {}).get("inputs") or {}).get("technical_signal")
     target = params.get("long_target_weight", 1.0)
     implied = _implied(d, target)
 
@@ -928,7 +929,7 @@ def decision(source, slot, session):
                 }
                 for c in ta
             ],
-            "features": (ta[0]["prompt"] or {}).get("features") if ta else None,
+            "features": (ta[0]["inputs"] or {}).get("features") if ta else None,
             "evidence_summary": [
                 {"code": code, "role": role, "count": n} for (code, role), n in evidence.most_common()
             ],
@@ -1158,22 +1159,20 @@ def demo_trace(slot, session):
             "stage": "technical_analyst",
             "analyst_id": i + 1,
             "status": "ok",
-            "validated_response": {
+            "response": {
                 "signal": rng.choice(["COMPRA", "MANTER", "VENDA"]),
                 "confidence": round(rng.uniform(0.4, 0.9), 2),
             },
-            "technical_evidence": None,
+            "inputs": None,
+            "explanation": "(demonstração — sem justificativa real)",
+            "response_id": None,
             "token_usage": {"prompt_tokens": 1100, "completion_tokens": 180},
             "attempt_count": 1,
-            "retry_count": 0,
             "duration_ms": rng.randint(2000, 4000),
             "error_type": None,
             "error_message": None,
-            "resolved_model": "demo",
-            "provider_response_id": None,
             "finish_reason": "STOP",
-            "identity_digest": None,
-            "user_prompt": "(demonstração — sem prompt real)",
+            "resolved_model": "demo",
         }
         for i in range(5)
     ]

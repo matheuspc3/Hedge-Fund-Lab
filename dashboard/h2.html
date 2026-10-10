@@ -124,6 +124,7 @@ pre { background: var(--page); border: 1px solid var(--border); border-radius: 8
 .legend .dash { width: 16px; height: 0; border-top: 2px dashed; }
 .legend .solid { width: 16px; height: 0; border-top: 2px solid; }
 footer { color: var(--muted); font-size: 12px; text-align: center; padding: 24px; }
+@media (max-width: 520px) { .chip { white-space: normal; overflow-wrap: anywhere; } }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
 </head>
@@ -158,7 +159,8 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 24px
   <section id="tab-audit" hidden></section>
 </main>
 <footer>Painel somente leitura · cálculos e validação no backend · nenhum controle dispara inferência · Final Test bloqueado</footer>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<!-- Chart.js 4.4.1, npm dist/chart.umd.js (sha256 74401d73…), served locally: no CDN at presentation time -->
+<script src="/vendor/chart.umd.js"></script>
 <script src="/h2.js"></script>
 </body>
 </html>

@@ -20,7 +20,7 @@ sintéticos, faixa `DEMONSTRAÇÃO — DADOS SINTÉTICOS`, nunca misturados com 
 | `/api/h2/validation?source=` | métricas, curvas, ΔSharpe, progresso, custos, selos |
 | `/api/h2/run?source=&run=` | decisions e timeline de trades de um run |
 | `/api/h2/trace?source=&run=&session=` | chamadas Technical/Risk/Portfolio de uma sessão |
-| `/api/h2/artifact?source=&run=&name=` | download de artifact selado (lista branca) |
+| `/api/h2/artifact?source=&run=&name=` | download de artifact selado (lista branca: `manifest.json`, `equity.csv`, `trades.csv`, `decisions.jsonl` e os três arquivos de fase) |
 | `/api/h2/analysis?source=` | preço × decisões, ciclos, exposição, comportamento multiagente |
 | `/api/h2/decision?source=&run=&session=` | Technical → Risk → Portfolio → execução de uma sessão |
 
@@ -47,6 +47,11 @@ Abra `http://localhost:8081/h2#provisional/decisions` com a fonte **Provisória 
 
 Tudo é calculado no backend a partir dos artifacts `COMPLETE` da fonte. Nenhum preço externo é
 usado e o snapshot não é aberto. A demonstração não tem traces e mostra um estado vazio.
+`llm_calls.jsonl` (prompts completos), `provider_journal.jsonl` (envelopes HTTP) e os SQLite
+não são servidos por HTTP; os traces mostram só entradas estruturadas e respostas validadas, e
+a auditoria completa continua offline sobre os arquivos em disco. O Chart.js 4.4.1 é servido
+localmente (`dashboard/vendor/`), então os gráficos funcionam sem CDN; sem internet, só as
+fontes Google caem para as fontes do sistema.
 Verificação: `.venv\Scripts\python.exe -B -m pytest tests/test_h2_dashboard_analysis.py`.
 Síntese: [H2_V6_OA1_VALIDATION_SCIENTIFIC_SUMMARY.md](H2_V6_OA1_VALIDATION_SCIENTIFIC_SUMMARY.md).
 

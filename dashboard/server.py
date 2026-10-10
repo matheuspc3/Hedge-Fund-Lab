@@ -172,6 +172,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
 class ReusableTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     allow_reuse_address = True
+    # The default listen backlog (5) refuses connections when rapid source/run
+    # switches fire parallel requests; refused fetches looked like "API down".
+    request_queue_size = 64
 
     def handle_error(self, request, client_address):
         """Ignora erros de socket inofensivos (como navegador cancelando requisição)."""

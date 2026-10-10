@@ -43,7 +43,8 @@ contém o período do Final Test) foi feita para produzi-la.
   (*total return*); custo de 5 bps de spread + 0,032% sobre o nocional; capital inicial
   R$ 100.000.
 - **Janela:** decisões de 2024-09-02 a 2025-08-28 (247 sessões), settlement em 2025-08-29.
-- **Repetições:** R = 3 runs independentes (L01, L02, L03), executados em sequência.
+- **Repetições:** R = 3 runs operacionalmente independentes (L01, L02, L03), executados em
+  sequência (ver §5 para o que essa independência significa e o que não demonstra).
 - **Benchmarks determinísticos:** Buy & Hold, SMA Regime 50/200 e Bollinger Estado 20/2.
 - **Sensibilidade de custos:** grade 0, 5, 10 e 20 bps, por replay exato das respostas
   gravadas.
@@ -105,17 +106,23 @@ técnico sozinho implicaria dada a posição em *t*.
 - **[F]** Todos os vetos foram da regra `CONCENTRATION` sobre COMPRA com a carteira já em
   100% (`BUY_AT_TARGET_NOOP`): sem o veto também não haveria ordem. As regras de drawdown e
   de volatilidade nunca dispararam. O Risk LLM aprovou todas as compras.
-- **[F]** O PM seguiu o consenso técnico em 100% das chamadas. **Risk e Portfolio não
-  tiveram efeito incremental observado:** a trajetória financeira foi função do consenso
-  técnico e do sizing 0% / 100%.
+- **[F]** O PM seguiu o consenso técnico em 100% das chamadas. **Nesta janela, Risk e
+  Portfolio não tiveram contribuição incremental observada:** foram chamados e produziram
+  decisões, mas nenhuma alterou a ordem executada, e a trajetória financeira foi função do
+  consenso técnico e do sizing 0% / 100%. A constatação vale para a Validation analisada;
+  não mostra que essas camadas sejam inócuas em outros regimes (§7).
 - **[F]** Toda compra foi decidida com fechamento acima da SMA50 e toda venda com
   fechamento abaixo dela; as evidências mais citadas pelos analistas foram
   `CLOSE_ABOVE_SMA50` / `CLOSE_BELOW_SMA50`, seguidas dos sinais de MACD.
-- **[F] Independência operacional dos três runs.** As perguntas técnicas são idênticas por
-  construção (mesmo `identity_digest`), mas as respostas são independentes: 3.963
-  `provider_response_id` distintos, nenhum envelope HTTP repetido entre runs e janelas de
-  execução sem sobreposição. A concordância de votos é semelhante entre todos os pares
-  (L01×L02 93,4%; L01×L03 92,6%; L02×L03 93,5%).
+- **[F] Independência operacional das chamadas.** As perguntas técnicas são idênticas por
+  construção (mesmo `identity_digest`), mas cada run fez suas próprias chamadas ao
+  provedor: 3.963 `provider_response_id` distintos, nenhum envelope HTTP repetido entre runs
+  e janelas de execução sem sobreposição. Não houve reutilização de respostas entre runs. A
+  concordância de votos é semelhante entre todos os pares (L01×L02 93,4%; L01×L03 92,6%;
+  L02×L03 93,5%).
+- **[L]** "Independência" aqui é operacional: chamadas distintas, sem cache nem reuso. A
+  independência estatística das respostas (por exemplo, ausência de correlação induzida
+  pelo mesmo prompt e pelo mesmo modelo) não foi testada e não é afirmada.
 - **[F] Trajetórias idênticas com respostas diferentes.** L02 e L03 têm `equity.csv` e
   `trades.csv` idênticos byte a byte, embora os votos difiram em 37 sessões e o resultado
   técnico em 10. Nenhuma dessas 10 sessões podia mudar a posição: foram VENDA × MANTER com
@@ -125,10 +132,32 @@ técnico sozinho implicaria dada a posição em *t*.
 ## 6. Explicação observacional do desempenho
 
 - **[F] A diferença para o B&H vem do calendário de exposição, não do retorno nos dias
-  investidos.** Nos dias em que a H2 ficou comprada o dia inteiro, o retorno diário foi
-  igual ao do B&H. A H2 ficou comprada no fechamento de 141 (L01) e 140 (L02/L03) das 247
-  sessões. Nos 100 pregões em caixa o dia inteiro, o ativo subiu +28,7%; nos pregões
-  comprados o dia inteiro, caiu −23,7% (L01) e −26,5% (L02/L03).
+  investidos.** A H2 ficou comprada no fechamento de 141 (L01) e 140 (L02/L03) das 247
+  sessões. A tabela decompõe exatamente a diferença em log-retorno,
+  `Σ_t [ln(1 + r_H2) − ln(1 + r_B&H)] = ln(P_H2(T) / P_B&H(T))`, classificando cada um dos
+  247 retornos diários pelo estado da H2 no dia (diagnóstico §7, recalculado a partir de
+  `equity.csv` e `trades.csv`):
+
+  | Estado do dia | L01: Δ log (dias; ativo em log) | L02 = L03: Δ log (dias; ativo em log) |
+  |---|---:|---:|
+  | Comprada o dia inteiro | 0,0000 (135; −0,2711) | 0,0000 (133; −0,3076) |
+  | Em caixa o dia inteiro | **−0,2522** (100; +0,2522) | **−0,2522** (100; +0,2522) |
+  | Entrada na abertura | +0,0035 (6) | −0,0027 (7) |
+  | Saída na abertura | +0,0428 (6) | +0,0149 (7) |
+  | **Total = ln(P_H2 / P_B&H)** | **−0,2059** (razão 0,8139) | **−0,2400** (razão 0,7867) |
+
+  - Nos dias comprados o dia inteiro, a contribuição é nula: a H2 estava 100% investida,
+    como o B&H.
+  - **Os dias em caixa são a principal contribuição negativa** (−0,2522 nos três runs): são
+    os 100 pregões em que o ativo subiu +28,7% e a H2 não participou.
+  - **Os dias de entrada e saída também entram na diferença final**, mas nesta janela
+    compensaram parte dela: +0,0463 em L01 e +0,0122 em L02/L03. No dia de entrada a H2 perde
+    o gap entre o fechamento anterior e a abertura; no dia de saída deixa de capturar o
+    movimento da abertura ao fechamento. Os dois efeitos incluem o custo da ordem. Em
+    L02/L03 as entradas somaram −0,0027, e a saída de 2025-02-14 sozinha contribuiu −0,0279,
+    num dia de alta de 3,08%.
+  - A diferença de −0,034 em log entre L01 e L02/L03 vem só desses dias de troca, ligados ao
+    episódio de venda e recompra de 2025-02-14 / 2025-02-17.
 - **[F] Timing desfavorável de entrada e saída.** L01 fez 6 ciclos e L02/L03 fizeram 7,
   com **um único ciclo lucrativo** em cada. Todas as recompras saíram acima do preço da
   venda anterior (+1,2% a +5,4%), e o ativo subiu em todos os períodos com pregões inteiros
@@ -178,8 +207,9 @@ técnico sozinho implicaria dada a posição em *t*.
 
 - Para o TCC, a Validation OA-1 documenta, de forma rastreável, um caso em que a
   arquitetura multiagente operou sem falhas de integridade (journal, selos e hashes
-  conferem) e ficou abaixo do B&H por timing de exposição, com Risk e Portfolio sem efeito
-  incremental observado. É um resultado descritivo e provisório, apresentável como tal.
+  conferem) e ficou abaixo do B&H por timing de exposição, sem contribuição incremental
+  observada de Risk e Portfolio nesta janela. É um resultado descritivo e provisório,
+  apresentável como tal.
 - O resultado não autoriza retuning: alterar limiares, sizing ou prompts com base nesta
   janela invalidaria o uso dela como Validation.
 - Próximos passos dependem de decisão humana fora deste documento: manifestação do

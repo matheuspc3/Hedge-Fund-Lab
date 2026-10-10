@@ -93,7 +93,7 @@ def test_cycles_exposure_and_prices(analysis):
         == 0.287
     )
     assert m["close"][0] is None and round(m["close"][1], 4) == 30.1357
-    features = h2_api._runs(VALIDATION)["L01"]["calls"]["2025-03-05"][0]["prompt"][
+    features = h2_api._runs(VALIDATION)["L01"]["calls"]["2025-03-05"][0]["inputs"][
         "features"
     ]
     i = m["dates"].index("2025-03-05")
@@ -136,3 +136,19 @@ def test_decision_detail_and_missing_data():
         ("official", "L01", "2024-09-04"),
     ):
         assert h2_api.decision(*args) is None
+
+
+def test_http_exposes_no_prompts_envelopes_or_journal():
+    for name in ("llm_calls.jsonl", "provider_journal.jsonl", "../summary.json", ".."):
+        assert h2_api.artifact_path("provisional", "L01", name) is None
+    assert h2_api.artifact_path("provisional", "_root", "provider.sqlite") is None
+    assert h2_api.artifact_path("provisional", "L01", "decisions.jsonl").is_file()
+    listed = {f["name"] for f in h2_api.validation("provisional")["files"]["L01"]}
+    assert listed == set(h2_api.RUN_FILES)
+    trace = h2_api.trace("provisional", "L01", "2024-09-18")
+    assert [c["stage"] for c in trace["calls"]][-1] == "portfolio_manager"
+    payload = json.dumps(trace, ensure_ascii=False)
+    for leak in ("user_prompt", "system_prompt", "raw_response", "identity_digest"):
+        assert leak not in payload
+    assert trace["calls"][0]["inputs"]["features"] and trace["calls"][0]["explanation"]
+    assert "analysis" not in trace["calls"][-1]["inputs"]["risk_verdict"]
