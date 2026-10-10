@@ -1,0 +1,33 @@
+{
+  "criterion": "HEDGE-FUND-LAB PREMIUM UI V1",
+  "checked_on": "2026-10-10",
+  "code_commit": "3656374",
+  "protected": {"files": 265, "changed": [], "checker": "scripts/check_h2_forward_dashboard.py"},
+  "focused_tests": {"passed": 46, "failed": 0, "dashboard_file": {"passed": 31, "new": 6}},
+  "full_suite_clean_tree": {
+    "passed": 1463,
+    "failed": 10,
+    "duration_seconds": 554,
+    "external_network_blocked": true,
+    "gemini_keys_in_env": false,
+    "failures": {
+      "environment_postgresql_5435": 7,
+      "outdated_historical_expectation": [
+        "tests/experiments/test_spec.py::test_registry_cobre_os_cinco_classicos_e_o_participante_llm",
+        "tests/experiments/test_v6_phase_routing.py::test_structural_failure_prevents_phase_selection_and_progression",
+        "tests/experiments/test_cal_b4_safety.py::test_v5_development_s3_failure_blocks_further_phases"
+      ]
+    },
+    "pass_only_with_basetemp_outside_repo": [
+      "tests/experiments/test_h2_v6_provisional.py::test_oa1_validation_seal_and_dashboard",
+      "tests/pipeline/test_snapshot.py::test_manifest_adulterado_e_rejeitado[code]"
+    ],
+    "dashboard_regressions": 0
+  },
+  "ruff": "passed",
+  "node_syntax": "passed",
+  "browser": {"engine": "Chrome headless via CDP", "widths": [1440, 640, 420], "console_errors": 0, "non_get_requests": 0, "horizontal_overflow": 0, "details": "browser-checks.json"},
+  "new_gemini_calls": 0,
+  "real_validation_or_final_runs": 0,
+  "ledgers_written": 0
+}

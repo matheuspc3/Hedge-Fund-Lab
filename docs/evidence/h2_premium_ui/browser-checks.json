@@ -1,0 +1,214 @@
+{
+  "checks": [
+    {
+      "name": "paper-overview-1440",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "visible": [
+        "visao"
+      ],
+      "current": "Visão Geral",
+      "text": 1803,
+      "error": false,
+      "executeDisabled": true,
+      "overflow": false
+    },
+    {
+      "name": "paper-room-1440",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "visible": [
+        "sala"
+      ],
+      "current": "Sala de Decisão",
+      "text": 4464,
+      "error": false,
+      "executeDisabled": true,
+      "overflow": false
+    },
+    {
+      "name": "paper-wallets-1440",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "visible": [
+        "carteiras"
+      ],
+      "current": "Carteiras",
+      "text": 2232,
+      "error": false,
+      "executeDisabled": true,
+      "overflow": false
+    },
+    {
+      "name": "paper-agents-1440",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "visible": [
+        "agentes"
+      ],
+      "current": "Agentes",
+      "text": 2938,
+      "error": false,
+      "executeDisabled": true,
+      "overflow": false
+    },
+    {
+      "name": "paper-overview-640",
+      "scrollWidth": 640,
+      "width": 640,
+      "visible": [
+        "visao"
+      ],
+      "current": "Visão Geral",
+      "text": 1803,
+      "error": false,
+      "executeDisabled": true,
+      "overflow": false
+    },
+    {
+      "name": "paper-room-640",
+      "scrollWidth": 640,
+      "width": 640,
+      "visible": [
+        "sala"
+      ],
+      "current": "Sala de Decisão",
+      "text": 4464,
+      "error": false,
+      "executeDisabled": true,
+      "overflow": false
+    },
+    {
+      "name": "paper-wallets-640",
+      "scrollWidth": 640,
+      "width": 640,
+      "visible": [
+        "carteiras"
+      ],
+      "current": "Carteiras",
+      "text": 2232,
+      "error": false,
+      "executeDisabled": true,
+      "overflow": false
+    },
+    {
+      "name": "paper-agents-640",
+      "scrollWidth": 640,
+      "width": 640,
+      "visible": [
+        "agentes"
+      ],
+      "current": "Agentes",
+      "text": 2938,
+      "error": false,
+      "executeDisabled": true,
+      "overflow": false
+    },
+    {
+      "name": "paper-overview-420",
+      "scrollWidth": 420,
+      "width": 420,
+      "visible": [
+        "visao"
+      ],
+      "current": "Visão Geral",
+      "text": 1803,
+      "error": false,
+      "executeDisabled": true,
+      "overflow": false
+    },
+    {
+      "name": "paper-room-420",
+      "scrollWidth": 420,
+      "width": 420,
+      "visible": [
+        "sala"
+      ],
+      "current": "Sala de Decisão",
+      "text": 4464,
+      "error": false,
+      "executeDisabled": true,
+      "overflow": false
+    },
+    {
+      "name": "paper-wallets-420",
+      "scrollWidth": 420,
+      "width": 420,
+      "visible": [
+        "carteiras"
+      ],
+      "current": "Carteiras",
+      "text": 2232,
+      "error": false,
+      "executeDisabled": true,
+      "overflow": false
+    },
+    {
+      "name": "paper-agents-420",
+      "scrollWidth": 420,
+      "width": 420,
+      "visible": [
+        "agentes"
+      ],
+      "current": "Agentes",
+      "text": 2938,
+      "error": false,
+      "executeDisabled": true,
+      "overflow": false
+    },
+    {
+      "name": "paper-wallet-detail-sma-1440",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "visible": [
+        "carteiras"
+      ],
+      "current": "Carteiras",
+      "text": 2250,
+      "error": false,
+      "executeDisabled": true,
+      "overflow": false
+    },
+    {
+      "name": "paper-agent-detail-rm-1440",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "visible": [
+        "agentes"
+      ],
+      "current": "Agentes",
+      "text": 2946,
+      "error": false,
+      "executeDisabled": true,
+      "overflow": false
+    },
+    {
+      "name": "paper-agent-detail-ta3-420",
+      "scrollWidth": 420,
+      "width": 420,
+      "visible": [
+        "agentes"
+      ],
+      "current": "Agentes",
+      "text": 2940,
+      "error": false,
+      "executeDisabled": true,
+      "overflow": false
+    },
+    {
+      "name": "paper-legacy-hash-room",
+      "scrollWidth": 640,
+      "width": 640,
+      "visible": [
+        "sala"
+      ],
+      "current": "Sala de Decisão",
+      "text": 4464,
+      "error": false,
+      "executeDisabled": true,
+      "overflow": false
+    }
+  ],
+  "consoleErrors": [],
+  "nonGetRequests": []
+}
