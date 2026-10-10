@@ -29,6 +29,7 @@ data/agent_daily/
 data/cache/
 data/snapshots/
 data/runs/
+data/forward/
 hedgefundlab.db
 
 # Dashboard data (generated)
