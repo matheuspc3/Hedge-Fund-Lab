@@ -398,6 +398,15 @@ def test_benchmarks_causal_common_inception_settlement_and_no_backfill(
             w.get("comparable", True)
             for w in api.portfolios(forward_root, book_root)["wallets"]
         )
+        path = book_root / benchmarks.STRATEGIES[0] / "state.json"
+        original = path.read_bytes()
+        altered = json.loads(original)
+        altered["sessions"][0]["close"] += 1
+        path.write_text(json.dumps(altered))
+        assert (
+            api.portfolios(forward_root, book_root)["wallets"][2]["comparable"] is False
+        )
+        path.write_bytes(original)
         f.prepare(forward_root, tuesday, bars)
         f.reconcile(
             state,

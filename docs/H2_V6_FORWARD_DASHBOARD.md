@@ -154,6 +154,18 @@ Screenshots de Chrome: [1440 px](evidence/h2_forward_dashboard/paper-1440.jpg),
 [640 px](evidence/h2_forward_dashboard/paper-640.jpg),
 [420 px](evidence/h2_forward_dashboard/paper-420.jpg). Todos usam a sessão real
 de 09/10 e distinguem alvo 100% da posição observada em caixa.
+As quatro carteiras estão na [captura de Carteiras](evidence/h2_forward_dashboard/paper-wallets-1440.jpg).
+Medições DOM e navegação das seis abas: `evidence/h2_forward_dashboard/browser-checks.json`.
+
+SMA e Bollinger foram inicializadas de fato em 10/10/2026, antes da abertura de
+13/10, a partir do input congelado `8acf2b53eb36…`. Ambas começam no fechamento
+de referência 09/10, em caixa, como IA/B&H. Todas têm R$ 100.000, retorno zero,
+zero operações e custos zero. SMA registra alvo 100% para 13/10; Bollinger
+mantém alvo zero. Essas são recomendações futuras; nenhuma execução foi inferida.
+O preflight após o commit confirmou a identidade `gemini-3.8-flash`, T=1,
+thinking low, e retornou DECISION_EXISTS para a IA. A reserva/journal existente
+não mudou. O servidor de verificação está em `http://localhost:8082/paper`;
+a porta 8081 já estava ocupada por uma instância anterior, que foi preservada.
 
 Arquivos implementados: `dashboard/forward_api.py`, `dashboard/forward_jobs.py`,
 `dashboard/paper.html`, `dashboard/paper.css`, `dashboard/paper.js`,
