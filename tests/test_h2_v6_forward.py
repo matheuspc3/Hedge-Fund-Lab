@@ -92,6 +92,7 @@ def test_forward_paper_cycle(tmp_path, monkeypatch):
 
     report = fwd.preflight(tmp_path, saturday)
     assert report["ready"], report["checks"]
+    json.dumps(report)  # the CLI prints it
     token = report["input"]["sha256"][:12]
     with pytest.raises(SystemExit, match="confirm"):
         fwd.run("0" * 12, tmp_path, saturday)

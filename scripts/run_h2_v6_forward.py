@@ -420,7 +420,7 @@ def preflight(root=OUTPUT, clock=now):
                 "manifest": str(CANDIDATE.relative_to(ROOT)),
                 "manifest_sha256": sha,
                 "participant_sha256": PARTICIPANT_SHA256,
-                "params": spec.params,
+                "params": dict(spec.params),
                 "costs": BASE_COSTS.to_dict(),
                 "execution": EXECUTION.to_dict(),
                 "initial_capital": CAPITAL,
