@@ -1,0 +1,723 @@
+{
+ "identity": "HFL-V75-SCIENTIFIC-CONSOLIDATION",
+ "schema_version": 1,
+ "metrics": {
+  "radar.opinions_completed": {
+   "value": 5,
+   "unit": "pareceres",
+   "definition": "Pareceres oficiais com status COMPLETED na execução recovery-01.",
+   "numerator": null,
+   "denominator": 5,
+   "classification": "DERIVED",
+   "sources": [
+    "data/radar/hfl_multiasset_v1_recovery_01/analyses/*/2026-10-09/result.json"
+   ],
+   "caveat": null
+  },
+  "radar.valid_analyst_votes": {
+   "value": 25,
+   "unit": "votos",
+   "definition": "Votos técnicos válidos somados nos cinco comitês.",
+   "numerator": null,
+   "denominator": 25,
+   "classification": "DERIVED",
+   "sources": [
+    "data/radar/hfl_multiasset_v1_recovery_01/analyses/*/2026-10-09/result.json"
+   ],
+   "caveat": null
+  },
+  "radar.provider_calls": {
+   "value": {
+    "total": 29,
+    "technical_analyst": 25,
+    "risk_manager": 4,
+    "with_error": 0,
+    "retries": 0
+   },
+   "unit": "chamadas",
+   "definition": "Chamadas registradas nos journals do provedor; BBAS3 não chama o Risk LLM (veto determinístico).",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DERIVED",
+   "sources": [
+    "data/radar/hfl_multiasset_v1_recovery_01/analyses/*/2026-10-09/provider_journal.jsonl"
+   ],
+   "caveat": null
+  },
+  "radar.risk_vetoes": {
+   "value": [
+    "BBAS3"
+   ],
+   "unit": "ativos",
+   "definition": "Ativos com parecer de risco individual VETADO.",
+   "numerator": null,
+   "denominator": 5,
+   "classification": "DERIVED",
+   "sources": [
+    "data/radar/hfl_multiasset_v1_recovery_01/analyses/*/2026-10-09/result.json"
+   ],
+   "caveat": null
+  },
+  "radar.per_asset": {
+   "value": {
+    "PETR4": {
+     "votes": {
+      "COMPRA": 5,
+      "MANTER": 0,
+      "VENDA": 0
+     },
+     "valid_votes": 5,
+     "technical_signal": "COMPRA",
+     "technical_confidence": 0.744,
+     "risk_verdict": "APROVADO",
+     "risk_source": "ADVISORY_LLM",
+     "asset_volatility_21": 0.392326,
+     "rsi": 74.915165,
+     "bb_upper_gap": -0.001608,
+     "recommendation": "COMPRA"
+    },
+    "VALE3": {
+     "votes": {
+      "COMPRA": 0,
+      "MANTER": 0,
+      "VENDA": 5
+     },
+     "valid_votes": 5,
+     "technical_signal": "VENDA",
+     "technical_confidence": 0.79,
+     "risk_verdict": "APROVADO",
+     "risk_source": "ADVISORY_LLM",
+     "asset_volatility_21": 0.237709,
+     "rsi": 32.863753,
+     "bb_upper_gap": -0.103597,
+     "recommendation": "VENDA"
+    },
+    "ITUB4": {
+     "votes": {
+      "COMPRA": 5,
+      "MANTER": 0,
+      "VENDA": 0
+     },
+     "valid_votes": 5,
+     "technical_signal": "COMPRA",
+     "technical_confidence": 0.75,
+     "risk_verdict": "APROVADO",
+     "risk_source": "ADVISORY_LLM",
+     "asset_volatility_21": 0.429197,
+     "rsi": 76.557381,
+     "bb_upper_gap": -0.009664,
+     "recommendation": "COMPRA"
+    },
+    "WEGE3": {
+     "votes": {
+      "COMPRA": 1,
+      "MANTER": 4,
+      "VENDA": 0
+     },
+     "valid_votes": 5,
+     "technical_signal": "MANTER",
+     "technical_confidence": 0.476,
+     "risk_verdict": "APROVADO",
+     "risk_source": "ADVISORY_LLM",
+     "asset_volatility_21": 0.215187,
+     "rsi": 55.623115,
+     "bb_upper_gap": -0.014741,
+     "recommendation": "MANTER"
+    },
+    "BBAS3": {
+     "votes": {
+      "COMPRA": 5,
+      "MANTER": 0,
+      "VENDA": 0
+     },
+     "valid_votes": 5,
+     "technical_signal": "COMPRA",
+     "technical_confidence": 0.75,
+     "risk_verdict": "VETADO",
+     "risk_source": "HARD_ASSET_VOLATILITY_RULE",
+     "asset_volatility_21": 0.544844,
+     "rsi": 62.349531,
+     "bb_upper_gap": -0.036311,
+     "recommendation": "MANTER"
+    }
+   },
+   "unit": null,
+   "definition": "Votos, sinal agregado, confiança técnica qualitativa, Risk e recomendação final por ativo.",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DERIVED",
+   "sources": [
+    "data/radar/hfl_multiasset_v1_recovery_01/analyses/*/2026-10-09/result.json"
+   ],
+   "caveat": "Confiança técnica é qualitativa (média das confianças dos votos vencedores sobre o total), não probabilidade."
+  },
+  "radar.result_pins_match": {
+   "value": true,
+   "unit": null,
+   "definition": "SHA-256 de cada result.json igual ao result.sha256 gravado ao lado.",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DERIVED",
+   "sources": [
+    "data/radar/hfl_multiasset_v1_recovery_01/analyses/*/2026-10-09/result.json"
+   ],
+   "caveat": null
+  },
+  "radar.tokens": {
+   "value": {
+    "input": 29179,
+    "output": 5294,
+    "thoughts_reported": 374,
+    "total": 34847,
+    "calls_reporting_thoughts": 1,
+    "calls": 29
+   },
+   "unit": "tokens",
+   "definition": "Tokens informados pelo provedor, somados por chamada nos journals.",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DERIVED",
+   "sources": [
+    "data/radar/hfl_multiasset_v1_recovery_01/analyses/*/2026-10-09/provider_journal.jsonl"
+   ],
+   "caveat": "Pensamento informado em só 1 das 29 chamadas; nas demais o campo está ausente (null), não zero. Os result.json agregados gravam thoughts_tokens=0 nesses comitês (ver errata)."
+  },
+  "radar.usd_observed_lower_bound": {
+   "value": "0.04313925",
+   "unit": "USD",
+   "definition": "(entrada x 0,75 + (saída + pensamento informado) x 3,75) / 10^6, preços de 2026-10-11.",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DERIVED",
+   "sources": [
+    "data/radar/hfl_multiasset_v1_recovery_01/analyses/*/2026-10-09/provider_journal.jsonl",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/result.json"
+   ],
+   "caveat": "Piso pelos tokens informados; não é fatura; pensamento não informado pode existir."
+  },
+  "radar.sealed_cost_usd_sum": {
+   "value": "0.04313925",
+   "unit": "USD",
+   "definition": "Soma do campo cost_usd gravado nos cinco result.json.",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DERIVED",
+   "sources": [
+    "data/radar/hfl_multiasset_v1_recovery_01/analyses/*/2026-10-09/result.json"
+   ],
+   "caveat": "O campo se rotula 'estimated billing'; coincide com o piso acima porque trata pensamento ausente como zero."
+  },
+  "radar.usd_reserved": {
+   "value": "3.31776",
+   "unit": "USD",
+   "definition": "Reserva conservadora do lote recovery-01.",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DERIVED",
+   "sources": [
+    "data/radar/hfl_multiasset_v1_recovery_01/reservations/1308e28defa4fa1baf0942b780d35123d675005e01f59fb60f862868d97447ae.json"
+   ],
+   "caveat": "Reserva não é custo nem fatura."
+  },
+  "radar.usd_planning_estimate": {
+   "value": "0.14625",
+   "unit": "USD",
+   "definition": "Estimativa de planejamento do preflight do lote.",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DERIVED",
+   "sources": [
+    "data/radar/hfl_multiasset_v1_recovery_01/reservations/1308e28defa4fa1baf0942b780d35123d675005e01f59fb60f862868d97447ae.json"
+   ],
+   "caveat": "Hipótese de planejamento, não uso observado."
+  },
+  "radar.batch_window": {
+   "value": {
+    "first_claim": "2026-10-12T14:58:02.663054-03:00",
+    "last_completed": "2026-10-12T17:59:50.978588799+00:00"
+   },
+   "unit": null,
+   "definition": "Janela do lote pago do Radar (claim mais antigo → último parecer).",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DERIVED",
+   "sources": [
+    "data/radar/hfl_multiasset_v1_recovery_01/analyses/*/2026-10-09/result.json"
+   ],
+   "caveat": "Inferência em 12/10 sobre dados congelados da sessão de 09/10."
+  },
+  "radar.original_incident": {
+   "value": {
+    "committees": 5,
+    "committees_completed": 0,
+    "job_started_at": "2026-10-12T02:59:39.000871-03:00",
+    "usd_reserved_uncertain": "3.31776"
+   },
+   "unit": null,
+   "definition": "Lote original de 12/10 02:59 bloqueado pelo guard offline; nenhum comitê válido.",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DIAGNOSTIC",
+   "sources": [
+    "docs/evidence/hfl_incident_2026_10_12/forensics.json"
+   ],
+   "caveat": "Não contado como comitê válido em nenhuma métrica."
+  },
+  "gpm_v1.identity": {
+   "value": {
+    "treatment": "HFL-MULTIASSET-GLOBAL-PM-V1",
+    "record_id": "v7-5a78ea5d15214e37bcae18f167ffcee3",
+    "context_sha256": "0f5f7554ca18c9f898f799fdb6d50d3e583d6efaedef9965c7b463aa047e67d6",
+    "contracts_sha256": "faf633a1dad788f3ed72e8b88b8f4c04b9bbccac4fd75277693c50f19a4eda70",
+    "prompt_version": "GLOBAL_PM_PT_V1",
+    "validation_policy": null,
+    "mode": "CONSULTATIVE_SANDBOX",
+    "planner": "GEMINI_GLOBAL_PM",
+    "requested_model": "gemini-3.8-flash",
+    "resolved_model": "gemini-3.8-flash",
+    "options": {
+     "max_output_tokens": 8192,
+     "temperature": 1.0,
+     "thinking_level": "low"
+    },
+    "decision_session": "2026-10-09",
+    "radar_origin_sealed_in_context": false
+   },
+   "unit": null,
+   "definition": "Identidade, contrato, modelo e sessão do registro.",
+   "numerator": null,
+   "denominator": null,
+   "classification": "PRIMARY",
+   "sources": [
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/result.json",
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/context.json",
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/private/provider_journal.jsonl"
+   ],
+   "caveat": null
+  },
+  "gpm_v1.outcome": {
+   "value": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "errors": [
+     "explanation_selection_inconsistent"
+    ],
+    "financial_validation_valid": true,
+    "risk_projected": "OK",
+    "operations": 0,
+    "initial_capital": "100000.00",
+    "target_cash_weight": "1.0",
+    "target_weights": {
+     "BBAS3": "0",
+     "ITUB4": "0",
+     "PETR4": "0",
+     "VALE3": "0",
+     "WEGE3": "0"
+    },
+    "weights_plus_cash": "1.0",
+    "projected_exposure": "0",
+    "portfolio_changed": false,
+    "execution_enabled": false,
+    "not_selected": [
+     "BBAS3",
+     "VALE3",
+     "WEGE3"
+    ],
+    "deferred_field": [
+     "ITUB4",
+     "PETR4"
+    ],
+    "watchlist": []
+   },
+   "unit": null,
+   "definition": "Status selado, erros, validação financeira V5 e conteúdo estrutural da proposta.",
+   "numerator": null,
+   "denominator": null,
+   "classification": "PRIMARY",
+   "sources": [
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/result.json",
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/context.json"
+   ],
+   "caveat": null
+  },
+  "gpm_v1.integrity": {
+   "value": {
+    "opinion_refs_equal_context": true,
+    "context_opinions_point_to_radar_results": true,
+    "vetoed": [
+     "BBAS3"
+    ],
+    "veto_respected": true,
+    "weights_sum_to_one": true,
+    "journal_sha256_matches_result": true,
+    "journal_calls": 1,
+    "journal_response_equals_result": true,
+    "treatment_sources_unchanged": {
+     "scripts/multiasset_global_pm.py": true,
+     "scripts/run_global_pm.py": true
+    }
+   },
+   "unit": null,
+   "definition": "Conferências determinísticas de hashes, referências, veto e soma de pesos.",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DERIVED",
+   "sources": [
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/result.json",
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/context.json",
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/private/provider_journal.jsonl",
+    "data/radar/hfl_multiasset_v1_recovery_01/analyses/*/2026-10-09/result.json"
+   ],
+   "caveat": null
+  },
+  "gpm_v1.usage": {
+   "value": {
+    "input": 18794,
+    "output": 2519,
+    "thoughts": null,
+    "total": 21313,
+    "input_plus_output_equals_total": true,
+    "usd_observed_lower_bound": "0.02354175",
+    "usd_reserved": "0.159744",
+    "usd_planning_estimate": "0.0187303125",
+    "input_bytes_estimated": 49895,
+    "cost_usd_recorded": null,
+    "duration_ms": 16906.877400004305,
+    "attempts": 1
+   },
+   "unit": "tokens / USD",
+   "definition": "Tokens informados (usageMetadata), piso monetário, reserva e duração da única chamada.",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DERIVED",
+   "sources": [
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/result.json",
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/context.json",
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/authorization.json",
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/private/provider_journal.jsonl"
+   ],
+   "caveat": "thoughtsTokenCount ausente: pensamento não informado, não zero. Piso ≠ fatura; reserva ≠ custo. Uma amostra por tratamento."
+  },
+  "gpm_v1.timeline": {
+   "value": {
+    "market_session_valuation": "2026-10-09T19:00:00-03:00",
+    "context_created_at": "2026-10-12T18:18:04.351968+00:00",
+    "claim_created_at": "2026-10-12T18:26:47.301526+00:00",
+    "provider_call_started_at": "2026-10-12T18:26:47.356439Z",
+    "validation_at": "2026-10-12T18:27:04.263316+00:00",
+    "expires_at": "2026-10-13T18:18:04.351968+00:00"
+   },
+   "unit": null,
+   "definition": "Separação entre o instante de mercado, a preparação, a inferência e a validação.",
+   "numerator": null,
+   "denominator": null,
+   "classification": "PRIMARY",
+   "sources": [
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/result.json",
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/context.json",
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/claim.json",
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/private/provider_journal.jsonl"
+   ],
+   "caveat": null
+  },
+  "gpm_v1.free_text_terms": {
+   "value": {
+    "setor": true,
+    "regulament": false,
+    "correção imediata": true,
+    "rompimento": true
+   },
+   "unit": null,
+   "definition": "Presença literal de termos sensíveis no texto livre (reasoning, global_reasoning, risks, summary, watchlist).",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DERIVED",
+   "sources": [
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/result.json",
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/context.json"
+   ],
+   "caveat": "Proxy lexical; não substitui a auditoria manual nem valida o texto."
+  },
+  "gpm_v2.identity": {
+   "value": {
+    "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+    "record_id": "v74-76d07c0d32444cecaf07e875deacb519",
+    "context_sha256": "c4879f282017a59c8e6b520a423150a10c722cdda507ababe2c2d8eee850f210",
+    "contracts_sha256": "159fd196879c37362ab67270b4c7ddccb2ca529e06d74d1633c3936dd36590e2",
+    "prompt_version": "GLOBAL_PM_PT_V2",
+    "validation_policy": "GLOBAL_PM_VALIDATION_V2",
+    "mode": "CONSULTATIVE_SANDBOX",
+    "planner": "GEMINI_GLOBAL_PM",
+    "requested_model": "gemini-3.8-flash",
+    "resolved_model": "gemini-3.8-flash",
+    "options": {
+     "max_output_tokens": 8192,
+     "temperature": 1.0,
+     "thinking_level": "low"
+    },
+    "decision_session": "2026-10-09",
+    "radar_origin_sealed_in_context": true
+   },
+   "unit": null,
+   "definition": "Identidade, contrato, modelo e sessão do registro.",
+   "numerator": null,
+   "denominator": null,
+   "classification": "PRIMARY",
+   "sources": [
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/result.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/context.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/private/provider_journal.jsonl"
+   ],
+   "caveat": null
+  },
+  "gpm_v2.outcome": {
+   "value": {
+    "status": "VALID_PROPOSAL",
+    "errors": [],
+    "financial_validation_valid": true,
+    "risk_projected": "OK",
+    "operations": 0,
+    "initial_capital": "100000.00",
+    "target_cash_weight": "1.00",
+    "target_weights": {
+     "BBAS3": "0.00",
+     "ITUB4": "0.00",
+     "PETR4": "0.00",
+     "VALE3": "0.00",
+     "WEGE3": "0.00"
+    },
+    "weights_plus_cash": "1.00",
+    "projected_exposure": "0",
+    "portfolio_changed": false,
+    "execution_enabled": false,
+    "not_selected": [
+     "BBAS3",
+     "ITUB4",
+     "PETR4",
+     "VALE3",
+     "WEGE3"
+    ],
+    "deferred_field": [],
+    "watchlist": [
+     "ITUB4",
+     "PETR4"
+    ]
+   },
+   "unit": null,
+   "definition": "Status selado, erros, validação financeira V5 e conteúdo estrutural da proposta.",
+   "numerator": null,
+   "denominator": null,
+   "classification": "PRIMARY",
+   "sources": [
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/result.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/context.json"
+   ],
+   "caveat": null
+  },
+  "gpm_v2.integrity": {
+   "value": {
+    "opinion_refs_equal_context": true,
+    "context_opinions_point_to_radar_results": true,
+    "vetoed": [
+     "BBAS3"
+    ],
+    "veto_respected": true,
+    "weights_sum_to_one": true,
+    "journal_sha256_matches_result": true,
+    "journal_calls": 1,
+    "journal_response_equals_result": true,
+    "treatment_sources_unchanged": {
+     "scripts/multiasset_global_pm.py": true,
+     "scripts/multiasset_global_pm_v2.py": true,
+     "scripts/run_global_pm.py": true,
+     "scripts/run_global_pm_v2.py": true
+    }
+   },
+   "unit": null,
+   "definition": "Conferências determinísticas de hashes, referências, veto e soma de pesos.",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DERIVED",
+   "sources": [
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/result.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/context.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/private/provider_journal.jsonl",
+    "data/radar/hfl_multiasset_v1_recovery_01/analyses/*/2026-10-09/result.json"
+   ],
+   "caveat": null
+  },
+  "gpm_v2.usage": {
+   "value": {
+    "input": 20623,
+    "output": 2880,
+    "thoughts": null,
+    "total": 23503,
+    "input_plus_output_equals_total": true,
+    "usd_observed_lower_bound": "0.02626725",
+    "usd_reserved": "0.159744",
+    "usd_planning_estimate": "0.0197034375",
+    "input_bytes_estimated": 55085,
+    "cost_usd_recorded": null,
+    "duration_ms": 19517.283299996052,
+    "attempts": 1
+   },
+   "unit": "tokens / USD",
+   "definition": "Tokens informados (usageMetadata), piso monetário, reserva e duração da única chamada.",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DERIVED",
+   "sources": [
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/result.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/context.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/authorization.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/private/provider_journal.jsonl"
+   ],
+   "caveat": "thoughtsTokenCount ausente: pensamento não informado, não zero. Piso ≠ fatura; reserva ≠ custo. Uma amostra por tratamento."
+  },
+  "gpm_v2.timeline": {
+   "value": {
+    "market_session_valuation": "2026-10-09T19:00:00-03:00",
+    "context_created_at": "2026-10-12T20:29:22.581650+00:00",
+    "claim_created_at": "2026-10-12T21:07:41.735347+00:00",
+    "provider_call_started_at": "2026-10-12T21:07:41.799539Z",
+    "validation_at": "2026-10-12T21:08:01.316822+00:00",
+    "expires_at": "2026-10-13T20:29:22.581650+00:00"
+   },
+   "unit": null,
+   "definition": "Separação entre o instante de mercado, a preparação, a inferência e a validação.",
+   "numerator": null,
+   "denominator": null,
+   "classification": "PRIMARY",
+   "sources": [
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/result.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/context.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/claim.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/private/provider_journal.jsonl"
+   ],
+   "caveat": null
+  },
+  "gpm_v2.free_text_terms": {
+   "value": {
+    "setor": false,
+    "regulament": true,
+    "correção imediata": true,
+    "rompimento": false
+   },
+   "unit": null,
+   "definition": "Presença literal de termos sensíveis no texto livre (reasoning, global_reasoning, risks, summary, watchlist).",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DERIVED",
+   "sources": [
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/result.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/context.json"
+   ],
+   "caveat": "Proxy lexical; não substitui a auditoria manual nem valida o texto."
+  },
+  "gpm_v2.cited_metrics": {
+   "value": {
+    "cited": 13,
+    "agree_with_context": 13
+   },
+   "unit": "métricas",
+   "definition": "Métricas citadas em cited_metrics que conferem com verifiable_metrics (half-even na precisão citada).",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DERIVED",
+   "sources": [
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/result.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/context.json"
+   ],
+   "caveat": null
+  },
+  "gpm_v2.watchlist_signals_match": {
+   "value": true,
+   "unit": null,
+   "definition": "radar_signal de cada observação igual à recomendação final do parecer.",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DERIVED",
+   "sources": [
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/result.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/context.json"
+   ],
+   "caveat": null
+  },
+  "gpm.same_opinions_v1_v2": {
+   "value": true,
+   "unit": null,
+   "definition": "V1 e V2 receberam os mesmos cinco pareceres (mesmos hashes).",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DERIVED",
+   "sources": [
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/result.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/result.json"
+   ],
+   "caveat": "Mesmas entradas de Radar; snapshots, prompts, schemas e contratos diferentes."
+  },
+  "gpm.token_delta_v2_minus_v1": {
+   "value": {
+    "prompt_tokens": 1829,
+    "completion_tokens": 361,
+    "total_tokens": 2190
+   },
+   "unit": "tokens",
+   "definition": "Diferença bruta de tokens V2 - V1.",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DERIVED",
+   "sources": [
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/result.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/result.json"
+   ],
+   "caveat": "Duas chamadas únicas, contratos diferentes, temperatura 1.0: não é experimento controlado de eficiência."
+  },
+  "gpm.records_by_planner": {
+   "value": {
+    "real_gemini": 2,
+    "real_ids": [
+     "v7-5a78ea5d15214e37bcae18f167ffcee3",
+     "v74-76d07c0d32444cecaf07e875deacb519"
+    ],
+    "synthetic": 18
+   },
+   "unit": "registros",
+   "definition": "Registros Global PM com result.json, separados por planner (GEMINI_GLOBAL_PM x FAKE_GLOBAL_PM_NOT_GEMINI).",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DERIVED",
+   "sources": [
+    "data/global_pm/*/*/result.json"
+   ],
+   "caveat": "Os sintéticos são qualificação/demonstração e nunca entram nas métricas de resultado."
+  },
+  "gpm.real_outcomes": {
+   "value": {
+    "VALID_PROPOSAL": 1,
+    "REJECTED_BY_VALIDATOR": 1
+   },
+   "unit": "inferências",
+   "definition": "Desfecho das inferências reais (uma por tratamento).",
+   "numerator": null,
+   "denominator": 2,
+   "classification": "DERIVED",
+   "sources": [
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/result.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/result.json"
+   ],
+   "caveat": "n=2, tratamentos distintos: nenhuma taxa de aprovação é estimável ou generalizável."
+  },
+  "gpm_v1.itub4_close_inside_upper_band": {
+   "value": true,
+   "unit": null,
+   "definition": "bb_upper_gap de ITUB4 negativo (fechamento abaixo da banda superior), contrariando 'rompimento' no texto V1.",
+   "numerator": null,
+   "denominator": null,
+   "classification": "DERIVED",
+   "sources": [
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/context.json"
+   ],
+   "caveat": null
+  }
+ }
+}

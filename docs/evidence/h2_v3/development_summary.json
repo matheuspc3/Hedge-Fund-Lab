@@ -1,0 +1,606 @@
+{
+  "kind": "H2_V3_DEVELOPMENT_SUMMARY",
+  "descriptive_only": true,
+  "treatment_version": 3,
+  "v2_governance": {
+    "CAL_B2_HISTORICAL_STATUS": "CAL_B2_AWAITING_HUMAN_REVIEW",
+    "H2_V2_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE": true,
+    "reason": "CAL_B2 CONSUMED AND USED AS DEVELOPMENT EVIDENCE"
+  },
+  "phases": {
+    "v1 Hardening": {
+      "technical_votes": 300,
+      "contradiction_rate": 0.0,
+      "transition_rate": 0.4167,
+      "decisions": 60,
+      "tech_explicit_hold_rate": 0.6167,
+      "total_hold_rate": 0.6333,
+      "risk_llm_responses": 15,
+      "risk_verdicts": {
+        "APROVADO": 14,
+        "VETADO": 1
+      },
+      "risk_llm_veto_rate": 0.0667,
+      "V3-R1_count": 1,
+      "V3-R2_count": 0,
+      "V3-R3_count": 0,
+      "unsupported_confidence_threshold_rate": 0.0667,
+      "unsupported_numeric_rule_rate": 0.0,
+      "flagged_v3_only": null
+    },
+    "v2 Hardening": {
+      "technical_votes": 300,
+      "contradiction_rate": 0.0,
+      "transition_rate": 0.0067,
+      "decisions": 60,
+      "tech_explicit_hold_rate": 0.3833,
+      "total_hold_rate": 0.3833,
+      "risk_llm_responses": 11,
+      "risk_verdicts": {
+        "APROVADO": 11
+      },
+      "risk_llm_veto_rate": 0.0,
+      "V3-R1_count": 0,
+      "V3-R2_count": 0,
+      "V3-R3_count": 0,
+      "unsupported_confidence_threshold_rate": 0.0,
+      "unsupported_numeric_rule_rate": 0.0,
+      "flagged_v3_only": null
+    },
+    "v3 Hardening": {
+      "technical_votes": 300,
+      "contradiction_rate": 0.0909,
+      "transition_rate": 0.0067,
+      "decisions": 60,
+      "tech_explicit_hold_rate": 0.3833,
+      "total_hold_rate": 0.3833,
+      "risk_llm_responses": 11,
+      "risk_verdicts": {
+        "APROVADO": 11
+      },
+      "risk_llm_veto_rate": 0.0,
+      "V3-R1_count": 0,
+      "V3-R2_count": 0,
+      "V3-R3_count": 1,
+      "unsupported_confidence_threshold_rate": 0.0,
+      "unsupported_numeric_rule_rate": 0.0,
+      "flagged_v3_only": [
+        {
+          "decision_session": "2002-04-19",
+          "verdict": "APROVADO",
+          "analysis": "A operação de compra apresenta métricas de risco favoráveis dentro do portfólio, com concentração e drawdown zerados (0.0). A volatilidade recente de 0.112211 é moderada e compatível com a tomada de risco, respaldada por sinal técnico unânime (5/5 votos) com confidence qualitativamente positiva (0.65). Não há fatores adversos nas métricas fornecidas que justifiquem veto.",
+          "codes": [
+            "VERDICT_TEXT_CONTRADICTION"
+          ]
+        }
+      ],
+      "technical_replay": {
+        "replayed": {
+          "technical_analyst": 300,
+          "portfolio_manager": 26
+        },
+        "live": {
+          "portfolio_manager": 11
+        },
+        "mismatch": {},
+        "technical_prompt_v2_byte_identical": true
+      }
+    },
+    "v1 B0": {
+      "technical_votes": 60,
+      "contradiction_rate": 0.0,
+      "transition_rate": 0.4,
+      "decisions": 12,
+      "tech_explicit_hold_rate": 0.6667,
+      "total_hold_rate": 0.6667,
+      "risk_llm_responses": 3,
+      "risk_verdicts": {
+        "APROVADO": 3
+      },
+      "risk_llm_veto_rate": 0.0,
+      "V3-R1_count": 0,
+      "V3-R2_count": 0,
+      "V3-R3_count": 0,
+      "unsupported_confidence_threshold_rate": 0.0,
+      "unsupported_numeric_rule_rate": 0.0,
+      "flagged_v3_only": null
+    },
+    "v2 B0": {
+      "technical_votes": 60,
+      "contradiction_rate": 0.0,
+      "transition_rate": 0.0,
+      "decisions": 12,
+      "tech_explicit_hold_rate": 0.5,
+      "total_hold_rate": 0.5,
+      "risk_llm_responses": 2,
+      "risk_verdicts": {
+        "APROVADO": 2
+      },
+      "risk_llm_veto_rate": 0.0,
+      "V3-R1_count": 0,
+      "V3-R2_count": 0,
+      "V3-R3_count": 0,
+      "unsupported_confidence_threshold_rate": 0.0,
+      "unsupported_numeric_rule_rate": 0.0,
+      "flagged_v3_only": null
+    },
+    "v3 B0": {
+      "technical_votes": 60,
+      "contradiction_rate": 0.0,
+      "transition_rate": 0.0,
+      "decisions": 12,
+      "tech_explicit_hold_rate": 0.5,
+      "total_hold_rate": 0.5,
+      "risk_llm_responses": 2,
+      "risk_verdicts": {
+        "APROVADO": 2
+      },
+      "risk_llm_veto_rate": 0.0,
+      "V3-R1_count": 0,
+      "V3-R2_count": 0,
+      "V3-R3_count": 0,
+      "unsupported_confidence_threshold_rate": 0.0,
+      "unsupported_numeric_rule_rate": 0.0,
+      "flagged_v3_only": [],
+      "technical_replay": {
+        "replayed": {
+          "technical_analyst": 60,
+          "portfolio_manager": 4
+        },
+        "live": {
+          "portfolio_manager": 2
+        },
+        "mismatch": {},
+        "technical_prompt_v2_byte_identical": true
+      }
+    },
+    "v1 CAL-B1 (sealed one-shot)": {
+      "technical_votes": 50,
+      "contradiction_rate": null,
+      "transition_rate": 0.66,
+      "decisions": 10,
+      "tech_explicit_hold_rate": 0.8,
+      "total_hold_rate": 0.9,
+      "risk_llm_responses": 0,
+      "risk_verdicts": {},
+      "risk_llm_veto_rate": null,
+      "V3-R1_count": 0,
+      "V3-R2_count": 0,
+      "V3-R3_count": 0,
+      "unsupported_confidence_threshold_rate": null,
+      "unsupported_numeric_rule_rate": null,
+      "flagged_v3_only": null
+    },
+    "v2 defect hardening (CAL-B1 x R=3)": {
+      "technical_votes": 150,
+      "contradiction_rate": 0.0,
+      "transition_rate": 0.0,
+      "decisions": 30,
+      "tech_explicit_hold_rate": 0.7333,
+      "total_hold_rate": 0.8667,
+      "risk_llm_responses": 4,
+      "risk_verdicts": {
+        "APROVADO": 3,
+        "VETADO": 1
+      },
+      "risk_llm_veto_rate": 0.25,
+      "V3-R1_count": 0,
+      "V3-R2_count": 0,
+      "V3-R3_count": 0,
+      "unsupported_confidence_threshold_rate": 0.0,
+      "unsupported_numeric_rule_rate": 0.0,
+      "flagged_v3_only": null
+    },
+    "v2 CAL-B2 (consumed one-shot, now development)": {
+      "technical_votes": 50,
+      "contradiction_rate": 0.0,
+      "transition_rate": 0.0,
+      "decisions": 10,
+      "tech_explicit_hold_rate": 0.6,
+      "total_hold_rate": 0.7,
+      "risk_llm_responses": 3,
+      "risk_verdicts": {
+        "APROVADO": 2,
+        "VETADO": 1
+      },
+      "risk_llm_veto_rate": 0.3333,
+      "V3-R1_count": 1,
+      "V3-R2_count": 0,
+      "V3-R3_count": 0,
+      "unsupported_confidence_threshold_rate": 0.3333,
+      "unsupported_numeric_rule_rate": 0.0,
+      "flagged_v3_only": null
+    },
+    "v3 defect hardening (CAL-B2 x R=3)": {
+      "technical_votes": 150,
+      "contradiction_rate": 0.0,
+      "transition_rate": 0.0,
+      "decisions": 30,
+      "tech_explicit_hold_rate": 0.6,
+      "total_hold_rate": 0.6,
+      "risk_llm_responses": 9,
+      "risk_verdicts": {
+        "APROVADO": 9
+      },
+      "risk_llm_veto_rate": 0.0,
+      "V3-R1_count": 0,
+      "V3-R2_count": 0,
+      "V3-R3_count": 0,
+      "unsupported_confidence_threshold_rate": 0.0,
+      "unsupported_numeric_rule_rate": 0.0,
+      "flagged_v3_only": [],
+      "technical_replay": {
+        "replayed": {
+          "technical_analyst": 150,
+          "portfolio_manager": 3
+        },
+        "live": {
+          "portfolio_manager": 9
+        },
+        "mismatch": {},
+        "technical_prompt_v2_byte_identical": true
+      }
+    },
+    "v1 CAL-A": {
+      "technical_votes": 300,
+      "contradiction_rate": 0.0,
+      "transition_rate": 0.3833,
+      "decisions": 60,
+      "tech_explicit_hold_rate": 0.4667,
+      "total_hold_rate": 0.6167,
+      "risk_llm_responses": 22,
+      "risk_verdicts": {
+        "VETADO": 12,
+        "APROVADO": 10
+      },
+      "risk_llm_veto_rate": 0.5455,
+      "V3-R1_count": 5,
+      "V3-R2_count": 0,
+      "V3-R3_count": 0,
+      "unsupported_confidence_threshold_rate": 0.2273,
+      "unsupported_numeric_rule_rate": 0.0,
+      "flagged_v3_only": null
+    },
+    "v2 CAL-A": {
+      "technical_votes": 300,
+      "contradiction_rate": 0.0,
+      "transition_rate": 0.0,
+      "decisions": 60,
+      "tech_explicit_hold_rate": 0.65,
+      "total_hold_rate": 0.6667,
+      "risk_llm_responses": 20,
+      "risk_verdicts": {
+        "APROVADO": 18,
+        "VETADO": 2
+      },
+      "risk_llm_veto_rate": 0.1,
+      "V3-R1_count": 1,
+      "V3-R2_count": 0,
+      "V3-R3_count": 0,
+      "unsupported_confidence_threshold_rate": 0.05,
+      "unsupported_numeric_rule_rate": 0.0,
+      "flagged_v3_only": null
+    },
+    "v3 CAL-A": {
+      "technical_votes": 300,
+      "contradiction_rate": 0.0,
+      "transition_rate": 0.0,
+      "decisions": 60,
+      "tech_explicit_hold_rate": 0.65,
+      "total_hold_rate": 0.6667,
+      "risk_llm_responses": 20,
+      "risk_verdicts": {
+        "APROVADO": 20
+      },
+      "risk_llm_veto_rate": 0.0,
+      "V3-R1_count": 0,
+      "V3-R2_count": 0,
+      "V3-R3_count": 0,
+      "unsupported_confidence_threshold_rate": 0.0,
+      "unsupported_numeric_rule_rate": 0.0,
+      "flagged_v3_only": [],
+      "technical_replay": {
+        "replayed": {
+          "technical_analyst": 1800,
+          "portfolio_manager": 66
+        },
+        "live": {
+          "portfolio_manager": 57
+        },
+        "mismatch": {},
+        "technical_prompt_v2_byte_identical": true
+      }
+    },
+    "v1 Sequential Dev": {
+      "technical_votes": 1905,
+      "contradiction_rate": 0.1667,
+      "transition_rate": 0.4142,
+      "decisions": 381,
+      "tech_explicit_hold_rate": 0.6273,
+      "total_hold_rate": 0.6745,
+      "risk_llm_responses": 12,
+      "risk_verdicts": {
+        "VETADO": 3,
+        "APROVADO": 9
+      },
+      "risk_llm_veto_rate": 0.25,
+      "V3-R1_count": 0,
+      "V3-R2_count": 0,
+      "V3-R3_count": 2,
+      "unsupported_confidence_threshold_rate": 0.0,
+      "unsupported_numeric_rule_rate": 0.0,
+      "flagged_v3_only": null
+    },
+    "v2 Sequential Dev": {
+      "technical_votes": 1905,
+      "contradiction_rate": 0.0,
+      "transition_rate": 0.0037,
+      "decisions": 381,
+      "tech_explicit_hold_rate": 0.6483,
+      "total_hold_rate": 0.6929,
+      "risk_llm_responses": 18,
+      "risk_verdicts": {
+        "APROVADO": 7,
+        "VETADO": 11
+      },
+      "risk_llm_veto_rate": 0.6111,
+      "V3-R1_count": 0,
+      "V3-R2_count": 5,
+      "V3-R3_count": 0,
+      "unsupported_confidence_threshold_rate": 0.0,
+      "unsupported_numeric_rule_rate": 0.2778,
+      "flagged_v3_only": null
+    },
+    "v3 Sequential Dev": {
+      "technical_votes": 1905,
+      "contradiction_rate": 0.0,
+      "transition_rate": 0.0037,
+      "decisions": 381,
+      "tech_explicit_hold_rate": 0.6483,
+      "total_hold_rate": 0.6483,
+      "risk_llm_responses": 11,
+      "risk_verdicts": {
+        "APROVADO": 11
+      },
+      "risk_llm_veto_rate": 0.0,
+      "V3-R1_count": 0,
+      "V3-R2_count": 0,
+      "V3-R3_count": 0,
+      "unsupported_confidence_threshold_rate": 0.0,
+      "unsupported_numeric_rule_rate": 0.0,
+      "flagged_v3_only": [],
+      "technical_replay": {
+        "replayed": {
+          "technical_analyst": 5715,
+          "portfolio_manager": 30
+        },
+        "live": {
+          "portfolio_manager": 42
+        },
+        "mismatch": {},
+        "technical_prompt_v2_byte_identical": true
+      }
+    },
+    "v1 Stress": {
+      "technical_votes": 2985,
+      "contradiction_rate": 0.0,
+      "transition_rate": 0.3732,
+      "decisions": 597,
+      "tech_explicit_hold_rate": 0.5226,
+      "total_hold_rate": 0.6717,
+      "risk_llm_responses": 15,
+      "risk_verdicts": {
+        "APROVADO": 12,
+        "VETADO": 3
+      },
+      "risk_llm_veto_rate": 0.2,
+      "V3-R1_count": 3,
+      "V3-R2_count": 0,
+      "V3-R3_count": 0,
+      "unsupported_confidence_threshold_rate": 0.2,
+      "unsupported_numeric_rule_rate": 0.0,
+      "flagged_v3_only": null
+    },
+    "v2 Stress": {
+      "technical_votes": 2985,
+      "contradiction_rate": 0.0,
+      "transition_rate": 0.009,
+      "decisions": 597,
+      "tech_explicit_hold_rate": 0.5394,
+      "total_hold_rate": 0.6013,
+      "risk_llm_responses": 15,
+      "risk_verdicts": {
+        "APROVADO": 12,
+        "VETADO": 3
+      },
+      "risk_llm_veto_rate": 0.2,
+      "V3-R1_count": 3,
+      "V3-R2_count": 0,
+      "V3-R3_count": 0,
+      "unsupported_confidence_threshold_rate": 0.2,
+      "unsupported_numeric_rule_rate": 0.0,
+      "flagged_v3_only": null
+    },
+    "v3 Stress": {
+      "technical_votes": 2985,
+      "contradiction_rate": 0.0588,
+      "transition_rate": 0.009,
+      "decisions": 597,
+      "tech_explicit_hold_rate": 0.5394,
+      "total_hold_rate": 0.5611,
+      "risk_llm_responses": 17,
+      "risk_verdicts": {
+        "APROVADO": 17
+      },
+      "risk_llm_veto_rate": 0.0,
+      "V3-R1_count": 0,
+      "V3-R2_count": 0,
+      "V3-R3_count": 1,
+      "unsupported_confidence_threshold_rate": 0.0,
+      "unsupported_numeric_rule_rate": 0.0,
+      "flagged_v3_only": [
+        {
+          "decision_session": "2018-09-10",
+          "verdict": "APROVADO",
+          "analysis": "A proposta de COMPRA apresenta métricas de exposição controladas, com concentração atual em 0.0 e drawdown zerado, permitindo alocação sem pressão prévia de perdas acumuladas. Embora a volatilidade recente esteja em 0.418435 associada a um consenso de sinal moderado (3/5 votos e confidence de 0.39), os parâmetros de risco do portfólio encontram-se em níveis aceitáveis dentro das métricas fornecidas, sem violação de limites ou condições adversas que justifiquem veto.",
+          "codes": [
+            "VERDICT_TEXT_CONTRADICTION"
+          ]
+        }
+      ],
+      "technical_replay": {
+        "replayed": {
+          "technical_analyst": 2985,
+          "portfolio_manager": 44
+        },
+        "live": {
+          "portfolio_manager": 85
+        },
+        "mismatch": {},
+        "technical_prompt_v2_byte_identical": true
+      }
+    }
+  },
+  "risk_checker_totals_v3_development": {
+    "risk_llm_responses": 70,
+    "V3-R1": 0,
+    "V3-R2": 0,
+    "V3-R3": 2,
+    "risk_verdicts": {
+      "APROVADO": 70
+    }
+  },
+  "risk_llm_verdicts_by_version_OBSERVATION": {
+    "v1": {
+      "APROVADO": 48,
+      "VETADO": 19
+    },
+    "v2": {
+      "APROVADO": 55,
+      "VETADO": 18
+    },
+    "v3": {
+      "APROVADO": 70
+    }
+  },
+  "frozen_component_replay": {
+    "policy": "TECHNICAL_V2",
+    "totals": {
+      "technical_analyst/replayed": 11010,
+      "portfolio_manager/replayed": 173,
+      "portfolio_manager/live": 206
+    },
+    "mismatches": 0
+  },
+  "selections": {
+    "CAL-A v3": {
+      "config_id": 2,
+      "volatility_window": 21,
+      "risk_max_volatility": 0.5,
+      "S1": 0.0012577896112663505,
+      "ranking": [
+        2,
+        3,
+        6,
+        1,
+        4,
+        5
+      ],
+      "discrimination": "YES",
+      "selection_basis": "EMPIRICAL_S1",
+      "tie": "TOP_TIE_2_3_6_FALLBACK_LOWEST_CONFIG_ID",
+      "evidence": "docs/evidence/cal_a_v3/run_20261006T151945Z/summary.json"
+    },
+    "Sequential Dev v3": {
+      "config_id": 1,
+      "name": "D01",
+      "risk_max_drawdown": 0.25,
+      "S2": 0.2614222625465128,
+      "ranking": [
+        1,
+        3,
+        2
+      ],
+      "discrimination": "YES",
+      "selection_basis": "EMPIRICAL_S2",
+      "tie": "TOP_TIE_1_3_FALLBACK_LOWEST_CONFIG_ID",
+      "evidence": "docs/evidence/sequential_dev_v3/run_20261006T152426Z/summary.json"
+    }
+  },
+  "final_v3_params": {
+    "ticker": "PETR4.SA",
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "temperature": 1.0,
+    "max_output_tokens": 8192,
+    "analyst_count": 5,
+    "consensus_threshold": 0.6,
+    "require_all_votes": true,
+    "decision_frequency": 1,
+    "strict_inputs": true,
+    "portfolio_inversion_policy": "fail",
+    "long_target_weight": 1.0,
+    "risk_max_concentration": 1.0,
+    "risk_max_volatility": 0.5,
+    "risk_max_drawdown": 0.25,
+    "volatility_window": 21,
+    "retry_attempts": 6,
+    "retry_base_delay": 2.0,
+    "thinking_level": "low",
+    "technical_prompt_version": 2,
+    "risk_prompt_version": 2
+  },
+  "stress_v3": {
+    "gates": {
+      "S-A": {
+        "result": "0 final failures; 0 trajectories missing",
+        "pass": true
+      },
+      "S-T": {
+        "result": "0 truncations",
+        "pass": true
+      },
+      "S-C": {
+        "result": "0 boundary/causal violations",
+        "pass": true
+      },
+      "S-R": {
+        "result": "0 hard-risk contract violations",
+        "pass": true
+      }
+    },
+    "coverage": {
+      "drawdown_rule": "NOT_EXERCISED",
+      "volatility_rule": "EXERCISED",
+      "flags": [
+        "HISTORICAL_STRESS_DRAWDOWN_RULE_NOT_EXERCISED"
+      ]
+    },
+    "status": "STRESS PROBING COMPLETE — READY FOR CAL-B PROTOCOL"
+  },
+  "cal_b3_safety": {
+    "anchors": [
+      "2018-08-03",
+      "2019-03-19",
+      "2019-10-18",
+      "2020-05-13",
+      "2021-01-06",
+      "2021-08-17",
+      "2022-03-11",
+      "2022-11-29",
+      "2023-05-12",
+      "2024-01-11"
+    ],
+    "commitment": "a5cadecd361de5059370bf4bfa97b1417b82eb8951950cf92b0aebc7edecdbaf",
+    "status": "SEALED",
+    "v3_decision_sessions_in_cal_b3": [],
+    "executed": false
+  },
+  "validation_final_safety": {
+    "validation_start": "2024-09-02",
+    "v3_sessions_at_or_after_validation": [],
+    "max_v3_session": "2024-08-29",
+    "sequential_development_end": "2024-08-30"
+  },
+  "status": "H2_V3 DEVELOPMENT COMPLETE — READY FOR CAL-B3 PROTOCOL"
+}

@@ -1,0 +1,377 @@
+{
+ "identity": "HFL-V76-READINESS",
+ "state": "QUALIFIED_OFFLINE",
+ "max_state_reachable_in_v76": "QUALIFIED_OFFLINE",
+ "gates": {
+  "structurally_defined": true,
+  "methodologically_reviewable": true,
+  "qualified_offline": true,
+  "v75_audit_ok": true,
+  "sources_available": true,
+  "budget_plan_consistent": true,
+  "human_review_recorded": false,
+  "paid_execution_authorized": false
+ },
+ "blocked_by": [
+  "BUDGET_EXCEEDS_SEALED_V2_CAP_REQUIRES_NEW_TREATMENT_OR_DECISION",
+  "COTAHIST_SESSION_VERIFICATION",
+  "HOLDINGS_PREPARATION_PATH_NOT_IMPLEMENTED",
+  "HUMAN_REVIEW_OF_PREREGISTRATION",
+  "PAID_EXECUTION_AUTHORIZATION",
+  "PAPER_LEDGER_NOT_IMPLEMENTED",
+  "PROTOCOL_FROZEN",
+  "RADAR_AGGREGATE_EXCEEDS_CAP_REQUIRES_HUMAN_BUDGET_AUTHORIZATION"
+ ],
+ "protocol_errors": [],
+ "campaigns": {
+  "c1-pilot": {
+   "status": "PLANNED_NOT_AUTHORIZED",
+   "blocks": []
+  },
+  "c1-intermediate": {
+   "status": "PLANNED_NOT_AUTHORIZED",
+   "blocks": []
+  },
+  "c1-extended": {
+   "status": "BLOCKED",
+   "blocks": [
+    "BUDGET_EXCEEDS_SEALED_V2_CAP_REQUIRES_NEW_TREATMENT_OR_DECISION"
+   ]
+  },
+  "c2-s1": {
+   "status": "BLOCKED",
+   "blocks": [
+    "HOLDINGS_PREPARATION_PATH_NOT_IMPLEMENTED"
+   ]
+  },
+  "c2-s4": {
+   "status": "BLOCKED",
+   "blocks": [
+    "HOLDINGS_PREPARATION_PATH_NOT_IMPLEMENTED"
+   ]
+  },
+  "c2-s5": {
+   "status": "BLOCKED",
+   "blocks": [
+    "HOLDINGS_PREPARATION_PATH_NOT_IMPLEMENTED"
+   ]
+  },
+  "c3-oos": {
+   "status": "BLOCKED",
+   "blocks": [
+    "COTAHIST_SESSION_VERIFICATION",
+    "PROTOCOL_FROZEN",
+    "RADAR_AGGREGATE_EXCEEDS_CAP_REQUIRES_HUMAN_BUDGET_AUTHORIZATION"
+   ]
+  },
+  "c4-prospective": {
+   "status": "BLOCKED",
+   "blocks": [
+    "PROTOCOL_FROZEN",
+    "PAPER_LEDGER_NOT_IMPLEMENTED",
+    "RADAR_AGGREGATE_EXCEEDS_CAP_REQUIRES_HUMAN_BUDGET_AUTHORIZATION"
+   ]
+  }
+ },
+ "qualification": {
+  "passed": 34,
+  "total": 34,
+  "scenarios_covered": [
+   "S0",
+   "S1",
+   "S2",
+   "S3",
+   "S4",
+   "S5",
+   "S6",
+   "S7",
+   "S8",
+   "S9"
+  ],
+  "radar_origin": {
+   "verified": "VERIFIED",
+   "mismatch": "MISMATCH",
+   "missing": "MISSING"
+  },
+  "replication_identity": {
+   "context_sha256_differ": true,
+   "economic_fingerprint_equal": true,
+   "fingerprint": "15aa180943d005ef6a8577c61992cb00d83b5b2c9363abc609da1df1b29ad165",
+   "bytes_identical_claimed": false
+  },
+  "sealed_trees_unchanged": true,
+  "qualification_sha256": "5001483b47ab5aca370a83b76e26378d000b8b93a14e52df10e76695a275478c",
+  "real_provider_calls": 0
+ },
+ "qualification_cases": [
+  {
+   "case": "S0-cash-watchlist",
+   "status": "VALID_PROPOSAL",
+   "codes": [],
+   "passed": true
+  },
+  {
+   "case": "S0-sale-without-custody",
+   "status": "REJECTED_BY_VALIDATOR",
+   "codes": [
+    "insufficient_available_units"
+   ],
+   "passed": true
+  },
+  {
+   "case": "S1-hold",
+   "status": "VALID_PROPOSAL",
+   "codes": [],
+   "passed": true
+  },
+  {
+   "case": "S1-reduce",
+   "status": "VALID_PROPOSAL",
+   "codes": [],
+   "passed": true
+  },
+  {
+   "case": "S1-exit",
+   "status": "VALID_PROPOSAL",
+   "codes": [],
+   "passed": true
+  },
+  {
+   "case": "S1-increase",
+   "status": "VALID_PROPOSAL",
+   "codes": [],
+   "passed": true
+  },
+  {
+   "case": "S1-new-buy",
+   "status": "VALID_PROPOSAL",
+   "codes": [],
+   "passed": true
+  },
+  {
+   "case": "S1-not-selected-while-held",
+   "status": "REJECTED_BY_VALIDATOR",
+   "codes": [
+    "explanation_action_inconsistent"
+   ],
+   "passed": true
+  },
+  {
+   "case": "S2-buy-within-cash",
+   "status": "VALID_PROPOSAL",
+   "codes": [],
+   "passed": true
+  },
+  {
+   "case": "S2-buy-beyond-cash",
+   "status": "REJECTED_BY_VALIDATOR",
+   "codes": [
+    "insufficient_settled_cash"
+   ],
+   "passed": true
+  },
+  {
+   "case": "S2-buy-without-compra-opinion",
+   "status": "REJECTED_BY_VALIDATOR",
+   "codes": [
+    "buy_incompatible_with_opinion"
+   ],
+   "passed": true
+  },
+  {
+   "case": "S3-sale-creates-receivable",
+   "status": "VALID_PROPOSAL",
+   "codes": [],
+   "passed": true
+  },
+  {
+   "case": "S3-receivable-used-as-cash",
+   "status": "REJECTED_BY_VALIDATOR",
+   "codes": [
+    "insufficient_settled_cash"
+   ],
+   "passed": true
+  },
+  {
+   "case": "S4-dependent-buy",
+   "status": "VALID_PROPOSAL",
+   "codes": [],
+   "passed": true
+  },
+  {
+   "case": "S4-dependency-not-declared",
+   "status": "REJECTED_BY_VALIDATOR",
+   "codes": [
+    "insufficient_settled_cash"
+   ],
+   "passed": true
+  },
+  {
+   "case": "S4-deferred-list-omitted",
+   "status": "REJECTED_BY_VALIDATOR",
+   "codes": [
+    "settlement_deferred_inconsistent"
+   ],
+   "passed": true
+  },
+  {
+   "case": "S4-unknown-dependency",
+   "status": "REJECTED_BY_VALIDATOR",
+   "codes": [
+    "dependency_cycle_unknown_or_not_sale"
+   ],
+   "passed": true
+  },
+  {
+   "case": "S5-buy-vetoed",
+   "status": "REJECTED_BY_VALIDATOR",
+   "codes": [
+    "vetoed_asset_allocation"
+   ],
+   "passed": true
+  },
+  {
+   "case": "S5-weight-on-vetoed",
+   "status": "REJECTED_BY_VALIDATOR",
+   "codes": [
+    "vetoed_asset_allocation"
+   ],
+   "passed": true
+  },
+  {
+   "case": "S5-held-vetoed-hold",
+   "status": "VALID_PROPOSAL",
+   "codes": [],
+   "passed": true
+  },
+  {
+   "case": "S5-held-vetoed-increase",
+   "status": "REJECTED_BY_VALIDATOR",
+   "codes": [
+    "vetoed_asset_allocation"
+   ],
+   "passed": true
+  },
+  {
+   "case": "S5-held-vetoed-reduce",
+   "status": "REJECTED_BY_VALIDATOR",
+   "codes": [
+    "vetoed_asset_allocation"
+   ],
+   "passed": true
+  },
+  {
+   "case": "S6-within-limit",
+   "status": "VALID_PROPOSAL",
+   "codes": [],
+   "passed": true
+  },
+  {
+   "case": "S6-beyond-limit",
+   "status": "REJECTED_BY_VALIDATOR",
+   "codes": [
+    "concentration_or_exposure_limit"
+   ],
+   "passed": true
+  },
+  {
+   "case": "S7-exposure-beyond-limit",
+   "status": "REJECTED_BY_VALIDATOR",
+   "codes": [
+    "concentration_or_exposure_limit"
+   ],
+   "passed": true
+  },
+  {
+   "case": "S7-operation-count-beyond-limit",
+   "status": "REJECTED_BY_VALIDATOR",
+   "codes": [
+    "response_schema_invalid"
+   ],
+   "passed": true
+  },
+  {
+   "case": "S8-opinion-hash",
+   "status": "REJECTED_BY_VALIDATOR",
+   "codes": [
+    "opinion_reference_mismatch"
+   ],
+   "passed": true
+  },
+  {
+   "case": "S8-context-hash",
+   "status": "REJECTED_BY_VALIDATOR",
+   "codes": [
+    "proposal_hash_mismatch"
+   ],
+   "passed": true
+  },
+  {
+   "case": "S8-missing-asset",
+   "status": "REJECTED_BY_VALIDATOR",
+   "codes": [
+    "complete_universe_and_current_weights_required"
+   ],
+   "passed": true
+  },
+  {
+   "case": "S8-expired-context",
+   "status": "REJECTED_BY_VALIDATOR",
+   "codes": [
+    "proposal_expired_or_future"
+   ],
+   "passed": true
+  },
+  {
+   "case": "S8-tampered-opinion",
+   "status": "REJECTED_BY_VALIDATOR",
+   "codes": [
+    "record_hash_mismatch"
+   ],
+   "passed": true
+  },
+  {
+   "case": "S8-v1-response",
+   "status": "REJECTED_BY_VALIDATOR",
+   "codes": [
+    "treatment_identity_mismatch"
+   ],
+   "passed": true
+  },
+  {
+   "case": "S9-hold-despite-sell-signal",
+   "status": "VALID_PROPOSAL",
+   "codes": [],
+   "passed": true
+  },
+  {
+   "case": "S9-all-cash-no-operation",
+   "status": "VALID_PROPOSAL",
+   "codes": [],
+   "passed": true
+  }
+ ],
+ "v75_audit": {
+  "v75_verifier_ok": true,
+  "sources_inventoried": 64,
+  "metrics_defined": 32,
+  "regression_failed_passed": [
+   15,
+   1706
+  ],
+  "missing_primary_sources": [],
+  "hash_violations": [],
+  "raw_radar_tokens_match_v75": true,
+  "raw_gpm_tokens_match_v75": true,
+  "real_records_are_gemini": true,
+  "metrics_citing_synthetic_sources": [],
+  "sealed_statuses_in_comparison_table": true,
+  "radar_table_values_in_report": [],
+  "forbidden_financial_claims": [],
+  "v1_status_sealed": "REJECTED_BY_VALIDATOR",
+  "v2_status_sealed": "VALID_PROPOSAL",
+  "v2_contract_unchanged": true,
+  "v1_contract_unchanged": true
+ },
+ "plan_sha256": "c9487033aa2bec43f302264af5a5a148bfa9cae77da03a738c6990472d6b1f80"
+}

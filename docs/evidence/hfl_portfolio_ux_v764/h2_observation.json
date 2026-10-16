@@ -1,0 +1,268 @@
+[
+  {
+    "id": "h2:ai",
+    "label": "IA H2 v6",
+    "identity": "H2_V6/ai",
+    "available": true,
+    "observed_at": "2026-10-13T13:16:17.912261+00:00",
+    "summary": {
+      "initial_capital": 100000.0,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "reserved": null,
+      "receivable": null,
+      "exposure": 0.0,
+      "realized_pnl": null,
+      "unrealized_pnl": null,
+      "costs": 0,
+      "pnl": 0.0,
+      "drawdown": null,
+      "volatility": null,
+      "invested": 0.0
+    },
+    "mark": {
+      "session": "2026-10-09",
+      "close": 56.0
+    },
+    "operation_status": "PENDENTE",
+    "authorization_status": "Não se aplica a esta estratégia",
+    "positions": [],
+    "trades": [],
+    "future": [
+      {
+        "kind": "Intenção pendente de reconciliação",
+        "decision_session": "2026-10-09",
+        "target_session": "2026-10-13",
+        "target_weight": 1.0
+      }
+    ],
+    "timeline": [
+      {
+        "kind": "Decisão registrada",
+        "session": "2026-10-09",
+        "at": null,
+        "status": "DECIDED",
+        "evidence": "/api/forward/decision?session=2026-10-09",
+        "sha256": null
+      },
+      {
+        "kind": "Fechamento reconciliado",
+        "session": "2026-10-09",
+        "at": null,
+        "status": "RECONCILIADO",
+        "evidence": "/api/forward/portfolios",
+        "sha256": null
+      }
+    ]
+  },
+  {
+    "id": "h2:buy_and_hold",
+    "label": "Buy & Hold",
+    "identity": "H2_V6/buy_and_hold",
+    "available": true,
+    "observed_at": "2026-10-13T13:16:17.925463+00:00",
+    "summary": {
+      "initial_capital": 100000.0,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "reserved": null,
+      "receivable": null,
+      "exposure": 0.0,
+      "realized_pnl": null,
+      "unrealized_pnl": null,
+      "costs": 0,
+      "pnl": 0.0,
+      "drawdown": null,
+      "volatility": null,
+      "invested": 0.0
+    },
+    "mark": {
+      "session": "2026-10-09",
+      "close": 56.0
+    },
+    "operation_status": "PENDENTE",
+    "authorization_status": "Não se aplica a esta estratégia",
+    "positions": [],
+    "trades": [],
+    "future": [
+      {
+        "kind": "Intenção pendente de reconciliação",
+        "decision_session": null,
+        "target_session": "2026-10-13",
+        "target_weight": 1
+      }
+    ],
+    "timeline": [
+      {
+        "kind": "Fechamento reconciliado",
+        "session": "2026-10-09",
+        "at": null,
+        "status": "RECONCILIADO",
+        "evidence": "/api/forward/portfolios",
+        "sha256": null
+      }
+    ]
+  },
+  {
+    "id": "h2:sma_regime_h2_proposed",
+    "label": "SMA Regime 50/200",
+    "identity": "H2_V6/sma_regime_h2_proposed",
+    "available": true,
+    "observed_at": "2026-10-13T13:16:17.938881+00:00",
+    "summary": {
+      "initial_capital": 100000.0,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "reserved": null,
+      "receivable": null,
+      "exposure": 0.0,
+      "realized_pnl": null,
+      "unrealized_pnl": null,
+      "costs": 0,
+      "pnl": 0.0,
+      "drawdown": null,
+      "volatility": null,
+      "invested": 0.0
+    },
+    "mark": {
+      "session": "2026-10-09",
+      "close": 56.0
+    },
+    "operation_status": "PENDENTE",
+    "authorization_status": "Não se aplica a esta estratégia",
+    "positions": [],
+    "trades": [],
+    "future": [
+      {
+        "kind": "Intenção pendente de reconciliação",
+        "decision_session": "2026-10-09",
+        "target_session": "2026-10-13",
+        "target_weight": 1.0
+      }
+    ],
+    "timeline": [
+      {
+        "kind": "Decisão registrada",
+        "session": "2026-10-09",
+        "at": "2026-10-10T16:42:53.144748-03:00",
+        "status": "DECIDED",
+        "evidence": "/api/forward/portfolios",
+        "sha256": null
+      },
+      {
+        "kind": "Fechamento reconciliado",
+        "session": "2026-10-09",
+        "at": null,
+        "status": "RECONCILIADO",
+        "evidence": "/api/forward/portfolios",
+        "sha256": null
+      }
+    ]
+  },
+  {
+    "id": "h2:bollinger_state_h2_proposed",
+    "label": "Bollinger Estado 20/2",
+    "identity": "H2_V6/bollinger_state_h2_proposed",
+    "available": true,
+    "observed_at": "2026-10-13T13:16:17.953744+00:00",
+    "summary": {
+      "initial_capital": 100000.0,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "reserved": null,
+      "receivable": null,
+      "exposure": 0.0,
+      "realized_pnl": null,
+      "unrealized_pnl": null,
+      "costs": 0,
+      "pnl": 0.0,
+      "drawdown": null,
+      "volatility": null,
+      "invested": 0.0
+    },
+    "mark": {
+      "session": "2026-10-09",
+      "close": 56.0
+    },
+    "operation_status": "SEM_PENDENCIA",
+    "authorization_status": "Não se aplica a esta estratégia",
+    "positions": [],
+    "trades": [],
+    "future": [],
+    "timeline": [
+      {
+        "kind": "Decisão registrada",
+        "session": "2026-10-09",
+        "at": "2026-10-10T16:43:00.737830-03:00",
+        "status": "DECIDED",
+        "evidence": "/api/forward/portfolios",
+        "sha256": null
+      },
+      {
+        "kind": "Fechamento reconciliado",
+        "session": "2026-10-09",
+        "at": null,
+        "status": "RECONCILIADO",
+        "evidence": "/api/forward/portfolios",
+        "sha256": null
+      }
+    ]
+  },
+  {
+    "id": "h2:h2_v6_supervised",
+    "label": "H2 v6 Supervisionada",
+    "identity": "H2_V6/h2_v6_supervised",
+    "available": true,
+    "observed_at": "2026-10-13T13:16:17.970950+00:00",
+    "summary": {
+      "initial_capital": 100000.0,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "reserved": null,
+      "receivable": null,
+      "exposure": 0.0,
+      "realized_pnl": null,
+      "unrealized_pnl": null,
+      "costs": 0,
+      "pnl": 0.0,
+      "drawdown": null,
+      "volatility": null,
+      "invested": 0.0
+    },
+    "mark": {
+      "session": "2026-10-09",
+      "close": 56.0
+    },
+    "operation_status": "EXPIRADA",
+    "authorization_status": "Sem aprovação registrada",
+    "positions": [],
+    "trades": [],
+    "future": [],
+    "timeline": [
+      {
+        "kind": "Decisão registrada",
+        "session": "2026-10-09",
+        "at": "2026-10-10T21:02:07.690651-03:00",
+        "status": "EXPIRADA",
+        "evidence": "/api/forward/decision?session=2026-10-09",
+        "sha256": null
+      },
+      {
+        "kind": "Expiração do prazo (derivada na consulta)",
+        "session": "2026-10-09",
+        "at": "2026-10-13T10:00:00-03:00",
+        "status": "EXPIRADA",
+        "evidence": "/api/forward/supervision?session=2026-10-09",
+        "sha256": null
+      },
+      {
+        "kind": "Fechamento reconciliado",
+        "session": "2026-10-09",
+        "at": null,
+        "status": "RECONCILIADO",
+        "evidence": "/api/forward/portfolios",
+        "sha256": null
+      }
+    ]
+  }
+]

@@ -1,0 +1,43 @@
+'use strict';
+// Presentation shared by Mercado and Radar. Reads recorded facts; never infers a decision.
+window.HFLMarket = (() => {
+  const esc = v => String(v ?? '—').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const help = id => `<button class="ds-help" data-help="${esc(id)}"></button>`;
+  const number = (v, digits=2) => typeof v === 'number' && Number.isFinite(v) ? v.toLocaleString('pt-BR', {maximumFractionDigits:digits}) : '—';
+  const percent = v => typeof v === 'number' && Number.isFinite(v) ? number(v*100)+'%' : '—';
+  const signals = {COMPRA:['↗','ok'], VENDA:['↘','info'], MANTER:['＝','neutral'], APROVADO:['✓','ok'], VETADO:['⊘','warn']};
+  const badge = value => { const [icon,tone] = signals[value] || ['–','neutral']; return `<span class="ds-state" data-tone="${tone}"><span aria-hidden="true">${icon}</span> ${esc(value || 'Indisponível')}</span>`; };
+  const available = row => row?.status === 'COMPLETED';
+  const link = (page, run, ticker) => page+'?'+new URLSearchParams({run, ...(ticker ? {asset:ticker} : {})});
+  const copy = (label, value) => value ? `<span class="ds-hash"><span>${esc(label)}: ${esc(value)}</span><button class="ds-copy" data-copy="${esc(value)}" data-copy-label="${esc(label)}"></button></span>` : '';
+  function decisions(row) {
+    const ok=available(row), c=row.consensus;
+    return `<dl class="market-decisions"><div><dt>Sinal técnico ${help('consenso')}</dt><dd>${badge(ok ? row.technical_signal?.signal : null)}</dd></div><div><dt>Consenso</dt><dd>${ok && c ? `${esc(c.counts?.[c.winning_signal])}/${esc(c.total_analysts)} votos · ${c.consensus_reached ? 'atingido' : 'não atingido'}` : 'Indisponível'}</dd></div><div><dt>Risk ${help('risk')}</dt><dd>${badge(ok ? row.risk?.verdict : null)}</dd></div><div><dt>Resultado final</dt><dd>${badge(ok ? row.recommendation : null)}</dd></div></dl>`;
+  }
+  function summary(row, run, page='/market') {
+    return `<article class="ds-card market-asset" data-asset="${esc(row.ticker)}"><div class="ds-section-head"><h3>${esc(row.ticker)}</h3><span class="market-history">◷ Histórico</span></div><p>Sessão ${esc(row.session)} · ${esc(row.status)}</p>${decisions(row)}<p class="market-confidence">Confiança técnica ${help('confianca-tecnica')}: ${available(row) ? number(row.technical_signal?.confidence,3) : '—'} · votos válidos: ${esc(row.consensus?.valid_votes ?? row.votes?.length)}</p>${row.risk_source === 'HARD_ASSET_VOLATILITY_RULE' ? '<p class="market-veto">⊘ Veto determinístico: o sinal técnico não se tornou recomendação de compra.</p>' : ''}<a class="ds-btn" href="${esc(link(page,run,row.ticker))}">Consultar ${esc(row.ticker)} →</a></article>`;
+  }
+  const indicators = {
+    rsi:['RSI · 14 sessões','rsi','Escala de 0 a 100',v=>number(v)],
+    sma50_gap:['SMA50 · distância relativa','sma50','Fechamento / média de 50 sessões − 1',percent],
+    sma200_gap:['SMA200 · distância relativa','sma200','Fechamento / média de 200 sessões − 1',percent],
+    macd_ratio:['MACD / fechamento','macd','EMA12 − EMA26, dividido pelo fechamento',percent],
+    macd_signal_ratio:['Sinal MACD / fechamento','macd','EMA9 do MACD, dividida pelo fechamento',percent],
+    bb_upper_gap:['Bollinger · distância à banda superior','bollinger','Fechamento / banda superior − 1',percent],
+    bb_lower_gap:['Bollinger · distância à banda inferior','bollinger','Fechamento / banda inferior − 1',percent],
+    bb_width:['Bollinger · largura relativa','bollinger','(Superior − inferior) / média · 20 sessões, 2 desvios',percent],
+  };
+  function detail(row, run, compact=false) {
+    const ok=available(row), counts=row.consensus?.counts, hard=row.risk_source==='HARD_ASSET_VOLATILITY_RULE';
+    const metrics=row.risk?.risk_metrics || {}, f=row.features || {};
+    const votes=row.votes || [];
+    return `<h3>${esc(row.ticker)} · sessão ${esc(row.session)}</h3><p class="market-history">◷ Dados históricos · ${row.mode==='synthetic' ? 'demonstração sintética' : row.mode==='live' ? 'B3 COTAHIST + fator de ajuste yfinance' : 'Fonte indisponível'} · análise consultiva</p>${decisions(row)}
+      ${!ok ? `<div class="ds-alert ds-alert--warn"><strong>Parecer final indisponível</strong><p>${esc(row.status)} · ${votes.length} votos parciais registrados · ${esc(row.reserved_calls)} chamadas reservadas. O incidente não constitui análise válida; recuperação somente offline.</p></div>` : `<p>${esc(row.technical_signal?.justification)}</p>`}
+      ${compact ? '' : `<details class="market-indicators"><summary>Indicadores técnicos e unidades</summary><p>Fotografia do fechamento de ${esc(row.session)}. Diferenças relativas não são preços em reais.</p><div class="ds-grid">${Object.entries(indicators).map(([key,[label,id,base,format]])=>`<article class="ds-kpi"><span>${label} ${help(id)}</span><strong>${format(f[key])}</strong><small>${base}</small>${key==='rsi' && Number.isFinite(f[key]) ? `<meter min="0" max="100" value="${esc(f[key])}" aria-label="RSI de 0 a 100">${number(f[key])}</meter>` : ''}</article>`).join('')}<article class="ds-kpi"><span>Volatilidade ${help('volatilidade')}</span><strong>${percent(metrics.asset_volatility_21)}</strong><small>Anualizada · janela de 21 retornos</small></article></div><p class="ds-empty">Esta API disponibiliza a fotografia dos indicadores, sem série temporal de preços. Não há série suficiente para um gráfico histórico neste painel.</p></details>
+      <section class="market-consensus"><h4>Consenso ${help('consenso')}</h4><p>${counts ? ['COMPRA','VENDA','MANTER'].map(s=>`${s}: ${esc(counts[s])}`).join(' · ') : 'Contagem agregada indisponível.'}</p>${counts ? `<div class="market-vote-bars" aria-label="Distribuição dos votos">${['COMPRA','VENDA','MANTER'].map(s=>`<label>${s} <meter min="0" max="${esc(row.consensus.total_analysts)}" value="${esc(counts[s])}">${esc(counts[s])}</meter><span>${esc(counts[s])}/${esc(row.consensus.total_analysts)}</span></label>`).join('')}</div><p>Limiar registrado: ${percent(row.consensus.threshold)} · ${row.consensus.consensus_reached ? 'consenso atingido' : 'consenso não atingido'}. Confiança técnica ${help('confianca-tecnica')}: ${number(row.technical_signal?.confidence,3)} (0–1); não é probabilidade de lucro.</p>` : ''}</section>
+      <section class="market-committee"><h4>Comitê de agentes · ${votes.length} votos registrados</h4><p>Analistas do mesmo modelo; unanimidade não comprova independência.</p>${votes.length ? votes.map(v=>`<details class="market-vote"><summary>Analista ${esc(v.analyst_id)} · ${esc(v.signal?.signal)} · confiança ${number(v.signal?.confidence)}</summary>${v.signal?.justification ? `<p>${esc(v.signal.justification)}</p>` : '<p>Justificativa textual não registrada; consulte as evidências usadas no voto.</p>'}<ul>${(v.signal?.evidence || []).map(e=>`<li><code>${esc(e.code)}</code> · ${esc(e.role)}</li>`).join('')}</ul><details><summary>Metadados do analista</summary><pre>${esc(JSON.stringify(v,null,2))}</pre></details></details>`).join('') : '<p class="ds-empty">Nenhum voto disponível.</p>'}</section>
+      <section class="ds-alert ${row.risk?.verdict==='VETADO' ? 'ds-alert--warn' : ''} market-risk"><h4>Risk ${help('risk')} · ${esc(row.risk?.verdict || 'Indisponível')}</h4><p><strong>${hard ? 'Regra determinística · nenhum parecer LLM de Risk' : row.risk_source==='ADVISORY_LLM' ? 'Parecer consultivo LLM' : 'Origem indisponível'}</strong>${esc(row.risk?.analysis || 'Nenhuma avaliação registrada.')}</p><p>Volatilidade anualizada (21 retornos): ${percent(metrics.asset_volatility_21)}.${hard ? ` Veto ${help('veto')} pelo limite interno do laboratório de 50% (não regulamentar).` : ''}</p><p>Consequência: resultado final ${esc(ok ? row.recommendation : null)}. Risco da carteira: não avaliado. Nenhuma ordem emitida.</p></section>
+      <details class="market-evidence"><summary>Evidências avançadas, hashes e histórico</summary><div class="market-hashes">${copy('Execução',run)}${['input_sha256','history_sha256','manifest_sha256','provider_journal_sha256'].map(k=>copy(k,row[k])).join('')}</div><p>Tratamento: <code>${esc(row.identity)}</code> · Risk: <code>${esc(row.risk_source)}</code></p><p>Fonte: ${esc(row.source?.name)} · geração ${esc(row.generated_at)} · conclusão ${esc(row.completed_at)}</p><p>Tokens: ${esc(row.tokens?.total_tokens)} · estimativa pelo uso: USD ${esc(row.cost_usd)} (não é fatura). Chamadas e votos são contagens distintas.</p><details><summary>Registro completo de leitura (contextos, fontes e eventos)</summary><pre>${esc(JSON.stringify(row,null,2))}</pre></details></details>`}`;
+  }
+  return Object.freeze({esc, help, number, percent, badge, available, link, copy, decisions, summary, detail});
+})();

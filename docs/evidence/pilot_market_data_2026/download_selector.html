@@ -1,0 +1,94 @@
+
+<!doctype html>
+<html class="no-js" lang="pt-br">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script type="text/javascript" src="/ruxitagentjs_ICANVfgqru_10345260810170330.js" data-dtconfig="rid=RID_1414152006|rpid=164976920|domain=bmfbovespa.com.br|reportUrl=/rb_ea8d7b8f-040c-423b-b726-54310cab2c40|app=a8c099ff7888fac8|cuc=kju5m9kg|owasp=1|mel=100000|featureHash=ICANVfgqru|dpvc=1|lastModification=1789825341339|tp=500,50,0|rdnt=1|uxrgce=1|srbbv=2|agentUri=/ruxitagentjs_ICANVfgqru_10345260810170330.js"></script><link rel="stylesheet" href="/aspnet_client/system_web/2_0_50727/Themes/SiteBmfBovespa/foundation.css" />
+<link rel="stylesheet" href="/aspnet_client/system_web/2_0_50727/Themes/SiteBmfBovespa/jquery.ui.datepicker.css" />
+<script src="/aspnet_client/system_web/2_0_50727/Themes/SiteBmfBovespa/js/vendor/modernizr.js"></script>
+<script src="/aspnet_client/system_web/2_0_50727/Themes/SiteBmfBovespa/js/vendor/jquery.js"></script>
+<script src="/aspnet_client/system_web/2_0_50727/Themes/SiteBmfBovespa/js/foundation.min.js"></script>
+
+<script language="JavaScript" src="/js/SeriesHistoricas.js"></script>
+</head>
+<body>
+<!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-KPF8G3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-KPF8G3');</script>
+<!-- End Google Tag Manager --><div id="divContainerIframeBmf">
+<div class="row">
+<div class="large-12 columns">
+  <form name="frmSerHist">
+
+    <p>Em função do tamanho de alguns arquivos, mesmo estando compactados, este processo poderá levar alguns minutos.</p>
+
+    <h3>Séries Anuais (todos os dias úteis do ano escolhido)</h3>
+    <div class="row">
+    <div class="large-4 columns">
+    <label id="SpanSeries">Ano
+        <select name='cboAno' onChange='javascript:AbrirValidacao(this.value);VoltarPosInic(1);'><option></option><option value=COTAHIST_A2026.ZIP                                >2026</option><option value=COTAHIST_A2025.ZIP                                >2025</option><option value=COTAHIST_A2024.ZIP                                >2024</option><option value=COTAHIST_A2023.ZIP                                >2023</option><option value=COTAHIST_A2022.ZIP                                >2022</option><option value=COTAHIST_A2021.ZIP                                >2021</option><option value=COTAHIST_A2020.ZIP                                >2020</option><option value=COTAHIST_A2019.ZIP                                >2019</option><option value=COTAHIST_A2018.ZIP                                >2018</option><option value=COTAHIST_A2017.ZIP                                >2017</option><option value=COTAHIST_A2016.ZIP                                >2016</option><option value=COTAHIST_A2015.ZIP                                >2015</option><option value=COTAHIST_A2014.ZIP                                >2014</option><option value=COTAHIST_A2013.ZIP                                >2013</option><option value=COTAHIST_A2012.ZIP                                >2012</option><option value=COTAHIST_A2011.ZIP                                >2011</option><option value=COTAHIST_A2010.ZIP                                >2010</option><option value=COTAHIST_A2009.ZIP                                >2009</option><option value=COTAHIST_A2008.ZIP                                >2008</option><option value=COTAHIST_A2007.zip                                >2007</option><option value=COTAHIST_A2006.zip                                >2006</option><option value=COTAHIST_A2005.zip                                >2005</option><option value=COTAHIST_A2004.zip                                >2004</option><option value=COTAHIST_A2003.zip                                >2003</option><option value=COTAHIST_A2002.zip                                >2002</option><option value=COTAHIST_A2001.zip                                >2001</option><option value=COTAHIST_A2000.zip                                >2000</option><option value=COTAHIST_A1999.zip                                >1999</option><option value=COTAHIST_A1998.zip                                >1998</option><option value=COTAHIST_A1997.zip                                >1997</option><option value=COTAHIST_A1996.zip                                >1996</option><option value=COTAHIST_A1995.zip                                >1995</option><option value=COTAHIST_A1994.zip                                >1994</option><option value=COTAHIST_A1993.zip                                >1993</option><option value=COTAHIST_A1992.zip                                >1992</option><option value=COTAHIST_A1991.zip                                >1991</option><option value=COTAHIST_A1990.zip                                >1990</option><option value=COTAHIST_A1989.zip                                >1989</option><option value=COTAHIST_A1988.zip                                >1988</option><option value=COTAHIST_A1987.zip                                >1987</option><option value=COTAHIST_A1986.zip                                >1986</option></select>
+    </label>
+    </div>
+    </div>
+    <p class="legenda">No ano corrente, o arquivo exibe dados acumulados até o último dia útil disponível.</p>
+
+    <h3>Séries Mensais (últimos 12 meses)</h3>
+    <div class="row">
+    <div class="large-4 columns">
+    <label id="SpanSeries">Mês
+        <select name='cboMes' onChange='javascript:AbrirValidacao(this.value);VoltarPosInic(2);'><option></option><option value=COTAHIST_M092026.ZIP                              >Set/2026</option><option value=COTAHIST_M082026.ZIP                              >Ago/2026</option><option value=COTAHIST_M072026.ZIP                              >Jul/2026</option><option value=COTAHIST_M062026.ZIP                              >Jun/2026</option><option value=COTAHIST_M052026.ZIP                              >Mai/2026</option><option value=COTAHIST_M042026.ZIP                              >Abr/2026</option><option value=COTAHIST_M032026.ZIP                              >Mar/2026</option><option value=COTAHIST_M022026.ZIP                              >Fev/2026</option><option value=COTAHIST_M012026.ZIP                              >Jan/2026</option><option value=COTAHIST_M122025.ZIP                              >Dez/2025</option><option value=COTAHIST_M112025.ZIP                              >Nov/2025</option><option value=COTAHIST_M102025.ZIP                              >Out/2025</option></select>
+    </label>
+    </div>
+    </div>
+
+    <h3>Séries Diárias (do ano corrente)</h3>
+    <div class="row">
+    <div class="large-4 columns">
+        <label id="SpanSeries">Mês
+            <select name='cboMesDia' onChange='javascript:MontaComboDia(this.value)'><option></option><option value=10>Out</option><option value=09>Set</option><option value=08>Ago</option><option value=07>Jul</option><option value=06>Jun</option><option value=05>Mai</option><option value=04>Abr</option><option value=03>Mar</option><option value=02>Fev</option><option value=01>Jan</option></select><input type=hidden id='hdnDados' name='hdnDados' value='04|01|COTAHIST_D01042026.ZIP_|_06|01|COTAHIST_D01062026.ZIP_|_07|01|COTAHIST_D01072026.ZIP_|_09|01|COTAHIST_D01092026.ZIP_|_10|01|COTAHIST_D01102026.ZIP_|_01|02|COTAHIST_D02012026.ZIP_|_02|02|COTAHIST_D02022026.ZIP_|_03|02|COTAHIST_D02032026.ZIP_|_04|02|COTAHIST_D02042026.ZIP_|_06|02|COTAHIST_D02062026.ZIP_|_07|02|COTAHIST_D02072026.ZIP_|_09|02|COTAHIST_D02092026.ZIP_|_10|02|COTAHIST_D02102026.ZIP_|_02|03|COTAHIST_D03022026.ZIP_|_03|03|COTAHIST_D03032026.ZIP_|_06|03|COTAHIST_D03062026.ZIP_|_07|03|COTAHIST_D03072026.ZIP_|_08|03|COTAHIST_D03082026.ZIP_|_09|03|COTAHIST_D03092026.ZIP_|_02|04|COTAHIST_D04022026.ZIP_|_03|04|COTAHIST_D04032026.ZIP_|_05|04|COTAHIST_D04052026.ZIP_|_08|04|COTAHIST_D04082026.ZIP_|_09|04|COTAHIST_D04092026.ZIP_|_01|05|COTAHIST_D05012026.ZIP_|_02|05|COTAHIST_D05022026.ZIP_|_03|05|COTAHIST_D05032026.ZIP_|_05|05|COTAHIST_D05052026.ZIP_|_06|05|COTAHIST_D05062026.ZIP_|_08|05|COTAHIST_D05082026.ZIP_|_10|05|COTAHIST_D05102026.ZIP_|_01|06|COTAHIST_D06012026.ZIP_|_02|06|COTAHIST_D06022026.ZIP_|_03|06|COTAHIST_D06032026.ZIP_|_04|06|COTAHIST_D06042026.ZIP_|_05|06|COTAHIST_D06052026.ZIP_|_07|06|COTAHIST_D06072026.ZIP_|_08|06|COTAHIST_D06082026.ZIP_|_10|06|COTAHIST_D06102026.ZIP_|_01|07|COTAHIST_D07012026.ZIP_|_04|07|COTAHIST_D07042026.ZIP_|_05|07|COTAHIST_D07052026.ZIP_|_07|07|COTAHIST_D07072026.ZIP_|_08|07|COTAHIST_D07082026.ZIP_|_10|07|COTAHIST_D07102026.ZIP_|_01|08|COTAHIST_D08012026.ZIP_|_04|08|COTAHIST_D08042026.ZIP_|_05|08|COTAHIST_D08052026.ZIP_|_06|08|COTAHIST_D08062026.ZIP_|_07|08|COTAHIST_D08072026.ZIP_|_09|08|COTAHIST_D08092026.ZIP_|_10|08|COTAHIST_D08102026.ZIP_|_01|09|COTAHIST_D09012026.ZIP_|_02|09|COTAHIST_D09022026.ZIP_|_03|09|COTAHIST_D09032026.ZIP_|_04|09|COTAHIST_D09042026.ZIP_|_06|09|COTAHIST_D09062026.ZIP_|_07|09|COTAHIST_D09072026.ZIP_|_09|09|COTAHIST_D09092026.ZIP_|_10|09|COTAHIST_D09102026.ZIP_|_02|10|COTAHIST_D10022026.ZIP_|_03|10|COTAHIST_D10032026.ZIP_|_04|10|COTAHIST_D10042026.ZIP_|_06|10|COTAHIST_D10062026.ZIP_|_07|10|COTAHIST_D10072026.ZIP_|_08|10|COTAHIST_D10082026.ZIP_|_09|10|COTAHIST_D10092026.ZIP_|_02|11|COTAHIST_D11022026.ZIP_|_03|11|COTAHIST_D11032026.ZIP_|_05|11|COTAHIST_D11052026.ZIP_|_06|11|COTAHIST_D11062026.ZIP_|_08|11|COTAHIST_D11082026.ZIP_|_09|11|COTAHIST_D11092026.ZIP_|_01|12|COTAHIST_D12012026.ZIP_|_02|12|COTAHIST_D12022026.ZIP_|_03|12|COTAHIST_D12032026.ZIP_|_05|12|COTAHIST_D12052026.ZIP_|_06|12|COTAHIST_D12062026.ZIP_|_08|12|COTAHIST_D12082026.ZIP_|_01|13|COTAHIST_D13012026.ZIP_|_02|13|COTAHIST_D13022026.ZIP_|_03|13|COTAHIST_D13032026.ZIP_|_04|13|COTAHIST_D13042026.ZIP_|_05|13|COTAHIST_D13052026.ZIP_|_07|13|COTAHIST_D13072026.ZIP_|_08|13|COTAHIST_D13082026.ZIP_|_10|13|COTAHIST_D13102026.ZIP_|_01|14|COTAHIST_D14012026.ZIP_|_04|14|COTAHIST_D14042026.ZIP_|_05|14|COTAHIST_D14052026.ZIP_|_07|14|COTAHIST_D14072026.ZIP_|_08|14|COTAHIST_D14082026.ZIP_|_09|14|COTAHIST_D14092026.ZIP_|_01|15|COTAHIST_D15012026.ZIP_|_04|15|COTAHIST_D15042026.ZIP_|_05|15|COTAHIST_D15052026.ZIP_|_06|15|COTAHIST_D15062026.ZIP_|_07|15|COTAHIST_D15072026.ZIP_|_09|15|COTAHIST_D15092026.ZIP_|_01|16|COTAHIST_D16012026.ZIP_|_03|16|COTAHIST_D16032026.ZIP_|_04|16|COTAHIST_D16042026.ZIP_|_06|16|COTAHIST_D16062026.ZIP_|_07|16|COTAHIST_D16072026.ZIP_|_09|16|COTAHIST_D16092026.ZIP_|_03|17|COTAHIST_D17032026.ZIP_|_04|17|COTAHIST_D17042026.ZIP_|_06|17|COTAHIST_D17062026.ZIP_|_07|17|COTAHIST_D17072026.ZIP_|_08|17|COTAHIST_D17082026.ZIP_|_09|17|COTAHIST_D17092026.ZIP_|_02|18|COTAHIST_D18022026.ZIP_|_03|18|COTAHIST_D18032026.ZIP_|_05|18|COTAHIST_D18052026.ZIP_|_06|18|COTAHIST_D18062026.ZIP_|_08|18|COTAHIST_D18082026.ZIP_|_09|18|COTAHIST_D18092026.ZIP_|_01|19|COTAHIST_D19012026.ZIP_|_02|19|COTAHIST_D19022026.ZIP_|_03|19|COTAHIST_D19032026.ZIP_|_05|19|COTAHIST_D19052026.ZIP_|_06|19|COTAHIST_D19062026.ZIP_|_08|19|COTAHIST_D19082026.ZIP_|_01|20|COTAHIST_D20012026.ZIP_|_02|20|COTAHIST_D20022026.ZIP_|_03|20|COTAHIST_D20032026.ZIP_|_04|20|COTAHIST_D20042026.ZIP_|_05|20|COTAHIST_D20052026.ZIP_|_07|20|COTAHIST_D20072026.ZIP_|_08|20|COTAHIST_D20082026.ZIP_|_01|21|COTAHIST_D21012026.ZIP_|_05|21|COTAHIST_D21052026.ZIP_|_07|21|COTAHIST_D21072026.ZIP_|_08|21|COTAHIST_D21082026.ZIP_|_09|21|COTAHIST_D21092026.ZIP_|_01|22|COTAHIST_D22012026.ZIP_|_04|22|COTAHIST_D22042026.ZIP_|_05|22|COTAHIST_D22052026.ZIP_|_06|22|COTAHIST_D22062026.ZIP_|_07|22|COTAHIST_D22072026.ZIP_|_09|22|COTAHIST_D22092026.ZIP_|_01|23|COTAHIST_D23012026.ZIP_|_02|23|COTAHIST_D23022026.ZIP_|_03|23|COTAHIST_D23032026.ZIP_|_04|23|COTAHIST_D23042026.ZIP_|_06|23|COTAHIST_D23062026.ZIP_|_07|23|COTAHIST_D23072026.ZIP_|_09|23|COTAHIST_D23092026.ZIP_|_02|24|COTAHIST_D24022026.ZIP_|_03|24|COTAHIST_D24032026.ZIP_|_04|24|COTAHIST_D24042026.ZIP_|_06|24|COTAHIST_D24062026.ZIP_|_07|24|COTAHIST_D24072026.ZIP_|_08|24|COTAHIST_D24082026.ZIP_|_09|24|COTAHIST_D24092026.ZIP_|_02|25|COTAHIST_D25022026.ZIP_|_03|25|COTAHIST_D25032026.ZIP_|_05|25|COTAHIST_D25052026.ZIP_|_06|25|COTAHIST_D25062026.ZIP_|_08|25|COTAHIST_D25082026.ZIP_|_09|25|COTAHIST_D25092026.ZIP_|_01|26|COTAHIST_D26012026.ZIP_|_02|26|COTAHIST_D26022026.ZIP_|_03|26|COTAHIST_D26032026.ZIP_|_05|26|COTAHIST_D26052026.ZIP_|_06|26|COTAHIST_D26062026.ZIP_|_08|26|COTAHIST_D26082026.ZIP_|_01|27|COTAHIST_D27012026.ZIP_|_02|27|COTAHIST_D27022026.ZIP_|_03|27|COTAHIST_D27032026.ZIP_|_04|27|COTAHIST_D27042026.ZIP_|_05|27|COTAHIST_D27052026.ZIP_|_07|27|COTAHIST_D27072026.ZIP_|_08|27|COTAHIST_D27082026.ZIP_|_01|28|COTAHIST_D28012026.ZIP_|_04|28|COTAHIST_D28042026.ZIP_|_05|28|COTAHIST_D28052026.ZIP_|_07|28|COTAHIST_D28072026.ZIP_|_08|28|COTAHIST_D28082026.ZIP_|_09|28|COTAHIST_D28092026.ZIP_|_01|29|COTAHIST_D29012026.ZIP_|_04|29|COTAHIST_D29042026.ZIP_|_05|29|COTAHIST_D29052026.ZIP_|_06|29|COTAHIST_D29062026.ZIP_|_07|29|COTAHIST_D29072026.ZIP_|_09|29|COTAHIST_D29092026.ZIP_|_01|30|COTAHIST_D30012026.ZIP_|_03|30|COTAHIST_D30032026.ZIP_|_04|30|COTAHIST_D30042026.ZIP_|_06|30|COTAHIST_D30062026.ZIP_|_07|30|COTAHIST_D30072026.ZIP_|_09|30|COTAHIST_D30092026.ZIP_|_03|31|COTAHIST_D31032026.ZIP_|_07|31|COTAHIST_D31072026.ZIP_|_08|31|COTAHIST_D31082026.ZIP_|_'>
+        </label>
+    </div>
+    <div class="large-1 columns end">
+        <label id="SpanSeries">Dia
+            <select id="cboDia" name="cboDia" onChange="javascript:AbrirValidacao(this.value);VoltarPosInic(3);">
+                <option></option>
+            </select>
+        </label>
+    </div>
+    </div>
+    <!--p class="legenda">Nota: Caso queira uma data específica que não esteja disponível nesta página, <a href="FormSeriesHistoricasPrecos.asp">clique aqui</a> para conhecer a política comercial aplicável.</p-->
+
+  </form>    
+</div>
+</div>
+</div><script src="/aspnet_client/system_web/2_0_50727/Themes/SiteBmfBovespa/js/responsive.tables.min.js"></script>
+<script src="/aspnet_client/system_web/2_0_50727/Themes/SiteBmfBovespa/js/jquery.ui.core.js"></script>
+<script src="/aspnet_client/system_web/2_0_50727/Themes/SiteBmfBovespa/js/jquery.ui.datepicker.js"></script>
+<script>
+	$(document).foundation();
+	$("table").addClass("responsive");
+</script>
+
+<script type="text/javascript">
+
+	window.addEventListener('click', iframe_resize);
+
+	function iframe_resize() {
+
+	height = $("#divContainerIframeBmf").height();
+
+	if (parent.postMessage) {
+		parent.postMessage(height, "http://www.bmfbovespa.com.br");
+	}
+
+	}
+</script>
+<script type="text/javascript">iframe_resize();</script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4a315286c65caeb',t:'MTc5MTk0NDE5Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

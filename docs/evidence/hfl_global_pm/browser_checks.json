@@ -1,0 +1,70 @@
+{
+  "browser": "Chrome",
+  "url": "http://localhost:8089/portfolio",
+  "console_warn_error": [],
+  "viewports": [
+    {
+      "width": 1440,
+      "document_scroll_width": 1425
+    },
+    {
+      "width": 640,
+      "document_scroll_width": 625,
+      "table_client_width": 535,
+      "table_scroll_width": 1000
+    },
+    {
+      "width": 420,
+      "document_scroll_width": 405,
+      "table_client_width": 331,
+      "table_scroll_width": 1000
+    }
+  ],
+  "cases_inspected": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F"
+  ],
+  "C_projection": {
+    "available_cash": "80000.00",
+    "receivable": "3996.00"
+  },
+  "D_projection": {
+    "available_cash": "9000.00",
+    "receivable": "19980.00",
+    "conditional_cash": "16467.50",
+    "total_costs": "32.50"
+  },
+  "F": {
+    "simulate_disabled": true,
+    "target_chart_absent": true,
+    "reason": "weights_must_sum_to_one"
+  },
+  "official_selection": {
+    "status": "INSUFFICIENT_DATA",
+    "missing": 5,
+    "radar_calls_max": 30,
+    "radar_reserved_usd": "3.317760",
+    "global_reserved_usd": "0.159744",
+    "provider_calls": 0
+  },
+  "synthetic_selection": {
+    "eligible": 5,
+    "radar_calls_max": 0,
+    "cost_usd": "0",
+    "provider_calls": 0
+  },
+  "viewport_restored": true,
+  "browser_deliverable_marked": true,
+  "screenshots": [
+    "chrome_1440.jpg",
+    "chrome_1440_allocations.jpg",
+    "chrome_420.jpg",
+    "chrome_420_allocations.jpg",
+    "chrome_640.jpg",
+    "chrome_rejected_F.jpg"
+  ]
+}

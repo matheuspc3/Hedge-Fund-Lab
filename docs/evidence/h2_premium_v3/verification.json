@@ -1,0 +1,437 @@
+{
+  "criterion": "HEDGE-FUND-LAB PREMIUM V3 — MARKET MONITOR & ORDER SCENARIO READY",
+  "checked_on": "2026-10-11",
+  "implementation_commit": "920835216e13681f9d672a920525191643dfaaa4",
+  "tests": {
+    "focused_passed": 79,
+    "focused_seconds": 84.37,
+    "final_targeted_passed": 12,
+    "final_targeted_seconds": 9.31,
+    "external_socket_and_dns_blocked": true,
+    "real_gemini_keys_removed": true,
+    "full_suite_rerun": false,
+    "prior_full_suite_record": "docs/evidence/h2_premium_v2/recheck/verification.json",
+    "prior_full_suite_failures": [
+      {
+        "test": "tests.experiments.test_cal_b4_safety::test_v5_development_s3_failure_blocks_further_phases",
+        "classification": "outdated_historical_expectation"
+      },
+      {
+        "test": "tests.experiments.test_spec::test_registry_cobre_os_cinco_classicos_e_o_participante_llm",
+        "classification": "outdated_historical_expectation"
+      },
+      {
+        "test": "tests.experiments.test_v6_phase_routing::test_structural_failure_prevents_phase_selection_and_progression",
+        "classification": "outdated_historical_expectation"
+      },
+      {
+        "test": "tests.pipeline.test_flows.TestPipelineFlow::test_full_flow_success",
+        "classification": "environment_postgresql_5435"
+      },
+      {
+        "test": "tests.pipeline.test_flows.TestPipelineFlow::test_partial_flow_returns_explicit_failure_summary",
+        "classification": "environment_postgresql_5435"
+      },
+      {
+        "test": "tests.pipeline.test_flows.TestPipelineFlow::test_extract_retry_on_failure",
+        "classification": "environment_postgresql_5435"
+      },
+      {
+        "test": "tests.pipeline.test_flows.TestPipelineFlow::test_custom_tickers",
+        "classification": "environment_postgresql_5435"
+      },
+      {
+        "test": "tests.pipeline.test_flows.TestPipelineFlow::test_single_ticker",
+        "classification": "environment_postgresql_5435"
+      },
+      {
+        "test": "tests.pipeline.test_flows.TestPipelineFlow::test_empty_tickers",
+        "classification": "environment_postgresql_5435"
+      },
+      {
+        "test": "tests.pipeline.test_flows.TestPipelineFlow::test_default_tickers_from_settings",
+        "classification": "environment_postgresql_5435"
+      }
+    ]
+  },
+  "protected": {
+    "scientific_files": 265,
+    "ledger_files": 13,
+    "changed": [],
+    "ledger_baseline_sha256": "8a90fb56620877549edab22d37676c32782e63f40ea8953062c5dd921d26d389"
+  },
+  "real_wallet": {
+    "position": {
+      "cash": 100000.0,
+      "units": 0.0,
+      "weight": 0.0,
+      "equity": 100000.0,
+      "mark": {
+        "session": "2026-10-09",
+        "close": 56.0
+      }
+    },
+    "human_actions": 0,
+    "audit": {
+      "ok": true,
+      "events": 1,
+      "errors": []
+    },
+    "decision_sha256": "27e51c949aebac155b1d890c6fff74d1a242852d7f5c8d3a30cdc602a6a09ddc",
+    "input_sha256": "8acf2b53eb36c4936de1d1c6b1f19d143ce31777c43d7ec83da2eadf25d957d7"
+  },
+  "real_record_scenarios": [
+    {
+      "hypothetical_open": 54,
+      "allowed": false,
+      "reason": "Gap de baixa 3.57% acima do limite 2.00%.",
+      "band": {
+        "lower": 54.879999999999995,
+        "upper": 56.0,
+        "inclusive": true,
+        "empty": false,
+        "redundant_gap_up": true,
+        "checks": [
+          {
+            "key": "max_gap_up",
+            "limit": 0.02,
+            "raw_bound": 57.120000000000005,
+            "observed": 54,
+            "passed": true
+          },
+          {
+            "key": "max_gap_down",
+            "limit": 0.02,
+            "raw_bound": 54.879999999999995,
+            "observed": 54,
+            "passed": false
+          },
+          {
+            "key": "max_buy_price",
+            "limit": 56.0,
+            "raw_bound": 56.0,
+            "observed": 54,
+            "passed": true
+          },
+          {
+            "key": "max_concentration",
+            "limit": 0.05,
+            "observed": 0.0,
+            "passed": true
+          }
+        ]
+      },
+      "estimate": {
+        "order_value": 0,
+        "quantity": 0,
+        "cost": 0,
+        "cash_after": 100000.0,
+        "units_after": 0.0,
+        "equity_after": 100000.0,
+        "concentration_after_costs": 0.0,
+        "adjusted_open": 54.0,
+        "adjustment_factor": 1.0,
+        "source": "sessions/2026-10-09/bars.csv + input.json; abertura hipotética"
+      }
+    },
+    {
+      "hypothetical_open": 54.88,
+      "allowed": true,
+      "reason": "Operação permitida neste cenário hipotético; nenhuma ordem criada.",
+      "band": {
+        "lower": 54.879999999999995,
+        "upper": 56.0,
+        "inclusive": true,
+        "empty": false,
+        "redundant_gap_up": true,
+        "checks": [
+          {
+            "key": "max_gap_up",
+            "limit": 0.02,
+            "raw_bound": 57.120000000000005,
+            "observed": 54.88,
+            "passed": true
+          },
+          {
+            "key": "max_gap_down",
+            "limit": 0.02,
+            "raw_bound": 54.879999999999995,
+            "observed": 54.88,
+            "passed": true
+          },
+          {
+            "key": "max_buy_price",
+            "limit": 56.0,
+            "raw_bound": 56.0,
+            "observed": 54.88,
+            "passed": true
+          },
+          {
+            "key": "max_concentration",
+            "limit": 0.05,
+            "observed": 0.05,
+            "passed": true
+          }
+        ]
+      },
+      "estimate": {
+        "order_value": 4999.795008404656,
+        "quantity": 91.10413645052215,
+        "cost": 4.0998319068918185,
+        "cash_after": 94996.10515968845,
+        "units_after": 91.10413645052215,
+        "equity_after": 99995.90016809311,
+        "concentration_after_costs": 0.05,
+        "adjusted_open": 54.88,
+        "adjustment_factor": 1.0,
+        "source": "sessions/2026-10-09/bars.csv + input.json; abertura hipotética"
+      }
+    },
+    {
+      "hypothetical_open": 55,
+      "allowed": true,
+      "reason": "Operação permitida neste cenário hipotético; nenhuma ordem criada.",
+      "band": {
+        "lower": 54.879999999999995,
+        "upper": 56.0,
+        "inclusive": true,
+        "empty": false,
+        "redundant_gap_up": true,
+        "checks": [
+          {
+            "key": "max_gap_up",
+            "limit": 0.02,
+            "raw_bound": 57.120000000000005,
+            "observed": 55,
+            "passed": true
+          },
+          {
+            "key": "max_gap_down",
+            "limit": 0.02,
+            "raw_bound": 54.879999999999995,
+            "observed": 55,
+            "passed": true
+          },
+          {
+            "key": "max_buy_price",
+            "limit": 56.0,
+            "raw_bound": 56.0,
+            "observed": 55,
+            "passed": true
+          },
+          {
+            "key": "max_concentration",
+            "limit": 0.05,
+            "observed": 0.05,
+            "passed": true
+          }
+        ]
+      },
+      "estimate": {
+        "order_value": 4999.795008404656,
+        "quantity": 90.90536378917557,
+        "cost": 4.0998319068918185,
+        "cash_after": 94996.10515968845,
+        "units_after": 90.90536378917557,
+        "equity_after": 99995.90016809311,
+        "concentration_after_costs": 0.05,
+        "adjusted_open": 55.0,
+        "adjustment_factor": 1.0,
+        "source": "sessions/2026-10-09/bars.csv + input.json; abertura hipotética"
+      }
+    },
+    {
+      "hypothetical_open": 56,
+      "allowed": true,
+      "reason": "Operação permitida neste cenário hipotético; nenhuma ordem criada.",
+      "band": {
+        "lower": 54.879999999999995,
+        "upper": 56.0,
+        "inclusive": true,
+        "empty": false,
+        "redundant_gap_up": true,
+        "checks": [
+          {
+            "key": "max_gap_up",
+            "limit": 0.02,
+            "raw_bound": 57.120000000000005,
+            "observed": 56,
+            "passed": true
+          },
+          {
+            "key": "max_gap_down",
+            "limit": 0.02,
+            "raw_bound": 54.879999999999995,
+            "observed": 56,
+            "passed": true
+          },
+          {
+            "key": "max_buy_price",
+            "limit": 56.0,
+            "raw_bound": 56.0,
+            "observed": 56,
+            "passed": true
+          },
+          {
+            "key": "max_concentration",
+            "limit": 0.05,
+            "observed": 0.05,
+            "passed": true
+          }
+        ]
+      },
+      "estimate": {
+        "order_value": 4999.795008404656,
+        "quantity": 89.28205372151172,
+        "cost": 4.0998319068918185,
+        "cash_after": 94996.10515968845,
+        "units_after": 89.28205372151172,
+        "equity_after": 99995.90016809311,
+        "concentration_after_costs": 0.05,
+        "adjusted_open": 56.0,
+        "adjustment_factor": 1.0,
+        "source": "sessions/2026-10-09/bars.csv + input.json; abertura hipotética"
+      }
+    },
+    {
+      "hypothetical_open": 56.5,
+      "allowed": false,
+      "reason": "Abertura bruta R$ 56.50 viola o limite de preço R$ 56.00.",
+      "band": {
+        "lower": 54.879999999999995,
+        "upper": 56.0,
+        "inclusive": true,
+        "empty": false,
+        "redundant_gap_up": true,
+        "checks": [
+          {
+            "key": "max_gap_up",
+            "limit": 0.02,
+            "raw_bound": 57.120000000000005,
+            "observed": 56.5,
+            "passed": true
+          },
+          {
+            "key": "max_gap_down",
+            "limit": 0.02,
+            "raw_bound": 54.879999999999995,
+            "observed": 56.5,
+            "passed": true
+          },
+          {
+            "key": "max_buy_price",
+            "limit": 56.0,
+            "raw_bound": 56.0,
+            "observed": 56.5,
+            "passed": false
+          },
+          {
+            "key": "max_concentration",
+            "limit": 0.05,
+            "observed": 0.0,
+            "passed": true
+          }
+        ]
+      },
+      "estimate": {
+        "order_value": 0,
+        "quantity": 0,
+        "cost": 0,
+        "cash_after": 100000.0,
+        "units_after": 0.0,
+        "equity_after": 100000.0,
+        "concentration_after_costs": 0.0,
+        "adjusted_open": 56.5,
+        "adjustment_factor": 1.0,
+        "source": "sessions/2026-10-09/bars.csv + input.json; abertura hipotética"
+      }
+    },
+    {
+      "hypothetical_open": 57.5,
+      "allowed": false,
+      "reason": "Gap de alta 2.68% acima do limite 2.00%.",
+      "band": {
+        "lower": 54.879999999999995,
+        "upper": 56.0,
+        "inclusive": true,
+        "empty": false,
+        "redundant_gap_up": true,
+        "checks": [
+          {
+            "key": "max_gap_up",
+            "limit": 0.02,
+            "raw_bound": 57.120000000000005,
+            "observed": 57.5,
+            "passed": false
+          },
+          {
+            "key": "max_gap_down",
+            "limit": 0.02,
+            "raw_bound": 54.879999999999995,
+            "observed": 57.5,
+            "passed": true
+          },
+          {
+            "key": "max_buy_price",
+            "limit": 56.0,
+            "raw_bound": 56.0,
+            "observed": 57.5,
+            "passed": false
+          },
+          {
+            "key": "max_concentration",
+            "limit": 0.05,
+            "observed": 0.0,
+            "passed": true
+          }
+        ]
+      },
+      "estimate": {
+        "order_value": 0,
+        "quantity": 0,
+        "cost": 0,
+        "cash_after": 100000.0,
+        "units_after": 0.0,
+        "equity_after": 100000.0,
+        "concentration_after_costs": 0.0,
+        "adjusted_open": 57.5,
+        "adjustment_factor": 1.0,
+        "source": "sessions/2026-10-09/bars.csv + input.json; abertura hipotética"
+      }
+    }
+  ],
+  "provider": "OfflineProvider; official historical frozen cache; no intraday feed",
+  "new_gemini_calls": 0,
+  "real_orders": 0,
+  "validation_or_final_runs": 0,
+  "push": false,
+  "local_url": "http://localhost:8085/paper",
+  "ledger_hashes": {
+    "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\data\\forward\\h2_v6_paper\\state.json": "421ecf999abb0aefb75e89b468e32d13cf4cb2c1c7f653e9be226766b3277181",
+    "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\data\\forward\\h2_v6_paper\\cotahist\\COTAHIST_A2026.ZIP": "d55b48e43c9d08561b595b7eb46f954fd1fa6051e0126220a2c36e8ac167fc11",
+    "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\data\\forward\\h2_v6_paper\\sessions\\2026-10-09\\bars.csv": "1918f5370b554614c2d39766fce8902c2a108186592f7269472dca33f25b6993",
+    "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\data\\forward\\h2_v6_paper\\sessions\\2026-10-09\\decision.json": "27e51c949aebac155b1d890c6fff74d1a242852d7f5c8d3a30cdc602a6a09ddc",
+    "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\data\\forward\\h2_v6_paper\\sessions\\2026-10-09\\input.json": "8acf2b53eb36c4936de1d1c6b1f19d143ce31777c43d7ec83da2eadf25d957d7",
+    "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\data\\forward\\h2_v6_paper\\sessions\\2026-10-09\\llm_trace.jsonl": "456e84af3e10a8556282e5f2f4dfdaf90a3e950ff4c9c8bc768e9e0345ae55b7",
+    "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\data\\forward\\h2_v6_paper\\sessions\\2026-10-09\\provider.sqlite": "f998939f193c77dd8bd145738434db16b9fa6183fc06c701c33614497d53198a",
+    "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\data\\forward\\h2_v6_paper\\sessions\\2026-10-09\\provider_journal.jsonl": "3cf317304386cd89e2712a17a18adfec703cf90d3b0fd874b10cbde43c562187",
+    "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\data\\forward\\h2_v6_paper\\sessions\\2026-10-09\\reconciliation.json": "b0e5d9c56c8997b7765f6fc31200230e4cebb54dca11f6ba616e3afa3eac86e8",
+    "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\data\\forward\\h2_v6_supervised\\audit.jsonl": "390bfab06933282b128c9858f61faeec49c9456bf9a69e4f7a76a4536d2d4149",
+    "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\data\\forward\\h2_v6_supervised\\state.json": "e4e07d83696e8d8af78254dc55c986f2566f5ebe61696ffdef7d94f77e31af9e",
+    "data\\forward\\h2_v6_benchmarks\\bollinger_state_h2_proposed\\state.json": "8be9fe2a3f79ca5b798957786c327d33ea7e2a0c4d3a2987f1bbf827e12667af",
+    "data\\forward\\h2_v6_benchmarks\\sma_regime_h2_proposed\\state.json": "94511dbbfab52eb759f88b339a814631d63a130a671c4ace8c81be308247356c"
+  },
+  "browser": {
+    "engine": "Chrome via cua_repl",
+    "widths": [
+      1440,
+      640,
+      420
+    ],
+    "layout_checks": 15,
+    "hypothetical_price_checks": 6,
+    "horizontal_overflow": false,
+    "console_errors_or_warnings": [],
+    "approvals_or_llm_controls_used": false
+  }
+}

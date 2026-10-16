@@ -1,0 +1,399 @@
+{
+ "checks": [
+  {
+   "name": "radar-2026-10-09-recovery-01@1440 shows the run's five-asset universe",
+   "ok": true,
+   "detail": 5
+  },
+  {
+   "name": "radar-2026-10-09-recovery-01@1440 card matches selection",
+   "ok": true,
+   "detail": {
+    "card": "radar-2026-10-09-recovery-01",
+    "selected": "radar-2026-10-09-recovery-01",
+    "overflow": -15,
+    "prepare": false,
+    "preflight": false,
+    "source": "CONSULTIVO COM GEMINI · registros desta execução apenas. Execução operacional do servidor.",
+    "error": null,
+    "incident": false,
+    "check": "Conferência dos inputs · 5 inputs prontos; 0/5 pareceres oficiais · execução radar-2026-10-09-recovery-01 · sessão 2026-10-09 · Gestor Global bloqueado até exis",
+    "universe": 5
+   }
+  },
+  {
+   "name": "radar-2026-10-09-recovery-01@1440 no horizontal page scroll",
+   "ok": true,
+   "detail": -15
+  },
+  {
+   "name": "radar-2026-10-09-original@1440 shows the run's five-asset universe",
+   "ok": true,
+   "detail": 5
+  },
+  {
+   "name": "radar-2026-10-09-original@1440 card matches selection",
+   "ok": true,
+   "detail": {
+    "card": "radar-2026-10-09-original",
+    "selected": "radar-2026-10-09-original",
+    "overflow": -15,
+    "prepare": true,
+    "preflight": true,
+    "source": "CONSULTIVO COM GEMINI · registros desta execução apenas. Somente leitura: execução operacional do servidor é radar-2026-10-09-recovery-01.",
+    "error": null,
+    "incident": true,
+    "check": "Conferência dos inputs · 5 inputs prontos; 0/5 pareceres oficiais · execução radar-2026-10-09-original · sessão 2026-10-09 · Gestor Global bloqueado até existir",
+    "universe": 5
+   }
+  },
+  {
+   "name": "radar-2026-10-09-original@1440 no horizontal page scroll",
+   "ok": true,
+   "detail": -15
+  },
+  {
+   "name": "incident@1440 read-only with banner",
+   "ok": true,
+   "detail": {
+    "card": "radar-2026-10-09-original",
+    "selected": "radar-2026-10-09-original",
+    "overflow": -15,
+    "prepare": true,
+    "preflight": true,
+    "source": "CONSULTIVO COM GEMINI · registros desta execução apenas. Somente leitura: execução operacional do servidor é radar-2026-10-09-recovery-01.",
+    "error": null,
+    "incident": true,
+    "check": "Conferência dos inputs · 5 inputs prontos; 0/5 pareceres oficiais · execução radar-2026-10-09-original · sessão 2026-10-09 · Gestor Global bloqueado até existir",
+    "universe": 5
+   }
+  },
+  {
+   "name": "radar-demo-v4@1440 shows the run's five-asset universe",
+   "ok": true,
+   "detail": 5
+  },
+  {
+   "name": "radar-demo-v4@1440 card matches selection",
+   "ok": true,
+   "detail": {
+    "card": "radar-demo-v4",
+    "selected": "radar-demo-v4",
+    "overflow": -15,
+    "prepare": true,
+    "preflight": true,
+    "source": "DEMONSTRAÇÃO SINTÉTICA · resultados fixos · sem chamadas ou gravações. Somente leitura: execução operacional do servidor é radar-2026-10-09-recovery-01.",
+    "error": null,
+    "incident": false,
+    "check": "Conferência dos inputs · 5 inputs prontos; 5/5 pareceres oficiais · execução radar-demo-v4 · sessão 2026-10-09 · Gestor Global elegível\n\nATIVO\tINPUT\tDADOS\tPAREC",
+    "universe": 5
+   }
+  },
+  {
+   "name": "radar-demo-v4@1440 no horizontal page scroll",
+   "ok": true,
+   "detail": -15
+  },
+  {
+   "name": "radar-2026-10-09-recovery-01@640 shows the run's five-asset universe",
+   "ok": true,
+   "detail": 5
+  },
+  {
+   "name": "radar-2026-10-09-recovery-01@640 card matches selection",
+   "ok": true,
+   "detail": {
+    "card": "radar-2026-10-09-recovery-01",
+    "selected": "radar-2026-10-09-recovery-01",
+    "overflow": 0,
+    "prepare": false,
+    "preflight": false,
+    "source": "CONSULTIVO COM GEMINI · registros desta execução apenas. Execução operacional do servidor.",
+    "error": null,
+    "incident": false,
+    "check": "Conferência dos inputs · 5 inputs prontos; 0/5 pareceres oficiais · execução radar-2026-10-09-recovery-01 · sessão 2026-10-09 · Gestor Global bloqueado até exis",
+    "universe": 5
+   }
+  },
+  {
+   "name": "radar-2026-10-09-recovery-01@640 no horizontal page scroll",
+   "ok": true,
+   "detail": 0
+  },
+  {
+   "name": "radar-2026-10-09-original@640 shows the run's five-asset universe",
+   "ok": true,
+   "detail": 5
+  },
+  {
+   "name": "radar-2026-10-09-original@640 card matches selection",
+   "ok": true,
+   "detail": {
+    "card": "radar-2026-10-09-original",
+    "selected": "radar-2026-10-09-original",
+    "overflow": 0,
+    "prepare": true,
+    "preflight": true,
+    "source": "CONSULTIVO COM GEMINI · registros desta execução apenas. Somente leitura: execução operacional do servidor é radar-2026-10-09-recovery-01.",
+    "error": null,
+    "incident": true,
+    "check": "Conferência dos inputs · 5 inputs prontos; 0/5 pareceres oficiais · execução radar-2026-10-09-original · sessão 2026-10-09 · Gestor Global bloqueado até existir",
+    "universe": 5
+   }
+  },
+  {
+   "name": "radar-2026-10-09-original@640 no horizontal page scroll",
+   "ok": true,
+   "detail": 0
+  },
+  {
+   "name": "incident@640 read-only with banner",
+   "ok": true,
+   "detail": {
+    "card": "radar-2026-10-09-original",
+    "selected": "radar-2026-10-09-original",
+    "overflow": 0,
+    "prepare": true,
+    "preflight": true,
+    "source": "CONSULTIVO COM GEMINI · registros desta execução apenas. Somente leitura: execução operacional do servidor é radar-2026-10-09-recovery-01.",
+    "error": null,
+    "incident": true,
+    "check": "Conferência dos inputs · 5 inputs prontos; 0/5 pareceres oficiais · execução radar-2026-10-09-original · sessão 2026-10-09 · Gestor Global bloqueado até existir",
+    "universe": 5
+   }
+  },
+  {
+   "name": "radar-demo-v4@640 shows the run's five-asset universe",
+   "ok": true,
+   "detail": 5
+  },
+  {
+   "name": "radar-demo-v4@640 card matches selection",
+   "ok": true,
+   "detail": {
+    "card": "radar-demo-v4",
+    "selected": "radar-demo-v4",
+    "overflow": 0,
+    "prepare": true,
+    "preflight": true,
+    "source": "DEMONSTRAÇÃO SINTÉTICA · resultados fixos · sem chamadas ou gravações. Somente leitura: execução operacional do servidor é radar-2026-10-09-recovery-01.",
+    "error": null,
+    "incident": false,
+    "check": "",
+    "universe": 5
+   }
+  },
+  {
+   "name": "radar-demo-v4@640 no horizontal page scroll",
+   "ok": true,
+   "detail": 0
+  },
+  {
+   "name": "radar-2026-10-09-recovery-01@420 shows the run's five-asset universe",
+   "ok": true,
+   "detail": 5
+  },
+  {
+   "name": "radar-2026-10-09-recovery-01@420 card matches selection",
+   "ok": true,
+   "detail": {
+    "card": "radar-2026-10-09-recovery-01",
+    "selected": "radar-2026-10-09-recovery-01",
+    "overflow": 0,
+    "prepare": false,
+    "preflight": false,
+    "source": "CONSULTIVO COM GEMINI · registros desta execução apenas. Execução operacional do servidor.",
+    "error": null,
+    "incident": false,
+    "check": "Conferência dos inputs · 5 inputs prontos; 0/5 pareceres oficiais · execução radar-2026-10-09-recovery-01 · sessão 2026-10-09 · Gestor Global bloqueado até exis",
+    "universe": 5
+   }
+  },
+  {
+   "name": "radar-2026-10-09-recovery-01@420 no horizontal page scroll",
+   "ok": true,
+   "detail": 0
+  },
+  {
+   "name": "radar-2026-10-09-original@420 shows the run's five-asset universe",
+   "ok": true,
+   "detail": 5
+  },
+  {
+   "name": "radar-2026-10-09-original@420 card matches selection",
+   "ok": true,
+   "detail": {
+    "card": "radar-2026-10-09-original",
+    "selected": "radar-2026-10-09-original",
+    "overflow": 0,
+    "prepare": true,
+    "preflight": true,
+    "source": "CONSULTIVO COM GEMINI · registros desta execução apenas. Somente leitura: execução operacional do servidor é radar-2026-10-09-recovery-01.",
+    "error": null,
+    "incident": true,
+    "check": "Conferência dos inputs · 5 inputs prontos; 0/5 pareceres oficiais · execução radar-2026-10-09-original · sessão 2026-10-09 · Gestor Global bloqueado até existir",
+    "universe": 5
+   }
+  },
+  {
+   "name": "radar-2026-10-09-original@420 no horizontal page scroll",
+   "ok": true,
+   "detail": 0
+  },
+  {
+   "name": "incident@420 read-only with banner",
+   "ok": true,
+   "detail": {
+    "card": "radar-2026-10-09-original",
+    "selected": "radar-2026-10-09-original",
+    "overflow": 0,
+    "prepare": true,
+    "preflight": true,
+    "source": "CONSULTIVO COM GEMINI · registros desta execução apenas. Somente leitura: execução operacional do servidor é radar-2026-10-09-recovery-01.",
+    "error": null,
+    "incident": true,
+    "check": "Conferência dos inputs · 5 inputs prontos; 0/5 pareceres oficiais · execução radar-2026-10-09-original · sessão 2026-10-09 · Gestor Global bloqueado até existir",
+    "universe": 5
+   }
+  },
+  {
+   "name": "radar-demo-v4@420 shows the run's five-asset universe",
+   "ok": true,
+   "detail": 5
+  },
+  {
+   "name": "radar-demo-v4@420 card matches selection",
+   "ok": true,
+   "detail": {
+    "card": "radar-demo-v4",
+    "selected": "radar-demo-v4",
+    "overflow": 0,
+    "prepare": true,
+    "preflight": true,
+    "source": "DEMONSTRAÇÃO SINTÉTICA · resultados fixos · sem chamadas ou gravações. Somente leitura: execução operacional do servidor é radar-2026-10-09-recovery-01.",
+    "error": null,
+    "incident": false,
+    "check": "Conferência dos inputs · 5 inputs prontos; 5/5 pareceres oficiais · execução radar-demo-v4 · sessão 2026-10-09 · Gestor Global elegível\n\nPETR4\nInput congelado\n2",
+    "universe": 5
+   }
+  },
+  {
+   "name": "radar-demo-v4@420 no horizontal page scroll",
+   "ok": true,
+   "detail": 0
+  },
+  {
+   "name": "keyboard: Tab reaches the run selector",
+   "ok": true,
+   "detail": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "A",
+    "A",
+    "A",
+    "A",
+    "A",
+    "A",
+    "radar-run",
+    "radar-to-global",
+    "ticker-search",
+    "BUTTON",
+    "INPUT",
+    "BUTTON",
+    "INPUT",
+    "BUTTON",
+    "INPUT",
+    "BUTTON"
+   ]
+  },
+  {
+   "name": "keyboard: ArrowDown switches run, card and URL follow",
+   "ok": true,
+   "detail": {
+    "value": "radar-demo-v4",
+    "card": "radar-demo-v4",
+    "url": "?run=radar-demo-v4"
+   }
+  },
+  {
+   "name": "rapid switches: last selection wins, no mixed readiness",
+   "ok": true,
+   "detail": {
+    "card": "radar-2026-10-09-recovery-01",
+    "rows": 5,
+    "check": true
+   }
+  },
+  {
+   "name": "global PM: missing-opinion reasons come from the same run (no incident text)",
+   "ok": true,
+   "detail": "PETR4 · AWAITING_RADAR_AUTHORIZATION · Input congelado; parecer pendente: preflight Radar e autorização paga própria do lote.\nVALE3 · AWAITING_RADAR_AUTHORIZATION · Input congelado; parecer pendente: preflight Radar e autorização paga própria do lote.\nITUB4 · AWAITING_RADAR_AUTHORIZATION · Input congelado; parecer pendente: preflight Radar e autorização paga própria do lote.\nWEGE3 · AWAITING_RADAR_AUTHORIZATION · Input congelado; parecer pendente: preflight Radar e autorização paga própria do lote.\nBBAS3 · AWAITING_RADAR_AUTHORIZATION · Input congelado; parecer pendente: preflight Radar e autorização paga própria do lote. Restrição de risco: volatilidade 21d 0.545 acima do limite 0.5; o Risk vetará por regra determinística (parecer completo, recomendação MANTER)."
+  },
+  {
+   "name": "global PM: selection names the run and stays blocked without opinions",
+   "ok": true,
+   "detail": {
+    "sel": "Dados insuficientes · CONSULTATIVE_SANDBOX · 2026-10-09 · execução Radar radar-2026-10-09-recovery-01\n\nPETR4: parecer ausente ou incompatível · VALE3: parecer ausente ou incompatível · ITUB4: parecer ausente ou incompatível · WEGE3: parecer ausente ou incompatível · BBAS3: parecer ausente ou incompa",
+    "mode": "CONSULTATIVE_SANDBOX",
+    "modeLocked": true,
+    "reasons": "PETR4 · AWAITING_RADAR_AUTHORIZATION · Input congelado; parecer pendente: preflight Radar e autorização paga própria do lote.\nVALE3 · AWAITING_RADAR_AUTHORIZATION · Input congelado; parecer pendente: preflight Radar e autorização paga própria do lote.\nITUB4 · AWAITING_RADAR_AUTHORIZATION · Input congelado; parecer pendente: preflight Radar e autorização paga própria do lote.\nWEGE3 · AWAITING_RADAR_AUTHORIZATION · Input congelado; parecer pendente: preflight Radar e autorização paga própria do lote.\nBBAS3 · AWAITING_RADAR_AUTHORIZATION · Input congelado; parecer pendente: preflight Radar e autorização paga própria do lote. Restrição de risco: volatilidade 21d 0.545 acima do limite 0.5; o Risk vetará por regra determinística (parecer completo, recomendação MANTER)."
+   }
+  },
+  {
+   "name": "landing@1440 no horizontal scroll",
+   "ok": true,
+   "detail": {
+    "overflow": -15,
+    "radar": "CONSULTIVO COM GEMINI · FONTE OFICIAL\nComitês por empresa\n\nExecução radar-2026-10-09-recovery-01: 5 inputs prontos; 0/5 pareceres oficiais. BBAS3: restrição de risco individual\n\nPreparar dados é gratu"
+   }
+  },
+  {
+   "name": "landing@420 no horizontal scroll",
+   "ok": true,
+   "detail": {
+    "overflow": 0,
+    "radar": "CONSULTIVO COM GEMINI · FONTE OFICIAL\nComitês por empresa\n\nExecução radar-2026-10-09-recovery-01: 5 inputs prontos; 0/5 pareceres oficiais. BBAS3: restrição de risco individual\n\nPreparar dados é gratu"
+   }
+  }
+ ],
+ "shots": [
+  {
+   "name": "radar-2026-10-09-recovery-01-1440.jpg",
+   "width": 1440,
+   "height": 3629
+  },
+  {
+   "name": "radar-2026-10-09-original-1440.jpg",
+   "width": 1440,
+   "height": 3708
+  },
+  {
+   "name": "radar-demo-v4-1440.jpg",
+   "width": 1440,
+   "height": 3567
+  },
+  {
+   "name": "radar-2026-10-09-recovery-01-640.jpg",
+   "width": 640,
+   "height": 5820
+  },
+  {
+   "name": "radar-2026-10-09-recovery-01-420.jpg",
+   "width": 420,
+   "height": 6917
+  },
+  {
+   "name": "global-pm-run-1440.jpg",
+   "width": 1440,
+   "height": 900
+  },
+  {
+   "name": "landing-1440.jpg",
+   "width": 1440,
+   "height": 2600
+  }
+ ],
+ "console_errors": []
+}

@@ -5,13 +5,11 @@ from unittest.mock import patch
 import pandas as pd
 import pytest
 
-from src.config import settings
-
 
 @pytest.fixture
 def mock_dataframe():
     """DataFrame simulado para retorno das tasks."""
-    dates = pd.bdate_range("2024-01-01", "2024-01-10")
+    dates = pd.date_range("2024-01-01", periods=10)
     return pd.DataFrame(
         {
             "fechamento": [100.0 + i for i in range(10)],
@@ -28,7 +26,7 @@ def mock_dataframe():
             "macd": [0.5] * 10,
             "macd_sinal": [0.3] * 10,
         },
-        index=pd.to_datetime([f"2024-01-{i+1:02d}" for i in range(10)]),
+        index=dates,
     )
 
 
@@ -42,9 +40,36 @@ class TestPipelineFlow:
             patch("src.pipeline.flows.transform_task", return_value=mock_dataframe),
             patch("src.pipeline.flows.load_task") as mock_load,
         ):
-            pipeline_etl(tickers=["TEST4.SA"], start="2024-01-01", end="2024-01-31")
+            result = pipeline_etl(
+                tickers=["TEST4.SA"], start="2024-01-01", end="2024-01-31"
+            )
 
         assert mock_load.called
+        assert result.complete
+        assert result.success_tickers == ("TEST4.SA",)
+        assert result.failed_tickers == ()
+
+    def test_partial_flow_returns_explicit_failure_summary(self, mock_dataframe):
+        from src.pipeline.flows import pipeline_etl
+
+        with (
+            patch(
+                "src.pipeline.flows.extract_task",
+                side_effect=[mock_dataframe, RuntimeError("fonte indisponível")],
+            ),
+            patch("src.pipeline.flows.transform_task", return_value=mock_dataframe),
+            patch("src.pipeline.flows.load_task"),
+        ):
+            result = pipeline_etl(
+                tickers=["OK4.SA", "FAIL4.SA"],
+                start="2024-01-01",
+                end="2024-01-31",
+            )
+
+        assert not result.complete
+        assert result.success_tickers == ("OK4.SA",)
+        assert result.failed_tickers == ("FAIL4.SA",)
+        assert result.errors == {"FAIL4.SA": "RuntimeError: fonte indisponível"}
 
     def test_extract_retry_on_failure(self, mock_dataframe):
         """Extract falha e depois sucede -> flow completa."""
@@ -128,7 +153,9 @@ class TestExtractTask:
             result = extract_task("PETR4.SA", "2024-01-01", "2024-01-31")
 
             pd.testing.assert_frame_equal(result, mock_dataframe)
-            instance.download.assert_called_once_with("PETR4.SA", "2024-01-01", "2024-01-31")
+            instance.download.assert_called_once_with(
+                "PETR4.SA", "2024-01-01", "2024-01-31"
+            )
 
 
 class TestTransformTask:
@@ -139,8 +166,13 @@ class TestTransformTask:
         from src.pipeline.flows import transform_task
 
         with (
-            patch("src.pipeline.flows.DataTransformer.clean", return_value=mock_dataframe),
-            patch("src.pipeline.flows.DataTransformer.calculate_indicators", return_value=mock_dataframe),
+            patch(
+                "src.pipeline.flows.DataTransformer.clean", return_value=mock_dataframe
+            ),
+            patch(
+                "src.pipeline.flows.DataTransformer.calculate_indicators",
+                return_value=mock_dataframe,
+            ),
         ):
             result = transform_task(mock_dataframe)
 
@@ -151,15 +183,15 @@ class TestLoadTask:
     """Testes para load_task — executa a função diretamente."""
 
     def test_load_task_calls_loader(self, mock_dataframe):
-        """load_task usa DataLoader.upsert_cotacoes e batch_insert_indicators."""
+        """load_task usa upsert para cotações e indicadores."""
         from src.pipeline.flows import load_task
 
         with (
             patch("src.pipeline.flows.DataLoader") as MockLoader,
-            patch("src.pipeline.flows.get_session") as mock_get_session,
+            patch("src.pipeline.flows.get_session"),
         ):
             instance = MockLoader.return_value
             load_task("PETR4.SA", mock_dataframe, mock_dataframe)
 
             assert instance.upsert_cotacoes.called
-            assert instance.batch_insert_indicators.called
+            assert instance.upsert_indicators.called

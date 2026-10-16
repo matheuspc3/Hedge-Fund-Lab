@@ -1,0 +1,259 @@
+{
+  "browser": "Chrome",
+  "base": "http://localhost:8090",
+  "checks": [
+    {
+      "page": "keyboard-menu",
+      "width": 640,
+      "expanded": "false",
+      "focus": "Menu da plataforma"
+    },
+    {
+      "page": "h2-dynamic-table-keyboard",
+      "width": 420,
+      "tables": [
+        {
+          "label": "Métricas",
+          "role": "region",
+          "tabIndex": 0
+        },
+        {
+          "label": "Exposição ao mercado",
+          "role": "region",
+          "tabIndex": 0
+        },
+        {
+          "label": "Sensibilidade de custos · Sharpe e retorno líquido",
+          "role": "region",
+          "tabIndex": 0
+        }
+      ]
+    },
+    {
+      "page": "legacy-final",
+      "width": 1440,
+      "charts": [
+        {
+          "height": 380,
+          "width": 528
+        },
+        {
+          "height": 380,
+          "width": 528
+        },
+        {
+          "height": 380,
+          "width": 528
+        },
+        {
+          "height": 200,
+          "width": 552
+        },
+        {
+          "height": 200,
+          "width": 552
+        }
+      ],
+      "pageWidth": 1434,
+      "tables": [
+        {
+          "content": 1434,
+          "tabIndex": 0,
+          "width": 1434
+        },
+        {
+          "content": 0,
+          "tabIndex": 0,
+          "width": 0
+        }
+      ],
+      "viewWidth": 1440
+    },
+    {
+      "page": "legacy-final",
+      "width": 640,
+      "pageWidth": 634,
+      "viewWidth": 640
+    },
+    {
+      "page": "legacy-analysis-final",
+      "width": 420,
+      "pageWidth": 414,
+      "tableFocus": [
+        0,
+        0
+      ],
+      "viewWidth": 420,
+      "visibleCharts": [
+        {
+          "height": 200,
+          "width": 300
+        },
+        {
+          "height": 200,
+          "width": 121
+        },
+        {
+          "height": 200,
+          "width": 121
+        }
+      ]
+    },
+    {
+      "page": "paper-final",
+      "width": 1440,
+      "detailsClosed": true,
+      "pageWidth": 1425,
+      "viewWidth": 1440,
+      "visibleHeadings": [
+        "Quórum do comitê",
+        "Por que os agentes decidiram isso?",
+        "Risk Manager",
+        "Portfolio Manager",
+        "Supervisão Humana"
+      ]
+    },
+    {
+      "page": "paper-final",
+      "width": 640,
+      "pageWidth": 625,
+      "viewWidth": 640
+    },
+    {
+      "page": "paper-final",
+      "width": 420,
+      "pageWidth": 405,
+      "viewWidth": 420
+    },
+    {
+      "page": "radar-final",
+      "width": 420,
+      "pageWidth": 405,
+      "transfer": "/portfolio?tickers=PETR4%2CVALE3%2CITUB4%2CWEGE3%2CBBAS3&session=2026-10-09&mode=CONSULTATIVE_SANDBOX#global-workflow",
+      "viewWidth": 420
+    },
+    {
+      "page": "radar-final",
+      "width": 640,
+      "pageWidth": 625,
+      "viewWidth": 640
+    },
+    {
+      "page": "radar-final",
+      "width": 1440,
+      "pageWidth": 1425,
+      "viewWidth": 1440
+    },
+    {
+      "page": "global-final",
+      "width": 1440,
+      "pageWidth": 1425,
+      "record": "v7-3558f0253cf44dd0a00c93d7be73e56f",
+      "runDisabled": true,
+      "selectedMode": "SYNTHETIC_DEMO",
+      "source": "Demonstração sintética: resposta fake, sem inferência real Gemini e sem operações.",
+      "viewWidth": 1440
+    },
+    {
+      "page": "global-final",
+      "width": 640,
+      "pageWidth": 625,
+      "viewWidth": 640
+    },
+    {
+      "page": "global-final",
+      "width": 420,
+      "pageWidth": 405,
+      "viewWidth": 420
+    },
+    {
+      "page": "logs-final",
+      "width": 1440,
+      "pageWidth": 1425,
+      "viewWidth": 1440
+    },
+    {
+      "page": "logs-final",
+      "width": 640,
+      "pageWidth": 625,
+      "viewWidth": 640
+    },
+    {
+      "page": "logs-final",
+      "width": 420,
+      "pageWidth": 405,
+      "viewWidth": 420
+    },
+    {
+      "page": "h2-agents-final",
+      "width": 420,
+      "charts": [
+        {
+          "height": 260,
+          "width": 327
+        }
+      ],
+      "pageWidth": 405,
+      "tables": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "viewWidth": 420
+    },
+    {
+      "page": "h2-final",
+      "width": 1440,
+      "pageWidth": 1425,
+      "viewWidth": 1440
+    },
+    {
+      "page": "h2-final",
+      "width": 640,
+      "pageWidth": 625,
+      "viewWidth": 640
+    },
+    {
+      "page": "h2-final",
+      "width": 420,
+      "pageWidth": 405,
+      "viewWidth": 420
+    },
+    {
+      "page": "landing-final",
+      "width": 1440,
+      "pageWidth": 1425,
+      "supervision": "Aguardando aprovação",
+      "viewWidth": 1440,
+      "wallets": 5
+    },
+    {
+      "page": "landing-final",
+      "width": 640,
+      "pageWidth": 625,
+      "supervision": "Aguardando aprovação",
+      "viewWidth": 640,
+      "wallets": 5
+    },
+    {
+      "page": "landing-final",
+      "width": 420,
+      "pageWidth": 405,
+      "supervision": "Aguardando aprovação",
+      "viewWidth": 420,
+      "wallets": 5
+    }
+  ],
+  "consoleErrors": [],
+  "notes": [
+    "Seis abas H2 consultadas sem execução científica.",
+    "Comparações e Multiagente carregados com gráficos locais e tabelas focáveis.",
+    "Fonte sintética V4 consultada e seleção transferida ao gestor.",
+    "Fake E V7 explicitamente confirmado: custo zero e zero operações.",
+    "Corrigidos menus duplicados, cache local, foco de tabelas dinâmicas e overflow legado.",
+    "Dimensões verificadas após o redimensionamento dos gráficos."
+  ]
+}

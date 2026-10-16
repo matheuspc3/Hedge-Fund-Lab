@@ -3,8 +3,7 @@
 import numpy as np
 import pandas as pd
 import pytest
-from hypothesis import given, settings
-from hypothesis import strategies as st
+from hypothesis import given, settings, strategies as st
 
 from src.indicators.macd import macd
 
@@ -60,7 +59,11 @@ class TestMACD:
     # ── Property-based ─────────────────────────────────────────
 
     @given(
-        values=st.lists(st.floats(min_value=1, max_value=1000, allow_nan=False), min_size=30, max_size=200),
+        values=st.lists(
+            st.floats(min_value=1, max_value=1000, allow_nan=False),
+            min_size=30,
+            max_size=200,
+        ),
     )
     @settings(max_examples=50)
     def test_macd_histograma_consistente(self, values):

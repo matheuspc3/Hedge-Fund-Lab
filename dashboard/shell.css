@@ -1,0 +1,103 @@
+/* Shared shell and legacy-page adaptation (V7.6.2). Tokens live in design-system.css,
+   which the shell injects on every page; values here only reference them. */
+body.hfl-platform { margin: 0; height: auto; min-height: 100vh; }
+body.hfl-platform * { box-sizing: border-box; }
+body.hfl-platform [hidden] { display: none !important; }
+.hfl-platform .hfl-skip { position: fixed; top: -100px; left: 15px; z-index: var(--z-skip, 100); background: var(--accent); color: #0b1118; padding: 10px 16px; border-radius: 6px; font-weight: 700; }
+.hfl-platform .hfl-skip:focus { top: 12px; }
+.hfl-platform > .skip { display: none; }
+
+/* Shell */
+.hfl-platform .hfl-shell { position: static; max-width: none; margin: 0; padding: 0 max(24px, calc((100vw - var(--page-max, 1320px)) / 2)); background: var(--shell-bg, #0f1822); border-bottom: 1px solid var(--line); }
+.hfl-top { display: flex; align-items: center; gap: 16px; min-height: 72px; }
+.hfl-platform .hfl-brand { font-size: 20px; font-weight: 750; letter-spacing: 1px; color: var(--text); text-decoration: none; line-height: 1.25; }
+.hfl-brand span { color: var(--accent); margin-left: 6px; }
+.hfl-brand small { display: block; color: var(--muted); font-size: 11px; letter-spacing: .3px; font-weight: 500; margin-top: 4px; }
+.hfl-local { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--accent); border: 1px solid var(--border-control); padding: 4px 6px 4px 10px; border-radius: 999px; }
+.hfl-platform .hfl-help-open, .hfl-platform .hfl-menu { min-height: 40px; padding: 0 14px; border-radius: var(--radius-sm, 6px); border: 1px solid var(--border-control); background: transparent; color: var(--text); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.hfl-platform .hfl-help-open span { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--link); color: #0b1118; margin-right: 4px; font-size: 12px; }
+.hfl-platform .hfl-menu { display: none; }
+.hfl-platform .hfl-market-open { min-height: 40px; padding: 8px 14px; border: 1px solid var(--border-control); border-radius: var(--radius-sm); background: transparent; color: var(--text); font: inherit; font-size: 13px; cursor: pointer; }
+.hfl-market-dialog { width: min(600px, calc(100% - 32px)); max-height: 85vh; overflow: auto; padding: 24px; border: 1px solid var(--border-control); border-radius: var(--radius-md); background: var(--surface); color: var(--text); }
+.hfl-market-dialog::backdrop { background: #000b; }
+.hfl-market-dialog p { line-height: 1.6; overflow-wrap: anywhere; }
+.hfl-market-dialog button { min-height: 40px; }
+.hfl-platform .hfl-shell nav { margin: 0; display: flex; flex-wrap: wrap; border: 0; gap: 2px 4px; }
+.hfl-platform .hfl-primary a { font-size: 14px; font-weight: 600; padding: 12px 14px; color: var(--text-2); text-decoration: none; border-bottom: 3px solid transparent; border-radius: 6px 6px 0 0; }
+.hfl-platform .hfl-primary a:hover { color: var(--text); background: var(--surface); }
+.hfl-platform .hfl-primary a[aria-current] { color: var(--text); border-bottom-color: var(--accent); background: var(--surface); }
+.hfl-primary { border-bottom: 1px solid var(--line) !important; }
+.hfl-platform .hfl-archive { padding: 8px 0; }
+.hfl-platform .hfl-archive a { color: var(--muted); padding: 7px 12px; font-size: 13px; }
+.hfl-platform .hfl-archive a[aria-current] { color: var(--text); font-weight: 600; }
+.hfl-platform .hfl-secondary { padding: 8px 0 0; }
+.hfl-platform .hfl-secondary a { font-size: 13px; padding: 7px 12px; color: var(--text-2); text-decoration: none; border-radius: 999px; border: 1px solid transparent; }
+.hfl-platform .hfl-secondary a:hover { border-color: var(--border-control); color: var(--text); }
+.hfl-platform .hfl-secondary a[aria-current] { background: var(--surface-2); border-color: var(--border-control); color: var(--text); font-weight: 600; }
+.hfl-context { display: flex; gap: 12px; justify-content: space-between; align-items: center; flex-wrap: wrap; padding: 10px 0 12px; color: var(--muted); font-size: 12px; }
+.hfl-crumbs { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; }
+.hfl-crumbs li + li::before { content: "›"; margin-right: 6px; color: var(--muted); }
+.hfl-crumbs a { color: var(--link); text-decoration: none; }
+.hfl-crumbs [aria-current] { color: var(--text); }
+.hfl-env { font-weight: 600; color: var(--text-2); letter-spacing: .06em; font-size: 11px; }
+
+/* Legacy page adaptation (UX-M4..M8 will migrate these pages to ds-* components) */
+.hfl-platform .module-header { position: static; max-width: var(--page-max, 1320px); margin: auto; padding: 0 24px; border: 0; background: none; backdrop-filter: none; }
+.hfl-platform .module-header .brand, .hfl-platform .module-header .topline, .hfl-platform .workspace { display: none; }
+.hfl-platform .module-header > .bar { padding: 12px 0; max-width: none; }
+.hfl-platform .module-header > h1 { margin: 24px 0 4px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.hfl-platform .module-header nav { margin: 0; flex-wrap: wrap; gap: 8px 18px; }
+.hfl-platform main { width: 100%; max-width: var(--page-max, 1320px); margin: auto; padding: 28px 24px 64px; min-width: 0; }
+.hfl-platform .card { background: var(--surface); border-color: var(--line); border-radius: 10px; min-width: 0; }
+.hfl-platform .notice, .hfl-platform .callout { border-radius: 6px; }
+.hfl-platform button, .hfl-platform select, .hfl-platform input { font-family: inherit; }
+.hfl-platform input, .hfl-platform select { max-width: 100%; }
+.hfl-platform .scroll, .hfl-platform .table-scroll, .hfl-platform .table-container { max-width: 100%; overflow: auto; }
+.hfl-platform td, .hfl-platform th { border-color: var(--line); }
+.hfl-platform footer { color: var(--muted); max-width: var(--page-max, 1320px); margin: auto; }
+.hfl-platform .heading { padding-top: 12px; }
+.hfl-platform .ai-card { margin-top: 0; }
+.hfl-platform .hfl-source { display: inline-block; padding: 4px 8px; font-size: 11px; font-weight: 650; letter-spacing: .5px; border: 1px solid var(--border-control); border-radius: 4px; color: var(--link); }
+.hfl-source.synthetic { color: var(--state-synthetic); border-color: var(--state-synthetic); border-style: dashed; }
+.hfl-platform .hfl-breadcrumb-link { color: var(--link); }
+.hfl-platform details > summary { min-height: 36px; cursor: pointer; }
+.hfl-platform .hfl-panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px; min-width: 0; }
+.hfl-platform .hfl-empty { color: var(--muted); border: 1px dashed var(--border-control); border-radius: 8px; padding: 20px; }
+.hfl-platform .hfl-warning { border-left: 3px solid var(--state-warn); background: #e7bd7a0d; padding: 13px 16px; color: var(--state-warn); }
+.hfl-platform .hfl-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.hfl-platform .hfl-row a { color: var(--link); }
+.hfl-platform .hfl-state { font-size: 11px; padding: 3px 7px; border: 1px solid var(--border-control); border-radius: 4px; color: var(--link); }
+.hfl-platform .hfl-state[data-state=BLOCKED], .hfl-platform .hfl-state[data-state=FAILED], .hfl-platform .hfl-state[data-state=RECOVERY_REQUIRED] { color: var(--state-warn); border-color: var(--state-warn); }
+.hfl-platform .portfolio-bottom-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.hfl-platform .indicator-charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+
+@media (max-width: 900px) {
+  .hfl-platform .hfl-menu { display: inline-flex; align-items: center; }
+  .hfl-links:not(.is-open) { display: none; }
+  .hfl-platform .hfl-shell nav { flex-direction: column; gap: 2px; }
+  .hfl-platform .hfl-primary a { min-height: 44px; display: flex; align-items: center; border-bottom: 0; border-left: 3px solid transparent; border-radius: 0 6px 6px 0; }
+  .hfl-platform .hfl-primary a[aria-current] { border-left-color: var(--accent); }
+  .hfl-platform .hfl-secondary { flex-direction: row !important; flex-wrap: wrap; padding: 8px 0; }
+  .hfl-platform .hfl-secondary a { min-height: 40px; display: inline-flex; align-items: center; }
+}
+@media (max-width: 640px) {
+  .hfl-platform .hfl-shell { padding: 0 16px; }
+  .hfl-top { min-height: 64px; gap: 8px; flex-wrap: wrap; padding: 10px 0; }
+  .hfl-platform .hfl-brand { font-size: 17px; }
+  .hfl-brand small { font-size: 10px; }
+  .hfl-local { order: 5; margin-left: 0; width: 100%; justify-content: space-between; font-size: 11px; }
+  .hfl-platform .hfl-market-open { order: 6; width: 100%; }
+  .hfl-platform .hfl-help-open { margin-left: auto; }
+  .hfl-context { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .hfl-platform main { padding: 20px 16px 48px; }
+  .hfl-platform .module-header { padding: 0 16px; }
+  .hfl-platform .hfl-panel { padding: 16px; }
+  .hfl-platform .g-2, .hfl-platform .g-3 { grid-template-columns: minmax(0, 1fr); }
+  .hfl-platform dl { grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); }
+  .hfl-platform .ai-card h1 { font-size: 30px; }
+  .hfl-platform .portfolio-bottom-grid { grid-template-columns: minmax(0, 1fr); padding: 0 16px 16px; }
+  .hfl-platform .indicator-charts { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hfl-platform * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legacy · Piloto PETR4 · Hedge-Fund-Lab</title>
+  <link rel="stylesheet" href="/paper.css?v=7" />
+  <script src="/vendor/chart.umd.js" defer></script>
+  <script src="/paper.js?v=7" defer></script><script src="/monitoring.js?v=764" defer></script><link rel="stylesheet" href="/monitoring.css?v=764">
+<link rel="stylesheet" href="/shell.css?v=7"><script src="/shell.js?v=7" defer></script>
+</head>
+<body class="hfl-platform">
+<!-- platform-shell -->
+<aside class="hfl-warning" aria-label="Etapa anterior">Legacy · etapa anterior do projeto, preservada somente para consulta e documentação do TCC. A reorganização não executa, cancela ou reconcilia intenções antigas e não comprova encerramento financeiro. <a href="/legacy">Acervo histórico</a> · <a href="/">Carteiras multiativos</a></aside>
+  <div class="module-header"><div class="bar"><span class="hfl-source">Legacy · H2 v6 · PETR4 · histórico paper <button class="ds-help" data-help="paper-trading"></button></span><p id="updated" class="updated" aria-live="polite"></p></div></div>
+  <main id="main">
+    <div id="error" role="alert" hidden></div>
+
+    <section id="acompanhamento" data-view aria-labelledby="monitor-title"><h1 id="monitor-title">Acompanhamento paper H2</h1><p>Cinco carteiras independentes. Consultar registros não autoriza nem executa operações.</p><section id="monitoring" aria-label="Consulta de carteira" aria-live="polite">
+<div class="monitor-toolbar"><label>Carteira acompanhada <select id="monitor-wallet" aria-label="Carteira acompanhada"></select></label><button id="monitor-refresh" data-action="read">Atualizar visualização</button></div>
+<div id="monitor-error" class="ds-alert" role="alert" hidden></div><div id="monitor-identity"></div>
+<div id="monitor-content" hidden>
+<section class="monitor-section"><div id="monitor-summary" class="monitor-grid"></div><details><summary>Resultados, reservas e risco</summary><div id="monitor-secondary" class="monitor-grid"></div></details><div id="monitor-status" class="ds-card"></div><h2>Última decisão</h2><div id="monitor-last"></div><h2>Alocação atual <button class="ds-help" data-help="peso-atual"></button></h2><div class="monitor-composition"><canvas id="monitor-composition" role="img" aria-label="Composição registrada; valores na tabela a seguir"></canvas></div><div id="monitor-allocation"></div></section>
+<section class="monitor-section"><h2>Posições e acompanhamento</h2><div id="monitor-positions"></div><h3>Evolução do patrimônio <button class="ds-help" data-help="historico-reconciliado"></button></h3><p id="monitor-curve-note"></p><canvas id="monitor-curve" role="img" aria-label="Patrimônio nas sessões reconciliadas; valores na tabela abaixo" hidden></canvas><div id="monitor-curve-table"></div><h3>Eventos futuros documentados</h3><div id="monitor-future"></div></section>
+<section class="monitor-section"><h2>Histórico de operações <button class="ds-help" data-help="execucao-paper"></button></h2><div id="monitor-trades"></div><h3>Linha do tempo</h3><div id="monitor-timeline"></div><div id="monitor-evidence"></div></section>
+</div></section></section>
+    <section id="visao" data-view aria-labelledby="visao-title">
+      <div class="section-head"><div><p class="eyebrow">MESMO CAPITAL INICIAL · SIMULAÇÕES ALTERNATIVAS</p><h1 id="visao-title">Resumo das carteiras</h1></div></div>
+      <p class="lead">Cinco carteiras virtuais acompanham os mesmos preços observados de PETR4: a H2 v6 original, a H2 v6 supervisionada e três referências. São alternativas paralelas: os patrimônios não se somam.</p>
+      <div id="overview-wallets" class="kpi-grid"><p class="state" role="status">Carregando carteiras…</p></div>
+      <div class="overview-grid">
+        <article class="card"><div class="card-head"><h2>Evolução do patrimônio</h2><small class="muted">Somente fechamentos prospectivos reconciliados</small></div><div id="overview-series" class="toggles" role="group" aria-label="Estratégias exibidas no gráfico"></div><div id="overview-chart"></div></article>
+        <article class="card" id="last-decision"><h2>Última deliberação</h2><p class="state" role="status">Carregando…</p></article>
+      </div>
+    </section>
+
+    <section id="sala" data-view aria-labelledby="sala-title" hidden>
+      <div class="section-head"><div><p class="eyebrow">FECHAMENTO → PRÓXIMA ABERTURA</p><h1 id="sala-title">Decisão do dia</h1></div><label>Deliberação registrada <select id="session" aria-label="Sessão da decisão"></select></label><button id="refresh" data-action="read">Consultar registros</button></div>
+      <div id="decision" aria-live="polite"><p class="state" role="status">Lendo registros prospectivos…</p></div>
+      <article class="card"><h2>Histórico de deliberações</h2><p class="muted">Consulta de decisões já gravadas. Abrir uma deliberação nunca executa os agentes novamente.</p><div id="history"></div></article>
+      <article class="card" id="operation"><h2>Processo histórico</h2><p>Preparação, preflight, inferências pagas, sincronização, aprovação, rejeição, cancelamento e reconciliação estão indisponíveis pela aplicação web.</p><div id="job" aria-live="polite"></div></article>
+    </section>
+
+    <section id="mercado" data-view aria-labelledby="mercado-title" hidden>
+      <div class="section-head"><div><p class="eyebrow">PREÇOS OBSERVADOS · MONITORAMENTO INFORMATIVO</p><h1 id="mercado-title">Mercado e abertura (PETR4)</h1></div><button id="market-refresh" data-action="read">Consultar mercado</button></div>
+      <p class="lead">Acompanhe PETR4 e os limites aprovados. Cotações e cenários não confirmam execução: somente a reconciliação oficial registra resultados na carteira virtual.</p>
+      <div id="market-content" aria-live="polite"><p class="state">Abra esta área para consultar os registros locais.</p></div>
+      <div class="row"><a href="#sala">Consultar decisão registrada →</a><a href="#carteiras">Consultar carteiras →</a></div>
+    </section>
+
+    <section id="carteiras" data-view aria-labelledby="carteiras-title" hidden>
+      <div class="section-head"><div><p class="eyebrow">MESMO CAPITAL · MESMOS PREÇOS OBSERVADOS</p><h1 id="carteiras-title">Carteiras prospectivas</h1></div><label>Carteira detalhada <select id="strategy" aria-label="Estratégia"></select></label></div>
+      <article class="card"><h2>Comparação entre estratégias</h2><div id="wallet-table"><p class="state" role="status">Carregando…</p></div></article>
+      <div id="composition"></div>
+      <article class="card"><div class="card-head"><h2>Evolução prospectiva do patrimônio</h2></div><p id="comparison-note" class="muted"></p><div id="wallet-chart"></div></article>
+      <div id="trades"></div>
+      <article class="card"><h2>Dividendos e proventos</h2><p><strong>Proventos ainda não contabilizados.</strong></p><p class="muted">O ledger marca PETR4 por preços ajustados: proventos já reescalam as unidades (unidades × fechamento anterior ÷ fechamento novo), preservando o valor marcado. Lançá-los também como caixa contaria o mesmo provento duas vezes. A metodologia necessária está documentada em <code>docs/H2_V6_PREMIUM_UI.md</code>.</p></article>
+    </section>
+
+    <section id="agentes" data-view aria-labelledby="agentes-title" hidden>
+      <div class="section-head"><div><p class="eyebrow">CATÁLOGO · CONFIGURAÇÃO · OBSERVABILIDADE</p><h1 id="agentes-title">Catálogo de agentes H2</h1></div></div>
+      <div class="agents-grid"><div id="committee"><p class="state" role="status">Carregando…</p></div>
+        <article class="card" id="simulator"><h2>Simulador local de quórum</h2><p class="muted">Aplica a regra de agregação do comitê a votos hipotéticos. Não chama modelos e não altera a H2 v6.</p>
+          <form id="sim-form" class="sim">
+            <label>Analistas <select id="sim-n"><option>5</option><option>10</option><option>15</option><option>20</option><option>30</option></select></label>
+            <label>Limiar <select id="sim-threshold"><option value="0.6">60%</option><option value="0.6666666666666666">2/3</option><option value="0.75">75%</option><option value="0.8333333333333334">5/6</option><option value="1">100%</option></select></label>
+            <label>COMPRA <input id="sim-compra" type="number" min="0" step="1" value="5" inputmode="numeric" /></label>
+            <label>VENDA <input id="sim-venda" type="number" min="0" step="1" value="0" inputmode="numeric" /></label>
+            <label>MANTER <input id="sim-manter" type="number" min="0" step="1" value="0" inputmode="numeric" /></label>
+            <label class="inline"><input id="sim-all" type="checkbox" checked /> Exigir todas as respostas</label>
+          </form>
+          <p id="sim-out" role="status"></p>
+        </article>
+      </div>
+      <div id="catalog"></div>
+      <div id="profile" aria-live="polite"></div>
+    </section>
+  </main>
+  <footer>H2 v6 · Paper trading single-asset · Sem retuning · Sem Final Test · Chart.js local</footer>
+</body>
+</html>

@@ -49,9 +49,7 @@ const COLORS = {
 };
 
 // Registra plugin de anotação se disponível
-if (typeof ChartAnnotation !== "undefined") {
-    Chart.register(ChartAnnotation);
-}
+
 
 /* ═══════════════════════════════════════════════
    Tab switching
@@ -84,7 +82,7 @@ function setupTabs() {
    Data Loading
    ═══════════════════════════════════════════════ */
 async function loadData() {
-    const resp = await fetch("data.json");
+    const resp = await fetch("/data.json");
     if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
     STATE.data = await resp.json();
     return STATE.data;
@@ -255,6 +253,7 @@ function renderRSIChart(asset) {
         data: {
             labels: dates,
             datasets: [
+                ...[["Sobrecompra (70)",70,"#ef4444"],["Sobrevenda (30)",30,"#22c55e"]].map(([label,value,color]) => ({label,data:dates.map(()=>value),borderColor:color,borderDash:[6,4],pointRadius:0,borderWidth:1})),
                 { label: "RSI", data: rsi, borderColor: COLORS.rsi, borderWidth: 1.5, pointRadius: 0, pointHoverRadius: 4, fill: false, tension: 0.1 },
             ],
         },
@@ -271,15 +270,6 @@ function renderRSIChart(asset) {
             },
         },
     };
-
-    if (typeof ChartAnnotation !== "undefined") {
-        config.options.plugins.annotation = {
-            annotations: {
-                overbought: { type: "line", yMin: 70, yMax: 70, borderColor: "rgba(239,68,68,0.5)", borderWidth: 1, borderDash: [6, 4], label: { display: true, content: "Sobrecompra (70)", position: "start", font: { size: 9, family: "'JetBrains Mono', monospace" }, color: "#ef4444", backgroundColor: "transparent" } },
-                oversold: { type: "line", yMin: 30, yMax: 30, borderColor: "rgba(34,197,94,0.5)", borderWidth: 1, borderDash: [6, 4], label: { display: true, content: "Sobrevenda (30)", position: "start", font: { size: 9, family: "'JetBrains Mono', monospace" }, color: "#22c55e", backgroundColor: "transparent" } },
-            },
-        };
-    }
 
     STATE.charts.rsi = new Chart(ctx, config);
 }

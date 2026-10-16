@@ -1,0 +1,10 @@
+{
+  "implementation_commit": "46a388bce4c7e2ef52802755afca1eecfa77b5d9",
+  "branch": "#1-Update",
+  "git_status_porcelain_before_report": "",
+  "scientific_identity_clean_check": "PASS",
+  "candidate_manifest_sha256": "dc118ce9841df612d030f40e5993858eacc6d06e41eff173706fc3a72d3acb98",
+  "participant_sha256": "7858beb47ea9b2be9ac870f4abb72f9422782e7ff30c975eba8f3255babe4938",
+  "push_performed": false,
+  "note": "Clean original scientific identity check after implementation commit. This evidence file is recorded by the following local documentation commit."
+}

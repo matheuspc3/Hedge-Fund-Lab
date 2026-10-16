@@ -1,0 +1,2104 @@
+........................................................................ [  4%]
+........................................................................ [  8%]
+........................................................................ [ 12%]
+........................................................................ [ 16%]
+........................................................................ [ 20%]
+........................................................................ [ 24%]
+........................................................................ [ 28%]
+........................................................................ [ 32%]
+........................................................................ [ 36%]
+........................................................................ [ 40%]
+........................................................................ [ 44%]
+........................................................................ [ 48%]
+......................F................................................. [ 53%]
+........................................................................ [ 57%]
+........................................................................ [ 61%]
+.................F...................................................... [ 65%]
+...................F.................................................... [ 69%]
+............FFFFFFF..................................................... [ 73%]
+........................................................................ [ 77%]
+........................................................................ [ 81%]
+........................................................F............. [ 85%]
+........................................................................ [ 89%]
+......................................................................F. [ 93%]
+.................................... [ 95%]
+.............................................FF.............................                                              [100%]
+================================== FAILURES ===================================
+____________ test_v5_development_s3_failure_blocks_further_phases _____________
+
+    def test_v5_development_s3_failure_blocks_further_phases():
+        from scripts.h2_v5 import require_pre_live_freeze
+    
+        if treatment.H2_V5_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE:
+>           with pytest.raises(ValueError, match="development S3 failure"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'development S3 failure'
+E             Actual message: 'CAL-B4 must stay sealed during v5 development'
+
+tests\experiments\test_cal_b4_safety.py:71: AssertionError
+_________ test_registry_cobre_os_cinco_classicos_e_o_participante_llm _________
+
+    def test_registry_cobre_os_cinco_classicos_e_o_participante_llm() -> None:
+>       assert set(PARTICIPANT_REGISTRY) == {
+            "bollinger",
+            "buy_and_hold",
+            "equal_weight",
+            "indicator_family_control",
+            "llm_agent",
+            "min_variance",
+            "sma_cross",
+        }
+E       AssertionError: assert {'bollinger',...m_agent', ...} == {'bollinger',...ariance', ...}
+E         
+E         Extra items in the left set:
+E         'bollinger_state_h2_proposed'
+E         'sma_regime_h2_proposed'
+E         Use -v to get more diff
+
+tests\experiments\test_spec.py:156: AssertionError
+______ test_structural_failure_prevents_phase_selection_and_progression _______
+
+    def test_structural_failure_prevents_phase_selection_and_progression():
+        from scripts.h2_v6 import apply_structural_gates, committed_phase, require_sessions
+        payload = {"complete":True,"technical_audit":{"technical_calls":300,"technical_votes":300,
+            "technical_prompt_v5_only":True,"V6-E":0,"V6-S1":0,"V6-S2":0,"V6-S3":1}}
+        assert not apply_structural_gates(payload)["v6_phase_pass"]
+        assert payload["status"] == treatment.H2_V6_DEFECT_FIX_FAILED
+>       with pytest.raises(ValueError,match="requires committed defect PASS"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests\experiments\test_v6_phase_routing.py:60: Failed
+___________________ TestPipelineFlow.test_full_flow_success ___________________
+
+self = <sqlalchemy.engine.base.Connection object at 0x0000025882197BD0>
+engine = Engine(postgresql://postgres:***@127.0.0.1:5435/hedgefundlab)
+connection = None, _has_events = None, _allow_revalidate = True
+_allow_autobegin = True
+
+    def __init__(
+        self,
+        engine: Engine,
+        connection: Optional[PoolProxiedConnection] = None,
+        _has_events: Optional[bool] = None,
+        _allow_revalidate: bool = True,
+        _allow_autobegin: bool = True,
+    ):
+        """Construct a new Connection."""
+        self.engine = engine
+        self.dialect = dialect = engine.dialect
+    
+        if connection is None:
+            try:
+>               self._dbapi_connection = engine.raw_connection()
+                                         ^^^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:146: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3302: in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:712: in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:179: in _do_get
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:177: in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:674: in __init__
+    self.__connect()
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:900: in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\create.py:643: in connect
+    return dialect.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\default.py:621: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+dsn = 'host=127.0.0.1 dbname=hedgefundlab user=postgres password=password port=5435'
+connection_factory = None, cursor_factory = None
+kwargs = {'host': '127.0.0.1', 'dbname': 'hedgefundlab', 'user': 'postgres', 'password': 'password', ...}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       psycopg2.OperationalError: connection to server at "127.0.0.1", port 5435 failed: Connection refused (0x0000274D/10061)
+E       	Is the server running on that host and accepting TCP/IP connections?
+
+.venv\Lib\site-packages\psycopg2\__init__.py:135: OperationalError
+
+The above exception was the direct cause of the following exception:
+
+self = <pipeline.test_flows.TestPipelineFlow object at 0x00000258FA190B90>
+mock_dataframe =             fechamento  abertura  maxima  ...   rsi  macd macd_sinal
+2024-01-01       100.0     100.0   101.0  ...  55......  55.0   0.5        0.3
+2024-01-10       109.0     109.0   110.0  ...  55.0   0.5        0.3
+
+[10 rows x 13 columns]
+
+    def test_full_flow_success(self, mock_dataframe):
+        """Flow completo executa sem erros."""
+        from src.pipeline.flows import pipeline_etl
+    
+        with (
+            patch("src.pipeline.flows.extract_task", return_value=mock_dataframe),
+            patch("src.pipeline.flows.transform_task", return_value=mock_dataframe),
+            patch("src.pipeline.flows.load_task") as mock_load,
+        ):
+>           result = pipeline_etl(
+                tickers=["TEST4.SA"], start="2024-01-01", end="2024-01-31"
+            )
+
+tests\pipeline\test_flows.py:43: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\pipeline\flows.py:141: in pipeline_etl
+    init_db()
+src\pipeline\flows.py:54: in init_db
+    Base.metadata.create_all(engine)
+.venv\Lib\site-packages\sqlalchemy\sql\schema.py:5868: in create_all
+    bind._run_ddl_visitor(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3252: in _run_ddl_visitor
+    with self.begin() as conn:
+         ^^^^^^^^^^^^
+..\..\..\AppData\Local\Python\pythoncore-3.13-64\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3242: in begin
+    with self.connect() as conn:
+         ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3278: in connect
+    return self._connection_cls(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:148: in __init__
+    Connection._handle_dbapi_exception_noconnection(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:2442: in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:146: in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3302: in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:712: in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:179: in _do_get
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:177: in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:674: in __init__
+    self.__connect()
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:900: in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\create.py:643: in connect
+    return dialect.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\default.py:621: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+dsn = 'host=127.0.0.1 dbname=hedgefundlab user=postgres password=password port=5435'
+connection_factory = None, cursor_factory = None
+kwargs = {'host': '127.0.0.1', 'dbname': 'hedgefundlab', 'user': 'postgres', 'password': 'password', ...}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "127.0.0.1", port 5435 failed: Connection refused (0x0000274D/10061)
+E       	Is the server running on that host and accepting TCP/IP connections?
+E       
+E       (Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+.venv\Lib\site-packages\psycopg2\__init__.py:135: OperationalError
+---------------------------- Captured stdout call -----------------------------
+2026-10-13 04:09:25 | INFO     | src.pipeline.flows | Config carregada | db=postgresql://postgres:password@127.0.0.1:5435/hedgefundlab tickers=['PETR4.SA', 'VALE3.SA', 'ITUB4.SA', 'BBDC4.SA', 'BBAS3.SA', 'ABEV3.SA', 'WEGE3.SA', 'CMIG4.SA', 'RENT3.SA', 'SUZB3.SA'] periodo=2016-01-01\u21922026-08-05 batch=1000 cache=data/raw log=data/logs/hedgefund.log\n2026-10-13 04:09:25 | INFO     | src.pipeline.flows | ==================================================\n2026-10-13 04:09:25 | INFO     | src.pipeline.flows | Pipeline ETL iniciado: 1 ticker(s), 2024-01-01 -> 2024-01-31\n2026-10-13 04:09:25 | INFO     | src.pipeline.flows | ==================================================
+------------------------------ Captured log call ------------------------------
+INFO     src.pipeline.flows:flows.py:25 Config carregada | db=postgresql://postgres:password@127.0.0.1:5435/hedgefundlab tickers=['PETR4.SA', 'VALE3.SA', 'ITUB4.SA', 'BBDC4.SA', 'BBAS3.SA', 'ABEV3.SA', 'WEGE3.SA', 'CMIG4.SA', 'RENT3.SA', 'SUZB3.SA'] periodo=2016-01-01\u21922026-08-05 batch=1000 cache=data/raw log=data/logs/hedgefund.log\nINFO     src.pipeline.flows:flows.py:137 ==================================================\nINFO     src.pipeline.flows:flows.py:138 Pipeline ETL iniciado: 1 ticker(s), 2024-01-01 -> 2024-01-31\nINFO     src.pipeline.flows:flows.py:139 ==================================================
+_____ TestPipelineFlow.test_partial_flow_returns_explicit_failure_summary _____
+
+self = <sqlalchemy.engine.base.Connection object at 0x0000025882266CF0>
+engine = Engine(postgresql://postgres:***@127.0.0.1:5435/hedgefundlab)
+connection = None, _has_events = None, _allow_revalidate = True
+_allow_autobegin = True
+
+    def __init__(
+        self,
+        engine: Engine,
+        connection: Optional[PoolProxiedConnection] = None,
+        _has_events: Optional[bool] = None,
+        _allow_revalidate: bool = True,
+        _allow_autobegin: bool = True,
+    ):
+        """Construct a new Connection."""
+        self.engine = engine
+        self.dialect = dialect = engine.dialect
+    
+        if connection is None:
+            try:
+>               self._dbapi_connection = engine.raw_connection()
+                                         ^^^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:146: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3302: in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:712: in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:179: in _do_get
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:177: in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:674: in __init__
+    self.__connect()
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:900: in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\create.py:643: in connect
+    return dialect.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\default.py:621: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+dsn = 'host=127.0.0.1 dbname=hedgefundlab user=postgres password=password port=5435'
+connection_factory = None, cursor_factory = None
+kwargs = {'host': '127.0.0.1', 'dbname': 'hedgefundlab', 'user': 'postgres', 'password': 'password', ...}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       psycopg2.OperationalError: connection to server at "127.0.0.1", port 5435 failed: Connection refused (0x0000274D/10061)
+E       	Is the server running on that host and accepting TCP/IP connections?
+
+.venv\Lib\site-packages\psycopg2\__init__.py:135: OperationalError
+
+The above exception was the direct cause of the following exception:
+
+self = <pipeline.test_flows.TestPipelineFlow object at 0x00000258FA190E10>
+mock_dataframe =             fechamento  abertura  maxima  ...   rsi  macd macd_sinal
+2024-01-01       100.0     100.0   101.0  ...  55......  55.0   0.5        0.3
+2024-01-10       109.0     109.0   110.0  ...  55.0   0.5        0.3
+
+[10 rows x 13 columns]
+
+    def test_partial_flow_returns_explicit_failure_summary(self, mock_dataframe):
+        from src.pipeline.flows import pipeline_etl
+    
+        with (
+            patch(
+                "src.pipeline.flows.extract_task",
+                side_effect=[mock_dataframe, RuntimeError("fonte indispon�vel")],
+            ),
+            patch("src.pipeline.flows.transform_task", return_value=mock_dataframe),
+            patch("src.pipeline.flows.load_task"),
+        ):
+>           result = pipeline_etl(
+                tickers=["OK4.SA", "FAIL4.SA"],
+                start="2024-01-01",
+                end="2024-01-31",
+            )
+
+tests\pipeline\test_flows.py:63: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\pipeline\flows.py:141: in pipeline_etl
+    init_db()
+src\pipeline\flows.py:54: in init_db
+    Base.metadata.create_all(engine)
+.venv\Lib\site-packages\sqlalchemy\sql\schema.py:5868: in create_all
+    bind._run_ddl_visitor(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3252: in _run_ddl_visitor
+    with self.begin() as conn:
+         ^^^^^^^^^^^^
+..\..\..\AppData\Local\Python\pythoncore-3.13-64\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3242: in begin
+    with self.connect() as conn:
+         ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3278: in connect
+    return self._connection_cls(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:148: in __init__
+    Connection._handle_dbapi_exception_noconnection(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:2442: in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:146: in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3302: in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:712: in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:179: in _do_get
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:177: in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:674: in __init__
+    self.__connect()
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:900: in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\create.py:643: in connect
+    return dialect.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\default.py:621: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+dsn = 'host=127.0.0.1 dbname=hedgefundlab user=postgres password=password port=5435'
+connection_factory = None, cursor_factory = None
+kwargs = {'host': '127.0.0.1', 'dbname': 'hedgefundlab', 'user': 'postgres', 'password': 'password', ...}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "127.0.0.1", port 5435 failed: Connection refused (0x0000274D/10061)
+E       	Is the server running on that host and accepting TCP/IP connections?
+E       
+E       (Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+.venv\Lib\site-packages\psycopg2\__init__.py:135: OperationalError
+---------------------------- Captured stdout call -----------------------------
+2026-10-13 04:09:27 | INFO     | src.pipeline.flows | ==================================================
+2026-10-13 04:09:27 | INFO     | src.pipeline.flows | Pipeline ETL iniciado: 2 ticker(s), 2024-01-01 -> 2024-01-31
+2026-10-13 04:09:27 | INFO     | src.pipeline.flows | ==================================================
+------------------------------ Captured log call ------------------------------
+INFO     src.pipeline.flows:flows.py:137 ==================================================
+INFO     src.pipeline.flows:flows.py:138 Pipeline ETL iniciado: 2 ticker(s), 2024-01-01 -> 2024-01-31
+INFO     src.pipeline.flows:flows.py:139 ==================================================
+_______________ TestPipelineFlow.test_extract_retry_on_failure ________________
+
+self = <sqlalchemy.engine.base.Connection object at 0x0000025882265550>
+engine = Engine(postgresql://postgres:***@127.0.0.1:5435/hedgefundlab)
+connection = None, _has_events = None, _allow_revalidate = True
+_allow_autobegin = True
+
+    def __init__(
+        self,
+        engine: Engine,
+        connection: Optional[PoolProxiedConnection] = None,
+        _has_events: Optional[bool] = None,
+        _allow_revalidate: bool = True,
+        _allow_autobegin: bool = True,
+    ):
+        """Construct a new Connection."""
+        self.engine = engine
+        self.dialect = dialect = engine.dialect
+    
+        if connection is None:
+            try:
+>               self._dbapi_connection = engine.raw_connection()
+                                         ^^^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:146: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3302: in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:712: in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:179: in _do_get
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:177: in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:674: in __init__
+    self.__connect()
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:900: in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\create.py:643: in connect
+    return dialect.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\default.py:621: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+dsn = 'host=127.0.0.1 dbname=hedgefundlab user=postgres password=password port=5435'
+connection_factory = None, cursor_factory = None
+kwargs = {'host': '127.0.0.1', 'dbname': 'hedgefundlab', 'user': 'postgres', 'password': 'password', ...}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       psycopg2.OperationalError: connection to server at "127.0.0.1", port 5435 failed: Connection refused (0x0000274D/10061)
+E       	Is the server running on that host and accepting TCP/IP connections?
+
+.venv\Lib\site-packages\psycopg2\__init__.py:135: OperationalError
+
+The above exception was the direct cause of the following exception:
+
+self = <pipeline.test_flows.TestPipelineFlow object at 0x00000258FA1510F0>
+mock_dataframe =             fechamento  abertura  maxima  ...   rsi  macd macd_sinal
+2024-01-01       100.0     100.0   101.0  ...  55......  55.0   0.5        0.3
+2024-01-10       109.0     109.0   110.0  ...  55.0   0.5        0.3
+
+[10 rows x 13 columns]
+
+    def test_extract_retry_on_failure(self, mock_dataframe):
+        """Extract falha e depois sucede -> flow completa."""
+        from src.pipeline.flows import pipeline_etl
+    
+        # Extract task mockada para retornar dados com sucesso
+        with (
+            patch("src.pipeline.flows.extract_task", return_value=mock_dataframe),
+            patch("src.pipeline.flows.transform_task", return_value=mock_dataframe),
+            patch("src.pipeline.flows.load_task") as mock_load,
+        ):
+>           pipeline_etl(tickers=["TEST4.SA"], start="2024-01-01", end="2024-01-31")
+
+tests\pipeline\test_flows.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\pipeline\flows.py:141: in pipeline_etl
+    init_db()
+src\pipeline\flows.py:54: in init_db
+    Base.metadata.create_all(engine)
+.venv\Lib\site-packages\sqlalchemy\sql\schema.py:5868: in create_all
+    bind._run_ddl_visitor(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3252: in _run_ddl_visitor
+    with self.begin() as conn:
+         ^^^^^^^^^^^^
+..\..\..\AppData\Local\Python\pythoncore-3.13-64\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3242: in begin
+    with self.connect() as conn:
+         ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3278: in connect
+    return self._connection_cls(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:148: in __init__
+    Connection._handle_dbapi_exception_noconnection(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:2442: in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:146: in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3302: in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:712: in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:179: in _do_get
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:177: in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:674: in __init__
+    self.__connect()
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:900: in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\create.py:643: in connect
+    return dialect.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\default.py:621: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+dsn = 'host=127.0.0.1 dbname=hedgefundlab user=postgres password=password port=5435'
+connection_factory = None, cursor_factory = None
+kwargs = {'host': '127.0.0.1', 'dbname': 'hedgefundlab', 'user': 'postgres', 'password': 'password', ...}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "127.0.0.1", port 5435 failed: Connection refused (0x0000274D/10061)
+E       	Is the server running on that host and accepting TCP/IP connections?
+E       
+E       (Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+.venv\Lib\site-packages\psycopg2\__init__.py:135: OperationalError
+---------------------------- Captured stdout call -----------------------------
+2026-10-13 04:09:30 | INFO     | src.pipeline.flows | ==================================================
+2026-10-13 04:09:30 | INFO     | src.pipeline.flows | Pipeline ETL iniciado: 1 ticker(s), 2024-01-01 -> 2024-01-31
+2026-10-13 04:09:30 | INFO     | src.pipeline.flows | ==================================================
+------------------------------ Captured log call ------------------------------
+INFO     src.pipeline.flows:flows.py:137 ==================================================
+INFO     src.pipeline.flows:flows.py:138 Pipeline ETL iniciado: 1 ticker(s), 2024-01-01 -> 2024-01-31
+INFO     src.pipeline.flows:flows.py:139 ==================================================
+____________________ TestPipelineFlow.test_custom_tickers _____________________
+
+self = <sqlalchemy.engine.base.Connection object at 0x00000258822675B0>
+engine = Engine(postgresql://postgres:***@127.0.0.1:5435/hedgefundlab)
+connection = None, _has_events = None, _allow_revalidate = True
+_allow_autobegin = True
+
+    def __init__(
+        self,
+        engine: Engine,
+        connection: Optional[PoolProxiedConnection] = None,
+        _has_events: Optional[bool] = None,
+        _allow_revalidate: bool = True,
+        _allow_autobegin: bool = True,
+    ):
+        """Construct a new Connection."""
+        self.engine = engine
+        self.dialect = dialect = engine.dialect
+    
+        if connection is None:
+            try:
+>               self._dbapi_connection = engine.raw_connection()
+                                         ^^^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:146: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3302: in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:712: in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:179: in _do_get
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:177: in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:674: in __init__
+    self.__connect()
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:900: in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\create.py:643: in connect
+    return dialect.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\default.py:621: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+dsn = 'host=127.0.0.1 dbname=hedgefundlab user=postgres password=password port=5435'
+connection_factory = None, cursor_factory = None
+kwargs = {'host': '127.0.0.1', 'dbname': 'hedgefundlab', 'user': 'postgres', 'password': 'password', ...}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       psycopg2.OperationalError: connection to server at "127.0.0.1", port 5435 failed: Connection refused (0x0000274D/10061)
+E       	Is the server running on that host and accepting TCP/IP connections?
+
+.venv\Lib\site-packages\psycopg2\__init__.py:135: OperationalError
+
+The above exception was the direct cause of the following exception:
+
+self = <pipeline.test_flows.TestPipelineFlow object at 0x00000258FA151220>
+mock_dataframe =             fechamento  abertura  maxima  ...   rsi  macd macd_sinal
+2024-01-01       100.0     100.0   101.0  ...  55......  55.0   0.5        0.3
+2024-01-10       109.0     109.0   110.0  ...  55.0   0.5        0.3
+
+[10 rows x 13 columns]
+
+    def test_custom_tickers(self, mock_dataframe):
+        """Tickers customizados s�o processados."""
+        from src.pipeline.flows import pipeline_etl
+    
+        with (
+            patch("src.pipeline.flows.extract_task", return_value=mock_dataframe),
+            patch("src.pipeline.flows.transform_task", return_value=mock_dataframe),
+            patch("src.pipeline.flows.load_task") as mock_load,
+        ):
+>           pipeline_etl(tickers=["CUSTOM3.SA"], start="2024-01-01", end="2024-01-31")
+
+tests\pipeline\test_flows.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\pipeline\flows.py:141: in pipeline_etl
+    init_db()
+src\pipeline\flows.py:54: in init_db
+    Base.metadata.create_all(engine)
+.venv\Lib\site-packages\sqlalchemy\sql\schema.py:5868: in create_all
+    bind._run_ddl_visitor(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3252: in _run_ddl_visitor
+    with self.begin() as conn:
+         ^^^^^^^^^^^^
+..\..\..\AppData\Local\Python\pythoncore-3.13-64\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3242: in begin
+    with self.connect() as conn:
+         ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3278: in connect
+    return self._connection_cls(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:148: in __init__
+    Connection._handle_dbapi_exception_noconnection(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:2442: in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:146: in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3302: in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:712: in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:179: in _do_get
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:177: in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:674: in __init__
+    self.__connect()
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:900: in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\create.py:643: in connect
+    return dialect.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\default.py:621: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+dsn = 'host=127.0.0.1 dbname=hedgefundlab user=postgres password=password port=5435'
+connection_factory = None, cursor_factory = None
+kwargs = {'host': '127.0.0.1', 'dbname': 'hedgefundlab', 'user': 'postgres', 'password': 'password', ...}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "127.0.0.1", port 5435 failed: Connection refused (0x0000274D/10061)
+E       	Is the server running on that host and accepting TCP/IP connections?
+E       
+E       (Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+.venv\Lib\site-packages\psycopg2\__init__.py:135: OperationalError
+---------------------------- Captured stdout call -----------------------------
+2026-10-13 04:09:32 | INFO     | src.pipeline.flows | ==================================================
+2026-10-13 04:09:32 | INFO     | src.pipeline.flows | Pipeline ETL iniciado: 1 ticker(s), 2024-01-01 -> 2024-01-31
+2026-10-13 04:09:32 | INFO     | src.pipeline.flows | ==================================================
+------------------------------ Captured log call ------------------------------
+INFO     src.pipeline.flows:flows.py:137 ==================================================
+INFO     src.pipeline.flows:flows.py:138 Pipeline ETL iniciado: 1 ticker(s), 2024-01-01 -> 2024-01-31
+INFO     src.pipeline.flows:flows.py:139 ==================================================
+_____________________ TestPipelineFlow.test_single_ticker _____________________
+
+self = <sqlalchemy.engine.base.Connection object at 0x00000258822666D0>
+engine = Engine(postgresql://postgres:***@127.0.0.1:5435/hedgefundlab)
+connection = None, _has_events = None, _allow_revalidate = True
+_allow_autobegin = True
+
+    def __init__(
+        self,
+        engine: Engine,
+        connection: Optional[PoolProxiedConnection] = None,
+        _has_events: Optional[bool] = None,
+        _allow_revalidate: bool = True,
+        _allow_autobegin: bool = True,
+    ):
+        """Construct a new Connection."""
+        self.engine = engine
+        self.dialect = dialect = engine.dialect
+    
+        if connection is None:
+            try:
+>               self._dbapi_connection = engine.raw_connection()
+                                         ^^^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:146: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3302: in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:712: in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:179: in _do_get
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:177: in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:674: in __init__
+    self.__connect()
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:900: in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\create.py:643: in connect
+    return dialect.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\default.py:621: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+dsn = 'host=127.0.0.1 dbname=hedgefundlab user=postgres password=password port=5435'
+connection_factory = None, cursor_factory = None
+kwargs = {'host': '127.0.0.1', 'dbname': 'hedgefundlab', 'user': 'postgres', 'password': 'password', ...}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       psycopg2.OperationalError: connection to server at "127.0.0.1", port 5435 failed: Connection refused (0x0000274D/10061)
+E       	Is the server running on that host and accepting TCP/IP connections?
+
+.venv\Lib\site-packages\psycopg2\__init__.py:135: OperationalError
+
+The above exception was the direct cause of the following exception:
+
+self = <pipeline.test_flows.TestPipelineFlow object at 0x00000258FA194B90>
+mock_dataframe =             fechamento  abertura  maxima  ...   rsi  macd macd_sinal
+2024-01-01       100.0     100.0   101.0  ...  55......  55.0   0.5        0.3
+2024-01-10       109.0     109.0   110.0  ...  55.0   0.5        0.3
+
+[10 rows x 13 columns]
+
+    def test_single_ticker(self, mock_dataframe):
+        """Apenas um ticker processado."""
+        from src.pipeline.flows import pipeline_etl
+    
+        with (
+            patch("src.pipeline.flows.extract_task", return_value=mock_dataframe),
+            patch("src.pipeline.flows.transform_task", return_value=mock_dataframe),
+            patch("src.pipeline.flows.load_task") as mock_load,
+        ):
+>           pipeline_etl(tickers=["UNICO3.SA"], start="2024-01-01", end="2024-01-31")
+
+tests\pipeline\test_flows.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\pipeline\flows.py:141: in pipeline_etl
+    init_db()
+src\pipeline\flows.py:54: in init_db
+    Base.metadata.create_all(engine)
+.venv\Lib\site-packages\sqlalchemy\sql\schema.py:5868: in create_all
+    bind._run_ddl_visitor(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3252: in _run_ddl_visitor
+    with self.begin() as conn:
+         ^^^^^^^^^^^^
+..\..\..\AppData\Local\Python\pythoncore-3.13-64\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3242: in begin
+    with self.connect() as conn:
+         ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3278: in connect
+    return self._connection_cls(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:148: in __init__
+    Connection._handle_dbapi_exception_noconnection(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:2442: in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:146: in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3302: in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:712: in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:179: in _do_get
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:177: in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:674: in __init__
+    self.__connect()
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:900: in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\create.py:643: in connect
+    return dialect.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\default.py:621: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+dsn = 'host=127.0.0.1 dbname=hedgefundlab user=postgres password=password port=5435'
+connection_factory = None, cursor_factory = None
+kwargs = {'host': '127.0.0.1', 'dbname': 'hedgefundlab', 'user': 'postgres', 'password': 'password', ...}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "127.0.0.1", port 5435 failed: Connection refused (0x0000274D/10061)
+E       	Is the server running on that host and accepting TCP/IP connections?
+E       
+E       (Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+.venv\Lib\site-packages\psycopg2\__init__.py:135: OperationalError
+---------------------------- Captured stdout call -----------------------------
+2026-10-13 04:09:34 | INFO     | src.pipeline.flows | ==================================================
+2026-10-13 04:09:34 | INFO     | src.pipeline.flows | Pipeline ETL iniciado: 1 ticker(s), 2024-01-01 -> 2024-01-31
+2026-10-13 04:09:34 | INFO     | src.pipeline.flows | ==================================================
+------------------------------ Captured log call ------------------------------
+INFO     src.pipeline.flows:flows.py:137 ==================================================
+INFO     src.pipeline.flows:flows.py:138 Pipeline ETL iniciado: 1 ticker(s), 2024-01-01 -> 2024-01-31
+INFO     src.pipeline.flows:flows.py:139 ==================================================
+_____________________ TestPipelineFlow.test_empty_tickers _____________________
+
+self = <sqlalchemy.engine.base.Connection object at 0x00000258822667B0>
+engine = Engine(postgresql://postgres:***@127.0.0.1:5435/hedgefundlab)
+connection = None, _has_events = None, _allow_revalidate = True
+_allow_autobegin = True
+
+    def __init__(
+        self,
+        engine: Engine,
+        connection: Optional[PoolProxiedConnection] = None,
+        _has_events: Optional[bool] = None,
+        _allow_revalidate: bool = True,
+        _allow_autobegin: bool = True,
+    ):
+        """Construct a new Connection."""
+        self.engine = engine
+        self.dialect = dialect = engine.dialect
+    
+        if connection is None:
+            try:
+>               self._dbapi_connection = engine.raw_connection()
+                                         ^^^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:146: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3302: in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:712: in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:179: in _do_get
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:177: in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:674: in __init__
+    self.__connect()
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:900: in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\create.py:643: in connect
+    return dialect.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\default.py:621: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+dsn = 'host=127.0.0.1 dbname=hedgefundlab user=postgres password=password port=5435'
+connection_factory = None, cursor_factory = None
+kwargs = {'host': '127.0.0.1', 'dbname': 'hedgefundlab', 'user': 'postgres', 'password': 'password', ...}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       psycopg2.OperationalError: connection to server at "127.0.0.1", port 5435 failed: Connection refused (0x0000274D/10061)
+E       	Is the server running on that host and accepting TCP/IP connections?
+
+.venv\Lib\site-packages\psycopg2\__init__.py:135: OperationalError
+
+The above exception was the direct cause of the following exception:
+
+self = <pipeline.test_flows.TestPipelineFlow object at 0x00000258FA092470>
+mock_dataframe =             fechamento  abertura  maxima  ...   rsi  macd macd_sinal
+2024-01-01       100.0     100.0   101.0  ...  55......  55.0   0.5        0.3
+2024-01-10       109.0     109.0   110.0  ...  55.0   0.5        0.3
+
+[10 rows x 13 columns]
+
+    def test_empty_tickers(self, mock_dataframe):
+        """Lista vazia de tickers -> nenhuma task chamada."""
+        from src.pipeline.flows import pipeline_etl
+    
+        with (
+            patch("src.pipeline.flows.extract_task", return_value=mock_dataframe),
+            patch("src.pipeline.flows.transform_task", return_value=mock_dataframe),
+            patch("src.pipeline.flows.load_task") as mock_load,
+        ):
+>           pipeline_etl(tickers=[], start="2024-01-01", end="2024-01-31")
+
+tests\pipeline\test_flows.py:123: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\pipeline\flows.py:141: in pipeline_etl
+    init_db()
+src\pipeline\flows.py:54: in init_db
+    Base.metadata.create_all(engine)
+.venv\Lib\site-packages\sqlalchemy\sql\schema.py:5868: in create_all
+    bind._run_ddl_visitor(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3252: in _run_ddl_visitor
+    with self.begin() as conn:
+         ^^^^^^^^^^^^
+..\..\..\AppData\Local\Python\pythoncore-3.13-64\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3242: in begin
+    with self.connect() as conn:
+         ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3278: in connect
+    return self._connection_cls(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:148: in __init__
+    Connection._handle_dbapi_exception_noconnection(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:2442: in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:146: in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3302: in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:712: in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:179: in _do_get
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:177: in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:674: in __init__
+    self.__connect()
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:900: in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\create.py:643: in connect
+    return dialect.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\default.py:621: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+dsn = 'host=127.0.0.1 dbname=hedgefundlab user=postgres password=password port=5435'
+connection_factory = None, cursor_factory = None
+kwargs = {'host': '127.0.0.1', 'dbname': 'hedgefundlab', 'user': 'postgres', 'password': 'password', ...}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "127.0.0.1", port 5435 failed: Connection refused (0x0000274D/10061)
+E       	Is the server running on that host and accepting TCP/IP connections?
+E       
+E       (Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+.venv\Lib\site-packages\psycopg2\__init__.py:135: OperationalError
+---------------------------- Captured stdout call -----------------------------
+2026-10-13 04:09:37 | INFO     | src.pipeline.flows | ==================================================
+2026-10-13 04:09:37 | INFO     | src.pipeline.flows | Pipeline ETL iniciado: 0 ticker(s), 2024-01-01 -> 2024-01-31
+2026-10-13 04:09:37 | INFO     | src.pipeline.flows | ==================================================
+------------------------------ Captured log call ------------------------------
+INFO     src.pipeline.flows:flows.py:137 ==================================================
+INFO     src.pipeline.flows:flows.py:138 Pipeline ETL iniciado: 0 ticker(s), 2024-01-01 -> 2024-01-31
+INFO     src.pipeline.flows:flows.py:139 ==================================================
+_____________ TestPipelineFlow.test_default_tickers_from_settings _____________
+
+self = <sqlalchemy.engine.base.Connection object at 0x00000258822E7AF0>
+engine = Engine(postgresql://postgres:***@127.0.0.1:5435/hedgefundlab)
+connection = None, _has_events = None, _allow_revalidate = True
+_allow_autobegin = True
+
+    def __init__(
+        self,
+        engine: Engine,
+        connection: Optional[PoolProxiedConnection] = None,
+        _has_events: Optional[bool] = None,
+        _allow_revalidate: bool = True,
+        _allow_autobegin: bool = True,
+    ):
+        """Construct a new Connection."""
+        self.engine = engine
+        self.dialect = dialect = engine.dialect
+    
+        if connection is None:
+            try:
+>               self._dbapi_connection = engine.raw_connection()
+                                         ^^^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:146: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3302: in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:712: in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:179: in _do_get
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:177: in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:674: in __init__
+    self.__connect()
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:900: in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\create.py:643: in connect
+    return dialect.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\default.py:621: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+dsn = 'host=127.0.0.1 dbname=hedgefundlab user=postgres password=password port=5435'
+connection_factory = None, cursor_factory = None
+kwargs = {'host': '127.0.0.1', 'dbname': 'hedgefundlab', 'user': 'postgres', 'password': 'password', ...}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       psycopg2.OperationalError: connection to server at "127.0.0.1", port 5435 failed: Connection refused (0x0000274D/10061)
+E       	Is the server running on that host and accepting TCP/IP connections?
+
+.venv\Lib\site-packages\psycopg2\__init__.py:135: OperationalError
+
+The above exception was the direct cause of the following exception:
+
+self = <pipeline.test_flows.TestPipelineFlow object at 0x00000258FA092580>
+mock_dataframe =             fechamento  abertura  maxima  ...   rsi  macd macd_sinal
+2024-01-01       100.0     100.0   101.0  ...  55......  55.0   0.5        0.3
+2024-01-10       109.0     109.0   110.0  ...  55.0   0.5        0.3
+
+[10 rows x 13 columns]
+
+    def test_default_tickers_from_settings(self, mock_dataframe):
+        """Sem argumento tickers, usa settings.default_tickers."""
+        from src.pipeline.flows import pipeline_etl
+    
+        with (
+            patch("src.pipeline.flows.extract_task", return_value=mock_dataframe),
+            patch("src.pipeline.flows.transform_task", return_value=mock_dataframe),
+            patch("src.pipeline.flows.load_task") as mock_load,
+        ):
+>           pipeline_etl()
+
+tests\pipeline\test_flows.py:136: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\pipeline\flows.py:141: in pipeline_etl
+    init_db()
+src\pipeline\flows.py:54: in init_db
+    Base.metadata.create_all(engine)
+.venv\Lib\site-packages\sqlalchemy\sql\schema.py:5868: in create_all
+    bind._run_ddl_visitor(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3252: in _run_ddl_visitor
+    with self.begin() as conn:
+         ^^^^^^^^^^^^
+..\..\..\AppData\Local\Python\pythoncore-3.13-64\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3242: in begin
+    with self.connect() as conn:
+         ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3278: in connect
+    return self._connection_cls(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:148: in __init__
+    Connection._handle_dbapi_exception_noconnection(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:2442: in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:146: in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:3302: in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:712: in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:179: in _do_get
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\impl.py:177: in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:674: in __init__
+    self.__connect()
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:900: in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.venv\Lib\site-packages\sqlalchemy\pool\base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\create.py:643: in connect
+    return dialect.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\engine\default.py:621: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+dsn = 'host=127.0.0.1 dbname=hedgefundlab user=postgres password=password port=5435'
+connection_factory = None, cursor_factory = None
+kwargs = {'host': '127.0.0.1', 'dbname': 'hedgefundlab', 'user': 'postgres', 'password': 'password', ...}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "127.0.0.1", port 5435 failed: Connection refused (0x0000274D/10061)
+E       	Is the server running on that host and accepting TCP/IP connections?
+E       
+E       (Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+.venv\Lib\site-packages\psycopg2\__init__.py:135: OperationalError
+---------------------------- Captured stdout call -----------------------------
+2026-10-13 04:09:39 | INFO     | src.pipeline.flows | ==================================================
+2026-10-13 04:09:39 | INFO     | src.pipeline.flows | Pipeline ETL iniciado: 10 ticker(s), 2016-01-01 -> 2026-08-05
+2026-10-13 04:09:39 | INFO     | src.pipeline.flows | ==================================================
+------------------------------ Captured log call ------------------------------
+INFO     src.pipeline.flows:flows.py:137 ==================================================
+INFO     src.pipeline.flows:flows.py:138 Pipeline ETL iniciado: 10 ticker(s), 2016-01-01 -> 2026-08-05
+INFO     src.pipeline.flows:flows.py:139 ==================================================
+______________ GlobalPMChecks.test_31_original_ledgers_preserved ______________
+
+self = <test_global_pm.GlobalPMChecks testMethod=test_31_original_ledgers_preserved>
+
+    def test_31_original_ledgers_preserved(self):
+        expected = json.loads(
+            (ROOT / "docs/evidence/hfl_global_pm/preservation_baseline.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        changed = [
+            name
+            for name, sha in expected.items()
+            if not (ROOT / name).is_file() or b.sha_file(ROOT / name) != sha
+        ]
+>       self.assertEqual(changed, [])
+E       AssertionError: Lists differ: ['data/radar/hfl_multiasset_v1/job.json', [44 chars]son'] != []
+E       
+E       First list contains 2 additional elements.
+E       First extra element 0:
+E       'data/radar/hfl_multiasset_v1/job.json'
+E       
+E       + []
+E       - ['data/radar/hfl_multiasset_v1/job.json',
+E       -  'data/radar/hfl_multiasset_v1/last_prepare.json']
+
+tests\test_global_pm.py:533: AssertionError
+__ IntegrationChecks.test_original_scientific_radar_and_ledger_preservation ___
+
+self = <test_multiasset_portfolio.IntegrationChecks testMethod=test_original_scientific_radar_and_ledger_preservation>
+
+    def test_original_scientific_radar_and_ledger_preservation(self):
+        baseline = book.read(
+            ROOT / "docs/evidence/hfl_multiasset_portfolio/preservation_baseline.json"
+        )
+        for name, expected in baseline.items():
+            path = ROOT / name
+            if not path.exists() and name.startswith("data/"):
+                continue  # Ignored local records can be absent in a clean checkout.
+>           self.assertEqual(book.sha_file(path), expected, name)
+E           AssertionError: '7304445202609016d5ead85e532c1e21a521deae103a6a8bd8f24b0c074e430e' != '5167d1142cfee5859a56753273295f06fa3998c140c5edae4424584ead16a9ed'
+E           - 7304445202609016d5ead85e532c1e21a521deae103a6a8bd8f24b0c074e430e
+E           + 5167d1142cfee5859a56753273295f06fa3998c140c5edae4424584ead16a9ed
+E            : data/radar/hfl_multiasset_v1/job.json
+
+tests\test_multiasset_portfolio.py:893: AssertionError
+_____ test_real_recovery_has_five_official_inputs_equivalent_to_original ______
+
+    @real
+    def test_real_recovery_has_five_official_inputs_equivalent_to_original():
+        data = runs.load(REAL)
+        entry = runs.run("radar-2026-10-09-recovery-01", data)
+        inv = runs.inventory(entry)
+>       assert inv["inputs"] == 5 and not inv["errors"] and inv["claims"] == 0
+E       assert (5 == 5 and not [] and 5 == 0)
+
+tests\test_radar_runs.py:444: AssertionError
+---------------------------- Captured stdout call -----------------------------
+2026-10-13 04:12:51 | INFO     | src.pipeline.transform | Calculando indicadores para 311 registros
+2026-10-13 04:12:51 | INFO     | src.pipeline.transform | Calculando indicadores para 311 registros
+2026-10-13 04:12:51 | INFO     | src.pipeline.transform | Calculando indicadores para 311 registros
+2026-10-13 04:12:51 | INFO     | src.pipeline.transform | Calculando indicadores para 311 registros
+2026-10-13 04:12:51 | INFO     | src.pipeline.transform | Calculando indicadores para 311 registros
+------------------------------ Captured log call ------------------------------
+INFO     src.pipeline.transform:transform.py:218 Calculando indicadores para 311 registros
+INFO     src.pipeline.transform:transform.py:218 Calculando indicadores para 311 registros
+INFO     src.pipeline.transform:transform.py:218 Calculando indicadores para 311 registros
+INFO     src.pipeline.transform:transform.py:218 Calculando indicadores para 311 registros
+INFO     src.pipeline.transform:transform.py:218 Calculando indicadores para 311 registros
+____________ test_real_itub4_bonus_normalized_and_bbas3_restricted ____________
+
+    @real
+    def test_real_itub4_bonus_normalized_and_bbas3_restricted():
+        data = runs.load(REAL)
+        new = runs.root_of(runs.run("radar-2026-10-09-recovery-01", data))
+        old = runs.root_of(runs.run("radar-2026-10-09-original", data))
+        itub = [radar.read(r / "analyses/ITUB4" / DAY / "input.json") for r in (new, old)]
+        events = [i["source"]["corporate_events"] for i in itub]
+        assert events[0]["events"] == events[1]["events"]
+        assert [e["type"] for e in events[0]["events"]] == ["BONIFICACAO"]
+        assert (
+            events[0]["module_sha256"] == events[1]["module_sha256"]
+        )  # same V7.2 normalizer
+        assert events[0]["module_sha256"] == radar.sha_file(
+            ROOT / "scripts/radar_corporate_events.py"
+        )
+        bbas = radar.read(new / "analyses/BBAS3" / DAY / "input.json")
+        assert (
+            bbas["risk_metrics"]["asset_volatility_21"]
+            > bbas["manifest"]["risk"]["max_asset_volatility"]
+        )
+        plan = runs.budget("radar-2026-10-09-recovery-01", data)["planned"]
+>       assert (plan["calls_max"], plan["calls_planned"]) == (30, 29)
+E       assert (0, 0) == (30, 29)
+E         
+E         At index 0 diff: 0 != 30
+E         Use -v to get more diff
+
+tests\test_radar_runs.py:482: AssertionError
+---------------------------- Captured stdout call -----------------------------
+2026-10-13 04:12:51 | INFO     | src.pipeline.transform | Calculando indicadores para 311 registros
+2026-10-13 04:12:51 | INFO     | src.pipeline.transform | Calculando indicadores para 311 registros
+2026-10-13 04:12:51 | INFO     | src.pipeline.transform | Calculando indicadores para 311 registros
+2026-10-13 04:12:51 | INFO     | src.pipeline.transform | Calculando indicadores para 311 registros
+2026-10-13 04:12:51 | INFO     | src.pipeline.transform | Calculando indicadores para 311 registros
+2026-10-13 04:12:51 | INFO     | src.pipeline.transform | Calculando indicadores para 311 registros
+2026-10-13 04:12:51 | INFO     | src.pipeline.transform | Calculando indicadores para 311 registros
+2026-10-13 04:12:51 | INFO     | src.pipeline.transform | Calculando indicadores para 311 registros
+2026-10-13 04:12:51 | INFO     | src.pipeline.transform | Calculando indicadores para 311 registros
+2026-10-13 04:12:51 | INFO     | src.pipeline.transform | Calculando indicadores para 311 registros
+------------------------------ Captured log call ------------------------------
+INFO     src.pipeline.transform:transform.py:218 Calculando indicadores para 311 registros
+INFO     src.pipeline.transform:transform.py:218 Calculando indicadores para 311 registros
+INFO     src.pipeline.transform:transform.py:218 Calculando indicadores para 311 registros
+INFO     src.pipeline.transform:transform.py:218 Calculando indicadores para 311 registros
+INFO     src.pipeline.transform:transform.py:218 Calculando indicadores para 311 registros
+INFO     src.pipeline.transform:transform.py:218 Calculando indicadores para 311 registros
+INFO     src.pipeline.transform:transform.py:218 Calculando indicadores para 311 registros
+INFO     src.pipeline.transform:transform.py:218 Calculando indicadores para 311 registros
+INFO     src.pipeline.transform:transform.py:218 Calculando indicadores para 311 registros
+INFO     src.pipeline.transform:transform.py:218 Calculando indicadores para 311 registros
+=========================== short test summary info ===========================
+FAILED tests/experiments/test_cal_b4_safety.py::test_v5_development_s3_failure_blocks_further_phases
+FAILED tests/experiments/test_spec.py::test_registry_cobre_os_cinco_classicos_e_o_participante_llm
+FAILED tests/experiments/test_v6_phase_routing.py::test_structural_failure_prevents_phase_selection_and_progression
+FAILED tests/pipeline/test_flows.py::TestPipelineFlow::test_full_flow_success
+FAILED tests/pipeline/test_flows.py::TestPipelineFlow::test_partial_flow_returns_explicit_failure_summary
+FAILED tests/pipeline/test_flows.py::TestPipelineFlow::test_extract_retry_on_failure
+FAILED tests/pipeline/test_flows.py::TestPipelineFlow::test_custom_tickers - ...
+FAILED tests/pipeline/test_flows.py::TestPipelineFlow::test_single_ticker - s...
+FAILED tests/pipeline/test_flows.py::TestPipelineFlow::test_empty_tickers - s...
+FAILED tests/pipeline/test_flows.py::TestPipelineFlow::test_default_tickers_from_settings
+FAILED tests/test_global_pm.py::GlobalPMChecks::test_31_original_ledgers_preserved
+FAILED tests/test_multiasset_portfolio.py::IntegrationChecks::test_original_scientific_radar_and_ledger_preservation
+FAILED tests/test_radar_runs.py::test_real_recovery_has_five_official_inputs_equivalent_to_original
+FAILED tests/test_radar_runs.py::test_real_itub4_bonus_normalized_and_bbas3_restricted
+14 failed, 1752 passed, 61 subtests passed in 870.20s (0:14:30)

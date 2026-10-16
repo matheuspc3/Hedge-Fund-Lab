@@ -1,0 +1,175 @@
+{
+  "identity": "RADAR_CORPORATE_EVENTS_V1",
+  "session": "2026-10-09",
+  "read_only": true,
+  "radar_manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef",
+  "items": [
+    {
+      "ticker": "PETR4",
+      "ratio_before": {
+        "2025": 1.0,
+        "2026": 1.0
+      },
+      "events": [],
+      "ratio_after": {
+        "2025": 1.0,
+        "2026": 1.0
+      },
+      "status": "ELIGIBLE",
+      "last_session": "2026-10-09",
+      "bars": 311,
+      "history_start": "2025-07-16",
+      "minimum_history": 200,
+      "features": 8,
+      "risk_metrics": {
+        "asset_volatility_21": 0.392326
+      },
+      "bars_sha256": "d17d69b71960d8796cddf7628823c4536e1185a1327257a63e6e1e2e4376efdc",
+      "inherited_factors": [],
+      "original_extractor_identical_bars": true,
+      "official_input": {
+        "bars_sha256": "6d7ae0896ded630d51185a15d9fd9d8147d08cc05ccb3f4536f62df9fea67bce",
+        "identical_bars": false,
+        "features_identical": true,
+        "max_relative_close_difference": 1.8031341708635296e-07,
+        "prepared_at": "2026-10-11T13:55:00.515658-03:00"
+      }
+    },
+    {
+      "ticker": "VALE3",
+      "ratio_before": {
+        "2025": 1.0,
+        "2026": 1.0
+      },
+      "events": [],
+      "ratio_after": {
+        "2025": 1.0,
+        "2026": 1.0
+      },
+      "status": "ELIGIBLE",
+      "last_session": "2026-10-09",
+      "bars": 311,
+      "history_start": "2025-07-16",
+      "minimum_history": 200,
+      "features": 8,
+      "risk_metrics": {
+        "asset_volatility_21": 0.237709
+      },
+      "bars_sha256": "b1cb92fc355a47f9c5fdaa089bc7e7be65cf9bf056980e00f1887eb1ce880104",
+      "inherited_factors": [],
+      "original_extractor_identical_bars": true,
+      "official_input": {
+        "bars_sha256": "8017a56b5369948f060e6e4bb55960a3856a95fc5ac1469622feef16c6278392",
+        "identical_bars": false,
+        "features_identical": true,
+        "max_relative_close_difference": 1.1828739721053694e-07,
+        "prepared_at": "2026-10-11T13:55:00.515658-03:00"
+      }
+    },
+    {
+      "ticker": "ITUB4",
+      "ratio_before": {
+        "2025": 0.9708737739656967,
+        "2026": 0.9999999928491858
+      },
+      "events": [
+        {
+          "ex_date": "2025-12-26",
+          "yfinance_split_ratio": 1.03,
+          "b3_especi": "PN EB N1",
+          "b3_dismes": [
+            "362",
+            "363"
+          ],
+          "b3_close": [
+            40.26,
+            39.1
+          ]
+        }
+      ],
+      "ratio_after": {
+        "2025": 0.9999999867479501,
+        "2026": 0.9999999928491858
+      },
+      "status": "ELIGIBLE",
+      "last_session": "2026-10-09",
+      "bars": 311,
+      "history_start": "2025-07-16",
+      "minimum_history": 200,
+      "features": 8,
+      "risk_metrics": {
+        "asset_volatility_21": 0.429197
+      },
+      "bars_sha256": "4a3dc6b7c736f7fd9deb374fb86a7839dee593b254ad66c6d28abfe775b933dc",
+      "inherited_factors": [],
+      "original_extractor_identical_bars": "ORIGINAL_BLOCKS: split-like mismatch between yfinance and B3 closes: {2025: 0.9708737739656967, 2026: 0.9999999928491858}",
+      "official_input": null
+    },
+    {
+      "ticker": "WEGE3",
+      "ratio_before": {
+        "2025": 0.999999995948277,
+        "2026": 1.0
+      },
+      "events": [],
+      "ratio_after": {
+        "2025": 0.999999995948277,
+        "2026": 1.0
+      },
+      "status": "ELIGIBLE",
+      "last_session": "2026-10-09",
+      "bars": 311,
+      "history_start": "2025-07-16",
+      "minimum_history": 200,
+      "features": 8,
+      "risk_metrics": {
+        "asset_volatility_21": 0.215187
+      },
+      "bars_sha256": "b837a07656e880db5e5a6a4c49dd0f687b3dd10ff19dc1831f0421c893c15cee",
+      "inherited_factors": [],
+      "original_extractor_identical_bars": true,
+      "official_input": {
+        "bars_sha256": "2a033d6b9a7893a6a9c7129760089c0d32b31a0386e43914f9d56b6f32439972",
+        "identical_bars": false,
+        "features_identical": true,
+        "max_relative_close_difference": 2.8656478257005347e-07,
+        "prepared_at": "2026-10-11T13:55:00.515658-03:00"
+      }
+    },
+    {
+      "ticker": "BBAS3",
+      "ratio_before": {
+        "2025": 1.0,
+        "2026": 1.0
+      },
+      "events": [],
+      "ratio_after": {
+        "2025": 1.0,
+        "2026": 1.0
+      },
+      "status": "ELIGIBLE",
+      "last_session": "2026-10-09",
+      "bars": 311,
+      "history_start": "2025-07-16",
+      "minimum_history": 200,
+      "features": 8,
+      "risk_metrics": {
+        "asset_volatility_21": 0.544844
+      },
+      "bars_sha256": "4987beb134eeca7b338e32be59d09a929b5239af45dc4f538382ac748e236804",
+      "inherited_factors": [],
+      "original_extractor_identical_bars": true,
+      "official_input": {
+        "bars_sha256": "2b95cac2dc12e7380e427a398d5a0c2c12d0d0b4e4a8dc70921b8418ebd573f3",
+        "identical_bars": false,
+        "features_identical": true,
+        "max_relative_close_difference": 2.0542743373042072e-07,
+        "prepared_at": "2026-10-11T13:55:00.515658-03:00"
+      }
+    }
+  ],
+  "cotahist_sha256": {
+    "COTAHIST_A2025.ZIP": "6cc0ad851c8f605ca30418acac48be81f1767f6ed05b4f563772d06ae448047d",
+    "COTAHIST_A2026.ZIP": "d55b48e43c9d08561b595b7eb46f954fd1fa6051e0126220a2c36e8ac167fc11"
+  }
+}

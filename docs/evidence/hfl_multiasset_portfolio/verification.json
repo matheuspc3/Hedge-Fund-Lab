@@ -1,0 +1,255 @@
+{
+  "schema_version": 1,
+  "identity": "HFL-MULTIASSET-PORTFOLIO-V1",
+  "status": "HFL PREMIUM V5 — MULTIASSET PORTFOLIO ENGINE QUALIFIED OFFLINE",
+  "generated_at": "2026-10-11T17:51:55.710449+00:00",
+  "protected_files_verified": 10922,
+  "changed_protected_files": [],
+  "original_manifest_sha256": "dc118ce9841df612d030f40e5993858eacc6d06e41eff173706fc3a72d3acb98",
+  "original_manifest_sources": 73,
+  "original_manifest_verified_clean_false": true,
+  "git_clean_identity_check": "PASSED",
+  "original_manifest_verified_clean_true": true,
+  "implementation_commit": "f76eaa3349ac673d5eb6711f9b3ff50a5034e4b3",
+  "portfolio_integrity": {
+    "ok": true,
+    "events": 22,
+    "head_sha256": "4056727967b517d41f6beb62451b1873c883fd35c8e3fb2e048fab89436cd71e",
+    "state_sha256": "22d6a7a9f6bf5e15bad4eddb10b9c0ea822f69ff4d1f00ecf44e7a5d1c961f0f",
+    "errors": []
+  },
+  "final_portfolio": {
+    "identity": "HFL-MULTIASSET-PORTFOLIO-V1",
+    "portfolio_id": "demo-qualified-v5",
+    "mode": "synthetic",
+    "session": "2026-10-16",
+    "initial_capital": "100000.00",
+    "positions": {
+      "ITUB4": {
+        "quantity": "499",
+        "reserved": "0",
+        "unsettled": "0",
+        "basis": "14984.97",
+        "available": "499",
+        "average_cost": "30.03000000",
+        "raw_mark": "30.00",
+        "market_value": "14970.00",
+        "unrealized_pnl": "-14.97",
+        "weight": "0.149793486115"
+      },
+      "PETR4": {
+        "quantity": "399",
+        "reserved": "0",
+        "unsettled": "0",
+        "basis": "15975.96",
+        "available": "399",
+        "average_cost": "40.04000000",
+        "raw_mark": "40.00",
+        "market_value": "15960.00",
+        "unrealized_pnl": "-15.96",
+        "weight": "0.159699668563"
+      },
+      "VALE3": {
+        "quantity": "333",
+        "reserved": "0",
+        "unsettled": "0",
+        "basis": "19999.98",
+        "available": "333",
+        "average_cost": "60.06000000",
+        "raw_mark": "60.00",
+        "market_value": "19980.00",
+        "unrealized_pnl": "-19.98",
+        "weight": "0.199924773051"
+      },
+      "WEGE3": {
+        "quantity": "70",
+        "reserved": "0",
+        "unsettled": "70",
+        "basis": "3503.50",
+        "available": "0",
+        "average_cost": "50.05000000",
+        "raw_mark": "50.00",
+        "market_value": "3500.00",
+        "unrealized_pnl": "-3.50",
+        "weight": "0.035021857141"
+      }
+    },
+    "cash": {
+      "settled": "45527.59",
+      "reserved": "0",
+      "available": "45527.59",
+      "receivable": "0"
+    },
+    "cash_weight": "0.455560215130",
+    "receivable_weight": "0",
+    "equity": "99937.59",
+    "exposure": "0.5444397848697372029883850511",
+    "costs": "62.41",
+    "realized_pnl": "-8.00",
+    "income_net": "0.00",
+    "unrealized_pnl": "-54.41",
+    "drawdown": "0.0006241",
+    "pending": {},
+    "executions": {
+      "a-initial-itub4": {
+        "operation": {
+          "cost_ceiling": "14.97",
+          "dependencies": [],
+          "funding_source": "SETTLED_CASH",
+          "limit_price": "30.00",
+          "operation_id": "a-initial-itub4",
+          "priority": 2,
+          "quantity": "499",
+          "reasoning": "A · Construir carteira com três empresas; WEGE3 e BBAS3 não recebem alocação apesar dos sinais de compra. Preservar caixa.",
+          "side": "BUY",
+          "ticker": "ITUB4"
+        },
+        "quantity": "499",
+        "raw_price": "30.00",
+        "cost": "14.97",
+        "realized_pnl": "0",
+        "trade_session": "2026-10-09",
+        "due_session": "2026-10-14",
+        "marks_sha256": "7f042a0ef0e914202b7bd981ae7b11390ccaa6cf051e53945178d9da769ea0c2"
+      },
+      "a-initial-petr4": {
+        "operation": {
+          "cost_ceiling": "19.96",
+          "dependencies": [],
+          "funding_source": "SETTLED_CASH",
+          "limit_price": "40.00",
+          "operation_id": "a-initial-petr4",
+          "priority": 2,
+          "quantity": "499",
+          "reasoning": "A · Construir carteira com três empresas; WEGE3 e BBAS3 não recebem alocação apesar dos sinais de compra. Preservar caixa.",
+          "side": "BUY",
+          "ticker": "PETR4"
+        },
+        "quantity": "499",
+        "raw_price": "40.00",
+        "cost": "19.96",
+        "realized_pnl": "0",
+        "trade_session": "2026-10-09",
+        "due_session": "2026-10-14",
+        "marks_sha256": "7f042a0ef0e914202b7bd981ae7b11390ccaa6cf051e53945178d9da769ea0c2"
+      },
+      "a-initial-vale3": {
+        "operation": {
+          "cost_ceiling": "19.98",
+          "dependencies": [],
+          "funding_source": "SETTLED_CASH",
+          "limit_price": "60.00",
+          "operation_id": "a-initial-vale3",
+          "priority": 2,
+          "quantity": "333",
+          "reasoning": "A · Construir carteira com três empresas; WEGE3 e BBAS3 não recebem alocação apesar dos sinais de compra. Preservar caixa.",
+          "side": "BUY",
+          "ticker": "VALE3"
+        },
+        "quantity": "333",
+        "raw_price": "60.00",
+        "cost": "19.98",
+        "realized_pnl": "0",
+        "trade_session": "2026-10-09",
+        "due_session": "2026-10-14",
+        "marks_sha256": "7f042a0ef0e914202b7bd981ae7b11390ccaa6cf051e53945178d9da769ea0c2"
+      },
+      "b-sale": {
+        "operation": {
+          "cost_ceiling": "4.00",
+          "dependencies": [],
+          "funding_source": null,
+          "limit_price": "40.00",
+          "operation_id": "b-sale",
+          "priority": 1,
+          "quantity": "100",
+          "reasoning": "Demonstração sintética; seleção explícita, sem sizing por confiança.",
+          "side": "SELL",
+          "ticker": "PETR4"
+        },
+        "quantity": "100",
+        "raw_price": "40.00",
+        "cost": "4.00",
+        "realized_pnl": "-8.00",
+        "trade_session": "2026-10-14",
+        "due_session": "2026-10-16",
+        "marks_sha256": "bef83beb8dd5a303b0b7710103d6dbef3747a959d364f73e6e3a49a79f627b96"
+      },
+      "c-buy": {
+        "operation": {
+          "cost_ceiling": "3.50",
+          "dependencies": [
+            "b-sale"
+          ],
+          "funding_source": "SETTLEMENT",
+          "limit_price": "50.00",
+          "operation_id": "c-buy",
+          "priority": 2,
+          "quantity": "70",
+          "reasoning": "Demonstração sintética; seleção explícita, sem sizing por confiança.",
+          "side": "BUY",
+          "ticker": "WEGE3"
+        },
+        "quantity": "70",
+        "raw_price": "50.00",
+        "cost": "3.50",
+        "realized_pnl": "0",
+        "trade_session": "2026-10-16",
+        "due_session": "2026-10-20",
+        "marks_sha256": "15b5c6f5e698b591fd014c560b4541b5633ef992cd480d96151e4250d4be97d0"
+      }
+    },
+    "receivables": {},
+    "blocked": {},
+    "state_sha256": "22d6a7a9f6bf5e15bad4eddb10b9c0ea822f69ff4d1f00ecf44e7a5d1c961f0f"
+  },
+  "synthetic_cases": [
+    {
+      "label": "A · Construção inicial",
+      "valid": true,
+      "operations": 3
+    },
+    {
+      "label": "B · Venda parcial, recebível indisponível",
+      "valid": true,
+      "operations": 1
+    },
+    {
+      "label": "C · Compra após liquidação",
+      "valid": true,
+      "operations": 1
+    },
+    {
+      "label": "D · Não operar",
+      "valid": true,
+      "operations": 0
+    },
+    {
+      "label": "E · Alocação impossível bloqueada",
+      "valid": false,
+      "operations": 0
+    }
+  ],
+  "portfolio_provider_calls": 0,
+  "real_gemini_calls": 0,
+  "real_orders": 0,
+  "new_checks": 29,
+  "regression": "167 passed in 133.82s (0:02:13)",
+  "offline_unit_checks": "29 passed in 42.952s",
+  "browser_checks": "chrome_checks.json",
+  "archive_sha256": "b7d86b5bd9f4848b324deea2081b7fba171efed236515b7075ae1c211c5a3bcf",
+  "archive_files": 42,
+  "implementation_sha256": {
+    "scripts/multiasset_portfolio.py": "6023b9b8f53280068d799d13da45f23a5bd6bc5e6b2125aae755a1cc088abff9",
+    "scripts/multiasset_manager.py": "4caf6bf84f983778c647f07430390c9d02e0eaa23800cd793c8e97e2f3ed8fa4",
+    "scripts/run_multiasset_portfolio.py": "faeb87f91929f40d1d8cff89d56699d63b609f37615fc41e014d132819b72b09"
+  },
+  "prospective_execution": "NOT_AUTHORIZED_NOT_IMPLEMENTED",
+  "pending_policies": [
+    "real costs/taxes/slippage",
+    "global limits/window approval",
+    "corporate fractions and entitlements",
+    "official raw feed, custody/cash confirmation and current calendar",
+    "prospective clock, execution window and operator authentication"
+  ]
+}

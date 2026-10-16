@@ -1,0 +1,214 @@
+{
+  "comparable": true,
+  "run": "radar-2026-10-09-recovery-01",
+  "reference": "radar-2026-10-09-original",
+  "session": "2026-10-09",
+  "items": [
+    {
+      "ticker": "PETR4",
+      "status": "EQUIVALENT_WITHIN_TOLERANCE",
+      "checks": {
+        "sessions": true,
+        "volume": true,
+        "raw_bar": true,
+        "adjusted_close_last": true,
+        "adjusted_series": true,
+        "features": true,
+        "risk_metrics": true,
+        "corporate_events": true,
+        "inherited_factors": true,
+        "treatment_manifest": true
+      },
+      "differences": {
+        "adjusted_series_max_relative": 1.4186698238383144e-07,
+        "adjusted_series_sessions_differing": 68,
+        "features": {},
+        "risk_metrics": {}
+      },
+      "tolerances": {
+        "price_relative": 1e-06,
+        "feature_absolute": 2e-06
+      },
+      "bars_sha256_identical": false,
+      "input_sha256_identical": false,
+      "provenance": {
+        "cotahist_sha256_identical": true,
+        "source_name_identical": true,
+        "normalizer": [
+          "ORIGINAL_V4_EXTRACTOR",
+          "RADAR_CORPORATE_EVENTS_V2"
+        ],
+        "prepared_at": [
+          "2026-10-11T13:55:00.515658-03:00",
+          "2026-10-12T12:59:10.317890-03:00"
+        ]
+      }
+    },
+    {
+      "ticker": "VALE3",
+      "status": "EQUIVALENT_WITHIN_TOLERANCE",
+      "checks": {
+        "sessions": true,
+        "volume": true,
+        "raw_bar": true,
+        "adjusted_close_last": true,
+        "adjusted_series": true,
+        "features": true,
+        "risk_metrics": true,
+        "corporate_events": true,
+        "inherited_factors": true,
+        "treatment_manifest": true
+      },
+      "differences": {
+        "adjusted_series_max_relative": 1.1828738333274913e-07,
+        "adjusted_series_sessions_differing": 36,
+        "features": {},
+        "risk_metrics": {}
+      },
+      "tolerances": {
+        "price_relative": 1e-06,
+        "feature_absolute": 2e-06
+      },
+      "bars_sha256_identical": false,
+      "input_sha256_identical": false,
+      "provenance": {
+        "cotahist_sha256_identical": true,
+        "source_name_identical": true,
+        "normalizer": [
+          "ORIGINAL_V4_EXTRACTOR",
+          "RADAR_CORPORATE_EVENTS_V2"
+        ],
+        "prepared_at": [
+          "2026-10-11T13:55:00.515658-03:00",
+          "2026-10-12T12:59:10.317890-03:00"
+        ]
+      }
+    },
+    {
+      "ticker": "ITUB4",
+      "status": "EQUIVALENT_WITHIN_TOLERANCE",
+      "checks": {
+        "sessions": true,
+        "volume": true,
+        "raw_bar": true,
+        "adjusted_close_last": true,
+        "adjusted_series": true,
+        "features": true,
+        "risk_metrics": true,
+        "corporate_events": true,
+        "inherited_factors": true,
+        "treatment_manifest": true
+      },
+      "differences": {
+        "adjusted_series_max_relative": 6.615572794022029e-07,
+        "adjusted_series_sessions_differing": 161,
+        "features": {
+          "rsi": [
+            76.557382,
+            76.557381
+          ]
+        },
+        "risk_metrics": {}
+      },
+      "tolerances": {
+        "price_relative": 1e-06,
+        "feature_absolute": 2e-06
+      },
+      "bars_sha256_identical": false,
+      "input_sha256_identical": false,
+      "provenance": {
+        "cotahist_sha256_identical": true,
+        "source_name_identical": true,
+        "normalizer": [
+          "RADAR_CORPORATE_EVENTS_V2",
+          "RADAR_CORPORATE_EVENTS_V2"
+        ],
+        "prepared_at": [
+          "2026-10-12T02:41:02.492799-03:00",
+          "2026-10-12T12:59:10.317890-03:00"
+        ]
+      }
+    },
+    {
+      "ticker": "WEGE3",
+      "status": "EQUIVALENT_WITHIN_TOLERANCE",
+      "checks": {
+        "sessions": true,
+        "volume": true,
+        "raw_bar": true,
+        "adjusted_close_last": true,
+        "adjusted_series": true,
+        "features": true,
+        "risk_metrics": true,
+        "corporate_events": true,
+        "inherited_factors": true,
+        "treatment_manifest": true
+      },
+      "differences": {
+        "adjusted_series_max_relative": 2.2131057020313705e-07,
+        "adjusted_series_sessions_differing": 91,
+        "features": {},
+        "risk_metrics": {}
+      },
+      "tolerances": {
+        "price_relative": 1e-06,
+        "feature_absolute": 2e-06
+      },
+      "bars_sha256_identical": false,
+      "input_sha256_identical": false,
+      "provenance": {
+        "cotahist_sha256_identical": true,
+        "source_name_identical": true,
+        "normalizer": [
+          "ORIGINAL_V4_EXTRACTOR",
+          "RADAR_CORPORATE_EVENTS_V2"
+        ],
+        "prepared_at": [
+          "2026-10-11T13:55:00.515658-03:00",
+          "2026-10-12T12:59:10.317890-03:00"
+        ]
+      }
+    },
+    {
+      "ticker": "BBAS3",
+      "status": "EQUIVALENT_WITHIN_TOLERANCE",
+      "checks": {
+        "sessions": true,
+        "volume": true,
+        "raw_bar": true,
+        "adjusted_close_last": true,
+        "adjusted_series": true,
+        "features": true,
+        "risk_metrics": true,
+        "corporate_events": true,
+        "inherited_factors": true,
+        "treatment_manifest": true
+      },
+      "differences": {
+        "adjusted_series_max_relative": 2.870974391555592e-07,
+        "adjusted_series_sessions_differing": 101,
+        "features": {},
+        "risk_metrics": {}
+      },
+      "tolerances": {
+        "price_relative": 1e-06,
+        "feature_absolute": 2e-06
+      },
+      "bars_sha256_identical": false,
+      "input_sha256_identical": false,
+      "provenance": {
+        "cotahist_sha256_identical": true,
+        "source_name_identical": true,
+        "normalizer": [
+          "ORIGINAL_V4_EXTRACTOR",
+          "RADAR_CORPORATE_EVENTS_V2"
+        ],
+        "prepared_at": [
+          "2026-10-11T13:55:00.515658-03:00",
+          "2026-10-12T12:59:10.317890-03:00"
+        ]
+      }
+    }
+  ],
+  "material": false
+}

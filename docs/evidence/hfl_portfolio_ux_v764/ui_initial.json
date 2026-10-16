@@ -1,0 +1,38 @@
+{
+  "passed": 6,
+  "failed": 1,
+  "results": [
+    {
+      "name": "overview:official_snapshot_not_demo",
+      "ok": true
+    },
+    {
+      "name": "overview:empty_v2_cash_no_positions",
+      "ok": true
+    },
+    {
+      "name": "overview:snapshot_not_prospective_history",
+      "ok": true
+    },
+    {
+      "name": "tabs:positions_only",
+      "ok": true
+    },
+    {
+      "name": "history:real_v1_and_v2",
+      "ok": true
+    },
+    {
+      "name": "history:v1_rejected_no_execution_controls",
+      "ok": true
+    },
+    {
+      "name": "history:back_and_focus",
+      "ok": false
+    }
+  ],
+  "blocked": [],
+  "exceptions": [
+    "AssertionError [ERR_ASSERTION]: history:back_and_focus\n    at check (file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v764.mjs:22:103)\n    at async file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v764.mjs:48:5\n    at async session (file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_cdp_v762.mjs:152:12)\n    at async file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v764.mjs:12:3"
+  ]
+}

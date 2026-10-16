@@ -1,0 +1,30 @@
+<a class="hfl-skip" href="#main">Pular para o conteúdo</a>
+<link rel="stylesheet" href="/design-system.css?v=762">
+<link rel="stylesheet" href="/product.css?v=1">
+<script src="/product.js?v=1" defer></script>
+<header class="hfl-shell" data-default-area="{{area}}">
+  <div class="hfl-top">
+    <a class="hfl-brand" href="/"><b class="product-mark">h.</b><span>Hedge Fund<small>LAB</small></span></a>
+    <button class="hfl-menu" type="button" aria-controls="hfl-navigation" aria-expanded="false">Menu</button>
+  </div>
+  <div id="hfl-navigation" class="hfl-links">
+    <nav class="hfl-primary" aria-label="Navegação principal">{{areas}}</nav>
+    <nav class="hfl-archive" aria-label="Acervo histórico">{{legacy}}</nav>
+    <nav class="hfl-secondary" aria-label="Seções da área">{{links}}</nav>
+  </div>
+  <div class="hfl-context">
+    <nav aria-label="Você está em"><ol class="hfl-crumbs"><li><a href="/">Hedge-Fund-Lab</a></li><li data-crumb="area">{{area_label}}</li><li data-crumb="page" aria-current="page" hidden></li></ol></nav>
+    <strong class="hfl-env">{{environment}}</strong>
+  </div>
+  <div class="product-profile"><span>L</span><div>Lucas<small>Workspace pessoal</small></div></div>
+</header>
+<div class="product-topbar"><label for="product-wallet">Carteira selecionada<select id="product-wallet"><option value="">Carregando carteiras…</option></select></label><span id="product-nature" class="product-chip"></span><div class="product-top-actions"><button class="hfl-market-open" id="hfl-market-open" type="button" aria-haspopup="dialog" aria-controls="hfl-market-dialog">Atualizar dados</button><button class="hfl-help-open" id="hfl-help-open" type="button" aria-haspopup="dialog">Ajuda</button></div></div>
+<dialog id="hfl-market-dialog" class="hfl-market-dialog" aria-labelledby="hfl-market-title">
+  <h2 id="hfl-market-title">Atualizar dados da bolsa</h2>
+  <p id="hfl-market-scope">Consultando a execução operacional…</p>
+  <p>Prepara preços e histórico dos ativos para a sessão indicada. Pareceres dos agentes e patrimônio das carteiras têm atualização própria.</p>
+  <p id="hfl-market-status" role="status" aria-live="polite"></p>
+  <div class="hfl-row"><button type="button" id="hfl-market-start" data-action="prepare" disabled>Atualizar agora</button><button type="button" id="hfl-market-reload" hidden>Atualizar esta visualização</button><a id="hfl-market-radar" href="/radar">Consultar Radar</a><button type="button" id="hfl-market-close">Fechar</button></div>
+</dialog>
+<script src="/glossary.js?v=762" defer></script>
+<script src="/ui.js?v=762" defer></script>

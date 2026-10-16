@@ -1,0 +1,112 @@
+{
+  "kind": "H2_V5_PRE_LIVE_CARRY_FORWARD_AUDIT",
+  "audited_utc": "2026-10-07T22:40:02.747134+00:00",
+  "git_commit": "272cae1add927161643285c2a87d221f8ae9011b",
+  "CAL_B4_CARRIED_FORWARD_TO_H2_V5": true,
+  "CAL_B4_HOLDOUT_INTEGRITY": "PRESERVED",
+  "cal_b4_status": "SEALED — NEVER EXECUTED",
+  "cal_b4_commitment": "35d3d468a3253538392314c158c8605867c283c864fbd99c9499c8fd276f6ae7",
+  "commitment_reproduced": true,
+  "calendar_only_ranking_reproduced": true,
+  "selected_utc": "2026-10-07T22:02:15.474304+00:00",
+  "selected_before_v4_live": true,
+  "selection_commit": "eed7576d40e3f38f42dbafc2dcdc4dd0a9315a4e",
+  "preserved_sources_sha256": {
+    "src/agents/feature_semantics.py": "fb2cfa36feba26b5e8f622828e03aa8fcfd25b1f7a0567d387f82baf9f056169",
+    "scripts/h2_v4.py": "630e7d8f862d4b5ffe5d8052911928e23f51634eaafcc88292ae0ef74a539f8e",
+    "src/agents/features.py": "4fbf0e82fabdca190d484b7abbc0e77f70ad953dd5e61211c8c15c828bd37cd7",
+    "src/agents/risk_contract.py": "524d1159235b7dfb9f92432952f58cc93b866138463a8d06dca434b2f1beb24b",
+    "src/agents/risk_manager.py": "f3be859af70aa6d929a9694f16c7b0d53c3bdd52dca413faa7c0526cdbca9b87",
+    "src/agents/portfolio_manager.py": "d09a44b508440405dad63eb7d381cdd5ad00a3daf5d15b36fb2bed2a9efff0c4",
+    "docs/evidence/cal_b4/selection.json": "b5fb30ae60ce256ac5eadfded3a4870b94595ad4ea3ed819df34fd3a303177b4"
+  },
+  "preserved_source_blobs": {
+    "src/agents/feature_semantics.py": "57c0b1b0548455b897fdf0149c177a9bcd7b2557",
+    "scripts/h2_v4.py": "672f6931ce19254acb147a2bc93705f542018ea1",
+    "src/agents/features.py": "cfabf02aaec9bcbafd0518189f4cfc924567d5a9",
+    "src/agents/risk_contract.py": "1ff4343a8e5d24ec4f8c71349a64771a21aa3636",
+    "src/agents/risk_manager.py": "250b07b5134f51f4dbe5c0d7bba3df4e0e690cd4",
+    "src/agents/portfolio_manager.py": "56b2f5c1b1a3b1e95ac41738e5f66d3623480130",
+    "docs/evidence/cal_b4/selection.json": "8255239e1ccc859241b19d405db0ed1cc6081cc0"
+  },
+  "checker_freeze": {
+    "version": 3,
+    "source_sha256": {
+      "src/agents/feature_semantics.py": "fb2cfa36feba26b5e8f622828e03aa8fcfd25b1f7a0567d387f82baf9f056169",
+      "scripts/h2_v4.py": "630e7d8f862d4b5ffe5d8052911928e23f51634eaafcc88292ae0ef74a539f8e"
+    },
+    "source_blobs": {
+      "src/agents/feature_semantics.py": "57c0b1b0548455b897fdf0149c177a9bcd7b2557",
+      "scripts/h2_v4.py": "672f6931ce19254acb147a2bc93705f542018ea1"
+    },
+    "regression_report": "docs/evidence/h2_v4/technical_checker_v3/calibration_report.json"
+  },
+  "guards": [
+    {
+      "session": "2018-08-21",
+      "runner_blocked": true,
+      "call_bank_blocked": true,
+      "network_calls": 0
+    },
+    {
+      "session": "2019-01-29",
+      "runner_blocked": true,
+      "call_bank_blocked": true,
+      "network_calls": 0
+    },
+    {
+      "session": "2019-10-28",
+      "runner_blocked": true,
+      "call_bank_blocked": true,
+      "network_calls": 0
+    },
+    {
+      "session": "2020-06-03",
+      "runner_blocked": true,
+      "call_bank_blocked": true,
+      "network_calls": 0
+    },
+    {
+      "session": "2021-02-18",
+      "runner_blocked": true,
+      "call_bank_blocked": true,
+      "network_calls": 0
+    },
+    {
+      "session": "2021-09-02",
+      "runner_blocked": true,
+      "call_bank_blocked": true,
+      "network_calls": 0
+    },
+    {
+      "session": "2022-03-30",
+      "runner_blocked": true,
+      "call_bank_blocked": true,
+      "network_calls": 0
+    },
+    {
+      "session": "2022-10-03",
+      "runner_blocked": true,
+      "call_bank_blocked": true,
+      "network_calls": 0
+    },
+    {
+      "session": "2023-07-17",
+      "runner_blocked": true,
+      "call_bank_blocked": true,
+      "network_calls": 0
+    },
+    {
+      "session": "2024-01-12",
+      "runner_blocked": true,
+      "call_bank_blocked": true,
+      "network_calls": 0
+    }
+  ],
+  "development_decision_sessions_audited": 379,
+  "cal_b4_sessions_in_development": [],
+  "validation_final_sessions_in_development": [],
+  "provider_calls": 0,
+  "no_new_commitment": true,
+  "technical_prompt_v4_sha256": "f20bc8140cf10ad35fde876a291298b7a1a124e08081a5b1186b4eb600862077"
+}

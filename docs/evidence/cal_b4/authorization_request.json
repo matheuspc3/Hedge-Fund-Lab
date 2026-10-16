@@ -1,0 +1,43 @@
+{
+  "phase": "CAL-B4",
+  "commitment_sha256": "35d3d468a3253538392314c158c8605867c283c864fbd99c9499c8fd276f6ae7",
+  "anchors": [
+    "2018-08-21",
+    "2019-01-29",
+    "2019-10-28",
+    "2020-06-03",
+    "2021-02-18",
+    "2021-09-02",
+    "2022-03-30",
+    "2022-10-03",
+    "2023-07-17",
+    "2024-01-12"
+  ],
+  "repetitions": 1,
+  "treatment_version": 6,
+  "technical_prompt_version": 5,
+  "technical_response_schema_version": 2,
+  "technical_evidence_vocabulary_version": 1,
+  "technical_evidence_validator_version": 1,
+  "risk_prompt_version": 2,
+  "participant_spec_sha256": "7858beb47ea9b2be9ac870f4abb72f9422782e7ff30c975eba8f3255babe4938",
+  "kind": "CAL_B4_EXTERNAL_AUTHORIZATION_REQUEST_NOT_AN_AUTHORIZATION",
+  "authorized": false,
+  "host": "generativelanguage.googleapis.com",
+  "accepts_normal_api_charges": false,
+  "identity_clarification": "PENDING_USER_CLARIFICATION",
+  "scientific_payloads_only": true,
+  "validation_final_authorized": false,
+  "system_freeze_authorized": false,
+  "source_user_authorization": null,
+  "forbidden_egress": [
+    "API key value/content outside native authentication header",
+    ".env",
+    "secrets/tokens/other credentials",
+    "arbitrary computer or repository files",
+    "unnecessary personal data",
+    "Validation",
+    "Final Test"
+  ],
+  "required_confirmation": "Authorize native Gemini CAL-B4 one-shot live calls and normal charges, with frozen scientific payloads only; explicitly confirm the existing final ParticipantSpec hash with original Stress ExperimentSpec provenance."
+}

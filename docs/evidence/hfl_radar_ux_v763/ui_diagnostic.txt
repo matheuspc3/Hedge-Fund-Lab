@@ -1,0 +1,56 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+_______________________ test_market_radar_interactions ________________________
+
+    @pytest.mark.skipif(
+        not shutil.which("node")
+        or not foundation.CHROME
+        or os.environ.get("HFL_SKIP_BROWSER"),
+        reason="Node/Chrome unavailable or browser checks disabled",
+    )
+    def test_market_radar_interactions():
+        foundation.Server.setUpClass()
+        try:
+            for route in (
+                "/market",
+                "/market/",
+                "/market.html",
+                "/market.js",
+                "/market-ui.js",
+                "/market.css",
+            ):
+                with urllib.request.urlopen(
+                    foundation.Server.base + route, timeout=30
+                ) as response:
+                    assert response.status == 200
+            with tempfile.TemporaryDirectory() as tmp:
+                out = Path(tmp) / "ui_checks.json"
+                done = subprocess.run(
+                    [
+                        "node",
+                        str(ROOT / "scripts/ui_check_v763.mjs"),
+                        foundation.Server.base,
+                        str(out),
+                    ],
+                    cwd=ROOT,
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    timeout=900,
+                )
+                report = json.loads(out.read_text(encoding="utf-8"))
+>               assert done.returncode == 0, (
+                    done.stdout
+                    + done.stderr
+                    + str([r for r in report["results"] if not r["ok"]])
+                )
+E               AssertionError: {"url":"http://127.0.0.1:55080/legacy","charts":[],"error":""}
+E                 {"passed":0,"failed":1,"blocked":[]}
+E                 [{'name': 'runner', 'ok': False, 'error': 'Error: wait_timeout: window.Chart && Chart.getChart(\'chart-portfolio-equity\'); {"url":"http://127.0.0.1:55080/legacy","error":"Erro ao carregar dados: Failed to fetch","loaded":false}; network=[{"event":"Network.responseReceived","requestId":"47616.18","loaderId":"2125958A8E6680799D35D9236BD97AE6","timestamp":467750.10919,"type":"Fetch","response":{"url":"http://127.0.0.1:55080/data.json","status":200,"statusText":"OK","headers":{"Content-Security-Policy":"frame-ancestors \'none\'; object-src \'none\'; base-uri \'self\'","Cache-Control":"no-store","X-Content-Type-Options":"nosniff","Referrer-Policy":"same-origin","Content-Length":"16643576","Date":"Tue, 13 Oct 2026 06:52:18 GMT","Content-type":"application/json","Last-Modified":"Mon, 17 Aug 2026 01:28:08 GMT","Server":"SimpleHTTP/0.6 Python/3.13.9","X-Frame-Options":"DENY"},"mimeType":"application/json","charset":"","connectionReused":false,"connectionId":250,"remoteIPAddress":"127.0.0.1","remotePort":55080,"fromDiskCache":false,"fromServiceWorker":false,"fromPrefetchCache":false,"encodedDataLength":394,"timing":{"requestTime":467750.102039,"proxyStart":-1,"proxyEnd":-1,"dnsStart":0.194,"dnsEnd":0.202,"connectStart":0.202,"connectEnd":0.744,"sslStart":-1,"sslEnd":-1,"workerStart":-1,"workerReady":-1,"workerFetchStart":-1,"workerRespondWithSettled":-1,"sendStart":0.799,"sendEnd":0.975,"pushStart":0,"pushEnd":0,"receiveHeadersStart":6.528,"receiveHeadersEnd":6.583},"responseTime":1791874338169.827,"protocol":"http/1.0","alternateProtocolUsage":"unspecifiedReason","securityState":"secure"},"hasExtraInfo":true,"frameId":"F47F9B23441ADB34ADB38AB7BE80F13D"},{"event":"Network.loadingFailed","requestId":"47616.18","timestamp":467769.086862,"type":"Fetch","errorText":"net::ERR_CONNECTION_RESET","canceled":false}]\n    at wait (file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v763.mjs:35:13)\n    at async file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v763.mjs:51:5\n    at async session (file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_cdp_v762.mjs:152:12)\n    at async file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v763.mjs:17:3'}]
+E               assert 1 == 0
+E                +  where 1 = CompletedProcess(args=['node', 'C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\scripts\\ui_check_v763.mjs', 'http:/...ut='{"url":"http://127.0.0.1:55080/legacy","charts":[],"error":""}\n{"passed":0,"failed":1,"blocked":[]}\n', stderr='').returncode
+
+tests\test_ui_v763.py:54: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_ui_v763.py::test_market_radar_interactions - AssertionError...
+1 failed in 50.91s

@@ -1,0 +1,801 @@
+{
+ "identity": "HFL-V76-SCENARIO-MATRIX",
+ "schema_version": 1,
+ "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+ "category": "A_SYNTHETIC_QUALIFICATION",
+ "inputs": {
+  "opinions": "OFFICIAL_FROZEN: data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/context.json (opinions, histories), read-only",
+  "prices": "raw_close of each frozen opinion (constant hypothetical marks)",
+  "responses": "SCRIPTED_FAKE_NOT_GEMINI",
+  "validator": "multiasset_global_pm_v2.validate (sealed V2, unchanged)",
+  "writes": "none; contexts frozen in memory only"
+ },
+ "note": "Scripted responses on real frozen opinions qualify the contract and the financial rules. They are never model observations and never market evaluation.",
+ "scenarios": {
+  "S0": {
+   "title": "Carteira integralmente em caixa",
+   "dimensions": [
+    "A",
+    "B"
+   ],
+   "cash": "100000.00",
+   "holdings": {},
+   "metrics": [
+    "global_validation_rate",
+    "no_operation_rate",
+    "watchlist_stability"
+   ]
+  },
+  "S1": {
+   "title": "Carteira com posições existentes",
+   "dimensions": [
+    "B",
+    "D"
+   ],
+   "cash": "51805.50",
+   "holdings": {
+    "PETR4": {
+     "quantity": "300",
+     "basis": "16800.00"
+    },
+    "VALE3": {
+     "quantity": "200",
+     "basis": "13580.00"
+    },
+    "ITUB4": {
+     "quantity": "200",
+     "basis": "10094.00"
+    },
+    "WEGE3": {
+     "quantity": "150",
+     "basis": "7720.50"
+    }
+   },
+   "metrics": [
+    "global_validation_rate",
+    "action_agreement",
+    "target_weight_l1_dispersion"
+   ]
+  },
+  "S2": {
+   "title": "Caixa limitado",
+   "dimensions": [
+    "B",
+    "D"
+   ],
+   "cash": "21601.00",
+   "holdings": {
+    "PETR4": {
+     "quantity": "400",
+     "basis": "22400.00"
+    },
+    "VALE3": {
+     "quantity": "300",
+     "basis": "20370.00"
+    },
+    "ITUB4": {
+     "quantity": "400",
+     "basis": "20188.00"
+    },
+    "WEGE3": {
+     "quantity": "300",
+     "basis": "15441.00"
+    }
+   },
+   "metrics": [
+    "financial_validation_rate",
+    "rejection_code_frequency"
+   ]
+  },
+  "S3": {
+   "title": "Venda com recebível D+2",
+   "dimensions": [
+    "B",
+    "D"
+   ],
+   "cash": "79630.00",
+   "holdings": {
+    "VALE3": {
+     "quantity": "300",
+     "basis": "20370.00"
+    }
+   },
+   "metrics": [
+    "financial_validation_rate",
+    "rejection_code_frequency"
+   ]
+  },
+  "S4": {
+   "title": "Compra dependente de liquidação",
+   "dimensions": [
+    "A",
+    "B"
+   ],
+   "cash": "20871.40",
+   "holdings": {
+    "PETR4": {
+     "quantity": "700",
+     "basis": "39200.00"
+    },
+    "VALE3": {
+     "quantity": "300",
+     "basis": "20370.00"
+    },
+    "WEGE3": {
+     "quantity": "380",
+     "basis": "19558.60"
+    }
+   },
+   "metrics": [
+    "global_validation_rate",
+    "rejection_code_frequency"
+   ]
+  },
+  "S5": {
+   "title": "Ativo vetado (BBAS3)",
+   "dimensions": [
+    "A",
+    "B"
+   ],
+   "cash": "100000.00",
+   "holdings": {},
+   "metrics": [
+    "veto_respected_rate",
+    "rejection_code_frequency"
+   ],
+   "variants": {
+    "held": {
+     "cash": "100000.00",
+     "holdings": {
+      "BBAS3": {
+       "quantity": "1000",
+       "basis": "24640.00"
+      }
+     }
+    }
+   }
+  },
+  "S6": {
+   "title": "Limite de concentração (40% por ativo)",
+   "dimensions": [
+    "B"
+   ],
+   "cash": "62032.00",
+   "holdings": {
+    "PETR4": {
+     "quantity": "678",
+     "basis": "37968.00"
+    }
+   },
+   "metrics": [
+    "financial_validation_rate",
+    "rejection_code_frequency"
+   ]
+  },
+  "S7": {
+   "title": "Limite de risco global (exposição 85%, número de operações)",
+   "dimensions": [
+    "B"
+   ],
+   "cash": "20000.00",
+   "holdings": {
+    "PETR4": {
+     "quantity": "500",
+     "basis": "28000.00"
+    },
+    "VALE3": {
+     "quantity": "400",
+     "basis": "27160.00"
+    },
+    "WEGE3": {
+     "quantity": "480",
+     "basis": "24705.60"
+    }
+   },
+   "metrics": [
+    "financial_validation_rate",
+    "rejection_code_frequency"
+   ]
+  },
+  "S8": {
+   "title": "Dados incompletos ou inconsistentes",
+   "dimensions": [
+    "A"
+   ],
+   "cash": "100000.00",
+   "holdings": {},
+   "metrics": [
+    "hash_integrity_rate",
+    "rejection_code_frequency"
+   ]
+  },
+  "S9": {
+   "title": "Nenhuma operação como decisão legítima",
+   "dimensions": [
+    "A",
+    "B"
+   ],
+   "cash": "51805.50",
+   "holdings": {
+    "PETR4": {
+     "quantity": "300",
+     "basis": "16800.00"
+    },
+    "VALE3": {
+     "quantity": "200",
+     "basis": "13580.00"
+    },
+    "ITUB4": {
+     "quantity": "200",
+     "basis": "10094.00"
+    },
+    "WEGE3": {
+     "quantity": "150",
+     "basis": "7720.50"
+    }
+   },
+   "metrics": [
+    "no_operation_rate",
+    "global_validation_rate"
+   ],
+   "variants": {
+    "cash": {
+     "cash": "100000.00",
+     "holdings": {}
+    }
+   }
+  }
+ },
+ "cases": [
+  {
+   "id": "S0-cash-watchlist",
+   "scenario": "S0",
+   "operations": [],
+   "watchlist": [
+    "ITUB4",
+    "PETR4"
+   ],
+   "expected": {
+    "status": "VALID_PROPOSAL"
+   }
+  },
+  {
+   "id": "S0-sale-without-custody",
+   "scenario": "S0",
+   "operations": [
+    {
+     "ticker": "VALE3",
+     "side": "SELL",
+     "quantity": "100"
+    }
+   ],
+   "expected": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "code": "insufficient_available_units"
+   }
+  },
+  {
+   "id": "S1-hold",
+   "scenario": "S1",
+   "operations": [],
+   "expected": {
+    "status": "VALID_PROPOSAL"
+   }
+  },
+  {
+   "id": "S1-reduce",
+   "scenario": "S1",
+   "operations": [
+    {
+     "ticker": "PETR4",
+     "side": "SELL",
+     "quantity": "100"
+    }
+   ],
+   "expected": {
+    "status": "VALID_PROPOSAL",
+    "action": {
+     "PETR4": "REDUCE"
+    }
+   }
+  },
+  {
+   "id": "S1-exit",
+   "scenario": "S1",
+   "operations": [
+    {
+     "ticker": "WEGE3",
+     "side": "SELL",
+     "quantity": "150"
+    }
+   ],
+   "expected": {
+    "status": "VALID_PROPOSAL",
+    "action": {
+     "WEGE3": "EXIT"
+    }
+   }
+  },
+  {
+   "id": "S1-increase",
+   "scenario": "S1",
+   "operations": [
+    {
+     "ticker": "ITUB4",
+     "side": "BUY",
+     "quantity": "100"
+    }
+   ],
+   "expected": {
+    "status": "VALID_PROPOSAL",
+    "action": {
+     "ITUB4": "INCREASE"
+    }
+   }
+  },
+  {
+   "id": "S1-new-buy",
+   "scenario": "S1",
+   "operations": [
+    {
+     "ticker": "PETR4",
+     "side": "BUY",
+     "quantity": "50"
+    }
+   ],
+   "expected": {
+    "status": "VALID_PROPOSAL",
+    "action": {
+     "PETR4": "INCREASE"
+    }
+   }
+  },
+  {
+   "id": "S1-not-selected-while-held",
+   "scenario": "S1",
+   "operations": [],
+   "mutation": "declare_not_selected:PETR4",
+   "expected": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "code": "explanation_action_inconsistent"
+   }
+  },
+  {
+   "id": "S2-buy-within-cash",
+   "scenario": "S2",
+   "operations": [
+    {
+     "ticker": "ITUB4",
+     "side": "BUY",
+     "quantity": "100"
+    }
+   ],
+   "expected": {
+    "status": "VALID_PROPOSAL",
+    "action": {
+     "ITUB4": "INCREASE"
+    }
+   }
+  },
+  {
+   "id": "S2-buy-beyond-cash",
+   "scenario": "S2",
+   "operations": [
+    {
+     "ticker": "ITUB4",
+     "side": "BUY",
+     "quantity": "500"
+    }
+   ],
+   "expected": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "code": "insufficient_settled_cash"
+   }
+  },
+  {
+   "id": "S2-buy-without-compra-opinion",
+   "scenario": "S2",
+   "operations": [
+    {
+     "ticker": "WEGE3",
+     "side": "BUY",
+     "quantity": "100"
+    }
+   ],
+   "expected": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "code": "buy_incompatible_with_opinion"
+   }
+  },
+  {
+   "id": "S3-sale-creates-receivable",
+   "scenario": "S3",
+   "operations": [
+    {
+     "ticker": "VALE3",
+     "side": "SELL",
+     "quantity": "300"
+    }
+   ],
+   "expected": {
+    "status": "VALID_PROPOSAL",
+    "action": {
+     "VALE3": "EXIT"
+    },
+    "receivable_not_available": true
+   }
+  },
+  {
+   "id": "S3-receivable-used-as-cash",
+   "scenario": "S3",
+   "operations": [
+    {
+     "ticker": "VALE3",
+     "side": "SELL",
+     "quantity": "300"
+    },
+    {
+     "ticker": "PETR4",
+     "side": "BUY",
+     "quantity": "1500"
+    }
+   ],
+   "expected": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "code": "insufficient_settled_cash"
+   }
+  },
+  {
+   "id": "S4-dependent-buy",
+   "scenario": "S4",
+   "operations": [
+    {
+     "ticker": "PETR4",
+     "side": "SELL",
+     "quantity": "400"
+    },
+    {
+     "ticker": "ITUB4",
+     "side": "BUY",
+     "quantity": "500",
+     "depends_on": [
+      0
+     ]
+    }
+   ],
+   "expected": {
+    "status": "VALID_PROPOSAL",
+    "action": {
+     "ITUB4": "WAIT_SETTLEMENT",
+     "PETR4": "REDUCE"
+    },
+    "settlement_deferred": 1
+   }
+  },
+  {
+   "id": "S4-dependency-not-declared",
+   "scenario": "S4",
+   "operations": [
+    {
+     "ticker": "PETR4",
+     "side": "SELL",
+     "quantity": "400"
+    },
+    {
+     "ticker": "ITUB4",
+     "side": "BUY",
+     "quantity": "500"
+    }
+   ],
+   "expected": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "code": "insufficient_settled_cash"
+   }
+  },
+  {
+   "id": "S4-deferred-list-omitted",
+   "scenario": "S4",
+   "operations": [
+    {
+     "ticker": "PETR4",
+     "side": "SELL",
+     "quantity": "400"
+    },
+    {
+     "ticker": "ITUB4",
+     "side": "BUY",
+     "quantity": "500",
+     "depends_on": [
+      0
+     ]
+    }
+   ],
+   "mutation": "clear_settlement_deferred",
+   "expected": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "code": "settlement_deferred_inconsistent"
+   }
+  },
+  {
+   "id": "S4-unknown-dependency",
+   "scenario": "S4",
+   "operations": [
+    {
+     "ticker": "ITUB4",
+     "side": "BUY",
+     "quantity": "100",
+     "raw_dependencies": [
+      "missing-sale"
+     ]
+    }
+   ],
+   "expected": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "code": "dependency_cycle_unknown_or_not_sale"
+   }
+  },
+  {
+   "id": "S5-buy-vetoed",
+   "scenario": "S5",
+   "operations": [
+    {
+     "ticker": "BBAS3",
+     "side": "BUY",
+     "quantity": "100"
+    }
+   ],
+   "expected": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "code": "vetoed_asset_allocation"
+   }
+  },
+  {
+   "id": "S5-weight-on-vetoed",
+   "scenario": "S5",
+   "operations": [],
+   "mutation": "vetoed_weight:BBAS3",
+   "expected": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "code": "vetoed_asset_allocation"
+   }
+  },
+  {
+   "id": "S5-held-vetoed-hold",
+   "scenario": "S5",
+   "variant": "held",
+   "operations": [],
+   "expected": {
+    "status": "VALID_PROPOSAL",
+    "action": {
+     "BBAS3": "HOLD"
+    }
+   }
+  },
+  {
+   "id": "S5-held-vetoed-increase",
+   "scenario": "S5",
+   "variant": "held",
+   "operations": [
+    {
+     "ticker": "BBAS3",
+     "side": "BUY",
+     "quantity": "100"
+    }
+   ],
+   "expected": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "code": "vetoed_asset_allocation"
+   }
+  },
+  {
+   "id": "S5-held-vetoed-reduce",
+   "scenario": "S5",
+   "variant": "held",
+   "operations": [
+    {
+     "ticker": "BBAS3",
+     "side": "SELL",
+     "quantity": "500"
+    }
+   ],
+   "expected": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "code": "vetoed_asset_allocation"
+   }
+  },
+  {
+   "id": "S6-within-limit",
+   "scenario": "S6",
+   "operations": [
+    {
+     "ticker": "PETR4",
+     "side": "BUY",
+     "quantity": "30"
+    }
+   ],
+   "expected": {
+    "status": "VALID_PROPOSAL"
+   }
+  },
+  {
+   "id": "S6-beyond-limit",
+   "scenario": "S6",
+   "operations": [
+    {
+     "ticker": "PETR4",
+     "side": "BUY",
+     "quantity": "60"
+    }
+   ],
+   "expected": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "code": "concentration_or_exposure_limit"
+   }
+  },
+  {
+   "id": "S7-exposure-beyond-limit",
+   "scenario": "S7",
+   "operations": [
+    {
+     "ticker": "ITUB4",
+     "side": "BUY",
+     "quantity": "200"
+    }
+   ],
+   "expected": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "code": "concentration_or_exposure_limit"
+   }
+  },
+  {
+   "id": "S7-operation-count-beyond-limit",
+   "scenario": "S7",
+   "operations": [
+    {
+     "ticker": "ITUB4",
+     "side": "BUY",
+     "quantity": "10"
+    },
+    {
+     "ticker": "ITUB4",
+     "side": "BUY",
+     "quantity": "10"
+    },
+    {
+     "ticker": "ITUB4",
+     "side": "BUY",
+     "quantity": "10"
+    },
+    {
+     "ticker": "ITUB4",
+     "side": "BUY",
+     "quantity": "10"
+    },
+    {
+     "ticker": "ITUB4",
+     "side": "BUY",
+     "quantity": "10"
+    },
+    {
+     "ticker": "ITUB4",
+     "side": "BUY",
+     "quantity": "10"
+    },
+    {
+     "ticker": "PETR4",
+     "side": "BUY",
+     "quantity": "10"
+    },
+    {
+     "ticker": "PETR4",
+     "side": "BUY",
+     "quantity": "10"
+    },
+    {
+     "ticker": "PETR4",
+     "side": "BUY",
+     "quantity": "10"
+    },
+    {
+     "ticker": "PETR4",
+     "side": "BUY",
+     "quantity": "10"
+    },
+    {
+     "ticker": "PETR4",
+     "side": "BUY",
+     "quantity": "10"
+    }
+   ],
+   "expected": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "code": "response_schema_invalid"
+   },
+   "note": "11 operações > max_operations 10; recusado já no schema. Giro > 100% não é atingível numa única proposta sem operações anteriores na sessão (compras dependentes liquidam em D+2)."
+  },
+  {
+   "id": "S8-opinion-hash",
+   "scenario": "S8",
+   "operations": [],
+   "mutation": "opinion_hash:PETR4",
+   "expected": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "code": "opinion_reference_mismatch"
+   }
+  },
+  {
+   "id": "S8-context-hash",
+   "scenario": "S8",
+   "operations": [],
+   "mutation": "context_hash",
+   "expected": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "code": "proposal_hash_mismatch"
+   }
+  },
+  {
+   "id": "S8-missing-asset",
+   "scenario": "S8",
+   "operations": [],
+   "mutation": "drop_asset:WEGE3",
+   "expected": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "code": "complete_universe_and_current_weights_required"
+   }
+  },
+  {
+   "id": "S8-expired-context",
+   "scenario": "S8",
+   "operations": [],
+   "validate_at": "expires_at",
+   "expected": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "code": "proposal_expired_or_future"
+   }
+  },
+  {
+   "id": "S8-tampered-opinion",
+   "scenario": "S8",
+   "operations": [],
+   "mutation": "tamper_context_opinion:PETR4",
+   "expected": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "code": "record_hash_mismatch"
+   }
+  },
+  {
+   "id": "S8-v1-response",
+   "scenario": "S8",
+   "operations": [],
+   "mutation": "v1_sealed_response",
+   "expected": {
+    "status": "REJECTED_BY_VALIDATOR",
+    "code": "treatment_identity_mismatch"
+   }
+  },
+  {
+   "id": "S9-hold-despite-sell-signal",
+   "scenario": "S9",
+   "operations": [],
+   "expected": {
+    "status": "VALID_PROPOSAL",
+    "action": {
+     "VALE3": "HOLD"
+    }
+   }
+  },
+  {
+   "id": "S9-all-cash-no-operation",
+   "scenario": "S9",
+   "operations": [],
+   "expected": {
+    "status": "VALID_PROPOSAL"
+   },
+   "variant": "cash"
+  }
+ ],
+ "undescribed_codes": {
+  "concentration_or_exposure_limit": "Emitido pelo motor V5 (multiasset_portfolio.py) e repassado pelo validador V2; ausente da tabela ERRORS da V2 (sem descrição na UI).",
+  "record_hash_mismatch": "Emitido por check_seal quando um registro selado (contexto) é adulterado; ausente da tabela ERRORS da V2."
+ }
+}

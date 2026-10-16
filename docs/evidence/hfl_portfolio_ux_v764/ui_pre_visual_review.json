@@ -1,0 +1,152 @@
+{
+  "passed": 36,
+  "failed": 0,
+  "results": [
+    {
+      "name": "overview:official_snapshot_not_demo",
+      "ok": true
+    },
+    {
+      "name": "overview:empty_v2_cash_no_positions",
+      "ok": true
+    },
+    {
+      "name": "overview:snapshot_not_prospective_history",
+      "ok": true
+    },
+    {
+      "name": "tabs:positions_only",
+      "ok": true
+    },
+    {
+      "name": "history:real_v1_and_v2",
+      "ok": true
+    },
+    {
+      "name": "history:v1_rejected_no_execution_controls",
+      "ok": true
+    },
+    {
+      "name": "history:back_and_focus",
+      "ok": true
+    },
+    {
+      "name": "history:v2_valid_watchlist_no_orders",
+      "ok": true
+    },
+    {
+      "name": "history:three_dates_and_provenance",
+      "ok": true
+    },
+    {
+      "name": "history:allocation_labels",
+      "ok": true
+    },
+    {
+      "name": "deep_links:reload_keeps_decision",
+      "ok": true
+    },
+    {
+      "name": "simulator:isolated_label_and_fixtures",
+      "ok": true
+    },
+    {
+      "name": "simulator:v5_validation",
+      "ok": true
+    },
+    {
+      "name": "simulator:v6_fixture_stays_synthetic",
+      "ok": true
+    },
+    {
+      "name": "deep_links:legacy_demo_alias",
+      "ok": true
+    },
+    {
+      "name": "monitoring:selector_keeps_research_separate",
+      "ok": true
+    },
+    {
+      "name": "monitoring:no_implied_fill",
+      "ok": true
+    },
+    {
+      "name": "monitoring:missing_not_zero",
+      "ok": true
+    },
+    {
+      "name": "monitoring:supervision_status_visible",
+      "ok": true
+    },
+    {
+      "name": "monitoring:timeline_evidence",
+      "ok": true
+    },
+    {
+      "name": "monitoring:refresh_no_financial_action",
+      "ok": true
+    },
+    {
+      "name": "paper:h2_only_selector",
+      "ok": true
+    },
+    {
+      "name": "help:open",
+      "ok": true
+    },
+    {
+      "name": "help:escape_focus",
+      "ok": true
+    },
+    {
+      "name": "layout:desktop",
+      "ok": true
+    },
+    {
+      "name": "layout:notebook",
+      "ok": true
+    },
+    {
+      "name": "layout:tablet",
+      "ok": true
+    },
+    {
+      "name": "layout:phone",
+      "ok": true
+    },
+    {
+      "name": "layout:200_percent_reflow",
+      "ok": true
+    },
+    {
+      "name": "keyboard:section_link_activation",
+      "ok": true
+    },
+    {
+      "name": "keyboard:visible_focus",
+      "ok": true
+    },
+    {
+      "name": "errors:no_stale_financial_data",
+      "ok": true
+    },
+    {
+      "name": "errors:retry_reads_persisted_source",
+      "ok": true
+    },
+    {
+      "name": "fixtures:positions_and_observed_points",
+      "ok": true
+    },
+    {
+      "name": "fixtures:execution_and_settlement_presented",
+      "ok": true
+    },
+    {
+      "name": "security:zero_writes_or_external_requests",
+      "ok": true
+    }
+  ],
+  "blocked": [],
+  "exceptions": []
+}

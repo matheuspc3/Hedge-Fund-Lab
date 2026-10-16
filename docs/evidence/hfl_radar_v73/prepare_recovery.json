@@ -1,0 +1,27 @@
+[
+  {
+    "ticker": "PETR4",
+    "session": "2026-10-09",
+    "status": "PREPARED"
+  },
+  {
+    "ticker": "VALE3",
+    "session": "2026-10-09",
+    "status": "PREPARED"
+  },
+  {
+    "ticker": "ITUB4",
+    "session": "2026-10-09",
+    "status": "PREPARED"
+  },
+  {
+    "ticker": "WEGE3",
+    "session": "2026-10-09",
+    "status": "PREPARED"
+  },
+  {
+    "ticker": "BBAS3",
+    "session": "2026-10-09",
+    "status": "PREPARED"
+  }
+]

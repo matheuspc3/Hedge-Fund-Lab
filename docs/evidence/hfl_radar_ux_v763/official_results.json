@@ -1,0 +1,195 @@
+{
+  "source": "GET /api/platform/radar-view?run=radar-2026-10-09-recovery-01 (verified primary files)",
+  "run": {
+    "id": "radar-2026-10-09-recovery-01",
+    "session": "2026-10-09",
+    "classification": "OFFICIAL",
+    "state": "COMPLETED",
+    "source": "B3_COTAHIST_YFINANCE_ADJUSTED",
+    "universe": [
+      "PETR4",
+      "VALE3",
+      "ITUB4",
+      "WEGE3",
+      "BBAS3"
+    ],
+    "treatment": {
+      "identity": "HFL-MULTIASSET-RADAR-V1",
+      "manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef",
+      "model": "gemini-3.8-flash"
+    },
+    "same_treatment_as": "radar-2026-10-09-original"
+  },
+  "results": [
+    {
+      "ticker": "WEGE3",
+      "session": "2026-10-09",
+      "status": "COMPLETED",
+      "technical_signal": {
+        "confidence": 0.476,
+        "justification": "Consenso coletivo: 4/5 votos em MANTER",
+        "signal": "MANTER"
+      },
+      "consensus": {
+        "consensus_reached": true,
+        "counts": {
+          "COMPRA": 1,
+          "MANTER": 4,
+          "VENDA": 0
+        },
+        "threshold": 0.6,
+        "total_analysts": 5,
+        "valid_votes": 5,
+        "winning_signal": "MANTER"
+      },
+      "risk": {
+        "analysis": "O ativo apresenta volatilidade anualizada de 21,52%, indicando um perfil de risco moderado. Os indicadores técnicos demonstram neutralidade, com RSI em 55,62 e MACD alinhado ao sinal. O preço opera ligeiramente acima das médias móveis de 50 e 200 períodos (3,05% e 8,00%, respectivamente). O consenso técnico é de MANTER com confiança qualitativa de 47,6%, sem sinais de estresse ou desvios atípicos de risco de mercado. A aprovação é estritamente técnica; a adequação à carteira permanece NÃO AVALIADA.",
+        "risk_metrics": {
+          "asset_volatility_21": 0.215187
+        },
+        "verdict": "APROVADO"
+      },
+      "risk_source": "ADVISORY_LLM",
+      "recommendation": "MANTER",
+      "input_sha256": "0de4b28e88e5cdb95f8b7ff58489b0bc8c4a95ceea1f0a1c42214a483bc7a1af",
+      "history_sha256": "3e8c8ac94ccac077a3b7a59f2567f972bdea63c96290864d8fb58ed744ddae42",
+      "manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef"
+    },
+    {
+      "ticker": "VALE3",
+      "session": "2026-10-09",
+      "status": "COMPLETED",
+      "technical_signal": {
+        "confidence": 0.79,
+        "justification": "Consenso coletivo: 5/5 votos em VENDA",
+        "signal": "VENDA"
+      },
+      "consensus": {
+        "consensus_reached": true,
+        "counts": {
+          "COMPRA": 0,
+          "MANTER": 0,
+          "VENDA": 5
+        },
+        "threshold": 0.6,
+        "total_analysts": 5,
+        "valid_votes": 5,
+        "winning_signal": "VENDA"
+      },
+      "risk": {
+        "analysis": "O parecer técnico de VENDA é APROVADO do ponto de vista consultivo de risco. O ativo apresenta tendência de baixa bem definida, operando abaixo das médias móveis de 50 e 200 períodos (gaps de -8,18% e -12,26%, respectivamente) e com MACD em terreno negativo, alinhado à sinalização dos modelos. A volatilidade anualizada de 23,77% situa-se em patamar moderado. Embora o RSI em 32,86 aponte proximidade da região de sobrevenda e o preço esteja próximo da banda inferior de Bollinger, a consistência dos indicadores de tendência fundamenta o risco do direcionamento proposto. A adequação deste movimento à carteira permanece não avaliada.",
+        "risk_metrics": {
+          "asset_volatility_21": 0.237709
+        },
+        "verdict": "APROVADO"
+      },
+      "risk_source": "ADVISORY_LLM",
+      "recommendation": "VENDA",
+      "input_sha256": "f89465ef779f2a10d87e0151bbd8fefbae762fab7663db2c9f6f4a5ccff917dc",
+      "history_sha256": "b1cb92fc355a47f9c5fdaa089bc7e7be65cf9bf056980e00f1887eb1ce880104",
+      "manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef"
+    },
+    {
+      "ticker": "PETR4",
+      "session": "2026-10-09",
+      "status": "COMPLETED",
+      "technical_signal": {
+        "confidence": 0.744,
+        "justification": "Consenso coletivo: 5/5 votos em COMPRA",
+        "signal": "COMPRA"
+      },
+      "consensus": {
+        "consensus_reached": true,
+        "counts": {
+          "COMPRA": 5,
+          "MANTER": 0,
+          "VENDA": 0
+        },
+        "threshold": 0.6,
+        "total_analysts": 5,
+        "valid_votes": 5,
+        "winning_signal": "COMPRA"
+      },
+      "risk": {
+        "analysis": "Parecer técnico favorável baseado no consenso unânime de compra (5/5) e momentum positivo indicado pelo MACD e distanciamento das médias móveis (SMA50 e SMA200). Observa-se volatilidade anualizada moderadamente alta (39,23%) e RSI em 74,92, apontando região de sobrecompra com preço próximo à banda superior de Bollinger, sugerindo cautela com possíveis correções no curto prazo. A aprovação refere-se estritamente à análise técnica do ativo; adequação à carteira não avaliada.",
+        "risk_metrics": {
+          "asset_volatility_21": 0.392326
+        },
+        "verdict": "APROVADO"
+      },
+      "risk_source": "ADVISORY_LLM",
+      "recommendation": "COMPRA",
+      "input_sha256": "e1b5f1f44bce8392d93082b11c5e5cf6bc0f2443a35011298dcec6efacb1b19d",
+      "history_sha256": "6a5c6ce8db87c105569ee12a9e296ba760538dc3f93c6a981cf9e0930a44098a",
+      "manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef"
+    },
+    {
+      "ticker": "ITUB4",
+      "session": "2026-10-09",
+      "status": "COMPLETED",
+      "technical_signal": {
+        "confidence": 0.75,
+        "justification": "Consenso coletivo: 5/5 votos em COMPRA",
+        "signal": "COMPRA"
+      },
+      "consensus": {
+        "consensus_reached": true,
+        "counts": {
+          "COMPRA": 5,
+          "MANTER": 0,
+          "VENDA": 0
+        },
+        "threshold": 0.6,
+        "total_analysts": 5,
+        "valid_votes": 5,
+        "winning_signal": "COMPRA"
+      },
+      "risk": {
+        "analysis": "O ativo apresenta forte momentum técnico positivo com consenso unânime de compra (5/5 votos) e confiança de 0.75, corroborado pelo MACD em terreno favorável e preço operando significativamente acima das médias de 50 e 200 períodos. Todavia, nota-se risco elevado no curto prazo devido à volatilidade anualizada considerável (42,92%) e condições de sobrecompra evidenciadas pelo RSI em 76,56 e rompimento da banda superior de Bollinger. Sob a ótica de risco técnico consultivo, o ativo é APROVADO, ressalvando-se o ambiente de alta dispersão e estiramento de preços. A adequação à carteira permanece NÃO AVALIADA.",
+        "risk_metrics": {
+          "asset_volatility_21": 0.429197
+        },
+        "verdict": "APROVADO"
+      },
+      "risk_source": "ADVISORY_LLM",
+      "recommendation": "COMPRA",
+      "input_sha256": "a1ddd28411fcc69f665cfef9462ac63c71c74ae50dae0f82c17eddfb6435faf7",
+      "history_sha256": "b54861315e0bbb3db8e5edf48600e91a1780d680e25fc03e2581043047a6597a",
+      "manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef"
+    },
+    {
+      "ticker": "BBAS3",
+      "session": "2026-10-09",
+      "status": "COMPLETED",
+      "technical_signal": {
+        "confidence": 0.75,
+        "justification": "Consenso coletivo: 5/5 votos em COMPRA",
+        "signal": "COMPRA"
+      },
+      "consensus": {
+        "consensus_reached": true,
+        "counts": {
+          "COMPRA": 5,
+          "MANTER": 0,
+          "VENDA": 0
+        },
+        "threshold": 0.6,
+        "total_analysts": 5,
+        "valid_votes": 5,
+        "winning_signal": "COMPRA"
+      },
+      "risk": {
+        "analysis": "Volatilidade do ativo acima de 50% anualizados.",
+        "risk_metrics": {
+          "asset_volatility_21": 0.544844
+        },
+        "verdict": "VETADO"
+      },
+      "risk_source": "HARD_ASSET_VOLATILITY_RULE",
+      "recommendation": "MANTER",
+      "input_sha256": "542ef758f41341611a883b4842eb7e714cfc60cde800d6a820cdab817c219363",
+      "history_sha256": "bbe4441fb88daf0f6c84976f69ddb2ac7b64854f5ee60c92f341e0ca19066395",
+      "manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef"
+    }
+  ]
+}

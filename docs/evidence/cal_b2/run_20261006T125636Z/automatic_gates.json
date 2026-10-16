@@ -1,0 +1,285 @@
+{
+  "kind": "CAL_B2_AUTOMATIC_GATES",
+  "freeze": "CAL_B2_PROTOCOL_FREEZE_V1",
+  "computed_utc": "2026-10-06T12:58:01Z",
+  "git_commit": "59533dce0ac767f065bff03e9344f67b352f35f0",
+  "batch_commit": "c9cc719def0f1bf7bb7558b500964e295d86a40f",
+  "anchors_x_repetitions": "10 x 1",
+  "gates": {
+    "CB2-A": {
+      "issues": {},
+      "pass": true
+    },
+    "CB2-S": {
+      "issues": {},
+      "pass": true
+    },
+    "CB2-C": {
+      "issues": {},
+      "pass": true
+    },
+    "CB2-R": {
+      "issues": {},
+      "pass": true
+    },
+    "CB2-SEM": {
+      "value": 0,
+      "threshold": "== 0",
+      "flagged": {},
+      "pass": true
+    },
+    "CB2-TRANS": {
+      "value": 0,
+      "threshold": "== 0",
+      "flagged": {},
+      "pass": true
+    },
+    "CB2-D": {
+      "total_hold_rate": 0.7,
+      "threshold": ">= 0.90 fails",
+      "pass": true
+    }
+  },
+  "automatic_pass": true,
+  "hold_rates": {
+    "explicit_hold_rate": 0.6,
+    "no_majority_abstention_rate": 0.0,
+    "risk_veto_rate": 0.1,
+    "portfolio_hold_rate": 0.0,
+    "total_hold_rate": 0.7,
+    "total_holds": 7,
+    "decisions": 10,
+    "degenerate_inactive": false
+  },
+  "action_distribution": {
+    "final_cause": {
+      "ACTION_BUY": 2,
+      "ACTION_SELL": 1,
+      "RISK_VETO_LLM": 1,
+      "TECH_EXPLICIT_HOLD": 6
+    },
+    "technical_outcome": {
+      "COMPRA": 3,
+      "MANTER": 6,
+      "VENDA": 1
+    }
+  },
+  "prescreen_flags_by_anchor": {
+    "2018-08-16": [],
+    "2019-04-05": [],
+    "2019-10-07": [],
+    "2020-07-01": [],
+    "2021-01-21": [],
+    "2021-09-22": [],
+    "2022-04-07": [],
+    "2022-11-01": [],
+    "2023-06-26": [],
+    "2023-12-18": []
+  },
+  "prescreen_note": "lexical flags only point reviewers to text; classification is human",
+  "operational": [
+    {
+      "anchor": "2018-08-16",
+      "logical_calls": 5,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 5,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 5
+      },
+      "input_tokens": 4440,
+      "output_tokens": 536,
+      "thinking_tokens": 0,
+      "latency_ms_total": 17505.8,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2019-04-05",
+      "logical_calls": 5,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 5,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 5
+      },
+      "input_tokens": 4435,
+      "output_tokens": 632,
+      "thinking_tokens": 0,
+      "latency_ms_total": 19747.4,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2019-10-07",
+      "logical_calls": 6,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 1
+      },
+      "http_attempts": 6,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 6
+      },
+      "input_tokens": 4645,
+      "output_tokens": 511,
+      "thinking_tokens": 0,
+      "latency_ms_total": 16402.4,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2020-07-01",
+      "logical_calls": 5,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 5,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 5
+      },
+      "input_tokens": 4440,
+      "output_tokens": 637,
+      "thinking_tokens": 0,
+      "latency_ms_total": 14976.4,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2021-01-21",
+      "logical_calls": 5,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 5,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 5
+      },
+      "input_tokens": 4425,
+      "output_tokens": 683,
+      "thinking_tokens": 0,
+      "latency_ms_total": 17759.9,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2021-09-22",
+      "logical_calls": 5,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 5,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 5
+      },
+      "input_tokens": 4435,
+      "output_tokens": 500,
+      "thinking_tokens": 0,
+      "latency_ms_total": 16179.4,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2022-04-07",
+      "logical_calls": 7,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 1,
+        "portfolio_manager": 1
+      },
+      "http_attempts": 7,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 7
+      },
+      "input_tokens": 4828,
+      "output_tokens": 740,
+      "thinking_tokens": 0,
+      "latency_ms_total": 21079.1,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2022-11-01",
+      "logical_calls": 5,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 0,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 5,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 5
+      },
+      "input_tokens": 4435,
+      "output_tokens": 631,
+      "thinking_tokens": 0,
+      "latency_ms_total": 15397.7,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2023-06-26",
+      "logical_calls": 6,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 1,
+        "portfolio_manager": 0
+      },
+      "http_attempts": 6,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 6
+      },
+      "input_tokens": 4565,
+      "output_tokens": 665,
+      "thinking_tokens": 397,
+      "latency_ms_total": 21781.1,
+      "recovery_used": false
+    },
+    {
+      "anchor": "2023-12-18",
+      "logical_calls": 7,
+      "by_stage": {
+        "technical_analyst": 5,
+        "risk_manager": 1,
+        "portfolio_manager": 1
+      },
+      "http_attempts": 7,
+      "retries": 0,
+      "attempt_outcomes": {
+        "http_200": 7
+      },
+      "input_tokens": 4824,
+      "output_tokens": 758,
+      "thinking_tokens": 0,
+      "latency_ms_total": 22031.7,
+      "recovery_used": false
+    }
+  ],
+  "operational_totals": {
+    "logical_calls": 56,
+    "http_attempts": 56,
+    "retries": 0,
+    "transient_failures": 0,
+    "latency_ms_p50": 3073.7353499862365,
+    "latency_ms_p90": 4328.182899975218,
+    "input_tokens": 45472,
+    "output_tokens": 6293,
+    "thinking_tokens": 397,
+    "cost": "not computed: no versioned pricing source"
+  },
+  "financial_outcome": "NOT COMPUTED (no t+1 price read, no return/P&L/Sharpe/Sortino/MDD/accuracy)"
+}

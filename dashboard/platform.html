@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Carteiras · Hedge-Fund-Lab</title><link rel="stylesheet" href="/radar.css?v=7"><link rel="stylesheet" href="/platform.css?v=pilot1"><link rel="stylesheet" href="/shell.css?v=762"><script src="/shell.js?v=762" defer></script><script src="/vendor/chart.umd.js" defer></script><script src="/platform.js?v=pilot1" defer></script><script src="/manual-portfolio.js?v=1" defer></script><script src="/personal-charts.js?v=2" defer></script><script src="/stock-explorer.js?v=1" defer></script></head>
+<body class="hfl-platform"><!-- platform-shell -->
+<main id="main">
+  <section id="personal-portfolios" aria-labelledby="personal-title">
+    <div class="product-heading"><div><p class="ds-eyebrow" id="personal-name">Suas carteiras</p><h1 id="personal-title" class="ds-title">Visão da carteira</h1><p>Acompanhe posições, caixa e decisões da carteira selecionada.</p></div><div class="product-actions" data-personal-view="wallet"><a class="product-wallet-link" href="/wallets/new">+ Criar carteira</a><a id="personal-operations" class="product-wallet-link" href="/operations">+ Registrar operação</a><a id="personal-analysis" class="product-primary product-wallet-link" href="/radar#new-analysis">Analisar carteira ↗</a></div></div>
+    <select id="personal-wallet" aria-label="Carteira do cadastro" hidden><option value="">Carregando…</option></select>
+    <p id="personal-status" role="status" aria-live="polite"></p><p id="personal-error" class="ds-alert" role="alert" hidden></p>
+    <section id="personal-create" class="product-panel" hidden><h2>Uma nova carteira começa em caixa</h2>
+      <form id="wallet-form" class="personal-form">
+        <label>Nome<input name="name" required maxlength="100" autocomplete="off"><small data-error="name"></small></label>
+        <label>Natureza<select name="nature"><option value="SIMULATION">Simulação manual</option><option value="EXTERNAL">Operações reais externas</option></select><small data-error="nature"></small></label>
+        <label>Capital / caixa inicial (R$)<input name="capital" type="number" required min="0" max="10000000000" step="0.01" value="100000"><small data-error="capital"></small></label>
+        <label>Data de início<input name="start_date" type="date" required><small data-error="start_date"></small></label>
+        <p class="personal-wide">Início em caixa, sem posições. Informe o capital que existia antes da primeira operação; carteiras pessoais ficam fora da comparação dos agentes.</p>
+        <button type="submit">Criar carteira</button>
+      </form>
+    </section>
+    <div id="personal-detail" hidden>
+      <div data-personal-view="wallet">
+      <div id="personal-metrics"></div>
+      <div class="product-overview"><section class="product-panel"><div class="product-panel-head"><h2>Evolução do patrimônio</h2><a href="/comparison" class="product-wallet-link">Comparar carteiras →</a></div><p id="personal-prices" class="product-note" role="status">Conferindo fechamentos disponíveis…</p><div id="personal-equity-wrap" class="personal-chart-wrap" hidden><canvas id="personal-equity-chart" role="img" aria-label="Evolução do patrimônio da carteira; valores na tabela abaixo"></canvas></div><details><summary>Consultar patrimônio em tabela</summary><div id="personal-equity-table"></div></details></section><section class="product-panel"><h2>Movimentos e proventos</h2><p class="product-note">Consulte os lançamentos registrados e a situação da integração de proventos.</p><div class="product-actions"><a href="/operations" class="product-wallet-link">Ver operações →</a><a href="/dividends" class="product-wallet-link">Ver proventos →</a></div><p class="product-note">Caixa econômico, sem controle de liquidação da corretora.</p></section></div>
+      <section class="product-panel"><div class="product-panel-head"><h2>Suas posições</h2><a href="/operations" class="product-wallet-link">Comprar ou vender →</a></div><div id="personal-positions"></div></section>
+      <section class="product-panel personal-stock-panel" aria-labelledby="personal-stock-title">
+        <div class="product-panel-head"><div><p class="product-eyebrow">EXPLORAR O MERCADO</p><h2 id="personal-stock-title">Histórico das ações</h2></div><button type="button" id="personal-stock-refresh">Atualizar histórico Yahoo</button></div>
+        <fieldset class="stock-assets"><legend>Ações no gráfico</legend><div id="personal-stock-assets"></div><button type="button" id="personal-stock-all">Selecionar todas</button></fieldset>
+        <div class="stock-toolbar"><div class="stock-periods" role="group" aria-label="Período do gráfico"><button type="button" data-stock-period="1d">1D</button><button type="button" data-stock-period="5d">5D</button><button type="button" data-stock-period="1mo">1M</button><button type="button" data-stock-period="6mo">6M</button><button type="button" data-stock-period="ytd">YTD</button><button type="button" data-stock-period="1y">1A</button><button type="button" data-stock-period="5y">5A</button><button type="button" data-stock-period="max">Máx</button></div><label>Mostrar<select id="personal-stock-mode"><option value="price">Preço por ação (R$)</option><option value="change">Variação no período (%)</option></select></label><label>Série<select id="personal-stock-basis"><option value="close">Fechamento Yahoo</option><option value="adjusted_close">Ajustada por proventos</option></select></label></div>
+        <form id="personal-stock-range" class="stock-range"><label>De<input type="date" id="personal-stock-from" required></label><label>Até<input type="date" id="personal-stock-to" required></label><button type="submit">Aplicar período</button><button type="button" id="personal-stock-clear" hidden>Limpar seleção no gráfico</button></form>
+        <p id="personal-stock-note" class="product-note" role="status">Conferindo histórico local…</p>
+        <p id="personal-stock-interval" class="stock-interval" aria-live="polite"></p><div id="personal-stock-summary" class="stock-summary"></div>
+        <div id="personal-stock-wrap" class="personal-chart-wrap personal-stock-chart" hidden><canvas id="personal-stock-chart" role="img" aria-label="Histórico das ações selecionadas, em barras intradiárias nos períodos curtos; use as datas acima ou arraste para medir um intervalo. Valores na tabela abaixo."></canvas></div>
+        <p class="product-note">Arraste entre dois pontos para medir a variação. No celular, arraste na horizontal. Você também pode usar os campos de data. Até 60 pregões o gráfico usa barras intradiárias (1 dia: 1 min; até 5: 5 min; até 15: 15 min; até 60: 1 hora); períodos maiores usam o diário. Hoje aparece com o atraso de cerca de 15 min do Yahoo; lacunas não são preenchidas.</p>
+        <details id="personal-stock-details"><summary>Consultar preços do período em tabela</summary><div id="personal-stock-table"></div></details><p id="personal-stock-error" role="alert" hidden></p><p id="personal-chart-error" role="alert" hidden></p>
+      </section>
+      <details style="margin-top:20px"><summary>Base inicial e detalhes do cadastro</summary><p id="personal-nature"></p><p id="personal-pilot"></p></details>
+      </div>
+      <div class="product-operations-grid" data-personal-view="operations" hidden>
+      <section id="personal-operation" class="product-panel" aria-labelledby="operation-title">
+        <h2 id="operation-title">Registrar operação</h2><p id="operation-origin" class="product-note"></p>
+        <div class="product-side-switch" aria-label="Movimento"><button id="product-buy" data-side="BUY" type="button" aria-pressed="true">↗ Comprar</button><button id="product-sell" data-side="SELL" type="button" aria-pressed="false">↘ Vender</button></div>
+        <form id="trade-form" class="personal-form">
+          <label>Ativo<input name="ticker" required maxlength="5" pattern="[A-Z]{4}[3-8]" placeholder="PETR4" autocomplete="off"><small data-error="ticker"></small></label>
+          <label hidden>Movimento<select name="side"><option value="BUY">Compra</option><option value="SELL">Venda</option></select><small data-error="side"></small></label>
+          <label>Quantidade de ações<input name="quantity" type="number" required min="1" max="10000000000" step="1"><small data-error="quantity"></small></label>
+          <label>Preço de execução por ação (R$)<input name="price" type="number" required min="0.01" max="10000000000" step="0.01"><small data-error="price"></small></label>
+          <label>Custos totais informados (R$)<input name="costs" type="number" required min="0" max="10000000000" step="0.01" value="0"><small data-error="costs"></small></label>
+          <label>Data econômica da operação<input name="economic_date" type="date" required><small data-error="economic_date"></small></label>
+          <label id="correction-reason" class="personal-wide" hidden>Motivo da correção<input name="reason" maxlength="300"><small data-error="reason"></small></label>
+          <div class="personal-wide"><button type="submit">Ver prévia</button> <button type="button" id="personal-void" hidden>Ver prévia da anulação</button> <button type="button" id="personal-cancel" hidden>Cancelar correção</button></div>
+        </form>
+        <div id="personal-preview" class="ds-card" hidden aria-live="polite"><h4>Confira antes de confirmar</h4><p id="personal-preview-note"></p><div id="personal-effect"></div><p>O registro receberá o horário real do cadastro. Uma operação antiga recalcula também os lançamentos posteriores.</p><button type="button" id="personal-confirm">Confirmar registro</button><button type="button" id="personal-dismiss">Voltar ao formulário</button></div>
+      </section><section class="product-panel product-operation-history"><div class="product-panel-head"><h2>Histórico da carteira</h2><span class="product-chip">Registros persistidos</span></div><div id="personal-trades"></div><details style="margin-top:20px"><summary>Correções e rastreabilidade</summary><div id="personal-audit"></div></details></section>
+      </div>
+    </div>
+    <div data-personal-view="comparison" hidden><section class="product-panel"><h2>Trajetórias independentes</h2><div class="product-empty-chart"><span class="product-empty-icon" aria-hidden="true">↗</span><strong>Comparação de retornos aguardando preços</strong><p>O gráfico será calculado a partir das marcações diárias das carteiras. Capital, caixa e custo de aquisição não são retorno de mercado.</p></div></section><section class="product-panel" style="margin-top:20px"><h2>Carteiras cadastradas</h2><p class="product-note">Carteiras pessoais só pertencem à mesma comparação quando seu grupo, base inicial e condições forem compatíveis.</p><div id="product-comparison"></div></section></div>
+    <section class="product-panel" data-personal-view="dividends" hidden><h2>Proventos da carteira</h2><div class="product-empty-chart"><span class="product-empty-icon" aria-hidden="true">◷</span><strong>Integração de proventos pendente</strong><p>Elegibilidade, ex-date, pagamentos e origem ainda precisam ser integrados ao cadastro pessoal. Não há valor recebido ou previsto confirmado nesta tela.</p></div><a href="/" class="product-wallet-link">Voltar à carteira →</a></section>
+    <div class="product-footer"><button type="button" id="personal-refresh">Atualizar consulta</button><p>Registros locais · nenhuma ordem é enviada à corretora. Inferência dos agentes e aplicação de propostas têm confirmações próprias.</p></div>
+  </section>
+  <section id="home-portfolio" aria-labelledby="portfolio-title">
+    <div class="home-portfolio-heading"><div><p class="ds-eyebrow">Acompanhamento de carteiras</p><h1 id="portfolio-title" class="ds-title">Sua carteira, sessão a sessão.</h1></div></div>
+    <div id="pilot-not-started" class="ds-card home-not-started"><h2>Piloto comparativo ainda não iniciado</h2><p>As carteiras pessoais acima são independentes. A demonstração sintética pode ser explorada separadamente.</p><a class="home-demo-link" href="/?demo=1">Explorar demonstração com dados sintéticos →</a></div>
+    <div id="pilot-demo" hidden>
+      <div class="home-demo-bar"><span class="ds-state" data-tone="synthetic"><span aria-hidden="true">≈</span> DEMONSTRAÇÃO · DADOS SINTÉTICOS</span><a href="/">Sair da demonstração</a></div>
+      <p class="home-caption" id="pilot-scenario">Cenário PAPER-02 · agentes roteirizados. As datas não são sessões reais observadas pelo piloto.</p>
+      <div class="home-controls"><label>Carteira<select id="pilot-wallet" aria-controls="pilot-content"><option value="">Carregando carteiras…</option></select></label><label>Sessão de referência<select id="pilot-session" aria-controls="pilot-content"><option value="">Última reconciliada</option></select></label><label>Período da variação<select id="pilot-period" aria-controls="pilot-content"><option value="since_start">Desde o início</option><option value="day">Sessão selecionada</option><option value="month">Mês corrente</option><option value="year">Ano corrente</option><option value="last_12_months">Últimos 12 meses</option></select></label><button type="button" id="pilot-refresh">Atualizar consulta</button></div>
+      <p id="pilot-status" role="status" aria-live="polite">Carregando demonstração verificada…</p>
+      <div id="pilot-error" class="ds-alert ds-alert--error" role="alert" hidden></div>
+      <div id="pilot-content" hidden>
+        <div class="home-wealth-grid"><article class="ds-card home-wealth"><span class="ds-eyebrow">Patrimônio <button class="ds-help" data-help="patrimonio"></button></span><strong id="pilot-equity"></strong><p id="pilot-variation"></p><p id="pilot-anchor" class="home-caption"></p></article><div id="pilot-kpis" class="home-kpis"></div></div>
+        <details class="home-detail"><summary>Caixa, custos e resultado</summary><div id="pilot-cash"></div></details>
+        <section class="ds-card home-chart" aria-labelledby="pilot-chart-title"><div class="ds-section-head"><div><p class="ds-eyebrow">Evolução comparativa</p><h2 id="pilot-chart-title">Duas carteiras, trajetórias independentes</h2><p id="pilot-chart-note" class="home-caption"></p></div></div><div class="home-chart-canvas"><canvas id="pilot-chart" role="img" aria-label="Evolução comparativa em base 100; valores na tabela abaixo"></canvas></div><details><summary>Consultar os valores do gráfico em tabela</summary><div id="pilot-chart-table"></div></details><p class="home-caption">Comparação descritiva de um roteiro sintético. Lacunas interrompem as linhas; não há soma de patrimônios nem evidência de superioridade.</p></section>
+        <section class="home-assets" aria-labelledby="pilot-assets-title"><div class="ds-section-head"><div><h2 id="pilot-assets-title" class="ds-section-title">Ativos e posições</h2><p class="home-caption">Preços CLOSE RAW sintéticos. A variação do preço é por ação; a mudança do valor da posição também pode incluir operações.</p></div></div><div id="pilot-assets"></div><details class="home-detail"><summary>Quantidade, custo médio e resultado por posição</summary><div id="pilot-positions"></div></details></section>
+        <div class="home-bottom-grid"><section class="ds-card"><p class="ds-eyebrow">Última decisão registrada</p><h2 class="ds-section-title" id="pilot-decision-title"></h2><div id="pilot-decision"></div></section><section class="ds-card"><p class="ds-eyebrow">Operações recentes</p><h2 class="ds-section-title">Movimentos da carteira</h2><div id="pilot-trades"></div></section></div>
+        <details class="home-detail"><summary>Origem e integridade desta demonstração</summary><p id="pilot-source"></p><p>Consulta somente leitura. Preparar o ensaio é um comando separado; abrir esta página não cria banco, executa inferência ou avança sessões.</p></details>
+      </div>
+    </div>
+  </section>
+  <details id="home-laboratory" class="home-laboratory"><summary>Explorar o laboratório multiativos e a auditoria</summary>
+  <section class="home-hero" aria-labelledby="home-title">
+    <p class="ds-eyebrow">Laboratório de pesquisa · sistemas multiagentes</p>
+    <h2 id="home-title" class="ds-title">Hedge-Fund-Lab</h2>
+    <p class="ds-subtitle">Laboratório de pesquisa quantitativa com agentes de inteligência artificial para análise de ativos, avaliação de risco e simulação de decisões financeiras.</p>
+    <ul class="home-facts">
+      <li><span class="home-fact-icon" aria-hidden="true">⊘</span><div><strong>Nenhum envio de ordem.</strong> Carteiras pessoais podem registrar negócios reais já feitos externamente; propostas da IA continuam consultivas. <button class="ds-help" data-help="sem-ordens-reais"></button></div></li>
+      <li><span class="home-fact-icon" aria-hidden="true">¤</span><div><strong>Custos sob controle.</strong> Ações que podem consumir orçamento de IA levam o símbolo ¤ e sempre pedem confirmação. <button class="ds-help" data-help="inferencia-paga"></button></div></li>
+      <li><span class="home-fact-icon" aria-hidden="true">✓</span><div><strong>Resultados auditáveis.</strong> Registros selados por hash e conferidos por regras determinísticas. <button class="ds-help" data-help="hash"></button></div></li>
+    </ul>
+  </section>
+
+  <section class="ds-section" aria-labelledby="explore-title">
+    <div class="ds-section-head"><div><h2 id="explore-title" class="ds-section-title">Explorar o laboratório</h2><p class="ds-lead">Escolha o que quer fazer. Nada nestes atalhos executa análises ou gera custo.</p></div></div>
+    <div class="ds-grid home-tasks">
+      <a class="ds-card ds-card--link" href="/market" data-run-link><span class="ds-card-icon" aria-hidden="true">⌁</span><h3>Explorar o mercado</h3><p>Ativos, indicadores técnicos e pareceres da sessão registrada no Radar. Dados históricos; cobertura do universo selecionado.</p><span data-ds-state="READ_ONLY" data-code="false"></span><span class="ds-card-cta">Explorar ativos →</span></a>
+      <a class="ds-card ds-card--link" href="/radar" data-run-link><span class="ds-card-icon" aria-hidden="true">◎</span><h3>Consultar o Radar</h3><p>Pareceres de comitês de 5 analistas de IA por ativo, com consenso e avaliação de risco.</p><span data-ds-state="CONSULTATIVE_SANDBOX" data-code="false"></span><span class="ds-card-cta">Abrir Radar →</span></a>
+      <a class="ds-card ds-card--link" href="/portfolio#global-workflow" data-run-link><span class="ds-card-icon" aria-hidden="true">◫</span><h3>Analisar uma carteira</h3><p>Propostas do Gestor Global para uma carteira hipotética e a validação de cada uma.</p><span data-ds-state="CONSULTATIVE_SANDBOX" data-code="false"></span><span class="ds-card-cta">Abrir Gestor e demonstrações →</span></a>
+      <a class="ds-card ds-card--link" href="/#audit"><span class="ds-card-icon" aria-hidden="true">⧉</span><h3>Auditar resultados</h3><p>Processos registrados, integridade dos registros, custos observados e recuperação sem nova chamada.</p><span data-ds-state="READ_ONLY" data-code="false"></span><span class="ds-card-cta">Abrir Auditoria →</span></a>
+    </div>
+  </section>
+
+  <section class="ds-section" id="state" aria-labelledby="state-title">
+    <div class="ds-section-head"><div><h2 id="state-title" class="ds-section-title">Estado do laboratório</h2><p class="ds-lead">Lido agora dos registros locais. Consultar não inicia processos, não baixa dados e não chama modelos.</p></div><div class="platform-refresh"><span id="platform-updated" role="status">Lendo registros locais, sem iniciar processos…</span><button type="button" id="platform-refresh" data-action="read">Atualizar</button></div></div>
+    <div id="platform-error" role="alert" hidden></div>
+    <div class="ds-kpis" id="home-state" aria-live="polite"><p class="ds-loading">Lendo registros locais…</p></div>
+  </section>
+
+  <section class="ds-section" aria-labelledby="how-title">
+    <h2 id="how-title" class="ds-section-title">Como funciona</h2>
+    <p class="ds-lead">Cada etapa é registrada e pode ser auditada. A validação é feita por código determinístico, independente da IA.</p>
+    <ol class="ds-flow">
+      <li><strong>Dados de mercado</strong><span>Preços oficiais da B3, congelados por sessão</span></li>
+      <li><strong>Analistas de IA</strong><span>5 votos por ativo <button class="ds-help" data-help="radar"></button></span></li>
+      <li><strong>Consenso</strong><span>Sinal com ≥ 60% dos votos <button class="ds-help" data-help="consenso"></button></span></li>
+      <li><strong>Risk</strong><span>Parecer de risco; pode vetar <button class="ds-help" data-help="veto"></button></span></li>
+      <li><strong>Gestor Global</strong><span>Propõe uma carteira <button class="ds-help" data-help="gestor-global"></button></span></li>
+      <li class="is-gate"><strong>Validação</strong><span>Regras do contrato e da carteira <button class="ds-help" data-help="proposta-validada"></button></span></li>
+      <li><strong>Proposta consultiva</strong><span>Nenhuma ordem é enviada</span></li>
+    </ol>
+    <div class="ds-alert ds-alert--warn"><strong>Decisões dos agentes não viram operações financeiras.</strong><p>Um parecer COMPRA não obriga o Gestor Global a comprar; sem COMPRA, comprar é proibido; uma proposta validada continua consultiva e não autoriza negociação.</p></div>
+    <div class="ds-grid ds-grid--3 home-compare">
+      <article class="ds-card"><h3>Radar</h3><p>Analisa <strong>cada ativo separadamente</strong>: comitê de IA, consenso e risco. Produz pareceres, não carteiras.</p></article>
+      <article class="ds-card"><h3>Gestor Global</h3><p>Olha <strong>todos os pareceres juntos</strong> e propõe uma carteira hipotética. Cada proposta passa pelo validador.</p></article>
+      <article class="ds-card"><h3>Carteiras simuladas</h3><p>Acompanhe patrimônio, posições, decisões e operações multiativos. O piloto oficial ainda não foi iniciado; a demonstração usa dados sintéticos.</p></article>
+    </div>
+  </section>
+
+
+
+  <section id="audit" class="ds-section" aria-labelledby="audit-title"><div class="section-head"><div><p class="ds-eyebrow">Auditoria · somente leitura</p><h2 id="audit-title">Registros, integridade e recuperação</h2></div></div><div id="platform-integrity" class="hfl-panel"></div><div id="platform-jobs" aria-live="polite"></div><p class="muted small">Estados vêm dos runners. Custos indisponíveis aparecem como N/D; tentativas e chamadas incertas exigem diagnóstico local. <button class="ds-help" data-help="claim"></button> Diários de chamadas e envelopes privados não são publicados. <button class="ds-help" data-help="journal"></button></p></section>
+
+  </details>
+  <footer>Hedge-Fund-Lab · ambiente experimental · nenhuma ordem real · execução financeira multiativos indisponível</footer>
+</main></body></html>

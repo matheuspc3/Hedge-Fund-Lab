@@ -1,0 +1,48 @@
+HFL · diagnóstico somente leitura · 2026-10-12T00:18:20.875514-03:00
+
+[H2 original]
+  decisão DECIDED · sessão 2026-10-09 · alvo 2026-10-13 · gerada 2026-10-10T15:17:04.881596-03:00
+  ordem: Alvo 100% na abertura de 13/10/2026; aguarda o preço observado e a reconciliação.
+  decisão existente: não repetir a inferência desta sessão.
+
+[Supervisão]
+  estado AGUARDANDO_APROVACAO · prazo 2026-10-13T10:00:00-03:00 · aprovação nenhuma
+  auditoria íntegra · 1 eventos
+
+[Carteiras e benchmarks]
+  IA H2 v6: patrimônio 100000.0 · caixa 100000.0 · posições nenhuma · marca 2026-10-09 · ordem para 2026-10-13
+  Buy & Hold: patrimônio 100000.0 · caixa 100000.0 · posições nenhuma · marca 2026-10-09 · ordem para 2026-10-13
+  SMA Regime 50/200: patrimônio 100000.0 · caixa 100000.0 · posições nenhuma · marca 2026-10-09 · ordem para 2026-10-13
+  Bollinger Estado 20/2: patrimônio 100000.0 · caixa 100000.0 · posições nenhuma · marca 2026-10-09 · ordem nenhuma
+  H2 v6 Supervisionada: patrimônio 100000.0 · caixa 100000.0 · posições nenhuma · marca 2026-10-09 · ordem nenhuma
+
+[Radar oficial · sessão 2026-10-09]
+  PETR4: AWAITING_RADAR_AUTHORIZATION · Input pronto: preflight Radar e autorização paga própria do lote.
+  VALE3: AWAITING_RADAR_AUTHORIZATION · Input pronto: preflight Radar e autorização paga própria do lote.
+  ITUB4: INPUT_BLOCKED · Evento corporativo (bonificação/desdobramento): preparar com .venv/Scripts/python.exe -B scripts/radar_corporate_events.py prepare --session 2026-10-09 --tickers ITUB4
+  WEGE3: AWAITING_RADAR_AUTHORIZATION · Input pronto: preflight Radar e autorização paga própria do lote.
+  BBAS3: AWAITING_RADAR_AUTHORIZATION · Input pronto: preflight Radar e autorização paga própria do lote.
+
+[Global PM]
+  pareceres oficiais completos: ausentes PETR4, VALE3, ITUB4, WEGE3, BBAS3 · contexto oficial só deve ser preparado perto do uso (validade 24 h).
+  v7-3558f0253cf44dd0a00c93d7be73e56f · SYNTHETIC_DEMO · VALID_PROPOSAL · expira 2026-10-13T00:16:46.287213+00:00
+
+[Mercado]
+  última sessão observada 2026-10-09 · último fechamento do calendário 2026-10-09 · coleta 2026-10-10T14:54:51.409659-03:00
+  próxima sessão 2026-10-13 · abertura prevista 2026-10-13T10:00:00-03:00 (previsão de calendário, não confirma leilão)
+  cotação intradiária indisponível nesta consulta.
+
+[Jobs incompletos, incertos ou bloqueados]
+  nenhum
+
+[Integridade]
+  H2: íntegra · 1 decisão(ões) · manifesto dc118ce9841df612d030f40e5993858eacc6d06e41eff173706fc3a72d3acb98
+  V5 demo: íntegra
+
+[Ações manuais pendentes]
+  PRÓXIMA: Aprovar ou rejeitar a supervisionada até 13/10/2026 10:00 BRT.
+  info: Após o COTAHIST de 13/10/2026: preparar o novo fechamento e conferir a reconciliação da intenção.
+  lab: Radar oficial: 0/5 pareceres elegíveis; bloqueados: ITUB4. Global PM aguarda os cinco.
+
+Nada foi baixado, gravado, aprovado, inferido ou reconciliado por este diagnóstico.
+exit=0

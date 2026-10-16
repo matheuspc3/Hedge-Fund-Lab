@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hedge-fund-lab · Logs</title>
+<title>Logs técnicos · Auditoria · Hedge-Fund-Lab</title>
 <style>
   /* ── Reset & Base ─────────────────────────────────────── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -42,8 +42,6 @@
   .status.disconnected .status-dot{ background: #f85149; }
   .status.waiting .status-dot    { background: #d29922; animation: pulse 1.2s infinite; }
   @keyframes pulse { 50% { opacity: 0.3; } }
-
-  .header-nav { display: flex; gap: 1rem; font-size: 0.85rem; }
 
   /* ── Stats Bar ────────────────────────────────────────── */
   .stats {
@@ -149,16 +147,14 @@
     .filters input { width: 120px; }
   }
 </style>
+<link rel="stylesheet" href="/shell.css?v=7"><script src="/shell.js?v=7" defer></script>
 </head>
-<body>
+<body class="hfl-platform" id="main" tabindex="-1">
+<!-- platform-shell -->
 
 <!-- ════════════════ Header ════════════════ -->
 <div class="header">
-  <h1>📋 <small>Hedge-fund-lab</small> Logs</h1>
-  <nav class="header-nav">
-    <a href="/">Dashboard</a>
-    <a href="/logs" class="active">Logs</a>
-  </nav>
+  <h1>Logs técnicos</h1>
   <span class="status disconnected" id="status">
     <span class="status-dot"></span>
     <span id="statusText">Desconectado</span>
@@ -204,7 +200,7 @@
     </label>
   </div>
   <div class="filter-group" style="margin-left:auto">
-    <button class="btn btn-danger" id="btnClear">🗑 Limpar</button>
+    <button class="btn" id="btnClear" data-action="read">Limpar visualização</button>
   </div>
 </div>
 

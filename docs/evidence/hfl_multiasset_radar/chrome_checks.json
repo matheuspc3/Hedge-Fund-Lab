@@ -1,0 +1,34 @@
+{
+  "browser": "Chrome",
+  "date": "2026-10-11",
+  "viewports": [
+    {
+      "viewport": 1440,
+      "document": 1425,
+      "body": 1425
+    },
+    {
+      "body": 625,
+      "document": 625,
+      "viewport": 640
+    },
+    {
+      "body": 405,
+      "document": 405,
+      "viewport": 420
+    }
+  ],
+  "checks": {
+    "zero_selection_blocks_prepare": true,
+    "one_selection_allowed": true,
+    "five_universe_persisted": true,
+    "invalid_ticker_refused": true,
+    "add_remove_without_history_loss": true,
+    "synthetic_prepare_preflight_confirm_run_completed": true,
+    "read_only_decision_room": true,
+    "same_session_comparison": true,
+    "different_session_comparison_blocked": true,
+    "paid_calls": 0
+  },
+  "unexpected_console_errors": []
+}

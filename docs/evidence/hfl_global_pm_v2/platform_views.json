@@ -1,0 +1,535 @@
+{
+ "incident_now": {
+  "id": "v7-5a78ea5d15214e37bcae18f167ffcee3",
+  "identity": "HFL-MULTIASSET-GLOBAL-PM-V1",
+  "status": "REJECTED_BY_VALIDATOR",
+  "state": "BLOCKED",
+  "validation_status": "REJECTED_BY_VALIDATOR",
+  "error_details": [
+   {
+    "code": "explanation_selection_inconsistent",
+    "stage": "GLOBAL_PM_VALIDATOR",
+    "description": "As listas de ativos não selecionados ou de operações adiadas não correspondem às operações e justificativas da proposta."
+   }
+  ],
+  "financial_status": {
+   "valid": true,
+   "risk_projected": "OK"
+  },
+  "usage_accounting": {
+   "provider_tokens": {
+    "completion_tokens": 2519,
+    "prompt_tokens": 18794,
+    "source": "provider",
+    "thoughts_tokens": null,
+    "total_tokens": 21313
+   },
+   "usd_reserved": "0.159744",
+   "billed_usd": null,
+   "billed_status": "NOT_CONFIRMED_NO_PROVIDER_INVOICE",
+   "status": "UNKNOWN",
+   "thoughts": "NOT_REPORTED",
+   "totals": "CONSISTENT_WITHOUT_THOUGHTS_FIELD",
+   "usd_estimated": null,
+   "usd_observed_lower_bound": "0.02354175",
+   "rates_usd_million": {
+    "input": "0.75",
+    "output": "3.75"
+   },
+   "price_source": "https://ai.google.dev/gemini-api/docs/pricing",
+   "price_checked": "2026-10-11",
+   "basis": "Estimate only when prompt, completion and thoughts are reported and sum to the total; otherwise UNKNOWN with the reported-token lower bound. Never an invoice."
+  },
+  "ui_operations": true,
+  "radar_origin": {
+   "state": "VERIFIED",
+   "analysis_id": "v7-5a78ea5d15214e37bcae18f167ffcee3",
+   "opinions": {
+    "BBAS3": {
+     "input_ref": "data/radar/hfl_multiasset_v1_recovery_01/analyses/BBAS3/2026-10-09/input.json",
+     "input_sha256": "542ef758f41341611a883b4842eb7e714cfc60cde800d6a820cdab817c219363",
+     "manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef",
+     "mode": "live",
+     "opinion_sha256": "5edc3b36df2f419a8a91bd753fbb7c067b797ae78af189568692bb49157ec54c",
+     "result_sha256": "33c2b4f747bfefafd2266c1c2e4c482dd38b0371c60ca9016321cb618cb39df1",
+     "session": "2026-10-09"
+    },
+    "ITUB4": {
+     "input_ref": "data/radar/hfl_multiasset_v1_recovery_01/analyses/ITUB4/2026-10-09/input.json",
+     "input_sha256": "a1ddd28411fcc69f665cfef9462ac63c71c74ae50dae0f82c17eddfb6435faf7",
+     "manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef",
+     "mode": "live",
+     "opinion_sha256": "cfb5c9c69a2ec19c66db911d7b0c5f328b99b09fe9123b9ce085660e546dcfe0",
+     "result_sha256": "4f96331a5dae68d9a860577d6ce31ce7266e1846abf99c0a941c7bed651ee7d0",
+     "session": "2026-10-09"
+    },
+    "PETR4": {
+     "input_ref": "data/radar/hfl_multiasset_v1_recovery_01/analyses/PETR4/2026-10-09/input.json",
+     "input_sha256": "e1b5f1f44bce8392d93082b11c5e5cf6bc0f2443a35011298dcec6efacb1b19d",
+     "manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef",
+     "mode": "live",
+     "opinion_sha256": "d8abcd02256488f564e2f0a53456593dc7a633e52e4a6b04b96769eac7d35ecc",
+     "result_sha256": "c63d7fdb025ba5e400a6432d32c3200cb2cd4afb02337c5b2e56cc1ff9fe5328",
+     "session": "2026-10-09"
+    },
+    "VALE3": {
+     "input_ref": "data/radar/hfl_multiasset_v1_recovery_01/analyses/VALE3/2026-10-09/input.json",
+     "input_sha256": "f89465ef779f2a10d87e0151bbd8fefbae762fab7663db2c9f6f4a5ccff917dc",
+     "manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef",
+     "mode": "live",
+     "opinion_sha256": "88a69aae707132489cd399a3fafff3533834ffa05c3020d7e5432c68252a5a60",
+     "result_sha256": "cfdb44b972be1e4f91ab22f25564462ae69438c9781aa7467a716d1c640a64e8",
+     "session": "2026-10-09"
+    },
+    "WEGE3": {
+     "input_ref": "data/radar/hfl_multiasset_v1_recovery_01/analyses/WEGE3/2026-10-09/input.json",
+     "input_sha256": "0de4b28e88e5cdb95f8b7ff58489b0bc8c4a95ceea1f0a1c42214a483bc7a1af",
+     "manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef",
+     "mode": "live",
+     "opinion_sha256": "7991d0c938ee402199122edd6d52487912100babf1189ef7e94a251ded487539",
+     "result_sha256": "e085e3f8f0b58649656e2f3fa60b9d5da8d761d6369f9c091d2388524fbfd118",
+     "session": "2026-10-09"
+    }
+   },
+   "radar_run": {
+    "classification": "OFFICIAL",
+    "id": "radar-2026-10-09-recovery-01",
+    "incident": null,
+    "instance_of": "radar-2026-10-09-original",
+    "mode": "CONSULTATIVE_SANDBOX",
+    "path": "data/radar/hfl_multiasset_v1_recovery_01",
+    "session": "2026-10-09",
+    "source": "B3_COTAHIST_YFINANCE_ADJUSTED",
+    "treatment": {
+     "identity": "HFL-MULTIASSET-RADAR-V1",
+     "manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef",
+     "model": "gemini-3.8-flash"
+    },
+    "universe": [
+     "PETR4",
+     "VALE3",
+     "ITUB4",
+     "WEGE3",
+     "BBAS3"
+    ]
+   },
+   "recorded_at": "2026-10-12T18:18:04.531707+00:00",
+   "registry_revision": 3,
+   "registry_sha256": "0753b88faf4500146cf215097d5addc3f8e94f129046636f5b98cda6adae8f55",
+   "schema_version": 1,
+   "sha256": "03436c1960e32ad5b6031fc43d83769cf6d1deee7f8c6179f2a1d8dd7cf5c0a9"
+  },
+  "planner": "GEMINI_GLOBAL_PM",
+  "classification": "CONSULTIVO COM GEMINI",
+  "expired": null
+ },
+ "incident_after_expiry_simulated_clock": {
+  "id": "v7-5a78ea5d15214e37bcae18f167ffcee3",
+  "identity": "HFL-MULTIASSET-GLOBAL-PM-V1",
+  "status": "PROPOSAL_EXPIRED",
+  "state": "EXPIRED",
+  "validation_status": "REJECTED_BY_VALIDATOR",
+  "error_details": [
+   {
+    "code": "explanation_selection_inconsistent",
+    "stage": "GLOBAL_PM_VALIDATOR",
+    "description": "As listas de ativos não selecionados ou de operações adiadas não correspondem às operações e justificativas da proposta."
+   }
+  ],
+  "financial_status": {
+   "valid": true,
+   "risk_projected": "OK"
+  },
+  "usage_accounting": {
+   "provider_tokens": {
+    "completion_tokens": 2519,
+    "prompt_tokens": 18794,
+    "source": "provider",
+    "thoughts_tokens": null,
+    "total_tokens": 21313
+   },
+   "usd_reserved": "0.159744",
+   "billed_usd": null,
+   "billed_status": "NOT_CONFIRMED_NO_PROVIDER_INVOICE",
+   "status": "UNKNOWN",
+   "thoughts": "NOT_REPORTED",
+   "totals": "CONSISTENT_WITHOUT_THOUGHTS_FIELD",
+   "usd_estimated": null,
+   "usd_observed_lower_bound": "0.02354175",
+   "rates_usd_million": {
+    "input": "0.75",
+    "output": "3.75"
+   },
+   "price_source": "https://ai.google.dev/gemini-api/docs/pricing",
+   "price_checked": "2026-10-11",
+   "basis": "Estimate only when prompt, completion and thoughts are reported and sum to the total; otherwise UNKNOWN with the reported-token lower bound. Never an invoice."
+  },
+  "ui_operations": true,
+  "radar_origin": {
+   "state": "VERIFIED",
+   "analysis_id": "v7-5a78ea5d15214e37bcae18f167ffcee3",
+   "opinions": {
+    "BBAS3": {
+     "input_ref": "data/radar/hfl_multiasset_v1_recovery_01/analyses/BBAS3/2026-10-09/input.json",
+     "input_sha256": "542ef758f41341611a883b4842eb7e714cfc60cde800d6a820cdab817c219363",
+     "manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef",
+     "mode": "live",
+     "opinion_sha256": "5edc3b36df2f419a8a91bd753fbb7c067b797ae78af189568692bb49157ec54c",
+     "result_sha256": "33c2b4f747bfefafd2266c1c2e4c482dd38b0371c60ca9016321cb618cb39df1",
+     "session": "2026-10-09"
+    },
+    "ITUB4": {
+     "input_ref": "data/radar/hfl_multiasset_v1_recovery_01/analyses/ITUB4/2026-10-09/input.json",
+     "input_sha256": "a1ddd28411fcc69f665cfef9462ac63c71c74ae50dae0f82c17eddfb6435faf7",
+     "manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef",
+     "mode": "live",
+     "opinion_sha256": "cfb5c9c69a2ec19c66db911d7b0c5f328b99b09fe9123b9ce085660e546dcfe0",
+     "result_sha256": "4f96331a5dae68d9a860577d6ce31ce7266e1846abf99c0a941c7bed651ee7d0",
+     "session": "2026-10-09"
+    },
+    "PETR4": {
+     "input_ref": "data/radar/hfl_multiasset_v1_recovery_01/analyses/PETR4/2026-10-09/input.json",
+     "input_sha256": "e1b5f1f44bce8392d93082b11c5e5cf6bc0f2443a35011298dcec6efacb1b19d",
+     "manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef",
+     "mode": "live",
+     "opinion_sha256": "d8abcd02256488f564e2f0a53456593dc7a633e52e4a6b04b96769eac7d35ecc",
+     "result_sha256": "c63d7fdb025ba5e400a6432d32c3200cb2cd4afb02337c5b2e56cc1ff9fe5328",
+     "session": "2026-10-09"
+    },
+    "VALE3": {
+     "input_ref": "data/radar/hfl_multiasset_v1_recovery_01/analyses/VALE3/2026-10-09/input.json",
+     "input_sha256": "f89465ef779f2a10d87e0151bbd8fefbae762fab7663db2c9f6f4a5ccff917dc",
+     "manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef",
+     "mode": "live",
+     "opinion_sha256": "88a69aae707132489cd399a3fafff3533834ffa05c3020d7e5432c68252a5a60",
+     "result_sha256": "cfdb44b972be1e4f91ab22f25564462ae69438c9781aa7467a716d1c640a64e8",
+     "session": "2026-10-09"
+    },
+    "WEGE3": {
+     "input_ref": "data/radar/hfl_multiasset_v1_recovery_01/analyses/WEGE3/2026-10-09/input.json",
+     "input_sha256": "0de4b28e88e5cdb95f8b7ff58489b0bc8c4a95ceea1f0a1c42214a483bc7a1af",
+     "manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef",
+     "mode": "live",
+     "opinion_sha256": "7991d0c938ee402199122edd6d52487912100babf1189ef7e94a251ded487539",
+     "result_sha256": "e085e3f8f0b58649656e2f3fa60b9d5da8d761d6369f9c091d2388524fbfd118",
+     "session": "2026-10-09"
+    }
+   },
+   "radar_run": {
+    "classification": "OFFICIAL",
+    "id": "radar-2026-10-09-recovery-01",
+    "incident": null,
+    "instance_of": "radar-2026-10-09-original",
+    "mode": "CONSULTATIVE_SANDBOX",
+    "path": "data/radar/hfl_multiasset_v1_recovery_01",
+    "session": "2026-10-09",
+    "source": "B3_COTAHIST_YFINANCE_ADJUSTED",
+    "treatment": {
+     "identity": "HFL-MULTIASSET-RADAR-V1",
+     "manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef",
+     "model": "gemini-3.8-flash"
+    },
+    "universe": [
+     "PETR4",
+     "VALE3",
+     "ITUB4",
+     "WEGE3",
+     "BBAS3"
+    ]
+   },
+   "recorded_at": "2026-10-12T18:18:04.531707+00:00",
+   "registry_revision": 3,
+   "registry_sha256": "0753b88faf4500146cf215097d5addc3f8e94f129046636f5b98cda6adae8f55",
+   "schema_version": 1,
+   "sha256": "03436c1960e32ad5b6031fc43d83769cf6d1deee7f8c6179f2a1d8dd7cf5c0a9"
+  },
+  "planner": "GEMINI_GLOBAL_PM",
+  "classification": "CONSULTIVO COM GEMINI",
+  "expired": null
+ },
+ "v2_qualification_a": {
+  "id": "v74-qual-a",
+  "identity": "HFL-MULTIASSET-GLOBAL-PM-V2",
+  "status": "VALID_PROPOSAL",
+  "state": "COMPLETED",
+  "validation_status": "VALID_PROPOSAL",
+  "error_details": [],
+  "financial_status": {
+   "valid": true,
+   "risk_projected": "OK"
+  },
+  "usage_accounting": {
+   "provider_tokens": {
+    "completion_tokens": 700,
+    "prompt_tokens": 1500,
+    "source": "provider",
+    "thoughts_tokens": 50,
+    "total_tokens": 2250
+   },
+   "usd_reserved": "0",
+   "billed_usd": null,
+   "billed_status": "NOT_BILLED_SYNTHETIC",
+   "status": "SYNTHETIC_ZERO",
+   "thoughts": "SYNTHETIC",
+   "totals": "SYNTHETIC",
+   "usd_estimated": "0",
+   "usd_observed_lower_bound": "0"
+  },
+  "ui_operations": false,
+  "radar_origin": {
+   "state": "MISSING"
+  },
+  "planner": "FAKE_GLOBAL_PM_NOT_GEMINI",
+  "classification": "DEMONSTRAÇÃO SINTÉTICA",
+  "expired": false
+ },
+ "v2_qualification_b": {
+  "id": "v74-qual-b",
+  "identity": "HFL-MULTIASSET-GLOBAL-PM-V2",
+  "status": "VALID_PROPOSAL",
+  "state": "COMPLETED",
+  "validation_status": "VALID_PROPOSAL",
+  "error_details": [],
+  "financial_status": {
+   "valid": true,
+   "risk_projected": "OK"
+  },
+  "usage_accounting": {
+   "provider_tokens": {
+    "completion_tokens": 700,
+    "prompt_tokens": 1500,
+    "source": "provider",
+    "thoughts_tokens": 50,
+    "total_tokens": 2250
+   },
+   "usd_reserved": "0",
+   "billed_usd": null,
+   "billed_status": "NOT_BILLED_SYNTHETIC",
+   "status": "SYNTHETIC_ZERO",
+   "thoughts": "SYNTHETIC",
+   "totals": "SYNTHETIC",
+   "usd_estimated": "0",
+   "usd_observed_lower_bound": "0"
+  },
+  "ui_operations": false,
+  "radar_origin": {
+   "state": "MISSING"
+  },
+  "planner": "FAKE_GLOBAL_PM_NOT_GEMINI",
+  "classification": "DEMONSTRAÇÃO SINTÉTICA",
+  "expired": false
+ },
+ "v2_qualification_c": {
+  "id": "v74-qual-c",
+  "identity": "HFL-MULTIASSET-GLOBAL-PM-V2",
+  "status": "REJECTED_BY_VALIDATOR",
+  "state": "BLOCKED",
+  "validation_status": "REJECTED_BY_VALIDATOR",
+  "error_details": [
+   {
+    "code": "insufficient_available_units",
+    "stage": "DETERMINISTIC_VALIDATOR",
+    "description": "Venda acima das unidades disponíveis em custódia."
+   }
+  ],
+  "financial_status": {
+   "valid": false,
+   "risk_projected": null
+  },
+  "usage_accounting": {
+   "provider_tokens": {
+    "completion_tokens": 700,
+    "prompt_tokens": 1500,
+    "source": "provider",
+    "thoughts_tokens": 50,
+    "total_tokens": 2250
+   },
+   "usd_reserved": "0",
+   "billed_usd": null,
+   "billed_status": "NOT_BILLED_SYNTHETIC",
+   "status": "SYNTHETIC_ZERO",
+   "thoughts": "SYNTHETIC",
+   "totals": "SYNTHETIC",
+   "usd_estimated": "0",
+   "usd_observed_lower_bound": "0"
+  },
+  "ui_operations": false,
+  "radar_origin": {
+   "state": "MISSING"
+  },
+  "planner": "FAKE_GLOBAL_PM_NOT_GEMINI",
+  "classification": "DEMONSTRAÇÃO SINTÉTICA",
+  "expired": false
+ },
+ "v2_qualification_d": {
+  "id": "v74-qual-d",
+  "identity": "HFL-MULTIASSET-GLOBAL-PM-V2",
+  "status": "VALID_PROPOSAL",
+  "state": "COMPLETED",
+  "validation_status": "VALID_PROPOSAL",
+  "error_details": [],
+  "financial_status": {
+   "valid": true,
+   "risk_projected": "OK"
+  },
+  "usage_accounting": {
+   "provider_tokens": {
+    "completion_tokens": 700,
+    "prompt_tokens": 1500,
+    "source": "provider",
+    "thoughts_tokens": 50,
+    "total_tokens": 2250
+   },
+   "usd_reserved": "0",
+   "billed_usd": null,
+   "billed_status": "NOT_BILLED_SYNTHETIC",
+   "status": "SYNTHETIC_ZERO",
+   "thoughts": "SYNTHETIC",
+   "totals": "SYNTHETIC",
+   "usd_estimated": "0",
+   "usd_observed_lower_bound": "0"
+  },
+  "ui_operations": false,
+  "radar_origin": {
+   "state": "MISSING"
+  },
+  "planner": "FAKE_GLOBAL_PM_NOT_GEMINI",
+  "classification": "DEMONSTRAÇÃO SINTÉTICA",
+  "expired": false
+ },
+ "v2_qualification_f": {
+  "id": "v74-qual-f",
+  "identity": "HFL-MULTIASSET-GLOBAL-PM-V2",
+  "status": "REJECTED_BY_VALIDATOR",
+  "state": "BLOCKED",
+  "validation_status": "REJECTED_BY_VALIDATOR",
+  "error_details": [
+   {
+    "code": "settlement_deferred_inconsistent",
+    "stage": "GLOBAL_PM_VALIDATOR",
+    "description": "A lista de operações adiadas difere das compras que realmente dependem de liquidação."
+   }
+  ],
+  "financial_status": {
+   "valid": true,
+   "risk_projected": "OK"
+  },
+  "usage_accounting": {
+   "provider_tokens": {
+    "completion_tokens": 700,
+    "prompt_tokens": 1500,
+    "source": "provider",
+    "thoughts_tokens": 50,
+    "total_tokens": 2250
+   },
+   "usd_reserved": "0",
+   "billed_usd": null,
+   "billed_status": "NOT_BILLED_SYNTHETIC",
+   "status": "SYNTHETIC_ZERO",
+   "thoughts": "SYNTHETIC",
+   "totals": "SYNTHETIC",
+   "usd_estimated": "0",
+   "usd_observed_lower_bound": "0"
+  },
+  "ui_operations": false,
+  "radar_origin": {
+   "state": "MISSING"
+  },
+  "planner": "FAKE_GLOBAL_PM_NOT_GEMINI",
+  "classification": "DEMONSTRAÇÃO SINTÉTICA",
+  "expired": false
+ },
+ "records": [
+  {
+   "id": "v74-qual-f",
+   "native_state": "REJECTED_BY_VALIDATOR",
+   "state": "BLOCKED",
+   "identity": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "validation_status": "REJECTED_BY_VALIDATOR",
+   "mode": "SYNTHETIC_DEMO",
+   "created_at": "2026-10-12T19:12:03.687979+00:00",
+   "expires_at": "2026-10-13T19:12:03.687979+00:00",
+   "context_sha256": "4b389711246f60f4fbb0e29ba6fabb52a574c7beb9e6c3bcb0b853be5ab4c1b2",
+   "cost_usd": "0",
+   "href": "/portfolio?analysis=v74-qual-f"
+  },
+  {
+   "id": "v74-qual-d",
+   "native_state": "VALID_PROPOSAL",
+   "state": "COMPLETED",
+   "identity": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "validation_status": "VALID_PROPOSAL",
+   "mode": "SYNTHETIC_DEMO",
+   "created_at": "2026-10-12T19:12:03.369448+00:00",
+   "expires_at": "2026-10-13T19:12:03.369448+00:00",
+   "context_sha256": "64c56b902650f345e366048ee19c0648d76c107bbb07f8c84f72006df0253008",
+   "cost_usd": "0",
+   "href": "/portfolio?analysis=v74-qual-d"
+  },
+  {
+   "id": "v74-qual-c",
+   "native_state": "REJECTED_BY_VALIDATOR",
+   "state": "BLOCKED",
+   "identity": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "validation_status": "REJECTED_BY_VALIDATOR",
+   "mode": "SYNTHETIC_DEMO",
+   "created_at": "2026-10-12T19:12:03.146119+00:00",
+   "expires_at": "2026-10-13T19:12:03.146119+00:00",
+   "context_sha256": "0ab48562aeab60bd13d2d4a194fd6f9f3d1176a8e5b7f7e5bb84bc007e69a9f8",
+   "cost_usd": "0",
+   "href": "/portfolio?analysis=v74-qual-c"
+  },
+  {
+   "id": "v74-qual-b",
+   "native_state": "VALID_PROPOSAL",
+   "state": "COMPLETED",
+   "identity": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "validation_status": "VALID_PROPOSAL",
+   "mode": "SYNTHETIC_DEMO",
+   "created_at": "2026-10-12T19:12:02.920745+00:00",
+   "expires_at": "2026-10-13T19:12:02.920745+00:00",
+   "context_sha256": "5c5d675420684f0ff25aa0bc35556e05621eb4aec4613a1fd7984130d008ca19",
+   "cost_usd": "0",
+   "href": "/portfolio?analysis=v74-qual-b"
+  },
+  {
+   "id": "v74-qual-a",
+   "native_state": "VALID_PROPOSAL",
+   "state": "COMPLETED",
+   "identity": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "validation_status": "VALID_PROPOSAL",
+   "mode": "SYNTHETIC_DEMO",
+   "created_at": "2026-10-12T19:12:02.698197+00:00",
+   "expires_at": "2026-10-13T19:12:02.698197+00:00",
+   "context_sha256": "5445f2e674410f9ede7c3905698231e22bc156943b8c13b9f93b66995eeeda31",
+   "cost_usd": "0",
+   "href": "/portfolio?analysis=v74-qual-a"
+  },
+  {
+   "id": "v7-5a78ea5d15214e37bcae18f167ffcee3",
+   "native_state": "REJECTED_BY_VALIDATOR",
+   "state": "BLOCKED",
+   "identity": "HFL-MULTIASSET-GLOBAL-PM-V1",
+   "validation_status": "REJECTED_BY_VALIDATOR",
+   "mode": "CONSULTATIVE_SANDBOX",
+   "created_at": "2026-10-12T18:18:04.351968+00:00",
+   "expires_at": "2026-10-13T18:18:04.351968+00:00",
+   "context_sha256": "0f5f7554ca18c9f898f799fdb6d50d3e583d6efaedef9965c7b463aa047e67d6",
+   "cost_usd": null,
+   "href": "/portfolio?analysis=v7-5a78ea5d15214e37bcae18f167ffcee3"
+  },
+  {
+   "id": "v7-3558f0253cf44dd0a00c93d7be73e56f",
+   "native_state": "VALID_PROPOSAL",
+   "state": "COMPLETED",
+   "identity": "HFL-MULTIASSET-GLOBAL-PM-V1",
+   "validation_status": "VALID_PROPOSAL",
+   "mode": "SYNTHETIC_DEMO",
+   "created_at": "2026-10-12T00:16:46.287213+00:00",
+   "expires_at": "2026-10-13T00:16:46.287213+00:00",
+   "context_sha256": "8e48262b7533282177573f8f1b6af4f2d9acde078b00583df5da3e70ac9da12b",
+   "cost_usd": "0",
+   "href": "/portfolio?analysis=v7-3558f0253cf44dd0a00c93d7be73e56f"
+  }
+ ]
+}

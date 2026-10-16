@@ -1,0 +1,10 @@
+Mutation checks V7.6 (12/10/2026): one guard removed at a time in scripts/experiment_protocol_v76.py,
+tests/test_experiment_protocol_v76.py run, file restored byte for byte afterwards.
+
+paid_gate never refuses                        -> 2 failed, 30 passed
+temporal-leakage input check removed           -> 1 failed, 31 passed
+rejected response compared as a decision       -> 1 failed, 31 passed
+explicit null treated like explicit zero       -> 1 failed, 31 passed
+EXECUTED accepted without execution evidence   -> 1 failed, 31 passed
+
+5/5 mutations detected.

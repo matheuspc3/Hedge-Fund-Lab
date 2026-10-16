@@ -1,0 +1,55 @@
+/* Market layout uses V7.6.2 tokens and components; no second palette. */
+* { box-sizing: border-box; }
+body { margin: 0; }
+.market-main { max-width: var(--page-max); margin: auto; padding: var(--sp-6) var(--sp-5); }
+.market-main h1 { margin: 0 0 var(--sp-3); }
+.market-main a { color: var(--link); }
+.market-main section, .market-main details { margin-block: var(--sp-5); }
+.market-main h4 { font-size: var(--fs-lg); margin: var(--sp-4) 0 var(--sp-2); }
+.market-main p, .market-main small { color: var(--text-2); }
+.market-main summary { cursor: pointer; padding: var(--sp-3); border: 1px solid var(--border-control); border-radius: var(--radius-md); font-weight: 600; }
+.market-main details > :not(summary) { margin-inline: var(--sp-3); }
+.market-main .ds-help { vertical-align: middle; }
+.market-main pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: var(--fs-xs); }
+.market-main [hidden] { display: none !important; }
+.market-history { font-size: var(--fs-sm); color: var(--state-warn) !important; }
+.market-main .market-overview { margin-block: var(--sp-5); }
+.market-overview .ds-kpi-value { overflow-wrap: anywhere; }
+.market-main .market-assets { grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); }
+.market-main .market-overview { grid-template-columns: repeat(4,minmax(0,1fr)); }
+.market-asset { display: flex; flex-direction: column; gap: var(--sp-2); }
+.market-asset .ds-btn { margin-top: auto; align-self: flex-start; }
+.market-decisions { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: var(--sp-3); margin: var(--sp-4) 0; }
+.market-decisions div { border-left: 2px solid var(--line); padding-left: var(--sp-3); min-width: 0; }
+.market-decisions dt { color: var(--text-2); font-size: var(--fs-sm); margin-bottom: var(--sp-2); }
+.market-decisions dd { margin: 0; font-weight: 600; }
+.market-asset .market-decisions { grid-template-columns: 1fr 1fr; }
+.market-veto { border-left: 3px solid var(--state-warn); padding-left: var(--sp-3); }
+.market-filters { display:flex; flex-wrap:wrap; align-items:flex-end; gap:var(--sp-3); margin:var(--sp-4) 0; }
+.market-filters label { display:grid; gap:var(--sp-1); flex:1 1 150px; }
+.market-filters button { flex:0 0 auto; }
+.market-main .ds-table { min-width: 750px; }
+.market-main td small { display:block; }
+.market-hashes { display:grid; gap:var(--sp-2); min-width:0; }
+.market-hashes .ds-hash { width:100%; }
+.market-hashes .ds-hash span { flex:1; }
+.market-main .market-vote { margin-block:var(--sp-2); }
+.market-vote-bars { display:grid; gap:var(--sp-2); max-width:640px; }
+.market-vote-bars label { display:grid; grid-template-columns:80px 1fr 45px; gap:var(--sp-3); align-items:center; }
+.market-main meter { width:100%; accent-color:var(--accent); }
+.market-main .market-operations { border:1px dashed var(--border-control); padding:var(--sp-4); }
+.market-main .run-card { display:block; border:0; margin:0; padding:var(--sp-3); }
+.market-main .run-card > div { display:inline-block; vertical-align:top; width: min(100%,280px); padding:var(--sp-2); }
+.market-main .run-card p, .market-main .run-card h2 { overflow-wrap:anywhere; }
+.market-main .card { background:var(--surface); border-color:var(--line); }
+.market-main .ds-table th, .market-main .ds-table td { max-width:none; font-size:var(--fs-sm); text-transform:none; letter-spacing:normal; }
+.market-main .ds-table th small { display:block; font-weight:400; }
+.market-main .ds-table .ds-btn { padding:var(--sp-2); background:transparent; color:var(--link); }
+@media(max-width:640px) {
+  .market-main { padding:var(--sp-5) var(--sp-3); }
+  .market-main .ds-card { padding:var(--sp-4); }
+  .market-decisions { grid-template-columns:1fr 1fr; }
+  .market-main .ds-state { white-space:normal; }
+  .market-main .ds-section-head { align-items:flex-start; }
+  .market-main .market-overview { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}

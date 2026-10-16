@@ -22,10 +22,10 @@ from src.backtesting.portfolio import (
     PortfolioTrade,
 )
 
-
 # ═══════════════════════════════════════════════════════════════════
 # Fixtures
 # ═══════════════════════════════════════════════════════════════════
+
 
 @pytest.fixture
 def synthetic_2assets() -> dict[str, pd.DataFrame]:
@@ -42,8 +42,12 @@ def synthetic_2assets() -> dict[str, pd.DataFrame]:
     price_a = 100 * np.exp(np.cumsum(drift + noise_a))
     price_b = 100 * np.exp(np.cumsum(drift * 0.8 + 0.7 * noise_a + 0.5 * noise_b))
 
-    df_a = pd.DataFrame({"fechamento": price_a}, index=dates)
-    df_b = pd.DataFrame({"fechamento": price_b}, index=dates)
+    df_a = pd.DataFrame(
+        {"abertura": price_a, "fechamento": price_a}, index=dates
+    )
+    df_b = pd.DataFrame(
+        {"abertura": price_b, "fechamento": price_b}, index=dates
+    )
     return {"ATIVO_A.SA": df_a, "ATIVO_B.SA": df_b}
 
 
@@ -59,9 +63,15 @@ def synthetic_3assets() -> dict[str, pd.DataFrame]:
     prices = 100 * np.exp(np.cumsum(drift + noise, axis=0))
 
     return {
-        "PETR4": pd.DataFrame({"fechamento": prices[:, 0]}, index=dates),
-        "ITUB4": pd.DataFrame({"fechamento": prices[:, 1]}, index=dates),
-        "WEGE3": pd.DataFrame({"fechamento": prices[:, 2]}, index=dates),
+        "PETR4": pd.DataFrame(
+            {"abertura": prices[:, 0], "fechamento": prices[:, 0]}, index=dates
+        ),
+        "ITUB4": pd.DataFrame(
+            {"abertura": prices[:, 1], "fechamento": prices[:, 1]}, index=dates
+        ),
+        "WEGE3": pd.DataFrame(
+            {"abertura": prices[:, 2], "fechamento": prices[:, 2]}, index=dates
+        ),
     }
 
 
@@ -70,14 +80,44 @@ def two_dates_dict() -> dict[str, pd.DataFrame]:
     """Apenas 2 datas — para testar edge cases sem janela mínima."""
     dates = pd.DatetimeIndex(["2024-01-02", "2024-01-03"])
     return {
-        "A": pd.DataFrame({"fechamento": [100.0, 101.0]}, index=dates),
-        "B": pd.DataFrame({"fechamento": [50.0, 51.0]}, index=dates),
+        "A": pd.DataFrame(
+            {"abertura": [100.0, 101.0], "fechamento": [100.0, 101.0]},
+            index=dates,
+        ),
+        "B": pd.DataFrame(
+            {"abertura": [50.0, 51.0], "fechamento": [50.0, 51.0]},
+            index=dates,
+        ),
     }
+
+
+class CloseLeaderPortfolio(PortfolioStrategy):
+    """Aloca no ativo líder usando somente o último fechamento recebido."""
+
+    def __init__(self):
+        self.last_observed_dates = []
+
+    def get_weights(self, data, current_date):
+        self.last_observed_dates.append(max(frame.index[-1] for frame in data.values()))
+        leader = max(data, key=lambda ticker: data[ticker]["fechamento"].iloc[-1])
+        return {ticker: float(ticker == leader) for ticker in data}
+
+    def get_name(self):
+        return "Close leader"
+
+
+class NegativeWeightPortfolio(PortfolioStrategy):
+    def get_weights(self, data, current_date):
+        return {ticker: (-0.1 if ticker == "B" else 1.1) for ticker in data}
+
+    def get_name(self):
+        return "Negative weight"
 
 
 # ═══════════════════════════════════════════════════════════════════
 # PortfolioStrategy (ABC)
 # ═══════════════════════════════════════════════════════════════════
+
 
 class TestPortfolioStrategy:
     def test_nao_instancia_abc(self):
@@ -89,6 +129,7 @@ class TestPortfolioStrategy:
 # ═══════════════════════════════════════════════════════════════════
 # EqualWeightPortfolio
 # ═══════════════════════════════════════════════════════════════════
+
 
 class TestEqualWeightPortfolio:
     def test_2_ativos_pesos_meio(self, two_dates_dict):
@@ -102,7 +143,7 @@ class TestEqualWeightPortfolio:
         strat = EqualWeightPortfolio()
         w = strat.get_weights(synthetic_3assets, pd.Timestamp("2021-01-04"))
         assert len(w) == 3
-        for ticker, weight in w.items():
+        for _ticker, weight in w.items():
             assert weight == pytest.approx(1 / 3)
 
     def test_soma_um(self, synthetic_2assets):
@@ -125,6 +166,7 @@ class TestEqualWeightPortfolio:
 # ═══════════════════════════════════════════════════════════════════
 # MinVariancePortfolio
 # ═══════════════════════════════════════════════════════════════════
+
 
 class TestMinVariancePortfolio:
     def test_2_ativos_soma_um(self, synthetic_2assets):
@@ -156,7 +198,10 @@ class TestMinVariancePortfolio:
     def test_1_ativo_peso_um(self):
         """Apenas 1 ativo → peso = 1.0."""
         dates = pd.bdate_range("2020-01-01", periods=300)
-        df = pd.DataFrame({"fechamento": np.linspace(100, 110, 300)}, index=dates)
+        prices = np.linspace(100, 110, 300)
+        df = pd.DataFrame(
+            {"abertura": prices, "fechamento": prices}, index=dates
+        )
         strat = MinVariancePortfolio(window=100)
         w = strat.get_weights({"UNICO": df}, pd.Timestamp("2021-01-04"))
         assert w == {"UNICO": 1.0}
@@ -181,6 +226,7 @@ class TestMinVariancePortfolio:
 # PortfolioBacktestResult
 # ═══════════════════════════════════════════════════════════════════
 
+
 class TestPortfolioBacktestResult:
     def test_returns_property(self):
         """returns deriva de equity_curve.pct_change()."""
@@ -200,6 +246,7 @@ class TestPortfolioBacktestResult:
 # ═══════════════════════════════════════════════════════════════════
 # PortfolioBacktestEngine — Init
 # ═══════════════════════════════════════════════════════════════════
+
 
 class TestPortfolioBacktestEngineInit:
     def test_init_valido(self, synthetic_2assets):
@@ -226,10 +273,20 @@ class TestPortfolioBacktestEngineInit:
         with pytest.raises(ValueError, match="must be > 0"):
             PortfolioBacktestEngine(strat, synthetic_2assets, -100)
 
+    def test_exige_preco_de_abertura(self):
+        data = {
+            "A": pd.DataFrame(
+                {"fechamento": [100.0]}, index=pd.DatetimeIndex(["2024-01-02"])
+            )
+        }
+        with pytest.raises(ValueError, match="abertura"):
+            PortfolioBacktestEngine(EqualWeightPortfolio(), data, 1_000.0)
+
 
 # ═══════════════════════════════════════════════════════════════════
 # PortfolioBacktestEngine — Run
 # ═══════════════════════════════════════════════════════════════════
+
 
 class TestPortfolioBacktestEngineRun:
     def test_equity_inicial(self, synthetic_2assets):
@@ -266,11 +323,12 @@ class TestPortfolioBacktestEngineRun:
     def test_primeiro_rebalanceamento(self, synthetic_2assets):
         """Após rebalanceamento inicial, posições são alocadas."""
         strat = EqualWeightPortfolio()
-        engine = PortfolioBacktestEngine(strat, synthetic_2assets, 100_000,
-                                          rebalance_freq=1)
+        engine = PortfolioBacktestEngine(
+            strat, synthetic_2assets, 100_000, rebalance_freq=1
+        )
         result = engine.run()
-        # No primeiro dia com rebalance_freq=1, metade do capital vai pra cada ativo
-        first_alloc = result.allocation_history.iloc[0]
+        # A decisão do primeiro fechamento é executada na abertura seguinte.
+        first_alloc = result.allocation_history.iloc[1]
         # Soma alocada (ex-cash) deve ser aproximadamente capital
         allocated = sum(first_alloc[t] for t in ["ATIVO_A.SA", "ATIVO_B.SA"])
         assert allocated > 0
@@ -279,8 +337,9 @@ class TestPortfolioBacktestEngineRun:
     def test_sem_rebalanceamento_so_drift(self, two_dates_dict):
         """Com rebalance_freq muito alto, só alocação inicial + drift."""
         strat = EqualWeightPortfolio()
-        engine = PortfolioBacktestEngine(strat, two_dates_dict, 100_000,
-                                          rebalance_freq=999)
+        engine = PortfolioBacktestEngine(
+            strat, two_dates_dict, 100_000, rebalance_freq=999
+        )
         result = engine.run()
         # 2 trades de BUY no primeiro dia (alocação inicial), sem rebalanceamentos depois
         assert len(result.trades) == 2
@@ -291,10 +350,12 @@ class TestPortfolioBacktestEngineRun:
         strat = EqualWeightPortfolio()
         cost_model = CostModel(brokerage_fixed=10.0, spread_bps=50)
 
-        engine_sem = PortfolioBacktestEngine(strat, synthetic_2assets, 100_000,
-                                               rebalance_freq=10)
-        engine_com = PortfolioBacktestEngine(strat, synthetic_2assets, 100_000,
-                                              rebalance_freq=10, cost_model=cost_model)
+        engine_sem = PortfolioBacktestEngine(
+            strat, synthetic_2assets, 100_000, rebalance_freq=10
+        )
+        engine_com = PortfolioBacktestEngine(
+            strat, synthetic_2assets, 100_000, rebalance_freq=10, cost_model=cost_model
+        )
 
         result_sem = engine_sem.run()
         result_com = engine_com.run()
@@ -305,8 +366,9 @@ class TestPortfolioBacktestEngineRun:
     def test_min_variance_executa(self, synthetic_2assets):
         """MinVariancePortfolio no motor não quebra."""
         strat = MinVariancePortfolio(window=100)
-        engine = PortfolioBacktestEngine(strat, synthetic_2assets, 100_000,
-                                          rebalance_freq=30)
+        engine = PortfolioBacktestEngine(
+            strat, synthetic_2assets, 100_000, rebalance_freq=30
+        )
         result = engine.run()
         assert result.final_equity > 0
         assert len(result.equity_curve) > 0
@@ -314,8 +376,9 @@ class TestPortfolioBacktestEngineRun:
     def test_resultado_contem_trades(self, synthetic_2assets):
         """Com rebalance_freq pequeno, trades são gerados."""
         strat = EqualWeightPortfolio()
-        engine = PortfolioBacktestEngine(strat, synthetic_2assets, 100_000,
-                                          rebalance_freq=20)
+        engine = PortfolioBacktestEngine(
+            strat, synthetic_2assets, 100_000, rebalance_freq=20
+        )
         result = engine.run()
         assert len(result.trades) > 0
         trade = result.trades[0]
@@ -328,8 +391,12 @@ class TestPortfolioBacktestEngineRun:
         """Apenas 1 data para cada ativo → executa sem quebrar."""
         dates = pd.DatetimeIndex(["2024-01-02"])
         data = {
-            "A": pd.DataFrame({"fechamento": [100.0]}, index=dates),
-            "B": pd.DataFrame({"fechamento": [50.0]}, index=dates),
+            "A": pd.DataFrame(
+                {"abertura": [100.0], "fechamento": [100.0]}, index=dates
+            ),
+            "B": pd.DataFrame(
+                {"abertura": [50.0], "fechamento": [50.0]}, index=dates
+            ),
         }
         strat = EqualWeightPortfolio()
         engine = PortfolioBacktestEngine(strat, data, 100_000)
@@ -343,10 +410,74 @@ class TestPortfolioBacktestEngineRun:
         result = engine.run()
         assert len(result.equity_curve) == len(result.returns) + 1
 
+    def test_pesos_em_t_executam_na_abertura_de_t_mais_1(self):
+        dates = pd.bdate_range("2024-01-02", periods=2)
+        data = {
+            "A": pd.DataFrame(
+                {"abertura": [90.0, 130.0], "fechamento": [100.0, 1.0]},
+                index=dates,
+            ),
+            "B": pd.DataFrame(
+                {"abertura": [45.0, 20.0], "fechamento": [50.0, 1_000.0]},
+                index=dates,
+            ),
+        }
+        strategy = CloseLeaderPortfolio()
+
+        result = PortfolioBacktestEngine(strategy, data, 1_000.0).run()
+
+        assert strategy.last_observed_dates[0] == dates[0]
+        assert len(result.trades) == 1
+        assert result.trades[0].ticker == "A"
+        assert result.trades[0].date == dates[1]
+        assert result.trades[0].price == 130.0
+
+    def test_ultimo_rebalanceamento_sem_proxima_sessao_nao_executa(self):
+        date = pd.DatetimeIndex(["2024-01-02"])
+        data = {
+            "A": pd.DataFrame(
+                {"abertura": [90.0], "fechamento": [100.0]}, index=date
+            )
+        }
+
+        result = PortfolioBacktestEngine(EqualWeightPortfolio(), data, 1_000.0).run()
+
+        assert result.trades == []
+        assert result.final_equity == 1_000.0
+
+    def test_rebalanceamento_reserva_custos_e_preserva_caixa(self):
+        dates = pd.bdate_range("2024-01-02", periods=2)
+        data = {
+            ticker: pd.DataFrame(
+                {"abertura": [90.0, 100.0], "fechamento": [100.0, 100.0]},
+                index=dates,
+            )
+            for ticker in ("A", "B")
+        }
+        costs = CostModel(tax_rate=0.01)
+
+        result = PortfolioBacktestEngine(
+            EqualWeightPortfolio(), data, 1_000.0, cost_model=costs
+        ).run()
+
+        assert [trade.quantity for trade in result.trades] == [5, 4]
+        assert [trade.cost for trade in result.trades] == [5.0, 4.0]
+        assert (result.allocation_history["cash"] >= 0).all()
+        assert result.allocation_history["cash"].iloc[-1] == pytest.approx(91.0)
+
+    def test_motor_nao_amplia_suporte_incompleto_a_short(self, two_dates_dict):
+        engine = PortfolioBacktestEngine(
+            NegativeWeightPortfolio(), two_dates_dict, 1_000.0
+        )
+
+        with pytest.raises(ValueError, match="negative"):
+            engine.run()
+
 
 # ═══════════════════════════════════════════════════════════════════
 # PortfolioTrade
 # ═══════════════════════════════════════════════════════════════════
+
 
 class TestPortfolioTrade:
     def test_create_trade(self):

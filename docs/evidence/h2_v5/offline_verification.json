@@ -1,0 +1,27 @@
+{
+  "kind": "H2_V5_OFFLINE_VERIFICATION",
+  "passed": 326,
+  "failed": 0,
+  "errors": 0,
+  "duration_seconds": 82.94,
+  "provider_calls": 0,
+  "execution": "pytest with mocks/synthetic data, outside sandbox to resolve temporary-directory Windows ACL limitations",
+  "test_paths": [
+    "tests/experiments/test_v5_phase_routing.py",
+    "tests/experiments/test_cal_b4_safety.py",
+    "tests/experiments/test_hardening.py",
+    "tests/experiments/test_anchors.py",
+    "tests/experiments/test_treatment.py",
+    "tests/experiments/test_stress.py",
+    "tests/experiments/test_runner.py",
+    "tests/experiments/test_llm_runner.py",
+    "tests/agents/test_agents.py",
+    "tests/agents/test_strict_snapshot_contract.py",
+    "tests/agents/test_temporal_contract.py",
+    "tests/agents/test_feature_semantics.py"
+  ],
+  "pytest_options": "-q -p no:cacheprovider --basetemp=.pytest_temp/h2-v5-offline-20261007T2300 --tb=short",
+  "frozen_checker_and_components_diff_from_ab7a328": "empty",
+  "original_v4_evidence_diff_from_ab7a328": "no existing file changed; only final_governance.json added",
+  "scientific_live_result": "NOT EXECUTED"
+}

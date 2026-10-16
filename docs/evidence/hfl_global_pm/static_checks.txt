@@ -1,0 +1,16 @@
+2026-10-11 — verificações locais V6
+
+.venv/Scripts/python.exe -m ruff check scripts/multiasset_global_pm.py scripts/run_global_pm.py dashboard/global_pm_api.py dashboard/server.py tests/test_global_pm.py
+All checks passed!
+
+.venv/Scripts/python.exe -m ruff format --check scripts/multiasset_global_pm.py scripts/run_global_pm.py dashboard/global_pm_api.py dashboard/server.py tests/test_global_pm.py
+5 files already formatted
+
+node --check dashboard/global-pm.js
+exit 0
+
+node --check dashboard/portfolio.js
+exit 0
+
+git diff --check
+exit 0; somente avisos Git de normalização LF/CRLF

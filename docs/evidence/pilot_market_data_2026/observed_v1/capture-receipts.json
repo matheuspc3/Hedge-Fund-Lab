@@ -1,0 +1,58 @@
+{
+  "normative_index.html": {
+    "url": "https://b3.com.br/pt_br/regulacao/estrutura-normativa/estrutura-normativa/operacoes/",
+    "final_url": "https://b3.com.br/pt_br/regulacao/estrutura-normativa/estrutura-normativa/operacoes/",
+    "retrieved_at": "2026-10-14T06:13:36.759296+00:00",
+    "sha256": "553cf71272c6bcaa4efe74cf5078f1ea80b4812ab78a7fc2d1cff4598e1646b9",
+    "bytes": 50737,
+    "content_type": "text/html; charset=UTF-8"
+  },
+  "manual_negotiation_20260701.pdf": {
+    "url": "https://www.b3.com.br/data/files/CF/D0/64/95/753D0A105BF9020AAC094EA8/MPO%20de%20Negociacao%20da%20B3.pdf",
+    "final_url": "https://www.b3.com.br/data/files/CF/D0/64/95/753D0A105BF9020AAC094EA8/MPO%20de%20Negociacao%20da%20B3.pdf",
+    "retrieved_at": "2026-10-14T06:15:39.977704+00:00",
+    "sha256": "24ae5af1a1a277910a87c53eb89fb580710e81146702b89ef642109f1fe3bccf",
+    "bytes": 3494862,
+    "content_type": "application/pdf"
+  },
+  "hours_005_2026.pdf": {
+    "url": "https://www.b3.com.br/data/files/E3/B2/C2/12/BC09C910F37907C9AC094EA8/OC%20005-2026%20PRE%20NOVOS%20HORARIOS%20DE%20NEGOCIACAO_PT.pdf",
+    "final_url": "https://www.b3.com.br/data/files/E3/B2/C2/12/BC09C910F37907C9AC094EA8/OC%20005-2026%20PRE%20NOVOS%20HORARIOS%20DE%20NEGOCIACAO_PT.pdf",
+    "retrieved_at": "2026-10-14T06:15:47.174029+00:00",
+    "sha256": "807c7d5044e04067ed75e02e53a25596cd3aeb4160d3f722b87dad9bed4f63d0",
+    "bytes": 359528,
+    "content_type": "application/pdf"
+  },
+  "calendar_2026.html": {
+    "url": "https://www.b3.com.br/pt_br/solucoes/plataformas/puma-trading-system/para-participantes-e-traders/calendario-de-negociacao/feriados/",
+    "final_url": "https://www.b3.com.br/pt_br/solucoes/plataformas/puma-trading-system/para-participantes-e-traders/calendario-de-negociacao/feriados/",
+    "retrieved_at": "2026-10-14T06:17:39.000056+00:00",
+    "sha256": "1dd50d5f9215b1d62461ad06fb2fa5ac220ccea4d6346fdf47a6f6f99f8f45b2",
+    "bytes": 344463,
+    "content_type": "text/html; charset=UTF-8"
+  },
+  "official_notices.html": {
+    "url": "https://www.b3.com.br/pt_br/regulacao/oficios-e-comunicados/",
+    "final_url": "https://www.b3.com.br/pt_br/regulacao/oficios-e-comunicados/",
+    "retrieved_at": "2026-10-14T06:18:04.284601+00:00",
+    "sha256": "19cc1a0c8d040e74e6497b43cb2f222f873dc1889ab07d47076d94606caaf1b4",
+    "bytes": 72765,
+    "content_type": "text/html;charset=UTF-8"
+  },
+  "weekday_rule_b3.html": {
+    "url": "https://www.b3.com.br/en_us/market-data-and-indices/data-services/up2data/helpdesk/information-delivery.htm",
+    "final_url": "https://www.b3.com.br/en_us/market-data-and-indices/data-services/up2data/helpdesk/information-delivery.htm",
+    "retrieved_at": "2026-10-14T06:22:35.750675+00:00",
+    "sha256": "244a74562ef3636b77d6665531ee2e40d77e1c16c26ef371dee0b5293c634756",
+    "bytes": 49432,
+    "content_type": "text/html; charset=UTF-8"
+  },
+  "cash_equities_week_ion.html": {
+    "url": "https://www.ion.itau/investimentos/produtos/acoes/",
+    "final_url": "https://www.ion.itau/investimentos/produtos/acoes/",
+    "retrieved_at": "2026-10-14T06:22:38.387639+00:00",
+    "sha256": "3021eed92e5508c5b81403310767200c7004ee05fe3e5794afad7f79395d6654",
+    "bytes": 112214,
+    "content_type": "text/html; charset=UTF-8"
+  }
+}

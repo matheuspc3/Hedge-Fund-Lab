@@ -1,0 +1,586 @@
+{
+ "changes": [
+  {
+   "path": "data/radar/demo-v4/analyses/BBAS3/2026-10-09/bars.csv",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "8c247b5b4bada38a6474a51d7abf24ea4aca462036f947b14a4ad7bac114ddae"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/BBAS3/2026-10-09/calls.sqlite",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "f9197a28458412a49b47f3ba233b84de1cfd7b1e4c68823733dd4bfb4d7aa602"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/BBAS3/2026-10-09/claim.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "29525cda04adc162778813c977aaeeb94d668e497d7aefd66a161d9e9e1a9b03"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/BBAS3/2026-10-09/events/1fde43e41e104b89b921e3eece125994.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "e90985a4c7be4766e092b366ba665d927d1c0079e65ad56250404ca221abfd97"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/BBAS3/2026-10-09/events/6be10b09e80240c8860e8521cfae92cd.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "de3cac2f2a27b0bc1aaf66e08edd4efa1654a5d5b5e78c85c4d145365a7bbe0a"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/BBAS3/2026-10-09/events/8a8932071afd4242b824c6cf6e7acf7f.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "d183ccd845d5ee975dcdb1c25ceab2890be19433bb244c8d003cc6dce6dfdcd4"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/BBAS3/2026-10-09/input.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "9edd055dc8694c338fa4810e973086656f2578015c3b653f1142d4c3247baa1f"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/BBAS3/2026-10-09/provider_journal.jsonl",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "7b279846e534f58a13ceefa4a61d5122957af462a4d97810433c47347377b998"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/BBAS3/2026-10-09/result.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "6a84d789083f7bbd55c11a38c8ddf5592f17e9df07db5bf9b250df3042987e53"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/BBAS3/2026-10-09/result.sha256",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "c694da1f414701dd95732ad2b8a355d6be8758ad4edaae49250ecbed958f8936"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/ITUB4/2026-10-09/bars.csv",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "1ea24ab71e82d5ad70b21fcd6cdf969e782659daad90cd66f72b5c1534dcf211"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/ITUB4/2026-10-09/calls.sqlite",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "0c3e0e2a8aa03fe267a2b682a0207284b31c07980e03880d90d4963662198cf7"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/ITUB4/2026-10-09/claim.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "468875286b4aeeb449f531c262a1a96cf146ed9269ecfbef52d1935bab22e3f6"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/ITUB4/2026-10-09/events/5ee17c91ce604e8987ce7f62bc87e9ec.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "fe328a63fceead00775defe0e7f7c72d0f1a99ac1f61a13870a74288b4c4a363"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/ITUB4/2026-10-09/events/6bbb832655a64d808a59b6e5d9732bd1.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "235da941cd5cd9d4e98cc6a25f39fc5b67a6e0ebaaeb69697256168eb0d4d82c"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/ITUB4/2026-10-09/events/cf97b74222f04f9e89a4538ca39a19bd.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "5fe88c441f5c9e3c708781502dfac1b8fcf273bf8b933ba0118d878f5fa486e8"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/ITUB4/2026-10-09/input.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "e529c71ccab0c96aebfba375f31c98d24a8667dd4d6a8ddd2d6350de16d4bf18"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/ITUB4/2026-10-09/provider_journal.jsonl",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "078785b542f2f073f05d951624fddfa5915b3171fc6e52d8ed425916f780ce20"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/ITUB4/2026-10-09/result.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "bdba44716bf9ab3034074c9be9b8edb6d9108d0f61ab72a51860e80d696f1766"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/ITUB4/2026-10-09/result.sha256",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "710c96e8ea5878b262be9477a2e910dde98b4920cb0cb02258eb503cdf4b90cd"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/PETR4/2026-10-09/bars.csv",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "1e3d2028bd0186982fdbb5fa4d9c89cc6111e7258df3b9172cae5289df13d9bb"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/PETR4/2026-10-09/calls.sqlite",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "2a3c2544abeef818260c590b13e377d360474426019c35167a46ca10c9676795"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/PETR4/2026-10-09/claim.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "3c8babadca812c1d18560f52dc99eaf8cd1eb7b2d55267caf877be3d54fd3af8"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/PETR4/2026-10-09/events/771b2783d5264a2286b0471ba358197a.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "d75d253af7a83224907b029755d5ad528a716e58a01adcc076b75bfabcd14422"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/PETR4/2026-10-09/events/a19436538e4d4dc1b8013022c1313749.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "da1ebc9cfe90eb522da20ca0ccf1a2c72d19d46cc6eb7dc5b336c552ffe7d12d"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/PETR4/2026-10-09/events/df1254177ca747708a27276834a2649c.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "97a8e12e6951183073d3d94b57833bdfa4bc45f89e0c839701123e1e79978e1f"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/PETR4/2026-10-09/input.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "2768872e7215e1d52e26a128055707f1afc15938e7d0ce8e1ded80712a8a7330"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/PETR4/2026-10-09/provider_journal.jsonl",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "57f91ff9827331d999ea78e3abea048733c847a78b2f4d23f906bb1c69a9f1a1"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/PETR4/2026-10-09/result.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "af00f22904c557e25319f516753ed673c57655c5a1f725262d75cb171b2b8bdb"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/PETR4/2026-10-09/result.sha256",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "86fb45cb16054b81b276bcc921459c15fe3a9b9bde1330230213e5cf21fc877a"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/VALE3/2026-10-08/bars.csv",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "5f2b4043e42f59d1207bd8e680b970e4d98829c283f5793491ff50be5d3a4158"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/VALE3/2026-10-08/calls.sqlite",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "dca267ee7b2265771a922e15cab632b2526354a3a7cc653f56b937f06f231c34"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/VALE3/2026-10-08/claim.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "799b5a1a6500b02644e1e05b8ba8386baecd9981783c0e510942cd75ec9a9639"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/VALE3/2026-10-08/events/51ea59e2708544c682075278a0cbef81.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "05db1184ce51e7ff76e5b40183695079a34d7f034232de0116c8b57d96c72c9e"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/VALE3/2026-10-08/events/8f50188148ac4876bbebdb233e8c179b.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "8d5b82abc13b64ff76c05a35556661b50bf7941828ce72211813c8211a7ebeb0"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/VALE3/2026-10-08/events/9085b56510414268afea2f80e19335f4.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "dcbad71dfc9391b67373d94e409f9747d1be8bf13ceb9ebcfa794e4d86cec30d"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/VALE3/2026-10-08/input.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "5ec7cfc6d4f03e4dce224f21edca09cb528a5b22e58a8a08ae26abacfd5f6957"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/VALE3/2026-10-08/provider_journal.jsonl",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "6bb1030945caff52d34e467f13e43743fd09222fc82843404c7f10ade032ce1c"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/VALE3/2026-10-08/result.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "409b5c53d82c4128bf6ee20ba6d00137e380bf4a935147c0da7632817fd0dc3a"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/VALE3/2026-10-08/result.sha256",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "5a613811edf45748cb83e85262ef50414f5aee7d5054110168f62b349c9d3ae0"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/VALE3/2026-10-09/bars.csv",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "f717cc124e037bca6372d999a86d881385400e8b510beace6739bf7c2b1fa764"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/VALE3/2026-10-09/calls.sqlite",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "9c907862301151ff0f8987b0a9502ec3f3ce84ff92fae2f783a1b8de428f127f"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/VALE3/2026-10-09/claim.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "50ba6579266f365013f6fb162b2b0a677213ac8f5026226a7e93a7461f55a5b2"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/VALE3/2026-10-09/events/2a98bfdbfe5e453fbfdb4110ee9a9960.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "f6811969c97c6c54d01d1458264bb54f036ce2f4079157eb60457fba151c21e7"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/VALE3/2026-10-09/events/2d6533dde49542ff84b5edf1f957bda9.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "c9ee65714511ae2413636e532716e7962b6707f104ba6729443518cd1988938f"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/VALE3/2026-10-09/events/a6e37edd234d499b8c6b3eb2c7072cd0.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "554576189168a4403bc844560cec3b6545b2b047283b15c4569cecbee50d9fcd"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/VALE3/2026-10-09/input.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "b843404b79e7705c9d053db40fc95a84563873b14a64740b3f66d96674366e74"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/VALE3/2026-10-09/provider_journal.jsonl",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "9730bd6809cebe57c617ae92ae011affb05919ea0070f17deb0bdeba4cadc6a1"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/VALE3/2026-10-09/result.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "6ed425d687bf5037ec05f8e91ca161887609fa540c06f9efc84afb32905d836d"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/VALE3/2026-10-09/result.sha256",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "060ede22e265a0ea9dee168f4fe689aa820a3e9daf8b23d3dadc25f48c3ccf31"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/WEGE3/2026-10-09/bars.csv",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "aaa8f7c4494b9f9272c718c9b8ccf1fe7a580ea0dec5c7243202dcbaa0fc3b1b"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/WEGE3/2026-10-09/calls.sqlite",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "e7c8b423f1653297baace1e7f2900174a62dd1a74e31b8380378f0ec349c3d4c"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/WEGE3/2026-10-09/claim.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "a5dab4f11ed5dc053a196a3bc081d85f0d84e551c3c31cf73d9074b6849599c7"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/WEGE3/2026-10-09/events/2bf93d47b59948ec895ee77434427e46.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "5cb2015cd6ff733aa80889904aceec1e7fdb3d6a11a7af210683b0470475ee4b"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/WEGE3/2026-10-09/events/4c799701c62a4db088718f353aaff672.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "335d800b2513cd194814aff966d32a346233d3edf7a7721491c7befe9042abe1"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/WEGE3/2026-10-09/events/d2435a8785db4fcc8fbef94ac22d4d0e.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "f10a7aee90478b3cc4259dd41133f896148819dc22262a8eca8829c971afb1b8"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/WEGE3/2026-10-09/input.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "348513fd64e76e7986174c9706c6b5f38794efc366820e5203f036464ee43dce"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/WEGE3/2026-10-09/provider_journal.jsonl",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "bc0a32887e4cbb1fdf4cd9afe4a33f311b6c8c052eab9ffcad456ac1f163f515"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/WEGE3/2026-10-09/result.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "cc3d866bca4324acde596f4630de98bcd63ca56acb22ea3ee93b7f8beedf85c5"
+  },
+  {
+   "path": "data/radar/demo-v4/analyses/WEGE3/2026-10-09/result.sha256",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "cf8a050ffcf66e120fb3cb8245ceea6efabf93e73f203f7dca97df8047203f75"
+  },
+  {
+   "path": "data/radar/demo-v4/job.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "0bfaae9eff6913e437d9a2c803e9b6ba2a73b06ecc8348d175500af88e25572a"
+  },
+  {
+   "path": "data/radar/demo-v4/last_prepare.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "1daaec28674e96b00dbcfacdeb23e0c1dd87a793424d461cc3640af192ef87ae"
+  },
+  {
+   "path": "data/radar/demo-v4/reservations/40deeafb374efe7e7c4554d82b1260aac4caa0eafc0e302002b196b7f2baf6f8.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "17aaa3115267902614f3398760f4010987c34d63465f5ffaa48159b5d256e4c5"
+  },
+  {
+   "path": "data/radar/demo-v4/reservations/5766d3f64393db5296a5487c2ea0efec6bc426f3b06031cbc292fe90115686e5.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "744fe58aac50f4c671892730645c5a79f5b994f9edeb9d89676a530f77b9fc93"
+  },
+  {
+   "path": "data/radar/demo-v4/universe.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "b5708fa3eb10f67ff82fd69347b7ea1bc860bcc030aa81de562df26ab9ce0253"
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/BBAS3/2026-10-09/bars.csv",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "bbe4441fb88daf0f6c84976f69ddb2ac7b64854f5ee60c92f341e0ca19066395"
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/BBAS3/2026-10-09/events/bb4f5a951bab47ac80a5221898025408.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "b4265b175941e6c3217649e31ad85ec6864e70c24939915c7ee8ecbbe12fd7e2"
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/BBAS3/2026-10-09/input.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "542ef758f41341611a883b4842eb7e714cfc60cde800d6a820cdab817c219363"
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/ITUB4/2026-10-09/bars.csv",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "b54861315e0bbb3db8e5edf48600e91a1780d680e25fc03e2581043047a6597a"
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/ITUB4/2026-10-09/events/b422fe11a1b14611970dd3a8fca59f89.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "96fbe9f230757adc8f21547917e9e7ce1626bdbe67d0eb08a7eabd078c7fa5a5"
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/ITUB4/2026-10-09/input.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "a1ddd28411fcc69f665cfef9462ac63c71c74ae50dae0f82c17eddfb6435faf7"
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/PETR4/2026-10-09/bars.csv",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "6a5c6ce8db87c105569ee12a9e296ba760538dc3f93c6a981cf9e0930a44098a"
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/PETR4/2026-10-09/events/9c4c9f2d7cea4b89bcd3c2e0b93ef3a2.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "2c362ff7991d1b1bf3470165584bbedebe5b0ffbd8eee5f0c85227e622cc3411"
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/PETR4/2026-10-09/input.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "e1b5f1f44bce8392d93082b11c5e5cf6bc0f2443a35011298dcec6efacb1b19d"
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/VALE3/2026-10-09/bars.csv",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "b1cb92fc355a47f9c5fdaa089bc7e7be65cf9bf056980e00f1887eb1ce880104"
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/VALE3/2026-10-09/events/61e8a7b10bf449b0b726ed12b56ecd63.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "ccbe6bf7404d8245f7b942be1397397857082b5c640e9f81da1e58a286fdba86"
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/VALE3/2026-10-09/input.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "f89465ef779f2a10d87e0151bbd8fefbae762fab7663db2c9f6f4a5ccff917dc"
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/WEGE3/2026-10-09/bars.csv",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "3e8c8ac94ccac077a3b7a59f2567f972bdea63c96290864d8fb58ed744ddae42"
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/WEGE3/2026-10-09/events/bc8303d751054d879566223619b306da.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "80fa2b871f8cfe07e9a4a7737581bfe820a957a0d3795e0d3dd38501abf7d9c2"
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/WEGE3/2026-10-09/input.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "0de4b28e88e5cdb95f8b7ff58489b0bc8c4a95ceea1f0a1c42214a483bc7a1af"
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/cotahist/COTAHIST_A2026.ZIP",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "d55b48e43c9d08561b595b7eb46f954fd1fa6051e0126220a2c36e8ac167fc11"
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/last_prepare.json",
+   "category": "UNCOVERED_BEFORE",
+   "reason": "Área fora do snapshot anterior; conferir pelos baselines.",
+   "before": null,
+   "after": "31d3e2dd094b1e3881b3f4e65c5a594522455d064c9136219fd33013266e351f"
+  },
+  {
+   "path": "data/radar/registry.json",
+   "category": "OPERATIONAL",
+   "reason": "Índice operacional das execuções Radar; não é autoridade sobre os registros selados.",
+   "before": null,
+   "after": "abb933c5900648b6762874625cc37e1c05c1798baaecbdd127f501df46f020ce"
+  }
+ ],
+ "violations": []
+}

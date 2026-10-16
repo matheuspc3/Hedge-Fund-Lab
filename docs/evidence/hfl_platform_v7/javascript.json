@@ -1,0 +1,50 @@
+{
+  "checks": [
+    {
+      "file": "dashboard/app.js",
+      "ok": true,
+      "error": null
+    },
+    {
+      "file": "dashboard/global-pm.js",
+      "ok": true,
+      "error": null
+    },
+    {
+      "file": "dashboard/global-workflow.js",
+      "ok": true,
+      "error": null
+    },
+    {
+      "file": "dashboard/h2.js",
+      "ok": true,
+      "error": null
+    },
+    {
+      "file": "dashboard/paper.js",
+      "ok": true,
+      "error": null
+    },
+    {
+      "file": "dashboard/platform.js",
+      "ok": true,
+      "error": null
+    },
+    {
+      "file": "dashboard/portfolio.js",
+      "ok": true,
+      "error": null
+    },
+    {
+      "file": "dashboard/radar.js",
+      "ok": true,
+      "error": null
+    },
+    {
+      "file": "dashboard/shell.js",
+      "ok": true,
+      "error": null
+    }
+  ],
+  "ok": true
+}

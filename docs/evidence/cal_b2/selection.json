@@ -1,0 +1,176 @@
+{
+  "kind": "CAL_B2_DETERMINISTIC_SELECTION",
+  "computed_utc": "2026-10-06T02:19:09Z",
+  "git_commit": "8dc7ffaad6f01da8c0a0216c5210131213b4f829",
+  "rule": "SHA256(seed + '|' + stratum_id + '|' + ISO_DATE), lowest digest per CAL-B stratum",
+  "seed_formula": "SHA256('HEDGE-FUND-LAB|CAL-B2|' + CAL_B1_COMMITMENT_HASH)",
+  "cal_b1_commitment_sha256": "51d73b2285d4e0e103bfb3fc4f5cd26892a6b96fe7dbe8d43cd1e429937f38c0",
+  "seed": "9964e94881a876d87f8e5ebc32a63b5d280102b064ddb6fbf1e2c6d964d336bf",
+  "inputs": "session calendar only (no price, return, volatility, feature, LLM response or regime)",
+  "domain_sha256": "9dd54e3fdf8e377429e0d87b431600df569ee6cab00f0f30297ac8a289828827",
+  "exclusions": {
+    "cal_b1_anchors": [
+      "2018-07-19",
+      "2019-03-07",
+      "2019-10-15",
+      "2020-06-01",
+      "2021-01-13",
+      "2021-08-20",
+      "2022-03-31",
+      "2022-11-04",
+      "2023-06-15",
+      "2024-01-22"
+    ],
+    "h_real": [
+      "2019-04-09",
+      "2020-06-30",
+      "2021-09-17",
+      "2022-12-07"
+    ],
+    "h_real_pre_amendment_1": [
+      "2019-04-08",
+      "2020-06-29",
+      "2021-09-17",
+      "2022-12-07"
+    ],
+    "cal_a_anchors": 20,
+    "evidence_decision_sessions": 359
+  },
+  "strata": [
+    {
+      "stratum_id": 3,
+      "candidates": 50,
+      "excluded_in_stratum": 1,
+      "winner": "2018-08-16",
+      "winner_digest": "0366541e4d7a5d149fa9de772e73b11498b127592c59b30242fe1c2ccec40a66",
+      "ranking_sha256": "df80551bcd3d0f673ac1fb48b8150726d1b96c9931fdf082d29eddd93aba7708",
+      "old_cal_b1_anchor": "2018-07-19",
+      "excluded_sessions": [
+        "2018-07-19"
+      ]
+    },
+    {
+      "stratum_id": 6,
+      "candidates": 49,
+      "excluded_in_stratum": 2,
+      "winner": "2019-04-05",
+      "winner_digest": "0bf9f4ec89b621f0f112f0ef6b258494b4f41406642d9ba1043724dedb70fd2a",
+      "ranking_sha256": "8c27d5f4d4aa0222a3ee840b1514a2b69b107ce16b71aa10e06e8159486f56a7",
+      "old_cal_b1_anchor": "2019-03-07",
+      "excluded_sessions": [
+        "2019-03-07",
+        "2019-04-08"
+      ]
+    },
+    {
+      "stratum_id": 9,
+      "candidates": 50,
+      "excluded_in_stratum": 1,
+      "winner": "2019-10-07",
+      "winner_digest": "05d711d10fcf6cb29b83f7858d83c70c74a95162fa8fb160cf92959f17a03acc",
+      "ranking_sha256": "491ff6e7f95fac5df46bcbef712248ab2c477c0aaf0e35a320a7f6a1c4f68903",
+      "old_cal_b1_anchor": "2019-10-15",
+      "excluded_sessions": [
+        "2019-10-15"
+      ]
+    },
+    {
+      "stratum_id": 12,
+      "candidates": 49,
+      "excluded_in_stratum": 2,
+      "winner": "2020-07-01",
+      "winner_digest": "08dda8f7e3b12b3e9b2a1ba1a56345612c08507fa980415bfb381400bee3db8f",
+      "ranking_sha256": "4ddcd6d7f24cf16bab18ce8447b402bfe40314b78903092541109e1737e65443",
+      "old_cal_b1_anchor": "2020-06-01",
+      "excluded_sessions": [
+        "2020-06-01",
+        "2020-06-29"
+      ]
+    },
+    {
+      "stratum_id": 15,
+      "candidates": 50,
+      "excluded_in_stratum": 1,
+      "winner": "2021-01-21",
+      "winner_digest": "01c3fce7bd31e5ba2d73217ea1feea629ddaa25a118dc85074a79451ae8b308e",
+      "ranking_sha256": "0f220538e4f07b8b5a0bb40fefc51aae7ddf9a14d0bfb775fc13474f6cfe51d5",
+      "old_cal_b1_anchor": "2021-01-13",
+      "excluded_sessions": [
+        "2021-01-13"
+      ]
+    },
+    {
+      "stratum_id": 18,
+      "candidates": 49,
+      "excluded_in_stratum": 1,
+      "winner": "2021-09-22",
+      "winner_digest": "014743f919bfce921860ce6524f1a3f2bf57cbbdb00b9cfe230ba04ccb720639",
+      "ranking_sha256": "4c3fef61832284bd0d0a19cf6fce6ed81148cdc24b9fbdef5fd88a13694ceb98",
+      "old_cal_b1_anchor": "2021-08-20",
+      "excluded_sessions": [
+        "2021-08-20"
+      ]
+    },
+    {
+      "stratum_id": 21,
+      "candidates": 49,
+      "excluded_in_stratum": 1,
+      "winner": "2022-04-07",
+      "winner_digest": "0bb6e1630f89b942b7f6f7a08a544cd46b545d696cf36f697584cb97b2203727",
+      "ranking_sha256": "71fad77ee10769f45b941d1103e9c76eaf458964fea682cbefb5dc3ef105304a",
+      "old_cal_b1_anchor": "2022-03-31",
+      "excluded_sessions": [
+        "2022-03-31"
+      ]
+    },
+    {
+      "stratum_id": 24,
+      "candidates": 49,
+      "excluded_in_stratum": 1,
+      "winner": "2022-11-01",
+      "winner_digest": "05de6e9801361171cc221fb62400991e685281d16cb01864f4601065de389eef",
+      "ranking_sha256": "c144e4b5d4efca8d42ea62517903ba829f62f15ab27086467dbd24e13276a2ef",
+      "old_cal_b1_anchor": "2022-11-04",
+      "excluded_sessions": [
+        "2022-11-04"
+      ]
+    },
+    {
+      "stratum_id": 27,
+      "candidates": 49,
+      "excluded_in_stratum": 1,
+      "winner": "2023-06-26",
+      "winner_digest": "057619b85f70d877a4be5c4ab6a350e251213c0a0ec7fcbc49a3e286d81e6357",
+      "ranking_sha256": "b6e6e39fe11fd03ffcce48927c5bacb5e5cecd71b023eb14698d06c09b3cc4ee",
+      "old_cal_b1_anchor": "2023-06-15",
+      "excluded_sessions": [
+        "2023-06-15"
+      ]
+    },
+    {
+      "stratum_id": 30,
+      "candidates": 49,
+      "excluded_in_stratum": 1,
+      "winner": "2023-12-18",
+      "winner_digest": "34821571f0640bdd9d238fa8adaed976ac63556fff4c6050e5dace367aa70f27",
+      "ranking_sha256": "81e83a20b1e81fb3e1f6efd61464e58b7141cc5c0179ff9eb1da6300736b9ea9",
+      "old_cal_b1_anchor": "2024-01-22",
+      "excluded_sessions": [
+        "2024-01-22"
+      ]
+    }
+  ],
+  "cal_b2_anchors": [
+    "2018-08-16",
+    "2019-04-05",
+    "2019-10-07",
+    "2020-07-01",
+    "2021-01-21",
+    "2021-09-22",
+    "2022-04-07",
+    "2022-11-01",
+    "2023-06-26",
+    "2023-12-18"
+  ],
+  "cal_b2_commitment_sha256": "518dd9ddc132244726fc40b2939684876c6f69bf6bad67ea1f91a78fc4e9b167"
+}

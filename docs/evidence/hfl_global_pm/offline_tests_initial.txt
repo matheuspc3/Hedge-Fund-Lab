@@ -1,0 +1,57 @@
+test_01_complete_read_only_opinions (__main__.GlobalPMChecks.test_01_complete_read_only_opinions) ... ok
+test_02_tampered_opinion (__main__.GlobalPMChecks.test_02_tampered_opinion) ... ok
+test_03_incompatible_sessions (__main__.GlobalPMChecks.test_03_incompatible_sessions) ... ok
+test_04_synthetic_official_mix (__main__.GlobalPMChecks.test_04_synthetic_official_mix) ... ok
+test_05_missing_opinion_and_no_fallback (__main__.GlobalPMChecks.test_05_missing_opinion_and_no_fallback) ... ok
+test_06_all_cash_snapshot (__main__.GlobalPMChecks.test_06_all_cash_snapshot) ... ok
+test_07_partially_invested_increase (__main__.GlobalPMChecks.test_07_partially_invested_increase) ... ok
+test_08_multiple_buys (__main__.GlobalPMChecks.test_08_multiple_buys) ... ok
+test_09_partial_sale (__main__.GlobalPMChecks.test_09_partial_sale) ... ok
+test_10_total_exit (__main__.GlobalPMChecks.test_10_total_exit) ... ok
+test_11_sale_without_purchase (__main__.GlobalPMChecks.test_11_sale_without_purchase) ... ok
+test_12_preserve_cash_select_fewer_assets (__main__.GlobalPMChecks.test_12_preserve_cash_select_fewer_assets) ... ok
+test_13_rebalance_reduces_concentration (__main__.GlobalPMChecks.test_13_rebalance_reduces_concentration) ... ok
+test_14_no_operations_preserves_finances (__main__.GlobalPMChecks.test_14_no_operations_preserves_finances) ... ok
+test_15_invalid_weights (__main__.GlobalPMChecks.test_15_invalid_weights) ... ok
+test_16_insufficient_cash (__main__.GlobalPMChecks.test_16_insufficient_cash) ... ok
+test_17_nonexistent_units (__main__.GlobalPMChecks.test_17_nonexistent_units) ... ok
+test_18_excessive_concentration (__main__.GlobalPMChecks.test_18_excessive_concentration) ... ok
+test_19_global_volatility_veto (__main__.GlobalPMChecks.test_19_global_volatility_veto) ... ok
+test_20_insufficient_or_future_covariance_history (__main__.GlobalPMChecks.test_20_insufficient_or_future_covariance_history) ... ok
+test_21_settlement_dependency_is_conditional (__main__.GlobalPMChecks.test_21_settlement_dependency_is_conditional) ... ok
+test_22_integer_weight_sizing_and_costs (__main__.GlobalPMChecks.test_22_integer_weight_sizing_and_costs) ... ok
+test_23_state_change_after_proposal (__main__.GlobalPMChecks.test_23_state_change_after_proposal) ... ok
+test_24_expired_proposal_and_preflight (__main__.GlobalPMChecks.test_24_expired_proposal_and_preflight) ... ok
+test_25_llm_schema_failure_durable_no_retry (__main__.GlobalPMChecks.test_25_llm_schema_failure_durable_no_retry) ... ok
+test_26_impossible_response_rejected_without_retry (__main__.GlobalPMChecks.test_26_impossible_response_rejected_without_retry) ... C:\Users\LUCAS\Meu Canto\TCC\Hedge-Fund-Lab\scripts\multiasset_portfolio.py:79: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x000002603F8F3970>
+  def pack(value):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_27_duplicate_and_concurrent_inference_blocked (__main__.GlobalPMChecks.test_27_duplicate_and_concurrent_inference_blocked) ... ok
+test_28_crashes_before_journal_and_after_journal (__main__.GlobalPMChecks.test_28_crashes_before_journal_and_after_journal) ... ok
+test_29_replay_after_envelope_or_before_result_no_call (__main__.GlobalPMChecks.test_29_replay_after_envelope_or_before_result_no_call) ... ok
+test_30_read_only_http_and_private_allowlist (__main__.GlobalPMChecks.test_30_read_only_http_and_private_allowlist) ... 127.0.0.1 - - [11/Oct/2026 19:00:38] "GET /api/global-pm/status HTTP/1.1" 200 -
+127.0.0.1 - - [11/Oct/2026 19:00:39] "GET /api/global-pm/case?case=A HTTP/1.1" 200 -
+127.0.0.1 - - [11/Oct/2026 19:00:40] "GET /api/global-pm/case?case=B HTTP/1.1" 200 -
+127.0.0.1 - - [11/Oct/2026 19:00:41] "GET /api/global-pm/case?case=C HTTP/1.1" 200 -
+127.0.0.1 - - [11/Oct/2026 19:00:42] "GET /api/global-pm/case?case=D HTTP/1.1" 200 -
+127.0.0.1 - - [11/Oct/2026 19:00:42] "GET /api/global-pm/case?case=E HTTP/1.1" 200 -
+127.0.0.1 - - [11/Oct/2026 19:00:43] "GET /api/global-pm/case?case=F HTTP/1.1" 200 -
+127.0.0.1 - - [11/Oct/2026 19:00:44] "GET /api/global-pm/simulate?case=D HTTP/1.1" 200 -
+127.0.0.1 - - [11/Oct/2026 19:00:44] "GET /data/global_pm/private/calls.sqlite HTTP/1.1" 404 -
+127.0.0.1 - - [11/Oct/2026 19:00:44] "GET /api/global-pm/case?case=A&case=B HTTP/1.1" 400 -
+127.0.0.1 - - [11/Oct/2026 19:00:44] "GET /api/global-pm/case?case=../../src HTTP/1.1" 400 -
+127.0.0.1 - - [11/Oct/2026 19:00:44] "GET /api/global-pm/status HTTP/1.1" 403 -
+127.0.0.1 - - [11/Oct/2026 19:00:44] "POST /api/global-pm/run HTTP/1.1" 404 -
+127.0.0.1 - - [11/Oct/2026 19:00:44] "POST /api/global-pm/execute HTTP/1.1" 404 -
+ok
+test_31_original_ledgers_preserved (__main__.GlobalPMChecks.test_31_original_ledgers_preserved) ... ok
+test_32_scientific_identity_and_v5_seals (__main__.GlobalPMChecks.test_32_scientific_identity_and_v5_seals) ... ok
+test_33_unsupported_evidence_and_action_mismatch (__main__.GlobalPMChecks.test_33_unsupported_evidence_and_action_mismatch) ... ok
+test_34_budget_confirmation_and_policy_required (__main__.GlobalPMChecks.test_34_budget_confirmation_and_policy_required) ... ok
+test_35_prompt_minimization_and_unique_global_request (__main__.GlobalPMChecks.test_35_prompt_minimization_and_unique_global_request) ... ok
+
+----------------------------------------------------------------------
+Ran 35 tests in 162.736s
+
+OK

@@ -1,0 +1,34 @@
+{
+  "tested_commit": "09f06b2",
+  "passed": 1765,
+  "failed": 14,
+  "subtests_passed": 61,
+  "duration_seconds": 1009.69,
+  "final_failures": [
+    "tests/experiments/test_cal_b4_safety.py::test_v5_development_s3_failure_blocks_further_phases",
+    "tests/experiments/test_spec.py::test_registry_cobre_os_cinco_classicos_e_o_participante_llm",
+    "tests/experiments/test_v6_phase_routing.py::test_structural_failure_prevents_phase_selection_and_progression",
+    "tests/pipeline/test_flows.py::TestPipelineFlow::test_custom_tickers",
+    "tests/pipeline/test_flows.py::TestPipelineFlow::test_default_tickers_from_settings",
+    "tests/pipeline/test_flows.py::TestPipelineFlow::test_empty_tickers",
+    "tests/pipeline/test_flows.py::TestPipelineFlow::test_extract_retry_on_failure",
+    "tests/pipeline/test_flows.py::TestPipelineFlow::test_full_flow_success",
+    "tests/pipeline/test_flows.py::TestPipelineFlow::test_partial_flow_returns_explicit_failure_summary",
+    "tests/pipeline/test_flows.py::TestPipelineFlow::test_single_ticker",
+    "tests/test_global_pm.py::GlobalPMChecks::test_31_original_ledgers_preserved",
+    "tests/test_multiasset_portfolio.py::IntegrationChecks::test_original_scientific_radar_and_ledger_preservation",
+    "tests/test_radar_runs.py::test_real_itub4_bonus_normalized_and_bbas3_restricted",
+    "tests/test_radar_runs.py::test_real_recovery_has_five_official_inputs_equivalent_to_original"
+  ],
+  "new_vs_v763": [],
+  "baseline_not_repeated": [],
+  "resolved_after_initial": [
+    "tests/test_global_pm_v2.py::PreservationChecks::test_24_no_preservation_violation",
+    "tests/test_global_pm_v2.py::SyntheticChecks::test_20_ui_distinguishes_rejected_from_validated"
+  ],
+  "raw_sha256": "4cb711fbcbdfd85808f4600b1a61dfe1cec7aead26ba9d5b1606cb26fda05024",
+  "controlled_code_test": {
+    "inside_clean_repository": "FAILED: mutation did not change False",
+    "outside_repository": "PASSED: None changed to False"
+  }
+}

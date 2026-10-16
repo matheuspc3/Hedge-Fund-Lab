@@ -1,12 +1,10 @@
 """Testes para o motor de backtesting."""
 
-import numpy as np
 import pandas as pd
 import pytest
 
 from src.backtesting.costs import CostModel
 from src.backtesting.engine import BacktestEngine, Trade
-from tests.conftest import synthetic_clean_data  # noqa: F401
 
 
 class MockStrategy:
@@ -55,7 +53,10 @@ class TestBacktestEngineInit:
         with pytest.raises(ValueError, match="initial_capital must be > 0"):
             BacktestEngine(
                 strategy=strategy,
-                data=pd.DataFrame({"fechamento": [100.0]}, index=pd.DatetimeIndex(["2023-01-02"])),
+                data=pd.DataFrame(
+                    {"abertura": [100.0], "fechamento": [100.0]},
+                    index=pd.DatetimeIndex(["2023-01-02"]),
+                ),
                 initial_capital=0.0,
             )
 
@@ -65,8 +66,24 @@ class TestBacktestEngineInit:
         with pytest.raises(ValueError, match="initial_capital must be > 0"):
             BacktestEngine(
                 strategy=strategy,
-                data=pd.DataFrame({"fechamento": [100.0]}, index=pd.DatetimeIndex(["2023-01-02"])),
+                data=pd.DataFrame(
+                    {"abertura": [100.0], "fechamento": [100.0]},
+                    index=pd.DatetimeIndex(["2023-01-02"]),
+                ),
                 initial_capital=-1000.0,
+            )
+
+    def test_exige_preco_de_abertura(self):
+        data = pd.DataFrame(
+            {"fechamento": [100.0]}, index=pd.DatetimeIndex(["2023-01-02"])
+        )
+        with pytest.raises(ValueError, match="abertura"):
+            BacktestEngine(MockStrategy(), data, 1_000.0)
+
+    def test_short_incompleto_e_rejeitado_explicitamente(self, synthetic_clean_data):
+        with pytest.raises(ValueError, match="short policy"):
+            BacktestEngine(
+                MockStrategy(), synthetic_clean_data, 1_000.0, allow_short=True
             )
 
 
@@ -83,7 +100,9 @@ class TestBacktestEngineRun:
     def test_sem_sinais_equity_constante(self):
         """Nenhum sinal → equity constante."""
         dates = pd.bdate_range("2023-01-01", periods=10)
-        df = pd.DataFrame({"fechamento": [100.0] * 10}, index=dates)
+        df = pd.DataFrame(
+            {"abertura": [100.0] * 10, "fechamento": [100.0] * 10}, index=dates
+        )
         strategy = MockStrategy()
         engine = BacktestEngine(strategy, df, 100_000.0, cost_model=CostModel())
         result = engine.run()
@@ -94,52 +113,50 @@ class TestBacktestEngineRun:
         """Compra no T0 e preço sobe → equity aumenta."""
         dates = pd.bdate_range("2023-01-01", periods=5)
         prices = [100.0, 101.0, 102.0, 103.0, 104.0]
-        df = pd.DataFrame({"fechamento": prices}, index=dates)
+        df = pd.DataFrame({"abertura": prices, "fechamento": prices}, index=dates)
         signals = pd.Series([1, 0, 0, 0, 0], index=dates, dtype=int)
         strategy = MockStrategy(signals, "BuyTest")
         engine = BacktestEngine(strategy, df, 100_000.0, cost_model=CostModel())
         result = engine.run()
-        # Comprou 1000 ações a R$ 100 = R$ 100k
-        # Preço final = R$ 104 → equity = 1000 * 104 = R$ 104.000
-        assert abs(result.equity_curve.iloc[-1] - 104_000.0) < 1.0
+        # Sinal em T0, compra 990 ações na abertura de T1 a R$ 101.
+        assert result.equity_curve.iloc[-1] == pytest.approx(102_970.0)
 
     def test_buy_and_hold_desce(self):
         """Compra no T0 e preço cai → equity diminui."""
         dates = pd.bdate_range("2023-01-01", periods=5)
         prices = [100.0, 99.0, 98.0, 97.0, 96.0]
-        df = pd.DataFrame({"fechamento": prices}, index=dates)
+        df = pd.DataFrame({"abertura": prices, "fechamento": prices}, index=dates)
         signals = pd.Series([1, 0, 0, 0, 0], index=dates, dtype=int)
         strategy = MockStrategy(signals)
         engine = BacktestEngine(strategy, df, 100_000.0, cost_model=CostModel())
         result = engine.run()
-        # Comprou 1000 ações a R$ 100 = R$ 100k
-        # Preço final = R$ 96 → equity = 1000 * 96 = R$ 96.000
-        assert abs(result.equity_curve.iloc[-1] - 96_000.0) < 1.0
+        # Sinal em T0, compra 1010 ações na abertura de T1 a R$ 99.
+        assert result.equity_curve.iloc[-1] == pytest.approx(96_970.0)
 
     def test_compra_e_venda(self):
         """Compra e depois vende → volta ao capital inicial (sem custos)."""
         dates = pd.bdate_range("2023-01-01", periods=5)
         prices = [100.0, 101.0, 102.0, 101.0, 100.0]
-        df = pd.DataFrame({"fechamento": prices}, index=dates)
+        df = pd.DataFrame({"abertura": prices, "fechamento": prices}, index=dates)
         signals = pd.Series([1, 0, -1, 0, 0], index=dates, dtype=int)
         strategy = MockStrategy(signals)
         engine = BacktestEngine(strategy, df, 100_000.0, cost_model=CostModel())
         result = engine.run()
-        # Compra 1000 ações a R$ 100, vende a R$ 102 → lucro = R$ 2.000
-        # Compra de novo a R$ 101 (mas sem sinal)
-        # Equity final = 100.000 + 2.000 = 102.000
-        # Na verdade, vendeu a 102 e ficou em cash, depois sem sinal de compra
-        # Equity = cash
-        assert result.equity_curve.iloc[-1] > 100_000.0
+        # Compra e venda ocorrem nas aberturas seguintes aos sinais.
+        assert result.trades[0].price == 101.0
+        assert result.trades[1].price == 101.0
+        assert result.equity_curve.iloc[-1] == 100_000.0
 
     def test_venda_a_descoberto(self):
         """Sinal -1 sem posição → venda a descoberto não permitida."""
         dates = pd.bdate_range("2023-01-01", periods=3)
         prices = [100.0, 101.0, 102.0]
-        df = pd.DataFrame({"fechamento": prices}, index=dates)
+        df = pd.DataFrame({"abertura": prices, "fechamento": prices}, index=dates)
         signals = pd.Series([-1, 0, 0], index=dates, dtype=int)
         strategy = MockStrategy(signals)
-        engine = BacktestEngine(strategy, df, 100_000.0, cost_model=CostModel(), allow_short=False)
+        engine = BacktestEngine(
+            strategy, df, 100_000.0, cost_model=CostModel(), allow_short=False
+        )
         result = engine.run()
         # Sem posição para vender, sinal -1 ignorado
         assert len(result.trades) == 0
@@ -148,7 +165,7 @@ class TestBacktestEngineRun:
         """Sinal de compra repetido não gera trade duplicado."""
         dates = pd.bdate_range("2023-01-01", periods=5)
         prices = [100.0] * 5
-        df = pd.DataFrame({"fechamento": prices}, index=dates)
+        df = pd.DataFrame({"abertura": prices, "fechamento": prices}, index=dates)
         signals = pd.Series([1, 1, 1, 1, 1], index=dates, dtype=int)
         strategy = MockStrategy(signals)
         engine = BacktestEngine(strategy, df, 100_000.0, cost_model=CostModel())
@@ -158,7 +175,10 @@ class TestBacktestEngineRun:
 
     def test_dataframe_uma_linha(self):
         """Apenas 1 linha → execução não quebra."""
-        df = pd.DataFrame({"fechamento": [100.0]}, index=pd.DatetimeIndex(["2023-01-02"]))
+        df = pd.DataFrame(
+            {"abertura": [100.0], "fechamento": [100.0]},
+            index=pd.DatetimeIndex(["2023-01-02"]),
+        )
         signals = pd.Series([1], index=pd.DatetimeIndex(["2023-01-02"]), dtype=int)
         strategy = MockStrategy(signals)
         engine = BacktestEngine(strategy, df, 100_000.0, cost_model=CostModel())
@@ -170,7 +190,7 @@ class TestBacktestEngineRun:
         """Trades gerados têm a estrutura correta."""
         dates = pd.bdate_range("2023-01-01", periods=5)
         prices = [100.0, 101.0, 102.0, 101.0, 100.0]
-        df = pd.DataFrame({"fechamento": prices}, index=dates)
+        df = pd.DataFrame({"abertura": prices, "fechamento": prices}, index=dates)
         signals = pd.Series([1, 0, -1, 0, 0], index=dates, dtype=int)
         strategy = MockStrategy(signals)
         engine = BacktestEngine(strategy, df, 100_000.0, cost_model=CostModel())
@@ -185,14 +205,16 @@ class TestBacktestEngineRun:
         """Com custos, retorno líquido < retorno bruto."""
         dates = pd.bdate_range("2023-01-01", periods=5)
         prices = [100.0, 101.0, 102.0, 103.0, 104.0]
-        df = pd.DataFrame({"fechamento": prices}, index=dates)
+        df = pd.DataFrame({"abertura": prices, "fechamento": prices}, index=dates)
         signals = pd.Series([1, 0, 0, 0, -1], index=dates, dtype=int)
         strategy = MockStrategy(signals)
 
         engine_sem_custo = BacktestEngine(strategy, df, 100_000.0, cost_model=CostModel())
         engine_com_custo = BacktestEngine(
-            strategy, df, 100_000.0,
-            cost_model=CostModel(brokerage_fixed=10.0, spread_bps=50.0, tax_rate=0.0003)
+            strategy,
+            df,
+            100_000.0,
+            cost_model=CostModel(brokerage_fixed=10.0, spread_bps=50.0, tax_rate=0.0003),
         )
 
         result_sem = engine_sem_custo.run()
@@ -203,46 +225,85 @@ class TestBacktestEngineRun:
 class TestLookAheadBias:
     """Testes críticos de viés de look-ahead."""
 
-    def test_sem_look_ahead(self):
-        """O engine não usa dados futuros para decisões presentes."""
-        dates = pd.bdate_range("2023-01-01", periods=10)
-        # Preço estável, com um spike enorme no último dia
-        prices = [100.0] * 9 + [500.0]
-        df = pd.DataFrame({"fechamento": prices}, index=dates)
+    def test_sinal_no_fechamento_executa_na_proxima_abertura(self):
+        dates = pd.bdate_range("2023-01-01", periods=2)
+        data = pd.DataFrame(
+            {"abertura": [90.0, 130.0], "fechamento": [100.0, 140.0]},
+            index=dates,
+        )
+        signals = pd.Series([1, 0], index=dates, dtype=int)
 
-        # Estratégia que sempre compra no T0
-        signals = pd.Series([1] + [0] * 9, index=dates, dtype=int)
-        strategy = MockStrategy(signals, "LookAheadTest")
-        engine = BacktestEngine(strategy, df, 100_000.0, cost_model=CostModel())
-        result = engine.run()
+        result = BacktestEngine(MockStrategy(signals), data, 1_000.0).run()
 
-        # Sem look-ahead: comprou 1000 ações a R$ 100
-        # Equity no T8 (antes do spike) = 1000 * 100 = 100.000
-        # Último dia (T9) com price 500 = 1000 * 500 = 500.000
-        # Se houvesse look-ahead, a decisão de compra seria diferente
         assert len(result.trades) == 1
-        assert result.trades[0].type == "BUY"
-        assert result.trades[0].price == 100.0
-        assert result.trades[0].date == dates[0]
+        assert result.trades[0].price == 130.0
+        assert result.trades[0].date == dates[1]
+        assert result.equity_curve.tolist() == [1_000.0, 1_070.0]
 
-    def test_informacao_futura_nao_afeta_sinal(self):
-        """Sinal gerado com dados parciais (até t) não vê t+1."""
-        dates = pd.bdate_range("2023-01-01", periods=10)
-        prices = [100.0, 101.0, 102.0, 103.0, 104.0,
-                  50.0, 51.0, 52.0, 53.0, 54.0]
-        df = pd.DataFrame({"fechamento": prices}, index=dates)
+    def test_ultimo_sinal_sem_proxima_abertura_nao_executa(self):
+        dates = pd.bdate_range("2023-01-01", periods=2)
+        data = pd.DataFrame(
+            {"abertura": [90.0, 130.0], "fechamento": [100.0, 140.0]},
+            index=dates,
+        )
+        signals = pd.Series([0, 1], index=dates, dtype=int)
 
-        # Mock que retorna COMPRA apenas se a média dos preços futuros > 100
-        # Isso é explicitamente look-ahead — queremos verificar que o engine
-        # não permite isso (o mock retorna sinais pré-definidos, não baseados
-        # em dados futuros do engine)
-        signals = pd.Series([1] + [0] * 9, index=dates, dtype=int)
-        strategy = MockStrategy(signals)
-        engine = BacktestEngine(strategy, df, 100_000.0, cost_model=CostModel())
-        result = engine.run()
+        result = BacktestEngine(MockStrategy(signals), data, 1_000.0).run()
 
-        # Verifica que o engine não altera os sinais
-        assert result.trades[0].price == 100.0  # preço do T0
+        assert result.trades == []
+        assert result.final_equity == 1_000.0
+
+    def test_custo_da_compra_usa_notional_total(self):
+        dates = pd.bdate_range("2023-01-01", periods=2)
+        data = pd.DataFrame(
+            {"abertura": [90.0, 100.0], "fechamento": [100.0, 100.0]},
+            index=dates,
+        )
+        signals = pd.Series([1, 0], index=dates, dtype=int)
+
+        result = BacktestEngine(
+            MockStrategy(signals), data, 1_010.0, CostModel(tax_rate=0.01)
+        ).run()
+
+        assert result.trades[0].quantity == 10
+        assert result.trades[0].cost == 10.0
+        assert result.final_equity == 1_000.0
+
+    def test_compra_reserva_custos_e_preserva_caixa_nao_negativo(self):
+        dates = pd.bdate_range("2023-01-01", periods=2)
+        data = pd.DataFrame(
+            {"abertura": [90.0, 100.0], "fechamento": [100.0, 100.0]},
+            index=dates,
+        )
+        signals = pd.Series([1, 0], index=dates, dtype=int)
+
+        result = BacktestEngine(
+            MockStrategy(signals), data, 1_000.0, CostModel(tax_rate=0.01)
+        ).run()
+
+        trade = result.trades[0]
+        cash = result.final_equity - trade.quantity * data["fechamento"].iloc[-1]
+        assert trade.quantity == 9
+        assert cash == pytest.approx(91.0)
+        assert cash >= 0
+
+    def test_venda_que_excederia_caixa_e_rejeitada(self):
+        dates = pd.bdate_range("2023-01-01", periods=3)
+        data = pd.DataFrame(
+            {"abertura": [90.0, 100.0, 10.0], "fechamento": [100.0, 100.0, 10.0]},
+            index=dates,
+        )
+        signals = pd.Series([1, -1, 0], index=dates, dtype=int)
+
+        result = BacktestEngine(
+            MockStrategy(signals),
+            data,
+            151.0,
+            CostModel(brokerage_fixed=50.0),
+        ).run()
+
+        assert [trade.type for trade in result.trades] == ["BUY"]
+        assert result.final_equity == 11.0
 
 
 class TestTrade:

@@ -1,0 +1,128 @@
+{
+  "passed": 30,
+  "failed": 0,
+  "results": [
+    {
+      "name": "official:cash_compact_no_doughnut",
+      "ok": true
+    },
+    {
+      "name": "official:no_positions_and_no_performance_curve",
+      "ok": true
+    },
+    {
+      "name": "identity:multiasset_selector_excludes_h2",
+      "ok": true
+    },
+    {
+      "name": "identity:explicit_cross_line_link",
+      "ok": true
+    },
+    {
+      "name": "demo:explicit_selection_keyboard_and_identity",
+      "ok": true
+    },
+    {
+      "name": "demo:qualified_summary",
+      "ok": true
+    },
+    {
+      "name": "demo:last_mark_and_reconciliation",
+      "ok": true
+    },
+    {
+      "name": "demo:origin_and_official_execution_disabled",
+      "ok": true
+    },
+    {
+      "name": "demo:two_positions_and_five_sessions",
+      "ok": true
+    },
+    {
+      "name": "demo:prices_are_observed_points",
+      "ok": true
+    },
+    {
+      "name": "demo:three_trades_and_settlements",
+      "ok": true
+    },
+    {
+      "name": "demo:timeline_first_page",
+      "ok": true
+    },
+    {
+      "name": "demo:timeline_second_page",
+      "ok": true
+    },
+    {
+      "name": "session:historical_holdings_and_pending_settlement",
+      "ok": true
+    },
+    {
+      "name": "session:single_point_not_performance",
+      "ok": true
+    },
+    {
+      "name": "session:reload_preserves_date_and_equity",
+      "ok": true
+    },
+    {
+      "name": "session:receivable_and_reduced_position",
+      "ok": true
+    },
+    {
+      "name": "help:contextual_open",
+      "ok": true
+    },
+    {
+      "name": "help:escape_returns_focus",
+      "ok": true
+    },
+    {
+      "name": "decisions:v1_rejected_v2_valid_preserved",
+      "ok": true
+    },
+    {
+      "name": "deep_link:h2_migrates_identity_to_paper",
+      "ok": true
+    },
+    {
+      "name": "layout:desktop",
+      "ok": true
+    },
+    {
+      "name": "layout:notebook",
+      "ok": true
+    },
+    {
+      "name": "layout:tablet",
+      "ok": true
+    },
+    {
+      "name": "layout:phone",
+      "ok": true
+    },
+    {
+      "name": "layout:200_percent_equivalent_reflow",
+      "ok": true
+    },
+    {
+      "name": "error:stale_state_hidden",
+      "ok": true
+    },
+    {
+      "name": "error:read_retry_recovers",
+      "ok": true
+    },
+    {
+      "name": "empty:no_fixture_promoted_to_official",
+      "ok": true
+    },
+    {
+      "name": "transport:no_writes_or_external_calls",
+      "ok": true
+    }
+  ],
+  "blocked": [],
+  "exceptions": []
+}

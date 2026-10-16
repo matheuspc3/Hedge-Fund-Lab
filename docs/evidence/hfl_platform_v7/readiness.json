@@ -1,0 +1,1942 @@
+{
+  "identity": "HFL-PLATFORM-V7",
+  "observed_at": "2026-10-11T21:58:24.556696-03:00",
+  "read_only": true,
+  "state": "COMPLETED",
+  "wallets": {
+    "available": true,
+    "data": {
+      "classification": "PROSPECTIVE EXPLORATORY PAPER TRADING - NOT CONFIRMATORY, NOT FINAL TEST, NO RETUNING",
+      "paper_only": true,
+      "wallets": [
+        {
+          "key": "ai",
+          "label": "IA H2 v6",
+          "available": true,
+          "equity": 100000.0,
+          "return": 0.0,
+          "composition": [
+            {
+              "asset": "PETR4",
+              "value": 0.0,
+              "weight": 0.0,
+              "units": 0.0
+            },
+            {
+              "asset": "Caixa",
+              "value": 100000.0,
+              "weight": 1.0
+            }
+          ],
+          "position_count": 0,
+          "marked_value": 0.0,
+          "exposure": 0.0,
+          "costs": 0,
+          "cash": 100000.0,
+          "pnl": 0.0,
+          "observations": 1,
+          "max_drawdown": null,
+          "dividends": null,
+          "curve": [
+            {
+              "session": "2026-10-09",
+              "equity": 100000.0
+            }
+          ],
+          "trades": [],
+          "pending": {
+            "decision_session": "2026-10-09",
+            "target_session": "2026-10-13",
+            "target_weight": 1.0
+          },
+          "last_decision": {
+            "session": "2026-10-09",
+            "status": "DECIDED",
+            "target_weight": 1.0,
+            "target_session": null,
+            "generated_at": null
+          },
+          "mark": {
+            "session": "2026-10-09",
+            "close": 56.0
+          },
+          "initial_capital": 100000.0
+        },
+        {
+          "key": "buy_and_hold",
+          "label": "Buy & Hold",
+          "available": true,
+          "equity": 100000.0,
+          "return": 0.0,
+          "composition": [
+            {
+              "asset": "PETR4",
+              "value": 0.0,
+              "weight": 0.0,
+              "units": 0.0
+            },
+            {
+              "asset": "Caixa",
+              "value": 100000.0,
+              "weight": 1.0
+            }
+          ],
+          "position_count": 0,
+          "marked_value": 0.0,
+          "exposure": 0.0,
+          "costs": 0,
+          "cash": 100000.0,
+          "pnl": 0.0,
+          "observations": 1,
+          "max_drawdown": null,
+          "dividends": null,
+          "curve": [
+            {
+              "session": "2026-10-09",
+              "equity": 100000.0
+            }
+          ],
+          "trades": [],
+          "pending": {
+            "decision_session": null,
+            "target_session": "2026-10-13",
+            "target_weight": 1
+          },
+          "last_decision": null,
+          "mark": {
+            "session": "2026-10-09",
+            "close": 56.0
+          },
+          "initial_capital": 100000.0
+        },
+        {
+          "key": "sma_regime_h2_proposed",
+          "label": "SMA Regime 50/200",
+          "available": true,
+          "equity": 100000.0,
+          "return": 0.0,
+          "composition": [
+            {
+              "asset": "PETR4",
+              "value": 0.0,
+              "weight": 0.0,
+              "units": 0.0
+            },
+            {
+              "asset": "Caixa",
+              "value": 100000.0,
+              "weight": 1.0
+            }
+          ],
+          "position_count": 0,
+          "marked_value": 0.0,
+          "exposure": 0.0,
+          "costs": 0,
+          "cash": 100000.0,
+          "pnl": 0.0,
+          "observations": 1,
+          "max_drawdown": null,
+          "dividends": null,
+          "curve": [
+            {
+              "session": "2026-10-09",
+              "equity": 100000.0
+            }
+          ],
+          "trades": [],
+          "pending": {
+            "decision_session": "2026-10-09",
+            "target_session": "2026-10-13",
+            "target_weight": 1.0
+          },
+          "last_decision": {
+            "session": "2026-10-09",
+            "status": "DECIDED",
+            "target_weight": 1.0,
+            "target_session": "2026-10-13",
+            "generated_at": "2026-10-10T16:42:53.144748-03:00"
+          },
+          "mark": {
+            "session": "2026-10-09",
+            "close": 56.0
+          },
+          "initial_capital": 100000.0,
+          "comparable": true,
+          "initialized_at": "2026-10-10T16:42:47.990046-03:00"
+        },
+        {
+          "key": "bollinger_state_h2_proposed",
+          "label": "Bollinger Estado 20/2",
+          "available": true,
+          "equity": 100000.0,
+          "return": 0.0,
+          "composition": [
+            {
+              "asset": "PETR4",
+              "value": 0.0,
+              "weight": 0.0,
+              "units": 0.0
+            },
+            {
+              "asset": "Caixa",
+              "value": 100000.0,
+              "weight": 1.0
+            }
+          ],
+          "position_count": 0,
+          "marked_value": 0.0,
+          "exposure": 0.0,
+          "costs": 0,
+          "cash": 100000.0,
+          "pnl": 0.0,
+          "observations": 1,
+          "max_drawdown": null,
+          "dividends": null,
+          "curve": [
+            {
+              "session": "2026-10-09",
+              "equity": 100000.0
+            }
+          ],
+          "trades": [],
+          "pending": null,
+          "last_decision": {
+            "session": "2026-10-09",
+            "status": "DECIDED",
+            "target_weight": 0.0,
+            "target_session": "2026-10-13",
+            "generated_at": "2026-10-10T16:43:00.737830-03:00"
+          },
+          "mark": {
+            "session": "2026-10-09",
+            "close": 56.0
+          },
+          "initial_capital": 100000.0,
+          "comparable": true,
+          "initialized_at": "2026-10-10T16:42:56.000824-03:00"
+        },
+        {
+          "key": "h2_v6_supervised",
+          "label": "H2 v6 Supervisionada",
+          "available": true,
+          "equity": 100000.0,
+          "return": 0.0,
+          "composition": [
+            {
+              "asset": "PETR4",
+              "value": 0.0,
+              "weight": 0.0,
+              "units": 0.0
+            },
+            {
+              "asset": "Caixa",
+              "value": 100000.0,
+              "weight": 1.0
+            }
+          ],
+          "position_count": 0,
+          "marked_value": 0.0,
+          "exposure": 0.0,
+          "costs": 0,
+          "cash": 100000.0,
+          "pnl": 0.0,
+          "observations": 1,
+          "max_drawdown": null,
+          "dividends": null,
+          "curve": [
+            {
+              "session": "2026-10-09",
+              "equity": 100000.0
+            }
+          ],
+          "trades": [],
+          "pending": null,
+          "last_decision": {
+            "session": "2026-10-09",
+            "status": "AGUARDANDO_APROVACAO",
+            "target_weight": 1.0,
+            "target_session": "2026-10-13",
+            "generated_at": "2026-10-10T21:02:07.690651-03:00"
+          },
+          "mark": {
+            "session": "2026-10-09",
+            "close": 56.0
+          },
+          "initial_capital": 100000.0,
+          "initialized_at": "2026-10-10T21:02:07.690651-03:00",
+          "comparable": true,
+          "supervision": {
+            "awaiting": 1,
+            "approved": 0,
+            "rejected": 0,
+            "executed": 0,
+            "not_executed": 0
+          }
+        }
+      ],
+      "mark": {
+        "session": "2026-10-09",
+        "close": 56.0
+      },
+      "comparison_note": "Curvas prospectivas na mesma data de início, com mesmo capital, custos e preços observados. Um único fechamento não permite medir evolução."
+    }
+  },
+  "decision": {
+    "available": true,
+    "data": {
+      "session": "2026-10-09",
+      "ticker": "PETR4.SA",
+      "target_session": "2026-10-13",
+      "target_open_deadline": "2026-10-13T10:00:00-03:00",
+      "close_used": 56.0,
+      "status": "DECIDED",
+      "generated_at": "2026-10-10T15:17:04.881596-03:00",
+      "replayed_from_journal": false,
+      "llm_calls": 7,
+      "failure": null,
+      "analysts": [
+        {
+          "analyst_id": 1,
+          "sequence": 0,
+          "status": "ok",
+          "retry_count": 0,
+          "error_type": null,
+          "signal": "COMPRA",
+          "confidence": 0.75,
+          "evidence": [
+            {
+              "code": "CLOSE_ABOVE_SMA50",
+              "role": "SUPPORTS_COMPRA",
+              "label": "fechamento acima da SMA50"
+            },
+            {
+              "code": "CLOSE_ABOVE_SMA200",
+              "role": "SUPPORTS_COMPRA",
+              "label": "fechamento acima da SMA200"
+            },
+            {
+              "code": "MACD_POSITIVE",
+              "role": "SUPPORTS_COMPRA",
+              "label": "MACD acima de zero"
+            },
+            {
+              "code": "MACD_ABOVE_SIGNAL",
+              "role": "SUPPORTS_COMPRA",
+              "label": "MACD acima da linha de sinal"
+            },
+            {
+              "code": "RSI_CURRENT",
+              "role": "CAUTION",
+              "label": "RSI atual = 74.915165"
+            },
+            {
+              "code": "CLOSE_INSIDE_BOLLINGER",
+              "role": "NEUTRAL",
+              "label": "fechamento dentro das bandas de Bollinger"
+            }
+          ],
+          "explanation": "fechamento acima da SMA50 — classificado pelo analista como suporte à COMPRA; fechamento acima da SMA200 — classificado pelo analista como suporte à COMPRA; MACD acima de zero — classificado pelo analista como suporte à COMPRA; MACD acima da linha de sinal — classificado pelo analista como suporte à COMPRA; RSI atual = 74.915165 — classificado pelo analista como cautela; fechamento dentro das bandas de Bollinger — classificado pelo analista como neutro"
+        },
+        {
+          "analyst_id": 2,
+          "sequence": 1,
+          "status": "ok",
+          "retry_count": 0,
+          "error_type": null,
+          "signal": "COMPRA",
+          "confidence": 0.75,
+          "evidence": [
+            {
+              "code": "CLOSE_ABOVE_SMA50",
+              "role": "SUPPORTS_COMPRA",
+              "label": "fechamento acima da SMA50"
+            },
+            {
+              "code": "CLOSE_ABOVE_SMA200",
+              "role": "SUPPORTS_COMPRA",
+              "label": "fechamento acima da SMA200"
+            },
+            {
+              "code": "MACD_POSITIVE",
+              "role": "SUPPORTS_COMPRA",
+              "label": "MACD acima de zero"
+            },
+            {
+              "code": "MACD_ABOVE_SIGNAL",
+              "role": "SUPPORTS_COMPRA",
+              "label": "MACD acima da linha de sinal"
+            },
+            {
+              "code": "RSI_CURRENT",
+              "role": "CAUTION",
+              "label": "RSI atual = 74.915165"
+            },
+            {
+              "code": "CLOSE_INSIDE_BOLLINGER",
+              "role": "NEUTRAL",
+              "label": "fechamento dentro das bandas de Bollinger"
+            }
+          ],
+          "explanation": "fechamento acima da SMA50 — classificado pelo analista como suporte à COMPRA; fechamento acima da SMA200 — classificado pelo analista como suporte à COMPRA; MACD acima de zero — classificado pelo analista como suporte à COMPRA; MACD acima da linha de sinal — classificado pelo analista como suporte à COMPRA; RSI atual = 74.915165 — classificado pelo analista como cautela; fechamento dentro das bandas de Bollinger — classificado pelo analista como neutro"
+        },
+        {
+          "analyst_id": 3,
+          "sequence": 2,
+          "status": "ok",
+          "retry_count": 0,
+          "error_type": null,
+          "signal": "COMPRA",
+          "confidence": 0.75,
+          "evidence": [
+            {
+              "code": "CLOSE_ABOVE_SMA50",
+              "role": "SUPPORTS_COMPRA",
+              "label": "fechamento acima da SMA50"
+            },
+            {
+              "code": "CLOSE_ABOVE_SMA200",
+              "role": "SUPPORTS_COMPRA",
+              "label": "fechamento acima da SMA200"
+            },
+            {
+              "code": "MACD_POSITIVE",
+              "role": "SUPPORTS_COMPRA",
+              "label": "MACD acima de zero"
+            },
+            {
+              "code": "MACD_ABOVE_SIGNAL",
+              "role": "SUPPORTS_COMPRA",
+              "label": "MACD acima da linha de sinal"
+            },
+            {
+              "code": "RSI_CURRENT",
+              "role": "CAUTION",
+              "label": "RSI atual = 74.915165"
+            },
+            {
+              "code": "CLOSE_INSIDE_BOLLINGER",
+              "role": "NEUTRAL",
+              "label": "fechamento dentro das bandas de Bollinger"
+            },
+            {
+              "code": "BB_WIDTH_CURRENT",
+              "role": "NEUTRAL",
+              "label": "largura relativa atual das bandas = 0.218802"
+            }
+          ],
+          "explanation": "fechamento acima da SMA50 — classificado pelo analista como suporte à COMPRA; fechamento acima da SMA200 — classificado pelo analista como suporte à COMPRA; MACD acima de zero — classificado pelo analista como suporte à COMPRA; MACD acima da linha de sinal — classificado pelo analista como suporte à COMPRA; RSI atual = 74.915165 — classificado pelo analista como cautela; fechamento dentro das bandas de Bollinger — classificado pelo analista como neutro; largura relativa atual das bandas = 0.218802 — classificado pelo analista como neutro"
+        },
+        {
+          "analyst_id": 4,
+          "sequence": 3,
+          "status": "ok",
+          "retry_count": 0,
+          "error_type": null,
+          "signal": "COMPRA",
+          "confidence": 0.75,
+          "evidence": [
+            {
+              "code": "CLOSE_ABOVE_SMA50",
+              "role": "SUPPORTS_COMPRA",
+              "label": "fechamento acima da SMA50"
+            },
+            {
+              "code": "CLOSE_ABOVE_SMA200",
+              "role": "SUPPORTS_COMPRA",
+              "label": "fechamento acima da SMA200"
+            },
+            {
+              "code": "MACD_POSITIVE",
+              "role": "SUPPORTS_COMPRA",
+              "label": "MACD acima de zero"
+            },
+            {
+              "code": "MACD_ABOVE_SIGNAL",
+              "role": "SUPPORTS_COMPRA",
+              "label": "MACD acima da linha de sinal"
+            },
+            {
+              "code": "RSI_CURRENT",
+              "role": "CAUTION",
+              "label": "RSI atual = 74.915165"
+            },
+            {
+              "code": "CLOSE_INSIDE_BOLLINGER",
+              "role": "NEUTRAL",
+              "label": "fechamento dentro das bandas de Bollinger"
+            }
+          ],
+          "explanation": "fechamento acima da SMA50 — classificado pelo analista como suporte à COMPRA; fechamento acima da SMA200 — classificado pelo analista como suporte à COMPRA; MACD acima de zero — classificado pelo analista como suporte à COMPRA; MACD acima da linha de sinal — classificado pelo analista como suporte à COMPRA; RSI atual = 74.915165 — classificado pelo analista como cautela; fechamento dentro das bandas de Bollinger — classificado pelo analista como neutro"
+        },
+        {
+          "analyst_id": 5,
+          "sequence": 4,
+          "status": "ok",
+          "retry_count": 0,
+          "error_type": null,
+          "signal": "COMPRA",
+          "confidence": 0.75,
+          "evidence": [
+            {
+              "code": "CLOSE_ABOVE_SMA50",
+              "role": "SUPPORTS_COMPRA",
+              "label": "fechamento acima da SMA50"
+            },
+            {
+              "code": "CLOSE_ABOVE_SMA200",
+              "role": "SUPPORTS_COMPRA",
+              "label": "fechamento acima da SMA200"
+            },
+            {
+              "code": "MACD_POSITIVE",
+              "role": "SUPPORTS_COMPRA",
+              "label": "MACD acima de zero"
+            },
+            {
+              "code": "MACD_ABOVE_SIGNAL",
+              "role": "SUPPORTS_COMPRA",
+              "label": "MACD acima da linha de sinal"
+            },
+            {
+              "code": "RSI_CURRENT",
+              "role": "CAUTION",
+              "label": "RSI atual = 74.915165"
+            },
+            {
+              "code": "CLOSE_INSIDE_BOLLINGER",
+              "role": "NEUTRAL",
+              "label": "fechamento dentro das bandas de Bollinger"
+            }
+          ],
+          "explanation": "fechamento acima da SMA50 — classificado pelo analista como suporte à COMPRA; fechamento acima da SMA200 — classificado pelo analista como suporte à COMPRA; MACD acima de zero — classificado pelo analista como suporte à COMPRA; MACD acima da linha de sinal — classificado pelo analista como suporte à COMPRA; RSI atual = 74.915165 — classificado pelo analista como cautela; fechamento dentro das bandas de Bollinger — classificado pelo analista como neutro"
+        }
+      ],
+      "evidence_summary": [
+        {
+          "code": "CLOSE_ABOVE_SMA50",
+          "role": "SUPPORTS_COMPRA",
+          "count": 5,
+          "label": "fechamento acima da SMA50",
+          "stance": "favorable",
+          "analysts": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "code": "CLOSE_ABOVE_SMA200",
+          "role": "SUPPORTS_COMPRA",
+          "count": 5,
+          "label": "fechamento acima da SMA200",
+          "stance": "favorable",
+          "analysts": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "code": "MACD_POSITIVE",
+          "role": "SUPPORTS_COMPRA",
+          "count": 5,
+          "label": "MACD acima de zero",
+          "stance": "favorable",
+          "analysts": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "code": "MACD_ABOVE_SIGNAL",
+          "role": "SUPPORTS_COMPRA",
+          "count": 5,
+          "label": "MACD acima da linha de sinal",
+          "stance": "favorable",
+          "analysts": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "code": "RSI_CURRENT",
+          "role": "CAUTION",
+          "count": 5,
+          "label": "RSI atual = 74.915165",
+          "stance": "caution",
+          "analysts": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "code": "CLOSE_INSIDE_BOLLINGER",
+          "role": "NEUTRAL",
+          "count": 5,
+          "label": "fechamento dentro das bandas de Bollinger",
+          "stance": "neutral",
+          "analysts": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "code": "BB_WIDTH_CURRENT",
+          "role": "NEUTRAL",
+          "count": 1,
+          "label": "largura relativa atual das bandas = 0.218802",
+          "stance": "neutral",
+          "analysts": [
+            3
+          ]
+        }
+      ],
+      "divergences": [],
+      "committee": {
+        "analyst_count": 5,
+        "consensus_threshold": 0.6,
+        "require_all_votes": true,
+        "responded": 5
+      },
+      "consensus": {
+        "vote_counts": {
+          "COMPRA": 5,
+          "MANTER": 0,
+          "VENDA": 0
+        },
+        "valid_votes": 5,
+        "consensus_threshold": 0.6,
+        "consensus_reached": true,
+        "technical_outcome": "COMPRA",
+        "signal": {
+          "signal": "COMPRA",
+          "confidence": 0.75,
+          "justification": "Consenso coletivo: 5/5 votos em COMPRA"
+        }
+      },
+      "risk": {
+        "verdict": "APROVADO",
+        "analysis": "O sinal de COMPRA apresenta consenso pleno (5/5) e suporte qualitativo condizente. As métricas de risco mostram drawdown nulo (0.0) e ausência de concentração prévia (0.0). Embora a volatilidade recente esteja em 0.392326, o cenário sem exposição acumulada permite a entrada preservando o capital dentro dos limites avaliados.",
+        "metrics": {
+          "recent_volatility": 0.392326,
+          "current_drawdown": 0.0,
+          "current_concentration": 0.0
+        },
+        "risk_source": "LLM",
+        "risk_rule": null,
+        "rules": [
+          {
+            "rule": "VOLATILITY",
+            "value": 0.392326,
+            "limit": 0.5,
+            "operator": ">",
+            "status": "PASSOU"
+          },
+          {
+            "rule": "DRAWDOWN",
+            "value": 0.0,
+            "limit": 0.25,
+            "operator": ">",
+            "status": "PASSOU"
+          },
+          {
+            "rule": "CONCENTRATION",
+            "value": 0.0,
+            "limit": 1.0,
+            "operator": ">=",
+            "status": "PASSOU"
+          }
+        ],
+        "veto_effect": null
+      },
+      "portfolio": {
+        "decision": "COMPRA",
+        "reasoning": "O sinal técnico de COMPRA obteve consenso unânime (5/5) e foi devidamente aprovado pelo controle de risco, com drawdown zero e sem concentração prévia.",
+        "portfolio_source": "LLM",
+        "portfolio_rule": null,
+        "final_cause": "ACTION_BUY",
+        "observed_weight": 0.0,
+        "target_weight": 1.0
+      },
+      "pending": {
+        "decision_session": "2026-10-09",
+        "target_session": "2026-10-13",
+        "target_weight": 1.0
+      },
+      "execution": null,
+      "position_at_decision": {
+        "cash": 100000.0,
+        "units": 0.0,
+        "equity": 100000.0
+      },
+      "intent_weight": 1.0,
+      "order": {
+        "state": "PENDENTE",
+        "label": "Pendente",
+        "detail": "Alvo 100% na abertura de 13/10/2026; aguarda o preço observado e a reconciliação."
+      },
+      "flow": [
+        {
+          "stage": "Technical Analysts",
+          "result": "5/5 respostas",
+          "detail": "COMPRA 5 · MANTER 0 · VENDA 0",
+          "changed": null
+        },
+        {
+          "stage": "Consenso",
+          "result": "COMPRA",
+          "detail": "Consenso coletivo: 5/5 votos em COMPRA · limiar 60%",
+          "changed": null
+        },
+        {
+          "stage": "Risk Manager",
+          "result": "APROVADO",
+          "detail": "Aprovou o sinal; não alterou a decisão.",
+          "changed": false
+        },
+        {
+          "stage": "Portfolio Manager",
+          "result": "COMPRA",
+          "detail": "Confirmou o sinal agregado; não alterou a decisão.",
+          "changed": false
+        },
+        {
+          "stage": "Intenção de ordem",
+          "result": "Alvo 100%",
+          "detail": "Posição no fechamento 0% → alvo 100%. Pendente.",
+          "changed": null
+        }
+      ]
+    }
+  },
+  "supervision": {
+    "available": true,
+    "data": {
+      "initialized": true,
+      "strategy": "h2_v6_supervised",
+      "inception": "2026-10-09",
+      "initialized_at": "2026-10-10T21:02:07.690651-03:00",
+      "now": "2026-10-11T21:58:24.556696-03:00",
+      "position": {
+        "cash": 100000.0,
+        "units": 0.0,
+        "weight": 0.0,
+        "equity": 100000.0,
+        "mark": {
+          "session": "2026-10-09",
+          "close": 56.0
+        }
+      },
+      "proposals": [
+        {
+          "decision_session": "2026-10-09",
+          "weight_at_close": 0.0,
+          "created_at": "2026-10-10T21:02:07.690651-03:00",
+          "target_session": "2026-10-13",
+          "deadline": "2026-10-13T10:00:00-03:00",
+          "generated_at": "2026-10-10T15:17:04.881596-03:00",
+          "decision_sha256": "27e51c949aebac155b1d890c6fff74d1a242852d7f5c8d3a30cdc602a6a09ddc",
+          "input_sha256": "8acf2b53eb36c4936de1d1c6b1f19d143ce31777c43d7ec83da2eadf25d957d7",
+          "original_status": "DECIDED",
+          "final_cause": "ACTION_BUY",
+          "recent_volatility": 0.392326,
+          "raw_close": 56.0,
+          "created_after_deadline": false,
+          "direction": "COMPRA",
+          "recommended_target": 1.0,
+          "state": "AGUARDANDO_APROVACAO",
+          "reason": "COMPRA para alvo 100% aguarda decisão humana até o prazo.",
+          "order_state": "AGUARDANDO_APROVACAO",
+          "approval": null,
+          "cancel": null,
+          "outcome": null
+        }
+      ],
+      "selected": {
+        "decision_session": "2026-10-09",
+        "weight_at_close": 0.0,
+        "created_at": "2026-10-10T21:02:07.690651-03:00",
+        "target_session": "2026-10-13",
+        "deadline": "2026-10-13T10:00:00-03:00",
+        "generated_at": "2026-10-10T15:17:04.881596-03:00",
+        "decision_sha256": "27e51c949aebac155b1d890c6fff74d1a242852d7f5c8d3a30cdc602a6a09ddc",
+        "input_sha256": "8acf2b53eb36c4936de1d1c6b1f19d143ce31777c43d7ec83da2eadf25d957d7",
+        "original_status": "DECIDED",
+        "final_cause": "ACTION_BUY",
+        "recent_volatility": 0.392326,
+        "raw_close": 56.0,
+        "created_after_deadline": false,
+        "direction": "COMPRA",
+        "recommended_target": 1.0,
+        "state": "AGUARDANDO_APROVACAO",
+        "reason": "COMPRA para alvo 100% aguarda decisão humana até o prazo.",
+        "order_state": "AGUARDANDO_APROVACAO",
+        "approval": null,
+        "cancel": null,
+        "outcome": null
+      },
+      "timeline": [
+        {
+          "session": "2026-10-09",
+          "original_equity": 100000.0,
+          "supervised_equity": 100000.0,
+          "difference": 0.0,
+          "order_state": "AGUARDANDO_APROVACAO",
+          "action": null
+        }
+      ],
+      "audit": {
+        "ok": true,
+        "events": 1,
+        "errors": []
+      },
+      "limits_schema": {
+        "max_buy_price": {
+          "direction": "COMPRA",
+          "max": 1000000.0
+        },
+        "min_sell_price": {
+          "direction": "VENDA",
+          "max": 1000000.0
+        },
+        "max_gap_up": {
+          "direction": null,
+          "max": 1.0
+        },
+        "max_gap_down": {
+          "direction": null,
+          "max": 1.0
+        },
+        "max_concentration": {
+          "direction": "COMPRA",
+          "max": 1.0
+        },
+        "max_volatility": {
+          "direction": null,
+          "max": 10.0
+        }
+      }
+    }
+  },
+  "integrity": {
+    "available": true,
+    "data": {
+      "ok": true,
+      "decisions": 1,
+      "manifest_sha256": "dc118ce9841df612d030f40e5993858eacc6d06e41eff173706fc3a72d3acb98",
+      "scope": "identity_and_recorded_input_bars_trace_journal_hashes"
+    }
+  },
+  "radar": {
+    "available": true,
+    "data": {
+      "identity": "HFL-MULTIASSET-RADAR-V1",
+      "universe": [
+        "PETR4",
+        "VALE3",
+        "ITUB4",
+        "WEGE3",
+        "BBAS3"
+      ],
+      "examples": [
+        "PETR4",
+        "VALE3",
+        "ITUB4",
+        "WEGE3",
+        "BBAS3"
+      ],
+      "items": [
+        {
+          "identity": "HFL-MULTIASSET-RADAR-V1",
+          "ticker": "WEGE3",
+          "session": "2026-10-09",
+          "mode": "live",
+          "adjusted_close": 51.47,
+          "status": "PREPARED",
+          "generated_at": "2026-10-11T13:55:00.515658-03:00",
+          "votes": [],
+          "reserved_calls": 0,
+          "recommendation": null,
+          "portfolio_risk": "NOT_EVALUATED",
+          "history": [
+            {
+              "at": "2026-10-11T13:56:05.213727-03:00",
+              "event": "PREPARED",
+              "input_sha256": "0881353b24ad32eebbe138382c313f9d0fcab26a26ecc79742e2eeff05935be0"
+            }
+          ]
+        },
+        {
+          "identity": "HFL-MULTIASSET-RADAR-V1",
+          "ticker": "VALE3",
+          "session": "2026-10-09",
+          "mode": "live",
+          "adjusted_close": 67.9,
+          "status": "PREPARED",
+          "generated_at": "2026-10-11T13:55:00.515658-03:00",
+          "votes": [],
+          "reserved_calls": 0,
+          "recommendation": null,
+          "portfolio_risk": "NOT_EVALUATED",
+          "history": [
+            {
+              "at": "2026-10-11T13:55:39.658711-03:00",
+              "event": "PREPARED",
+              "input_sha256": "6bb5c279395c029a0672606fb867393ecf87b346c57ed7aa759c4a9a110a4a98"
+            }
+          ]
+        },
+        {
+          "identity": "HFL-MULTIASSET-RADAR-V1",
+          "ticker": "PETR4",
+          "session": "2026-10-09",
+          "mode": "live",
+          "adjusted_close": 56.0,
+          "status": "PREPARED",
+          "generated_at": "2026-10-11T13:55:00.515658-03:00",
+          "votes": [],
+          "reserved_calls": 0,
+          "recommendation": null,
+          "portfolio_risk": "NOT_EVALUATED",
+          "history": [
+            {
+              "at": "2026-10-11T13:55:25.366104-03:00",
+              "event": "PREPARED",
+              "input_sha256": "61a0f5912dbdef20614f66db950476b1b254931978bdd1184665afe87af10a1f"
+            }
+          ]
+        },
+        {
+          "identity": "HFL-MULTIASSET-RADAR-V1",
+          "ticker": "BBAS3",
+          "session": "2026-10-09",
+          "mode": "live",
+          "adjusted_close": 24.64,
+          "status": "PREPARED",
+          "generated_at": "2026-10-11T13:55:00.515658-03:00",
+          "votes": [],
+          "reserved_calls": 0,
+          "recommendation": null,
+          "portfolio_risk": "NOT_EVALUATED",
+          "history": [
+            {
+              "at": "2026-10-11T13:56:19.195122-03:00",
+              "event": "PREPARED",
+              "input_sha256": "a5ae08ab56db2672b5ef742cfd1e6d69f6b408aba5ea410e3ebddedab3a57a54"
+            }
+          ]
+        }
+      ],
+      "global_budget_used": 0,
+      "global_budget_cap": 5.0,
+      "last_closed_session": "2026-10-09",
+      "last_prepare": {
+        "generated_at": "2026-10-11T13:56:19.199956-03:00",
+        "items": [
+          {
+            "session": "2026-10-09",
+            "status": "PREPARED",
+            "ticker": "PETR4"
+          },
+          {
+            "session": "2026-10-09",
+            "status": "PREPARED",
+            "ticker": "VALE3"
+          },
+          {
+            "error": "ValueError: split-like mismatch between yfinance and B3 closes: {2025: 0.9708737739656967, 2026: 0.9999999928491858}",
+            "session": "2026-10-09",
+            "status": "BLOCKED",
+            "ticker": "ITUB4"
+          },
+          {
+            "session": "2026-10-09",
+            "status": "PREPARED",
+            "ticker": "WEGE3"
+          },
+          {
+            "session": "2026-10-09",
+            "status": "PREPARED",
+            "ticker": "BBAS3"
+          }
+        ]
+      }
+    }
+  },
+  "official_selection": {
+    "available": true,
+    "data": {
+      "identity": "HFL-MULTIASSET-GLOBAL-PM-V1",
+      "mode": "CONSULTATIVE_SANDBOX",
+      "session": "2026-10-09",
+      "items": [
+        {
+          "ticker": "PETR4",
+          "status": "MISSING_OR_INELIGIBLE",
+          "reason": "Parecer completo e íntegro desta fonte/sessão necessário; nada foi gerado."
+        },
+        {
+          "ticker": "VALE3",
+          "status": "MISSING_OR_INELIGIBLE",
+          "reason": "Parecer completo e íntegro desta fonte/sessão necessário; nada foi gerado."
+        },
+        {
+          "ticker": "ITUB4",
+          "status": "MISSING_OR_INELIGIBLE",
+          "reason": "Parecer completo e íntegro desta fonte/sessão necessário; nada foi gerado."
+        },
+        {
+          "ticker": "WEGE3",
+          "status": "MISSING_OR_INELIGIBLE",
+          "reason": "Parecer completo e íntegro desta fonte/sessão necessário; nada foi gerado."
+        },
+        {
+          "ticker": "BBAS3",
+          "status": "MISSING_OR_INELIGIBLE",
+          "reason": "Parecer completo e íntegro desta fonte/sessão necessário; nada foi gerado."
+        }
+      ],
+      "status": "INSUFFICIENT_DATA",
+      "missing": [
+        "PETR4",
+        "VALE3",
+        "ITUB4",
+        "WEGE3",
+        "BBAS3"
+      ],
+      "selected": [
+        "PETR4",
+        "VALE3",
+        "ITUB4",
+        "WEGE3",
+        "BBAS3"
+      ],
+      "provider_calls": 0,
+      "radar_cost_preview": {
+        "authorization_scope": "RADAR_ONLY_SEPARATE",
+        "missing_count": 5,
+        "calls_max": 30,
+        "usd_estimated": "0.14625",
+        "usd_reserved": "3.317760",
+        "planning_only": true
+      },
+      "global_pm_cost_preview": {
+        "authorization_scope": "GLOBAL_PM_ONLY_SEPARATE",
+        "calls_max": 1,
+        "usd_reserved_ceiling": "0.159744",
+        "usd_estimated": null,
+        "estimate_note": "Estimativa depende do contexto congelado; nenhum custo autorizado nesta consulta."
+      },
+      "execution_enabled": false
+    }
+  },
+  "global_records": [
+    {
+      "id": "v7-3558f0253cf44dd0a00c93d7be73e56f",
+      "native_state": "VALID_PROPOSAL",
+      "state": "COMPLETED",
+      "mode": "SYNTHETIC_DEMO",
+      "created_at": "2026-10-12T00:16:46.287213+00:00",
+      "expires_at": "2026-10-13T00:16:46.287213+00:00",
+      "context_sha256": "8e48262b7533282177573f8f1b6af4f2d9acde078b00583df5da3e70ac9da12b",
+      "cost_usd": "0",
+      "href": "/portfolio?analysis=v7-3558f0253cf44dd0a00c93d7be73e56f"
+    }
+  ],
+  "synthetic_v5": {
+    "available": true,
+    "data": {
+      "identity": "HFL-MULTIASSET-PORTFOLIO-V1",
+      "mode": "synthetic",
+      "initialized": true,
+      "portfolio": {
+        "identity": "HFL-MULTIASSET-PORTFOLIO-V1",
+        "portfolio_id": "demo-qualified-v5",
+        "mode": "synthetic",
+        "session": "2026-10-16",
+        "initial_capital": "100000.00",
+        "positions": {
+          "ITUB4": {
+            "quantity": "499",
+            "reserved": "0",
+            "unsettled": "0",
+            "basis": "14984.97",
+            "available": "499",
+            "average_cost": "30.03000000",
+            "raw_mark": "30.00",
+            "market_value": "14970.00",
+            "unrealized_pnl": "-14.97",
+            "weight": "0.149793486115"
+          },
+          "PETR4": {
+            "quantity": "399",
+            "reserved": "0",
+            "unsettled": "0",
+            "basis": "15975.96",
+            "available": "399",
+            "average_cost": "40.04000000",
+            "raw_mark": "40.00",
+            "market_value": "15960.00",
+            "unrealized_pnl": "-15.96",
+            "weight": "0.159699668563"
+          },
+          "VALE3": {
+            "quantity": "333",
+            "reserved": "0",
+            "unsettled": "0",
+            "basis": "19999.98",
+            "available": "333",
+            "average_cost": "60.06000000",
+            "raw_mark": "60.00",
+            "market_value": "19980.00",
+            "unrealized_pnl": "-19.98",
+            "weight": "0.199924773051"
+          },
+          "WEGE3": {
+            "quantity": "70",
+            "reserved": "0",
+            "unsettled": "70",
+            "basis": "3503.50",
+            "available": "0",
+            "average_cost": "50.05000000",
+            "raw_mark": "50.00",
+            "market_value": "3500.00",
+            "unrealized_pnl": "-3.50",
+            "weight": "0.035021857141"
+          }
+        },
+        "cash": {
+          "settled": "45527.59",
+          "reserved": "0",
+          "available": "45527.59",
+          "receivable": "0"
+        },
+        "cash_weight": "0.455560215130",
+        "receivable_weight": "0",
+        "equity": "99937.59",
+        "exposure": "0.5444397848697372029883850511",
+        "costs": "62.41",
+        "realized_pnl": "-8.00",
+        "income_net": "0.00",
+        "unrealized_pnl": "-54.41",
+        "drawdown": "0.0006241",
+        "pending": {},
+        "executions": {
+          "a-initial-itub4": {
+            "operation": {
+              "cost_ceiling": "14.97",
+              "dependencies": [],
+              "funding_source": "SETTLED_CASH",
+              "limit_price": "30.00",
+              "operation_id": "a-initial-itub4",
+              "priority": 2,
+              "quantity": "499",
+              "reasoning": "A · Construir carteira com três empresas; WEGE3 e BBAS3 não recebem alocação apesar dos sinais de compra. Preservar caixa.",
+              "side": "BUY",
+              "ticker": "ITUB4"
+            },
+            "quantity": "499",
+            "raw_price": "30.00",
+            "cost": "14.97",
+            "realized_pnl": "0",
+            "trade_session": "2026-10-09",
+            "due_session": "2026-10-14",
+            "marks_sha256": "7f042a0ef0e914202b7bd981ae7b11390ccaa6cf051e53945178d9da769ea0c2"
+          },
+          "a-initial-petr4": {
+            "operation": {
+              "cost_ceiling": "19.96",
+              "dependencies": [],
+              "funding_source": "SETTLED_CASH",
+              "limit_price": "40.00",
+              "operation_id": "a-initial-petr4",
+              "priority": 2,
+              "quantity": "499",
+              "reasoning": "A · Construir carteira com três empresas; WEGE3 e BBAS3 não recebem alocação apesar dos sinais de compra. Preservar caixa.",
+              "side": "BUY",
+              "ticker": "PETR4"
+            },
+            "quantity": "499",
+            "raw_price": "40.00",
+            "cost": "19.96",
+            "realized_pnl": "0",
+            "trade_session": "2026-10-09",
+            "due_session": "2026-10-14",
+            "marks_sha256": "7f042a0ef0e914202b7bd981ae7b11390ccaa6cf051e53945178d9da769ea0c2"
+          },
+          "a-initial-vale3": {
+            "operation": {
+              "cost_ceiling": "19.98",
+              "dependencies": [],
+              "funding_source": "SETTLED_CASH",
+              "limit_price": "60.00",
+              "operation_id": "a-initial-vale3",
+              "priority": 2,
+              "quantity": "333",
+              "reasoning": "A · Construir carteira com três empresas; WEGE3 e BBAS3 não recebem alocação apesar dos sinais de compra. Preservar caixa.",
+              "side": "BUY",
+              "ticker": "VALE3"
+            },
+            "quantity": "333",
+            "raw_price": "60.00",
+            "cost": "19.98",
+            "realized_pnl": "0",
+            "trade_session": "2026-10-09",
+            "due_session": "2026-10-14",
+            "marks_sha256": "7f042a0ef0e914202b7bd981ae7b11390ccaa6cf051e53945178d9da769ea0c2"
+          },
+          "b-sale": {
+            "operation": {
+              "cost_ceiling": "4.00",
+              "dependencies": [],
+              "funding_source": null,
+              "limit_price": "40.00",
+              "operation_id": "b-sale",
+              "priority": 1,
+              "quantity": "100",
+              "reasoning": "Demonstração sintética; seleção explícita, sem sizing por confiança.",
+              "side": "SELL",
+              "ticker": "PETR4"
+            },
+            "quantity": "100",
+            "raw_price": "40.00",
+            "cost": "4.00",
+            "realized_pnl": "-8.00",
+            "trade_session": "2026-10-14",
+            "due_session": "2026-10-16",
+            "marks_sha256": "bef83beb8dd5a303b0b7710103d6dbef3747a959d364f73e6e3a49a79f627b96"
+          },
+          "c-buy": {
+            "operation": {
+              "cost_ceiling": "3.50",
+              "dependencies": [
+                "b-sale"
+              ],
+              "funding_source": "SETTLEMENT",
+              "limit_price": "50.00",
+              "operation_id": "c-buy",
+              "priority": 2,
+              "quantity": "70",
+              "reasoning": "Demonstração sintética; seleção explícita, sem sizing por confiança.",
+              "side": "BUY",
+              "ticker": "WEGE3"
+            },
+            "quantity": "70",
+            "raw_price": "50.00",
+            "cost": "3.50",
+            "realized_pnl": "0",
+            "trade_session": "2026-10-16",
+            "due_session": "2026-10-20",
+            "marks_sha256": "15b5c6f5e698b591fd014c560b4541b5633ef992cd480d96151e4250d4be97d0"
+          }
+        },
+        "receivables": {},
+        "blocked": {},
+        "state_sha256": "22d6a7a9f6bf5e15bad4eddb10b9c0ea822f69ff4d1f00ecf44e7a5d1c961f0f"
+      },
+      "policy": {
+        "version": "DEMO_ACCOUNTING_V1",
+        "mode": "synthetic",
+        "currency": "BRL",
+        "rounding": "HALF_EVEN_CENT; BASIS_AUTHORITY; WEIGHT_RESIDUE_TO_CASH",
+        "fee_rate": "0.001",
+        "taxes": "PRE_IR_NOT_A_TAX_MODEL",
+        "max_concentration": "0.40",
+        "max_exposure": "0.85",
+        "max_volatility": "0.35",
+        "max_drawdown": "0.20",
+        "max_turnover": "1.00",
+        "max_cost_weight": "0.01",
+        "max_operations": 10,
+        "risk_window": 60,
+        "annualization": 252,
+        "veto_policy": "NO_OPERATION_ON_VETO; MISSING_OPINION_HOLD_ONLY",
+        "settlement_rule": "B3_CASH_EQUITIES_D+2_OC041_2026_CONFIRMED",
+        "calendar_year": 2026
+      },
+      "risk": {
+        "schema_version": 1,
+        "identity": "HFL-MULTIASSET-PORTFOLIO-V1",
+        "mode": "synthetic",
+        "session": "2026-10-16",
+        "state_sha256": "22d6a7a9f6bf5e15bad4eddb10b9c0ea822f69ff4d1f00ecf44e7a5d1c961f0f",
+        "marks_sha256": "15b5c6f5e698b591fd014c560b4541b5633ef992cd480d96151e4250d4be97d0",
+        "limits_sha256": "5e7eac1150cd397e13341ec2e62b1304551a14d58f00d13ffe3a18dd1f732152",
+        "history_sha256": "67f8289e7d2963b55528d974d18290a200d6b24d79186cbe71e43f6294f80fd7",
+        "window_returns": 60,
+        "annualization": 252,
+        "weights": {
+          "ITUB4": "0.149793486115",
+          "PETR4": "0.159699668563",
+          "VALE3": "0.199924773051",
+          "WEGE3": "0.035021857141"
+        },
+        "cash_available": "45527.59",
+        "drawdown": "0.0006241",
+        "exposure": "0.544439784870",
+        "concentration_by_company": {
+          "ITUB4": "0.149793486115",
+          "PETR4": "0.159699668563",
+          "VALE3": "0.199924773051",
+          "WEGE3": "0.035021857141"
+        },
+        "costs_cumulative": "62.41",
+        "sector_exposure": null,
+        "sector_status": "NOT_EVALUATED_NO_RELIABLE_METADATA",
+        "volatility": "0.017977557245210857",
+        "covariance_daily": {
+          "ITUB4": {
+            "ITUB4": "2.805427602132778e-06",
+            "PETR4": "4.426704461845141e-06",
+            "VALE3": "3.4343152473838743e-06",
+            "WEGE3": "2.3712262846410573e-06"
+          },
+          "PETR4": {
+            "ITUB4": "4.426704461845141e-06",
+            "PETR4": "6.985199322251576e-06",
+            "VALE3": "5.4191122930236305e-06",
+            "WEGE3": "3.741536175545794e-06"
+          },
+          "VALE3": {
+            "ITUB4": "3.4343152473838743e-06",
+            "PETR4": "5.4191122930236305e-06",
+            "VALE3": "4.2042040523912295e-06",
+            "WEGE3": "2.9027680840958247e-06"
+          },
+          "WEGE3": {
+            "ITUB4": "2.3712262846410573e-06",
+            "PETR4": "3.741536175545794e-06",
+            "VALE3": "2.9027680840958247e-06",
+            "WEGE3": "2.0042327180671914e-06"
+          }
+        },
+        "correlations": {
+          "ITUB4": {
+            "ITUB4": "1.0",
+            "PETR4": "0.9999806444776158",
+            "VALE3": "0.9999970802179867",
+            "WEGE3": "0.9999986042898902"
+          },
+          "PETR4": {
+            "ITUB4": "0.9999806444776158",
+            "PETR4": "1.0",
+            "VALE3": "0.9999927597036407",
+            "WEGE3": "0.9999688540457418"
+          },
+          "VALE3": {
+            "ITUB4": "0.9999970802179867",
+            "PETR4": "0.9999927597036407",
+            "VALE3": "1.0",
+            "WEGE3": "0.9999916471410397"
+          },
+          "WEGE3": {
+            "ITUB4": "0.9999986042898902",
+            "PETR4": "0.9999688540457418",
+            "VALE3": "0.9999916471410397",
+            "WEGE3": "1.0"
+          }
+        },
+        "status": "OK",
+        "errors": [],
+        "correlation_note": "Undefined correlation for constant returns remains null; covariance still observed.",
+        "aligned_returns": 60,
+        "start": "2026-07-23",
+        "end": "2026-10-16",
+        "sha256": "4dea193a23ae1cc3169188227d3ad14a2ab28d26b1a419fc4f076fb568ea4c24"
+      },
+      "opportunities": [
+        {
+          "generated_at": "2026-10-16T18:30:00-03:00",
+          "history_sha256": "a36bc9e1c948d0a1f4a6df565f206469381ebc20a02596004229f700d277348b",
+          "identity": "HFL-MULTIASSET-RADAR-V1",
+          "input_sha256": "1bb743fe75548849e28760d59b2e64c798e70403b85699940fc0fa5b46272df4",
+          "manifest_sha256": "55dd6bf0b82c98e780928c8408b418e9812613f969fbb6cd1a8fe13bb27c9f97",
+          "mode": "synthetic",
+          "origin": "SYNTHETIC_FIXTURE_NOT_GEMINI",
+          "recommendation": "COMPRA",
+          "result_sha256": "d6a645e0a5e18e541ba2a4706f206e8f6f6868853a1941d44e7c2278842050bc",
+          "risk_verdict": "APROVADO",
+          "schema_version": 1,
+          "session": "2026-10-16",
+          "sha256": "7b7d5166829a4b2d0565ed4bfdf47766568119ef9b938d22ffa01ece42b4d7d8",
+          "source_family": "SYNTHETIC_FULL_COMMITTEES_V1",
+          "ticker": "BBAS3",
+          "votes_count": 5
+        },
+        {
+          "generated_at": "2026-10-16T18:30:00-03:00",
+          "history_sha256": "7b069cc0f53d4898c6fef0f8b223a1da9d00253fa7d4a3be7729325ea43ff001",
+          "identity": "HFL-MULTIASSET-RADAR-V1",
+          "input_sha256": "a0c67a3abbc74dbeee7f092a28f447d1200fb2e4993ade570b82078b2c96add0",
+          "manifest_sha256": "55dd6bf0b82c98e780928c8408b418e9812613f969fbb6cd1a8fe13bb27c9f97",
+          "mode": "synthetic",
+          "origin": "SYNTHETIC_FIXTURE_NOT_GEMINI",
+          "recommendation": "COMPRA",
+          "result_sha256": "14ff50bd853fe0e3408cba15bc7200df99557ee1ffd6f15842fa986232a1e080",
+          "risk_verdict": "APROVADO",
+          "schema_version": 1,
+          "session": "2026-10-16",
+          "sha256": "6481a84a720f8476ff4bcdb7274580b1cd4887b9145c57a314dcd304563d8c0a",
+          "source_family": "SYNTHETIC_FULL_COMMITTEES_V1",
+          "ticker": "ITUB4",
+          "votes_count": 5
+        },
+        {
+          "generated_at": "2026-10-16T18:30:00-03:00",
+          "history_sha256": "48ce50f48101e6dd7b48a5aa58b422d88cf0a808e9923625dc131bc8d1ab3cdf",
+          "identity": "HFL-MULTIASSET-RADAR-V1",
+          "input_sha256": "c36ffe292ca5a9cbbfb210d6fd3ac49976ae410a51cda9819306095f73cf2eee",
+          "manifest_sha256": "55dd6bf0b82c98e780928c8408b418e9812613f969fbb6cd1a8fe13bb27c9f97",
+          "mode": "synthetic",
+          "origin": "SYNTHETIC_FIXTURE_NOT_GEMINI",
+          "recommendation": "COMPRA",
+          "result_sha256": "6d1b086364509774d71932b5200c5b08cfe7dc38a48c785bbd80e6289e4ba309",
+          "risk_verdict": "APROVADO",
+          "schema_version": 1,
+          "session": "2026-10-16",
+          "sha256": "6a173412a7d737ccddfb54f7f89136ee941b9e73efe95f174f060f07474de31a",
+          "source_family": "SYNTHETIC_FULL_COMMITTEES_V1",
+          "ticker": "PETR4",
+          "votes_count": 5
+        },
+        {
+          "generated_at": "2026-10-16T18:30:00-03:00",
+          "history_sha256": "735e1ac6c76cf5db61a1b42a6e0ba0988df090a3025b3594b9010640c902e9c8",
+          "identity": "HFL-MULTIASSET-RADAR-V1",
+          "input_sha256": "44532985eac28dc371f376d22789e2031b039a4951704eb35bdcef7c50c247ed",
+          "manifest_sha256": "55dd6bf0b82c98e780928c8408b418e9812613f969fbb6cd1a8fe13bb27c9f97",
+          "mode": "synthetic",
+          "origin": "SYNTHETIC_FIXTURE_NOT_GEMINI",
+          "recommendation": "COMPRA",
+          "result_sha256": "fd33c90b944991e295392c1fbba47172e0c21bf50f4fd898e3b1ae578b2eaeb2",
+          "risk_verdict": "APROVADO",
+          "schema_version": 1,
+          "session": "2026-10-16",
+          "sha256": "70510567b31413dc77c337014207252897910f2f75eae5adb108ff8de8269e5e",
+          "source_family": "SYNTHETIC_FULL_COMMITTEES_V1",
+          "ticker": "VALE3",
+          "votes_count": 5
+        },
+        {
+          "generated_at": "2026-10-16T18:30:00-03:00",
+          "history_sha256": "acda67cf268ce8b1d1fdcb7f4d73c11fa4d58d7624befb84d8cba4fa02f11a93",
+          "identity": "HFL-MULTIASSET-RADAR-V1",
+          "input_sha256": "27984a2da699fd7b1945e1105e1cbda60a61058ec4561d1bd2dc290356857d19",
+          "manifest_sha256": "55dd6bf0b82c98e780928c8408b418e9812613f969fbb6cd1a8fe13bb27c9f97",
+          "mode": "synthetic",
+          "origin": "SYNTHETIC_FIXTURE_NOT_GEMINI",
+          "recommendation": "COMPRA",
+          "result_sha256": "e19a0fd4ee3d494fca4989ec1f01ca85a677bff9b3a384bc6b8f1b4f8d0b112c",
+          "risk_verdict": "APROVADO",
+          "schema_version": 1,
+          "session": "2026-10-16",
+          "sha256": "0228ad18ced5bf111e178f20f79f37a34c2ef8eb9849dc008b9013522547f7c0",
+          "source_family": "SYNTHETIC_FULL_COMMITTEES_V1",
+          "ticker": "WEGE3",
+          "votes_count": 5
+        }
+      ],
+      "scenarios": [
+        "buy",
+        "sell_cash",
+        "partial",
+        "rebalance",
+        "hold",
+        "rotation"
+      ],
+      "cases": [
+        {
+          "id": "A",
+          "label": "A · Construção inicial",
+          "valid": true
+        },
+        {
+          "id": "B",
+          "label": "B · Venda parcial, recebível indisponível",
+          "valid": true
+        },
+        {
+          "id": "C",
+          "label": "C · Compra após liquidação",
+          "valid": true
+        },
+        {
+          "id": "D",
+          "label": "D · Não operar",
+          "valid": true
+        },
+        {
+          "id": "E",
+          "label": "E · Alocação impossível bloqueada",
+          "valid": false
+        }
+      ],
+      "events": [
+        {
+          "sequence": 1,
+          "kind": "INITIALIZED",
+          "record_id": "init",
+          "created_at": "2026-10-11T17:35:19.184322+00:00",
+          "sha256": "ad44e91933464338b5f84704de813bcc616dc5be56891534d4140aff9966027b",
+          "previous_sha256": null
+        },
+        {
+          "sequence": 2,
+          "kind": "PROPOSED",
+          "record_id": "propose-a-initial",
+          "created_at": "2026-10-11T17:35:19.212046+00:00",
+          "sha256": "d65f7cb92d71813c595d3ea0d05cfe7ee5564295eaa07252d2c3edb115fb97cd",
+          "previous_sha256": "ad44e91933464338b5f84704de813bcc616dc5be56891534d4140aff9966027b"
+        },
+        {
+          "sequence": 3,
+          "kind": "APPROVED",
+          "record_id": "approve-a-initial",
+          "created_at": "2026-10-11T17:35:19.255848+00:00",
+          "sha256": "5e53e71d77dd13be2f4d8d32f40060b522c7203cfa574f91e0d2d9cd110aa1d2",
+          "previous_sha256": "d65f7cb92d71813c595d3ea0d05cfe7ee5564295eaa07252d2c3edb115fb97cd"
+        },
+        {
+          "sequence": 4,
+          "kind": "RESERVED",
+          "record_id": "reserve-a-initial",
+          "created_at": "2026-10-11T17:35:19.336052+00:00",
+          "sha256": "a3e44b0be265a0d3d89b3c594dbf97fbd7403391f976a249b1e8dbdf2152a980",
+          "previous_sha256": "5e53e71d77dd13be2f4d8d32f40060b522c7203cfa574f91e0d2d9cd110aa1d2"
+        },
+        {
+          "sequence": 5,
+          "kind": "FILLED",
+          "record_id": "fill-a-initial",
+          "created_at": "2026-10-11T17:35:19.385285+00:00",
+          "sha256": "31bc4a8c26f3e6d3ed820dca1ebe7a98460d804d4dfb988234e2f9585cb6c83e",
+          "previous_sha256": "a3e44b0be265a0d3d89b3c594dbf97fbd7403391f976a249b1e8dbdf2152a980"
+        },
+        {
+          "sequence": 6,
+          "kind": "SETTLED",
+          "record_id": "settle-a-initial-itub4",
+          "created_at": "2026-10-11T17:35:19.509146+00:00",
+          "sha256": "68e93dc4603e38d7f2689aa6f78d58209e4ecbde97b6894b4079cebc94aff88e",
+          "previous_sha256": "31bc4a8c26f3e6d3ed820dca1ebe7a98460d804d4dfb988234e2f9585cb6c83e"
+        },
+        {
+          "sequence": 7,
+          "kind": "SETTLED",
+          "record_id": "settle-a-initial-petr4",
+          "created_at": "2026-10-11T17:35:19.571322+00:00",
+          "sha256": "80596da53ababfa40ba6e99bf0aa88733e97bd1da668aa73f4351e2950761b06",
+          "previous_sha256": "68e93dc4603e38d7f2689aa6f78d58209e4ecbde97b6894b4079cebc94aff88e"
+        },
+        {
+          "sequence": 8,
+          "kind": "SETTLED",
+          "record_id": "settle-a-initial-vale3",
+          "created_at": "2026-10-11T17:35:19.622379+00:00",
+          "sha256": "49a994e7a33bce70e7165e2f565e5f72701289be242888d6f5348ca932d7cb21",
+          "previous_sha256": "80596da53ababfa40ba6e99bf0aa88733e97bd1da668aa73f4351e2950761b06"
+        },
+        {
+          "sequence": 9,
+          "kind": "MARKED",
+          "record_id": "mark-14",
+          "created_at": "2026-10-11T17:35:19.712953+00:00",
+          "sha256": "38627b1748a4f171f75f32d6f7457b8db503a52859265b6f3ef35f9d6a4bd3ff",
+          "previous_sha256": "49a994e7a33bce70e7165e2f565e5f72701289be242888d6f5348ca932d7cb21"
+        },
+        {
+          "sequence": 10,
+          "kind": "PROPOSED",
+          "record_id": "propose-b-partial",
+          "created_at": "2026-10-11T17:35:19.977606+00:00",
+          "sha256": "1d4a668071b4edcbf8da4244ede0c3793cc4d22c5ad4a064fec3d2289f1a4fa1",
+          "previous_sha256": "38627b1748a4f171f75f32d6f7457b8db503a52859265b6f3ef35f9d6a4bd3ff"
+        },
+        {
+          "sequence": 11,
+          "kind": "APPROVED",
+          "record_id": "approve-b-partial",
+          "created_at": "2026-10-11T17:35:20.139020+00:00",
+          "sha256": "92cc9e57bc9c984c51f3f8534e24b5a5a2ce266baa625ce5ba4c94cad458187d",
+          "previous_sha256": "1d4a668071b4edcbf8da4244ede0c3793cc4d22c5ad4a064fec3d2289f1a4fa1"
+        },
+        {
+          "sequence": 12,
+          "kind": "RESERVED",
+          "record_id": "reserve-b-partial",
+          "created_at": "2026-10-11T17:35:20.338971+00:00",
+          "sha256": "30bab3ca57e86caf7d63243036d67fd0dfa4cd78ab7924360863d7f386b6d78a",
+          "previous_sha256": "92cc9e57bc9c984c51f3f8534e24b5a5a2ce266baa625ce5ba4c94cad458187d"
+        },
+        {
+          "sequence": 13,
+          "kind": "FILLED",
+          "record_id": "fill-b-partial",
+          "created_at": "2026-10-11T17:35:20.490093+00:00",
+          "sha256": "d0c9bd23284da723befc10fdcc3f5fdfa8eaeb8f5f1097af7167ed48ec014d83",
+          "previous_sha256": "30bab3ca57e86caf7d63243036d67fd0dfa4cd78ab7924360863d7f386b6d78a"
+        },
+        {
+          "sequence": 14,
+          "kind": "SETTLED",
+          "record_id": "settle-b-sale",
+          "created_at": "2026-10-11T17:35:20.910376+00:00",
+          "sha256": "87532d79423bb38189b2887454d2941932020b10efbe44f8acfef40b83ce6dea",
+          "previous_sha256": "d0c9bd23284da723befc10fdcc3f5fdfa8eaeb8f5f1097af7167ed48ec014d83"
+        },
+        {
+          "sequence": 15,
+          "kind": "MARKED",
+          "record_id": "mark-16",
+          "created_at": "2026-10-11T17:35:21.168490+00:00",
+          "sha256": "07adad6fa61872e04e0f64ab51575d1635ce2ff763e8dd672c057d946f861118",
+          "previous_sha256": "87532d79423bb38189b2887454d2941932020b10efbe44f8acfef40b83ce6dea"
+        },
+        {
+          "sequence": 16,
+          "kind": "PROPOSED",
+          "record_id": "propose-c-after-settlement",
+          "created_at": "2026-10-11T17:35:21.786792+00:00",
+          "sha256": "ff6b6f7f70d66a783166e69bbad999d35bc5ab811a65b19dbca03acffa982269",
+          "previous_sha256": "07adad6fa61872e04e0f64ab51575d1635ce2ff763e8dd672c057d946f861118"
+        },
+        {
+          "sequence": 17,
+          "kind": "APPROVED",
+          "record_id": "approve-c-after-settlement",
+          "created_at": "2026-10-11T17:35:22.107462+00:00",
+          "sha256": "7a6ac519a23d9345d4f123971ba1b5ab9fb503203eee11707c7918c819dce775",
+          "previous_sha256": "ff6b6f7f70d66a783166e69bbad999d35bc5ab811a65b19dbca03acffa982269"
+        },
+        {
+          "sequence": 18,
+          "kind": "RESERVED",
+          "record_id": "reserve-c-after-settlement",
+          "created_at": "2026-10-11T17:35:22.842982+00:00",
+          "sha256": "319d9b072b6c63529f9726a710aaffabdcc71ad1f25f5f048f869c1ff5d30fc2",
+          "previous_sha256": "7a6ac519a23d9345d4f123971ba1b5ab9fb503203eee11707c7918c819dce775"
+        },
+        {
+          "sequence": 19,
+          "kind": "FILLED",
+          "record_id": "fill-c-after-settlement",
+          "created_at": "2026-10-11T17:35:23.080122+00:00",
+          "sha256": "63f90d6c94f40a3276a24b08c32d5422d56e0f9dd91bf7412613692df3c19436",
+          "previous_sha256": "319d9b072b6c63529f9726a710aaffabdcc71ad1f25f5f048f869c1ff5d30fc2"
+        },
+        {
+          "sequence": 20,
+          "kind": "PROPOSED",
+          "record_id": "propose-d-hold",
+          "created_at": "2026-10-11T17:35:24.162805+00:00",
+          "sha256": "21f8faf74ca8c90316b3c3466ad227643e90d7c1fe8559af6cd4ded682343385",
+          "previous_sha256": "63f90d6c94f40a3276a24b08c32d5422d56e0f9dd91bf7412613692df3c19436"
+        },
+        {
+          "sequence": 21,
+          "kind": "APPROVED",
+          "record_id": "approve-d-hold",
+          "created_at": "2026-10-11T17:35:24.769498+00:00",
+          "sha256": "2424d64bb69e7ea4093313b9f52c94818a4ce067d8350899daeaac194b12a45b",
+          "previous_sha256": "21f8faf74ca8c90316b3c3466ad227643e90d7c1fe8559af6cd4ded682343385"
+        },
+        {
+          "sequence": 22,
+          "kind": "PROPOSED",
+          "record_id": "propose-e-invalid",
+          "created_at": "2026-10-11T17:35:26.286418+00:00",
+          "sha256": "4056727967b517d41f6beb62451b1873c883fd35c8e3fb2e048fab89436cd71e",
+          "previous_sha256": "2424d64bb69e7ea4093313b9f52c94818a4ce067d8350899daeaac194b12a45b"
+        }
+      ],
+      "integrity": {
+        "ok": true,
+        "events": 22,
+        "head_sha256": "4056727967b517d41f6beb62451b1873c883fd35c8e3fb2e048fab89436cd71e",
+        "state_sha256": "22d6a7a9f6bf5e15bad4eddb10b9c0ea822f69ff4d1f00ecf44e7a5d1c961f0f"
+      },
+      "provider_calls": 0,
+      "real_orders": 0
+    }
+  },
+  "synthetic_v6": {
+    "available": true,
+    "data": {
+      "identity": "HFL-MULTIASSET-GLOBAL-PM-V1",
+      "status": "PROPOSALS_AVAILABLE",
+      "cases": [
+        {
+          "case": "A",
+          "context_sha256": "166d1ca8e5f41662fb605fe3e4972b0649864078d354edf37065c18e2480bcf8",
+          "result_sha256": "b5d90fa3c178d9eb4d917e6644403f130fe70f2d7a6f3f54c52a56a85bec9f8d",
+          "root_id": "demo-qualified-v6-a",
+          "summary": "Iniciar três posições e preservar caixa. Cinco sinais favoráveis não obrigam cinco compras.",
+          "valid": true
+        },
+        {
+          "case": "B",
+          "context_sha256": "f7835964f23cf5a358786399e582ad17e1c49bdf59cdcf9e9233c2b42a2e750f",
+          "result_sha256": "ac41c2368d9fd1e709a7ab78d6a9ea4121db85770b65dd14352891b9890f5495",
+          "root_id": "demo-qualified-v6-b",
+          "summary": "Reduzir PETR4: concentração atual de 50% excede o teto didático de 40%, apesar do parecer favorável.",
+          "valid": true
+        },
+        {
+          "case": "C",
+          "context_sha256": "aa0f27b1c688f720e855bd1ecb72cf372cb258414bbc7b6f0df6234323ef9962",
+          "result_sha256": "bfb54a91e86758f74659a99fb3a407c4dc2d15115b058897fca5118de438cfd5",
+          "root_id": "demo-qualified-v6-c",
+          "summary": "Reduzir PETR4 e manter o recebível; nenhuma compra substituta. Caixa só após confirmação.",
+          "valid": true
+        },
+        {
+          "case": "D",
+          "context_sha256": "76c90c8e9863db894e2533f91688782ae1c8ca56b5df507f5aba26f1fa7d4b6c",
+          "result_sha256": "8c21860ce3a7df834aead082a5ce64003692efa7f88f8d01a3b8bbfa50eb9af5",
+          "root_id": "demo-qualified-v6-d",
+          "summary": "Caixa disponível de R$ 9.000 não financia WEGE3. Reduzir PETR4 e aguardar liquidação antes de considerar a compra.",
+          "valid": true
+        },
+        {
+          "case": "E",
+          "context_sha256": "c6305f67752aee5853abb9bb65020cc7ae02c41f8213132a381dc2a63623be9b",
+          "result_sha256": "f792f7028f57552408e82dc10f0ab52df255f218b25435a112c7af0e4dc1b316",
+          "root_id": "demo-qualified-v6-e",
+          "summary": "Manter posições e caixa; sinais favoráveis não justificam obrigatoriamente nova operação.",
+          "valid": true
+        },
+        {
+          "case": "F",
+          "context_sha256": "8ce657c1085203f7719fb11bb0d13039bf132cfe42fcedea52eef0cf972be432",
+          "result_sha256": "be493983534825cb7a8b30cea67d0ec434c4fffa5815e7c9965abbeea4477d35",
+          "root_id": "demo-qualified-v6-f",
+          "summary": "Fixture inválida de LLM: pesos somam 120%, sem efeito financeiro.",
+          "valid": false
+        }
+      ],
+      "prepared": null,
+      "execution_enabled": false,
+      "paid_inference_available_in_ui": false
+    }
+  },
+  "jobs": {
+    "available": true,
+    "data": [
+      {
+        "module": "Global PM",
+        "job_id": "v7-3558f0253cf44dd0a00c93d7be73e56f-run",
+        "id": "v7-3558f0253cf44dd0a00c93d7be73e56f",
+        "command": "run",
+        "started_at": "2026-10-12T00:19:53.488251+00:00",
+        "finished_at": "2026-10-12T00:19:53.877703+00:00",
+        "result_state": "VALID_PROPOSAL",
+        "cost_usd": "0",
+        "native_state": "COMPLETED",
+        "state": "COMPLETED",
+        "error": null,
+        "href": "/portfolio?analysis=v7-3558f0253cf44dd0a00c93d7be73e56f"
+      },
+      {
+        "module": "Global PM",
+        "job_id": "v7-3558f0253cf44dd0a00c93d7be73e56f-prepare",
+        "id": "v7-3558f0253cf44dd0a00c93d7be73e56f",
+        "command": "prepare",
+        "started_at": "2026-10-12T00:16:46.278824+00:00",
+        "finished_at": "2026-10-12T00:16:46.569777+00:00",
+        "result_state": "AWAITING_PREFLIGHT",
+        "cost_usd": null,
+        "native_state": "COMPLETED",
+        "state": "COMPLETED",
+        "error": null,
+        "href": "/portfolio?analysis=v7-3558f0253cf44dd0a00c93d7be73e56f"
+      },
+      {
+        "module": "Radar",
+        "id": "7748368cbd3385a42b8051a0",
+        "command": "prepare",
+        "started_at": "2026-10-11T13:55:00.509339-03:00",
+        "finished_at": "2026-10-11T13:56:19.204450-03:00",
+        "native_state": "COMPLETED",
+        "state": "COMPLETED",
+        "cost_usd": null,
+        "href": "/radar"
+      },
+      {
+        "module": "H2",
+        "id": "5204277bbc1b68d953a7bb61b99d9ad3",
+        "command": "benchmarks",
+        "session": "2026-10-09",
+        "stage": "Benchmarks determinísticos verificados",
+        "started_at": "2026-10-10T17:10:23.013426-03:00",
+        "finished_at": "2026-10-10T17:10:34.418784-03:00",
+        "native_state": "COMPLETE",
+        "state": "COMPLETED",
+        "error": null,
+        "calls_reserved": null,
+        "calls_recorded": null,
+        "cost_usd": null,
+        "href": "/paper#sala"
+      },
+      {
+        "module": "H2",
+        "id": "92ca5e8545c7ca8898db0dd6ab78b9cb",
+        "command": "preflight",
+        "session": "2026-10-09",
+        "stage": "DECISION_EXISTS",
+        "started_at": "2026-10-10T17:10:09.679205-03:00",
+        "finished_at": "2026-10-10T17:10:18.695876-03:00",
+        "native_state": "COMPLETE",
+        "state": "COMPLETED",
+        "error": null,
+        "calls_reserved": null,
+        "calls_recorded": null,
+        "cost_usd": null,
+        "href": "/paper#sala"
+      },
+      {
+        "module": "H2",
+        "id": "17b985d36d81d79c6a830ef003a9171c",
+        "command": "prepare",
+        "session": "2026-10-09",
+        "stage": "Runner concluído; consulte registros",
+        "started_at": "2026-10-10T17:10:03.042901-03:00",
+        "finished_at": "2026-10-10T17:10:06.295433-03:00",
+        "native_state": "COMPLETE",
+        "state": "COMPLETED",
+        "error": null,
+        "calls_reserved": null,
+        "calls_recorded": null,
+        "cost_usd": null,
+        "href": "/paper#sala"
+      },
+      {
+        "module": "H2",
+        "id": "0d6c0f1f5e960ab4d099a7a6ad4a51a6",
+        "command": "preflight",
+        "session": "2026-10-09",
+        "stage": "DECISION_EXISTS",
+        "started_at": "2026-10-10T17:05:35.299631-03:00",
+        "finished_at": "2026-10-10T17:05:42.996785-03:00",
+        "native_state": "COMPLETE",
+        "state": "COMPLETED",
+        "error": null,
+        "calls_reserved": null,
+        "calls_recorded": null,
+        "cost_usd": null,
+        "href": "/paper#sala"
+      },
+      {
+        "module": "H2",
+        "id": "e166ab2f6786d748dbda21fe06810879",
+        "command": "preflight",
+        "session": "2026-10-09",
+        "stage": "DECISION_EXISTS",
+        "started_at": "2026-10-10T16:43:55.340200-03:00",
+        "finished_at": "2026-10-10T16:44:03.894828-03:00",
+        "native_state": "COMPLETE",
+        "state": "COMPLETED",
+        "error": null,
+        "calls_reserved": null,
+        "calls_recorded": null,
+        "cost_usd": null,
+        "href": "/paper#sala"
+      },
+      {
+        "module": "H2",
+        "id": "b8780a444aae9106e0ef8ee35afcf99b",
+        "command": "benchmarks",
+        "session": "2026-10-09",
+        "stage": "Benchmarks determinísticos verificados",
+        "started_at": "2026-10-10T16:42:45.712611-03:00",
+        "finished_at": "2026-10-10T16:43:00.994135-03:00",
+        "native_state": "COMPLETE",
+        "state": "COMPLETED",
+        "error": null,
+        "calls_reserved": null,
+        "calls_recorded": null,
+        "cost_usd": null,
+        "href": "/paper#sala"
+      },
+      {
+        "module": "H2",
+        "id": "40d4c0a5c0a1ea7bb11afaa17ac772f7",
+        "command": "preflight",
+        "session": "2026-10-09",
+        "stage": "DECISION_EXISTS",
+        "started_at": "2026-10-10T16:36:43.124933-03:00",
+        "finished_at": "2026-10-10T16:36:52.404139-03:00",
+        "native_state": "COMPLETE",
+        "state": "COMPLETED",
+        "error": null,
+        "calls_reserved": null,
+        "calls_recorded": null,
+        "cost_usd": null,
+        "href": "/paper#sala"
+      },
+      {
+        "module": "H2",
+        "id": "7555bb43bba90632c3caa7b86062fa25",
+        "command": "prepare",
+        "session": "2026-10-09",
+        "stage": "Runner concluído; consulte registros",
+        "started_at": "2026-10-10T16:34:41.947235-03:00",
+        "finished_at": "2026-10-10T16:34:46.340050-03:00",
+        "native_state": "COMPLETE",
+        "state": "COMPLETED",
+        "error": null,
+        "calls_reserved": null,
+        "calls_recorded": null,
+        "cost_usd": null,
+        "href": "/paper#sala"
+      }
+    ]
+  },
+  "calendar": {
+    "state": "fechada",
+    "next_session": "2026-10-13",
+    "expected_open": "2026-10-13T10:00:00-03:00",
+    "basis": "Previsão pelo calendário B3 e relógio BRT; pregão regular, sem confirmação de leilão, suspensão ou after-market."
+  },
+  "last_observed_session": "2026-10-09",
+  "last_input_observed_at": "2026-10-10T14:54:51.409659-03:00",
+  "last_closed_session": "2026-10-09",
+  "intraday": {
+    "available": false,
+    "reason": "Consulta local sem provider intradiário; verificar Mercado."
+  },
+  "alerts": [
+    "Supervisão aguarda ação humana até 2026-10-13T10:00:00-03:00.",
+    "Pareceres oficiais completos ausentes: PETR4, VALE3, ITUB4, WEGE3, BBAS3."
+  ],
+  "scientific": {
+    "validation": "Validation OA-1 provisória · CONCLUÍDA E SELADA",
+    "academic": "NÃO APROVADO / NÃO CONGELADO — coautor, orientador e System Freeze pendentes",
+    "final_test": "BLOQUEADO — exige manifesto APPROVED/FROZEN, consentimento próprio e checkpoint oficial de Validation",
+    "interpretation": "Resultados descritivos, não confirmatórios"
+  },
+  "manual_next_steps": [
+    "Consultar a decisão de 09/10; não repetir sua inferência.",
+    "Revisar a supervisão antes de 13/10 às 10h BRT; não há aprovação automática.",
+    "Após dados oficiais de 13/10 disponíveis, preparar e conferir reconciliação no runner original; cada nova inferência exige autorização.",
+    "Conferir SMA/Bollinger e supervisionada com os mesmos inputs observados, mediante ação explícita.",
+    "Autorizar comitês Radar separadamente; só depois preparar contexto Global PM dentro de sua validade de 24 h."
+  ],
+  "execution_multiasset_available": false,
+  "provider_calls": 0
+}

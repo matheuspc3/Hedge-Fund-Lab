@@ -1,0 +1,50 @@
+{
+  "passed": 10,
+  "failed": 0,
+  "results": [
+    {
+      "name": "overview:official_snapshot_not_demo",
+      "ok": true
+    },
+    {
+      "name": "overview:empty_v2_cash_no_positions",
+      "ok": true
+    },
+    {
+      "name": "overview:snapshot_not_prospective_history",
+      "ok": true
+    },
+    {
+      "name": "tabs:positions_only",
+      "ok": true
+    },
+    {
+      "name": "history:real_v1_and_v2",
+      "ok": true
+    },
+    {
+      "name": "history:v1_rejected_no_execution_controls",
+      "ok": true
+    },
+    {
+      "name": "history:back_and_focus",
+      "ok": true
+    },
+    {
+      "name": "history:v2_valid_watchlist_no_orders",
+      "ok": true
+    },
+    {
+      "name": "history:three_dates_and_provenance",
+      "ok": true
+    },
+    {
+      "name": "history:allocation_labels",
+      "ok": true
+    }
+  ],
+  "blocked": [],
+  "exceptions": [
+    "Error: TypeError: Cannot read properties of null (reading 'textContent')\n    at <anonymous>:1:51\n    at Page.eval (file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_cdp_v762.mjs:111:35)\n    at async wait (file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v764.mjs:23:55)\n    at async file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v764.mjs:55:36\n    at async session (file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_cdp_v762.mjs:152:12)\n    at async file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v764.mjs:12:3"
+  ]
+}

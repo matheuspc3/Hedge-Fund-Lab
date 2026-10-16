@@ -1,0 +1,141 @@
+[
+  {
+    "id": "v74-76d07c0d32444cecaf07e875deacb519",
+    "identity": "HFL-MULTIASSET-GLOBAL-PM-V2",
+    "session": "2026-10-09",
+    "context_prepared_at": "2026-10-12T20:29:22.581650+00:00",
+    "inference_completed_at": "2026-10-12T21:08:01.356130+00:00",
+    "validation_at": "2026-10-12T21:08:01.316822+00:00",
+    "status": "VALID_PROPOSAL",
+    "cash_target": "1.00",
+    "targets": {
+      "BBAS3": "0.00",
+      "ITUB4": "0.00",
+      "PETR4": "0.00",
+      "VALE3": "0.00",
+      "WEGE3": "0.00"
+    },
+    "operations": [],
+    "watchlist": [
+      {
+        "observation": "Sinal técnico favorável com RSI elevado em 76.557381 e volatilidade anualizada de 0.429197.",
+        "radar_signal": "COMPRA",
+        "reassessment_condition": "Acomodação dos indicadores de momentum e retração do RSI para patamares neutros.",
+        "ticker": "ITUB4"
+      },
+      {
+        "observation": "Consenso de compra com RSI em 74.915165 sugerindo sobrecompra no curto prazo.",
+        "radar_signal": "COMPRA",
+        "reassessment_condition": "Estabilização técnica e alívio do estiramento em relação às médias.",
+        "ticker": "PETR4"
+      }
+    ],
+    "snapshot_equity": "100000.00",
+    "snapshot_positions": {},
+    "marks": {
+      "basis": "RAW",
+      "mode": "synthetic",
+      "observed_at": "2026-10-09T18:00:00-03:00",
+      "prices": {
+        "BBAS3": "24.64",
+        "ITUB4": "50.47",
+        "PETR4": "56.0",
+        "VALE3": "67.9",
+        "WEGE3": "51.47"
+      },
+      "schema_version": 1,
+      "session": "2026-10-09",
+      "sha256": "716de0935ac81a2f4ccb59163b4cf021d47efa4275663bf58ad43d326ec322e0",
+      "source": "SYNTHETIC_OFFLINE_NOT_MARKET_DATA"
+    },
+    "context_sha256": "c4879f282017a59c8e6b520a423150a10c722cdda507ababe2c2d8eee850f210",
+    "result_sha256": "8be7bc9179e007b05c6471fdb10c80ddc9a734e49d4d74727a274aa31483f11b",
+    "usage": {
+      "provider_tokens": {
+        "completion_tokens": 2880,
+        "prompt_tokens": 20623,
+        "source": "provider",
+        "thoughts_tokens": null,
+        "total_tokens": 23503
+      },
+      "usd_reserved": "0.159744",
+      "billed_usd": null,
+      "billed_status": "NOT_CONFIRMED_NO_PROVIDER_INVOICE",
+      "status": "UNKNOWN",
+      "thoughts": "NOT_REPORTED",
+      "totals": "CONSISTENT_WITHOUT_THOUGHTS_FIELD",
+      "usd_estimated": null,
+      "usd_observed_lower_bound": "0.02626725",
+      "rates_usd_million": {
+        "input": "0.75",
+        "output": "3.75"
+      },
+      "price_source": "https://ai.google.dev/gemini-api/docs/pricing",
+      "price_checked": "2026-10-11",
+      "basis": "Estimate only when prompt, completion and thoughts are reported and sum to the total; otherwise UNKNOWN with the reported-token lower bound. Never an invoice."
+    }
+  },
+  {
+    "id": "v7-5a78ea5d15214e37bcae18f167ffcee3",
+    "identity": "HFL-MULTIASSET-GLOBAL-PM-V1",
+    "session": "2026-10-09",
+    "context_prepared_at": "2026-10-12T18:18:04.351968+00:00",
+    "inference_completed_at": "2026-10-12T18:27:04.293953+00:00",
+    "validation_at": "2026-10-12T18:27:04.263316+00:00",
+    "status": "REJECTED_BY_VALIDATOR",
+    "cash_target": "1.0",
+    "targets": {
+      "BBAS3": "0",
+      "ITUB4": "0",
+      "PETR4": "0",
+      "VALE3": "0",
+      "WEGE3": "0"
+    },
+    "operations": [],
+    "watchlist": null,
+    "snapshot_equity": "100000.00",
+    "snapshot_positions": {},
+    "marks": {
+      "basis": "RAW",
+      "mode": "synthetic",
+      "observed_at": "2026-10-09T18:00:00-03:00",
+      "prices": {
+        "BBAS3": "24.64",
+        "ITUB4": "50.47",
+        "PETR4": "56.0",
+        "VALE3": "67.9",
+        "WEGE3": "51.47"
+      },
+      "schema_version": 1,
+      "session": "2026-10-09",
+      "sha256": "716de0935ac81a2f4ccb59163b4cf021d47efa4275663bf58ad43d326ec322e0",
+      "source": "SYNTHETIC_OFFLINE_NOT_MARKET_DATA"
+    },
+    "context_sha256": "0f5f7554ca18c9f898f799fdb6d50d3e583d6efaedef9965c7b463aa047e67d6",
+    "result_sha256": "6fc83a20441ac28f46f96a574bf40b33a4d1da4b59ed31488a01688407a62856",
+    "usage": {
+      "provider_tokens": {
+        "completion_tokens": 2519,
+        "prompt_tokens": 18794,
+        "source": "provider",
+        "thoughts_tokens": null,
+        "total_tokens": 21313
+      },
+      "usd_reserved": "0.159744",
+      "billed_usd": null,
+      "billed_status": "NOT_CONFIRMED_NO_PROVIDER_INVOICE",
+      "status": "UNKNOWN",
+      "thoughts": "NOT_REPORTED",
+      "totals": "CONSISTENT_WITHOUT_THOUGHTS_FIELD",
+      "usd_estimated": null,
+      "usd_observed_lower_bound": "0.02354175",
+      "rates_usd_million": {
+        "input": "0.75",
+        "output": "3.75"
+      },
+      "price_source": "https://ai.google.dev/gemini-api/docs/pricing",
+      "price_checked": "2026-10-11",
+      "basis": "Estimate only when prompt, completion and thoughts are reported and sum to the total; otherwise UNKNOWN with the reported-token lower bound. Never an invoice."
+    }
+  }
+]

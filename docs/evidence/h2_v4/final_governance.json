@@ -1,0 +1,10 @@
+{
+  "status": "H2_V4 TEMPORAL CONTRACT FIX FAILED",
+  "H2_V4_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE": true,
+  "reason": "DEFECT-DIRECTED HARDENING FAILED V4-S3",
+  "evidence": "docs/evidence/h2_v4/defect_hardening_20261007T220356Z/manifest.json",
+  "frozen_results": {"S1": 0, "S2": 0, "S3": 10, "technical_outputs": 150, "A": 0, "T": 0, "total_hold_rate": 0.40},
+  "preservation": "Existing v4 prompt, checker, responses, artifacts, gates and CAL-B4 commitment unchanged",
+  "CAL_B4": "SEALED — NEVER EXECUTED",
+  "validation_final": "NOT EXECUTED"
+}

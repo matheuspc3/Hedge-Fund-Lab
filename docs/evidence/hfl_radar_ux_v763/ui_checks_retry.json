@@ -1,0 +1,191 @@
+{
+  "passed": 41,
+  "failed": 1,
+  "results": [
+    {
+      "name": "market:real_universe_and_history",
+      "ok": true
+    },
+    {
+      "name": "market:asset_detail",
+      "ok": true
+    },
+    {
+      "name": "market:indicators_expand_and_units",
+      "ok": true
+    },
+    {
+      "name": "navigation:market_to_radar_preserves_selection",
+      "ok": true
+    },
+    {
+      "name": "radar:return_focus",
+      "ok": true
+    },
+    {
+      "name": "radar:five_rows",
+      "ok": true
+    },
+    {
+      "name": "filters:sell",
+      "ok": true
+    },
+    {
+      "name": "filters:buy",
+      "ok": true
+    },
+    {
+      "name": "filters:hold",
+      "ok": true
+    },
+    {
+      "name": "filters:deterministic_veto",
+      "ok": true
+    },
+    {
+      "name": "bbas3:correct_risk_source",
+      "ok": true
+    },
+    {
+      "name": "committee:expand_real_evidence",
+      "ok": true
+    },
+    {
+      "name": "help:open",
+      "ok": true
+    },
+    {
+      "name": "help:escape_and_focus",
+      "ok": true
+    },
+    {
+      "name": "copy:execution_id",
+      "ok": true
+    },
+    {
+      "name": "filters:empty",
+      "ok": true
+    },
+    {
+      "name": "reload:run_and_filters",
+      "ok": true
+    },
+    {
+      "name": "history:incident_not_valid",
+      "ok": true
+    },
+    {
+      "name": "comparison:two_assets",
+      "ok": true
+    },
+    {
+      "name": "navigation:radar_to_portfolio",
+      "ok": true
+    },
+    {
+      "name": "cost:disabled_and_facts",
+      "ok": true
+    },
+    {
+      "name": "cost:review_details",
+      "ok": true
+    },
+    {
+      "name": "cost:escape_cancels",
+      "ok": true
+    },
+    {
+      "name": "cost:cancel",
+      "ok": true
+    },
+    {
+      "name": "cost:explicit_confirmation",
+      "ok": true
+    },
+    {
+      "name": "cost:reject_missing_or_expired",
+      "ok": true
+    },
+    {
+      "name": "reflow:/market:desktop",
+      "ok": true
+    },
+    {
+      "name": "reflow:/radar:desktop",
+      "ok": true
+    },
+    {
+      "name": "reflow:/market:notebook",
+      "ok": true
+    },
+    {
+      "name": "reflow:/radar:notebook",
+      "ok": true
+    },
+    {
+      "name": "reflow:/market:tablet",
+      "ok": true
+    },
+    {
+      "name": "reflow:/radar:tablet",
+      "ok": true
+    },
+    {
+      "name": "reflow:/market:phone",
+      "ok": true
+    },
+    {
+      "name": "reflow:/radar:phone",
+      "ok": true
+    },
+    {
+      "name": "mobile:menu",
+      "ok": true
+    },
+    {
+      "name": "mobile:escape_restores_focus",
+      "ok": true
+    },
+    {
+      "name": "mobile:popover_bounds",
+      "ok": true
+    },
+    {
+      "name": "zoom:200_percent_reflow",
+      "ok": true
+    },
+    {
+      "name": "market:empty_api_fixture",
+      "ok": true
+    },
+    {
+      "name": "market:error_fixture_no_fallback",
+      "ok": true
+    },
+    {
+      "name": "radar:error_fixture_blocks_operations",
+      "ok": true
+    },
+    {
+      "name": "runner",
+      "ok": false,
+      "error": "Error: Object reference chain is too long\n    at Page.ws.onmessage (file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_cdp_v762.mjs:67:28)\n    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:848:20)\n    at WebSocket.dispatchEvent (node:internal/event_target:789:26)\n    at fireEvent (node:internal/deps/undici/undici:14438:14)\n    at #onMessage (node:internal/deps/undici/undici:15762:9)\n    at Object.onMessage (node:internal/deps/undici/undici:15469:76)\n    at websocketMessageReceived (node:internal/deps/undici/undici:14442:15)\n    at node:internal/deps/undici/undici:15171:21\n    at node:internal/deps/undici/undici:14951:11\n    at afterWrite (node:internal/streams/writable:712:5)"
+    }
+  ],
+  "blocked": [],
+  "mocked": [
+    {
+      "method": "GET",
+      "path": "/api/platform/radar-view"
+    },
+    {
+      "method": "GET",
+      "path": "/api/platform/radar-runs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/platform/radar-runs"
+    }
+  ],
+  "exceptions": []
+}

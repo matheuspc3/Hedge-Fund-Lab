@@ -1,0 +1,161 @@
+{
+  "qualification": "HFL PREMIUM V6 — AI GLOBAL PORTFOLIO MANAGER QUALIFIED OFFLINE",
+  "created_at": "2026-10-11T22:31:31.969834+00:00",
+  "identity": "HFL-MULTIASSET-GLOBAL-PM-V1",
+  "protected_files": 11027,
+  "protected_changed": [],
+  "manifest_sha256": "dc118ce9841df612d030f40e5993858eacc6d06e41eff173706fc3a72d3acb98",
+  "frozen_src_files": 73,
+  "v5": {
+    "ok": true,
+    "events": 22,
+    "head_sha256": "4056727967b517d41f6beb62451b1873c883fd35c8e3fb2e048fab89436cd71e",
+    "state_sha256": "22d6a7a9f6bf5e15bad4eddb10b9c0ea822f69ff4d1f00ecf44e7a5d1c961f0f",
+    "errors": []
+  },
+  "v6_demo_index_sha256": "ce96b92d275ae7a56d97755044359fe64d50d385db874fe67923b9a42f2b8409",
+  "v6_cases": [
+    {
+      "case": "A",
+      "context_sha256": "166d1ca8e5f41662fb605fe3e4972b0649864078d354edf37065c18e2480bcf8",
+      "result_sha256": "b5d90fa3c178d9eb4d917e6644403f130fe70f2d7a6f3f54c52a56a85bec9f8d",
+      "root_id": "demo-qualified-v6-a",
+      "summary": "Iniciar três posições e preservar caixa. Cinco sinais favoráveis não obrigam cinco compras.",
+      "valid": true,
+      "status": "VALID_PROPOSAL",
+      "tokens": {
+        "completion_tokens": 700,
+        "prompt_tokens": 1500,
+        "source": "provider",
+        "thoughts_tokens": 50,
+        "total_tokens": 2250
+      },
+      "cost_usd": "0",
+      "portfolio_changed": false
+    },
+    {
+      "case": "B",
+      "context_sha256": "f7835964f23cf5a358786399e582ad17e1c49bdf59cdcf9e9233c2b42a2e750f",
+      "result_sha256": "ac41c2368d9fd1e709a7ab78d6a9ea4121db85770b65dd14352891b9890f5495",
+      "root_id": "demo-qualified-v6-b",
+      "summary": "Reduzir PETR4: concentração atual de 50% excede o teto didático de 40%, apesar do parecer favorável.",
+      "valid": true,
+      "status": "VALID_PROPOSAL",
+      "tokens": {
+        "completion_tokens": 700,
+        "prompt_tokens": 1500,
+        "source": "provider",
+        "thoughts_tokens": 50,
+        "total_tokens": 2250
+      },
+      "cost_usd": "0",
+      "portfolio_changed": false
+    },
+    {
+      "case": "C",
+      "context_sha256": "aa0f27b1c688f720e855bd1ecb72cf372cb258414bbc7b6f0df6234323ef9962",
+      "result_sha256": "bfb54a91e86758f74659a99fb3a407c4dc2d15115b058897fca5118de438cfd5",
+      "root_id": "demo-qualified-v6-c",
+      "summary": "Reduzir PETR4 e manter o recebível; nenhuma compra substituta. Caixa só após confirmação.",
+      "valid": true,
+      "status": "VALID_PROPOSAL",
+      "tokens": {
+        "completion_tokens": 700,
+        "prompt_tokens": 1500,
+        "source": "provider",
+        "thoughts_tokens": 50,
+        "total_tokens": 2250
+      },
+      "cost_usd": "0",
+      "portfolio_changed": false
+    },
+    {
+      "case": "D",
+      "context_sha256": "76c90c8e9863db894e2533f91688782ae1c8ca56b5df507f5aba26f1fa7d4b6c",
+      "result_sha256": "8c21860ce3a7df834aead082a5ce64003692efa7f88f8d01a3b8bbfa50eb9af5",
+      "root_id": "demo-qualified-v6-d",
+      "summary": "Caixa disponível de R$ 9.000 não financia WEGE3. Reduzir PETR4 e aguardar liquidação antes de considerar a compra.",
+      "valid": true,
+      "status": "VALID_PROPOSAL",
+      "tokens": {
+        "completion_tokens": 700,
+        "prompt_tokens": 1500,
+        "source": "provider",
+        "thoughts_tokens": 50,
+        "total_tokens": 2250
+      },
+      "cost_usd": "0",
+      "portfolio_changed": false
+    },
+    {
+      "case": "E",
+      "context_sha256": "c6305f67752aee5853abb9bb65020cc7ae02c41f8213132a381dc2a63623be9b",
+      "result_sha256": "f792f7028f57552408e82dc10f0ab52df255f218b25435a112c7af0e4dc1b316",
+      "root_id": "demo-qualified-v6-e",
+      "summary": "Manter posições e caixa; sinais favoráveis não justificam obrigatoriamente nova operação.",
+      "valid": true,
+      "status": "VALID_PROPOSAL",
+      "tokens": {
+        "completion_tokens": 700,
+        "prompt_tokens": 1500,
+        "source": "provider",
+        "thoughts_tokens": 50,
+        "total_tokens": 2250
+      },
+      "cost_usd": "0",
+      "portfolio_changed": false
+    },
+    {
+      "case": "F",
+      "context_sha256": "8ce657c1085203f7719fb11bb0d13039bf132cfe42fcedea52eef0cf972be432",
+      "result_sha256": "be493983534825cb7a8b30cea67d0ec434c4fffa5815e7c9965abbeea4477d35",
+      "root_id": "demo-qualified-v6-f",
+      "summary": "Fixture inválida de LLM: pesos somam 120%, sem efeito financeiro.",
+      "valid": false,
+      "status": "REJECTED_BY_VALIDATOR",
+      "tokens": {
+        "completion_tokens": 700,
+        "prompt_tokens": 1500,
+        "source": "provider",
+        "thoughts_tokens": 50,
+        "total_tokens": 2250
+      },
+      "cost_usd": "0",
+      "portfolio_changed": false
+    }
+  ],
+  "archive": {
+    "path": "demo-qualified-v6.zip",
+    "sha256": "d9108dc05f5fee125339656489689d6b7dfa8a987574c147f60fe49cdb7221b4",
+    "files": 43
+  },
+  "regression": {
+    "passed": 206,
+    "subtests_passed": 2,
+    "new_tests": 39,
+    "seconds": 364.17,
+    "log": "regression_final.txt"
+  },
+  "ruff": "passed; 5 files checked and formatted",
+  "javascript": "node --check global-pm.js and portfolio.js passed",
+  "git_diff_check": "passed",
+  "real_gemini_calls": 0,
+  "prospective_operations": 0,
+  "portfolio_writes": 0,
+  "push_performed": false,
+  "git_clean_identity_gate": {
+    "passed": true,
+    "manifest_sha256": "dc118ce9841df612d030f40e5993858eacc6d06e41eff173706fc3a72d3acb98",
+    "assessed_commit": "ad64764f9ed718cde4dfd8ecd6a4c83dc8386412",
+    "git_status_porcelain": "",
+    "checked_at": "2026-10-11T22:38:49.837056+00:00"
+  },
+  "limitations": [
+    "V5 limits are didactic fixtures, not pilot policy",
+    "V5 synthetic-only calculation bridge is explicit and read-only",
+    "FakeGlobalPortfolioManager qualifies contracts, not the real model",
+    "Prospective execution unavailable; requires independent future phase"
+  ],
+  "local_implementation_commit": "ad64764f9ed718cde4dfd8ecd6a4c83dc8386412",
+  "qualification_commit_note": "A follow-up local commit records this clean-tree verification; no code changes or push."
+}

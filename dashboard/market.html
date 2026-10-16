@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Explorar ativos · Mercado · Hedge-Fund-Lab</title>
+  <link rel="stylesheet" href="/shell.css?v=7"><link rel="stylesheet" href="/market.css?v=763">
+  <script src="/shell.js?v=7" defer></script><script src="/market-ui.js?v=763" defer></script><script src="/market.js?v=763" defer></script>
+</head>
+<body class="hfl-platform">
+<!-- platform-shell -->
+<main id="main" class="market-main">
+  <p class="ds-eyebrow">Mercado · Explorar ativos</p><h1 class="ds-title">Entenda os ativos. Explore as evidências.</h1>
+  <p class="ds-subtitle">Indicadores, comitês e decisões registrados pelo laboratório, em um só lugar.</p>
+  <div class="ds-alert"><strong>Consulta histórica · análise consultiva</strong><p>Não há cotações em tempo real. Pareceres de IA não são recomendação de investimento nem execução financeira.</p></div>
+  <div id="market-error" class="ds-alert ds-alert--error" role="alert" hidden></div>
+  <div class="market-filters"><label>Execução de referência<select id="market-run"><option value="">Lendo registro…</option></select></label><label>Ativo<select id="market-asset"><option value="">Todos os ativos</option></select></label><button id="market-refresh" class="ds-btn" data-action="read">Atualizar consulta</button></div>
+  <div id="market-overview" class="ds-kpis market-overview" aria-live="polite"></div>
+  <p id="market-coverage" class="ds-lead">A cobertura será informada pelo universo da execução selecionada.</p>
+  <p><a id="market-to-radar" href="/radar">Comparar decisões no Radar →</a></p>
+  <section aria-label="Ativos disponíveis"><div id="market-assets" class="ds-grid market-assets"><p class="ds-loading">Consultando registros locais…</p></div></section>
+  <section id="market-room" class="ds-card" hidden aria-labelledby="market-room-title"><div class="ds-section-head"><h2 id="market-room-title" tabindex="-1">Detalhe do ativo</h2><a id="market-back" class="ds-btn" href="/market">Voltar aos ativos</a></div><div id="market-detail"></div></section>
+</main>
+</body></html>

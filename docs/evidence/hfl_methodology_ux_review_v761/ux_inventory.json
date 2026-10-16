@@ -1,0 +1,734 @@
+{
+ "identity": "HFL-V761-UX-INVENTORY",
+ "pages": {
+  "h2.html": {
+   "routes": [
+    "/h2",
+    "/h2.html",
+    "/h2/"
+   ],
+   "scripts": [
+    "/shell.js",
+    "/vendor/chart.umd.js",
+    "/h2.js"
+   ],
+   "h1": [],
+   "h2": [],
+   "sections": [
+    "tab-overview",
+    "tab-decisions",
+    "tab-compare",
+    "tab-agents",
+    "tab-experiments",
+    "tab-audit"
+   ],
+   "buttons": [
+    {
+     "id": "",
+     "label": "Visão geral",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "",
+     "label": "Decisões",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "",
+     "label": "Comparações",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "",
+     "label": "Multiagente",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "",
+     "label": "Experimentos",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "",
+     "label": "Auditoria",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "",
+     "label": "Provisória OA-1",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "",
+     "label": "Oficial",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "",
+     "label": "Demonstração",
+     "intent": "READ_ONLY"
+    }
+   ],
+   "dynamic_buttons_in_js": 10,
+   "api_endpoints_in_js": [
+    "/api/h2/analysis",
+    "/api/h2/artifact",
+    "/api/h2/decision",
+    "/api/h2/run",
+    "/api/h2/status",
+    "/api/h2/trace",
+    "/api/h2/validation"
+   ],
+   "counts": {
+    "aria-label": 3,
+    "tab": 6
+   },
+   "help_in_js": 9,
+   "terms": {
+    "paper": 6,
+    "portfolio": 14,
+    "radar": 2,
+    "risk": 19,
+    "replay": 1,
+    "journal": 1,
+    "visão geral": 1,
+    "laboratório": 2,
+    "operação": 3,
+    "carteira": 1,
+    "inferência": 2
+   }
+  },
+  "index.html": {
+   "routes": [
+    "/index.html",
+    "/legacy",
+    "/legacy/"
+   ],
+   "scripts": [
+    "/shell.js",
+    "/vendor/chart.umd.js",
+    "/app.js"
+   ],
+   "h1": [
+    "Backtests legados"
+   ],
+   "h2": [
+    "Portfólio Multi-Ativo"
+   ],
+   "sections": [
+    "philosophy-text"
+   ],
+   "buttons": [
+    {
+     "id": "",
+     "label": "Portfólio Multi-Ativo",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "",
+     "label": "Análise por Ativo",
+     "intent": "READ_ONLY"
+    }
+   ],
+   "dynamic_buttons_in_js": 0,
+   "api_endpoints_in_js": [],
+   "counts": {
+    "canvas": 8,
+    "label": 1,
+    "select": 1,
+    "table": 2
+   },
+   "help_in_js": 0,
+   "terms": {
+    "paper": 5,
+    "portfolio": 8,
+    "radar": 2,
+    "laboratório": 4,
+    "operação": 1,
+    "carteira": 1
+   }
+  },
+  "logs.html": {
+   "routes": [
+    "/logs",
+    "/logs.html"
+   ],
+   "scripts": [
+    "/shell.js"
+   ],
+   "h1": [
+    "📋 Hedge-fund-lab Logs"
+   ],
+   "h2": [],
+   "sections": [],
+   "buttons": [
+    {
+     "id": "btnClear",
+     "label": "🗑 Limpar",
+     "intent": "READ_ONLY"
+    }
+   ],
+   "dynamic_buttons_in_js": 0,
+   "api_endpoints_in_js": [],
+   "counts": {
+    "input": 2,
+    "label": 4,
+    "select": 2,
+    "table": 1
+   },
+   "help_in_js": 0,
+   "terms": {
+    "paper": 5,
+    "portfolio": 2,
+    "radar": 2,
+    "laboratório": 2,
+    "operação": 1
+   }
+  },
+  "paper.html": {
+   "routes": [
+    "/paper",
+    "/paper.html",
+    "/paper/"
+   ],
+   "scripts": [
+    "/vendor/chart.umd.js",
+    "/paper.js",
+    "/shell.js"
+   ],
+   "h1": [
+    "Visão Geral",
+    "Sala de Decisão",
+    "Mercado",
+    "Carteiras",
+    "Agentes"
+   ],
+   "h2": [
+    "Evolução do patrimônio",
+    "Última deliberação",
+    "Histórico de deliberações",
+    "Operação com confirmação humana",
+    "Comparação entre estratégias",
+    "Evolução prospectiva do patrimônio",
+    "Dividendos e proventos",
+    "Simulador local de quórum",
+    "Autorizar inferência nova e paga",
+    "Confirmar ação humana"
+   ],
+   "sections": [
+    "visao",
+    "sala",
+    "mercado",
+    "carteiras",
+    "agentes"
+   ],
+   "buttons": [
+    {
+     "id": "refresh",
+     "label": "Consultar registros",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "prepare",
+     "label": "1. Atualizar dados",
+     "intent": "WRITE_OR_PREPARE"
+    },
+    {
+     "id": "preflight",
+     "label": "2. Preflight",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "execute",
+     "label": "3. Confirmar e executar agentes",
+     "intent": "PAID_INFERENCE"
+    },
+    {
+     "id": "benchmarks",
+     "label": "Sincronizar SMA e Bollinger · grátis",
+     "intent": "WRITE_OR_PREPARE"
+    },
+    {
+     "id": "supervised-sync",
+     "label": "Sincronizar carteira supervisionada · grátis",
+     "intent": "WRITE_OR_PREPARE"
+    },
+    {
+     "id": "market-refresh",
+     "label": "Consultar mercado",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "cancel-confirm",
+     "label": "Cancelar",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "submit-confirm",
+     "label": "Autorizar e executar Gemini",
+     "intent": "PAID_INFERENCE"
+    },
+    {
+     "id": "sup-dismiss",
+     "label": "Voltar",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "sup-submit",
+     "label": "Confirmar ação",
+     "intent": "WRITE_OR_PREPARE"
+    }
+   ],
+   "dynamic_buttons_in_js": 8,
+   "api_endpoints_in_js": [
+    "/api/forward"
+   ],
+   "counts": {
+    "aria-label": 4,
+    "aria-live": 5,
+    "dialog": 2,
+    "input": 6,
+    "label": 10,
+    "select": 4
+   },
+   "help_in_js": 3,
+   "terms": {
+    "paper": 10,
+    "portfolio": 8,
+    "radar": 3,
+    "risk": 11,
+    "preflight": 6,
+    "replay": 3,
+    "journal": 3,
+    "consultar": 6,
+    "executar": 5,
+    "sala de decisão": 7,
+    "visão geral": 2,
+    "laboratório": 2,
+    "operação": 7,
+    "supervisão": 3,
+    "carteira": 17,
+    "gemini": 6,
+    "inferência": 3
+   }
+  },
+  "platform.html": {
+   "routes": [
+    "/"
+   ],
+   "scripts": [
+    "/shell.js",
+    "/platform.js"
+   ],
+   "h1": [
+    "Seu laboratório, em uma só visão."
+   ],
+   "h2": [
+    "Atenção necessária",
+    "Cinco estratégias. Capitais independentes.",
+    "Do parecer individual à proposta global",
+    "Quatro ambientes, quatro leituras",
+    "Processos, integridade e recuperação"
+   ],
+   "sections": [
+    "readiness",
+    "wallets",
+    "audit"
+   ],
+   "buttons": [
+    {
+     "id": "platform-refresh",
+     "label": "Atualizar visão",
+     "intent": "READ_ONLY"
+    }
+   ],
+   "dynamic_buttons_in_js": 0,
+   "api_endpoints_in_js": [
+    "/api/platform/overview"
+   ],
+   "counts": {
+    "aria-live": 3,
+    "details": 2
+   },
+   "help_in_js": 0,
+   "terms": {
+    "paper": 10,
+    "portfolio": 3,
+    "gestor global": 2,
+    "radar": 14,
+    "risk": 3,
+    "contexto": 1,
+    "snapshot": 1,
+    "claim": 1,
+    "journal": 2,
+    "consultar": 4,
+    "sala de decisão": 1,
+    "visão geral": 1,
+    "laboratório": 4,
+    "operação": 5,
+    "supervisão": 3,
+    "carteira": 10,
+    "gemini": 4,
+    "inferência": 2
+   }
+  },
+  "portfolio.html": {
+   "routes": [
+    "/portfolio",
+    "/portfolio.html",
+    "/portfolio/"
+   ],
+   "scripts": [
+    "/vendor/chart.umd.js",
+    "/portfolio.js",
+    "/global-pm.js",
+    "/global-workflow.js",
+    "/shell.js"
+   ],
+   "h1": [
+    "Da seleção à proposta de carteira.",
+    "Proposta da IA",
+    "Uma carteira.Decisões coordenadas."
+   ],
+   "h2": [
+    "Confirmação separada do Global PM",
+    "Capital distribuído. Caixa preservado.",
+    "A carteira inteira conta.",
+    "Oportunidades disponíveis",
+    "Carteira atual → Carteira sugerida",
+    "Cada movimento deixa uma evidência."
+   ],
+   "sections": [
+    "global-workflow",
+    "ai-proposal"
+   ],
+   "buttons": [
+    {
+     "id": "workflow-check",
+     "label": "1. Verificar pareceres e custos separados",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "workflow-prepare",
+     "label": "2. Preparar snapshot e Risk · sem Gemini",
+     "intent": "WRITE_OR_PREPARE"
+    },
+    {
+     "id": "workflow-preflight",
+     "label": "3. Preflight global",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "workflow-run",
+     "label": "4. Solicitar proposta · confirmar custo",
+     "intent": "PAID_INFERENCE"
+    },
+    {
+     "id": "workflow-consult",
+     "label": "Consultar registros",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "workflow-replay",
+     "label": "Recuperar somente offline",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "workflow-cancel",
+     "label": "Cancelar",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "workflow-authorize",
+     "label": "Confirmar somente esta inferência",
+     "intent": "PAID_INFERENCE"
+    },
+    {
+     "id": "ai-simulate",
+     "label": "Simular proposta sem executar",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "ai-preview",
+     "label": "Verificar seleção e custos offline",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "simulate",
+     "label": "Simular cenário offline",
+     "intent": "READ_ONLY"
+    }
+   ],
+   "dynamic_buttons_in_js": 2,
+   "api_endpoints_in_js": [
+    "/api/forward/status",
+    "/api/global-pm",
+    "/api/global-pm/selection",
+    "/api/platform",
+    "/api/platform/radar-selection",
+    "/api/portfolio",
+    "/api/radar/status"
+   ],
+   "counts": {
+    "aria-label": 5,
+    "aria-live": 7,
+    "canvas": 1,
+    "details": 2,
+    "dialog": 1,
+    "input": 12,
+    "label": 16,
+    "select": 4,
+    "table": 1
+   },
+   "help_in_js": 2,
+   "terms": {
+    "paper": 6,
+    "portfolio": 12,
+    "gestor global": 4,
+    "radar": 49,
+    "risk": 13,
+    "proposta da ia": 2,
+    "contexto": 21,
+    "preflight": 12,
+    "snapshot": 11,
+    "replay": 3,
+    "claim": 1,
+    "consultar": 7,
+    "recuperar": 1,
+    "histórico h2": 1,
+    "simular": 3,
+    "executar": 1,
+    "laboratório": 4,
+    "operação": 9,
+    "carteira": 16,
+    "gemini": 13,
+    "inferência": 17
+   }
+  },
+  "radar.html": {
+   "routes": [
+    "/radar",
+    "/radar.html",
+    "/radar/"
+   ],
+   "scripts": [
+    "/radar.js",
+    "/shell.js"
+   ],
+   "h1": [
+    "Um universo.Cinco perspectivas por ativo."
+   ],
+   "h2": [
+    "Selecione suas empresas",
+    "Prepare. Verifique. Confirme.",
+    "Sinais, lado a lado",
+    "Sala de Decisão"
+   ],
+   "sections": [
+    "run-card",
+    "room"
+   ],
+   "buttons": [
+    {
+     "id": "",
+     "label": "Adicionar ativo +",
+     "intent": "WRITE_OR_PREPARE"
+    },
+    {
+     "id": "prepare",
+     "label": "1. Preparar dados",
+     "intent": "WRITE_OR_PREPARE"
+    },
+    {
+     "id": "preflight",
+     "label": "2. Verificar preflight",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "execute",
+     "label": "3. Confirmar e executar este lote",
+     "intent": "PAID_INFERENCE"
+    },
+    {
+     "id": "refresh",
+     "label": "Consultar resultados",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "compare",
+     "label": "Comparar duas empresas",
+     "intent": "READ_ONLY"
+    },
+    {
+     "id": "close-room",
+     "label": "Fechar detalhes",
+     "intent": "READ_ONLY"
+    }
+   ],
+   "dynamic_buttons_in_js": 2,
+   "api_endpoints_in_js": [
+    "/api/platform/radar-detail",
+    "/api/platform/radar-readiness",
+    "/api/platform/radar-runs",
+    "/api/platform/radar-view",
+    "/api/radar"
+   ],
+   "counts": {
+    "aria-describedby": 1,
+    "aria-label": 4,
+    "aria-live": 4,
+    "input": 5,
+    "label": 9,
+    "select": 4,
+    "table": 1
+   },
+   "help_in_js": 0,
+   "terms": {
+    "paper": 1,
+    "portfolio": 2,
+    "gestor global": 3,
+    "radar": 16,
+    "risk": 14,
+    "preflight": 12,
+    "replay": 5,
+    "claim": 2,
+    "consultar": 4,
+    "recuperar": 1,
+    "histórico h2": 1,
+    "executar": 4,
+    "sala de decisão": 2,
+    "operação": 2,
+    "carteira": 4,
+    "gemini": 4
+   }
+  }
+ },
+ "routes": {
+  "/": "platform.html",
+  "/h2": "h2.html",
+  "/h2.html": "h2.html",
+  "/h2/": "h2.html",
+  "/index.html": "index.html",
+  "/legacy": "index.html",
+  "/legacy/": "index.html",
+  "/logs": "logs.html",
+  "/logs.html": "logs.html",
+  "/paper": "paper.html",
+  "/paper.html": "paper.html",
+  "/paper/": "paper.html",
+  "/portfolio": "portfolio.html",
+  "/portfolio.html": "portfolio.html",
+  "/portfolio/": "portfolio.html",
+  "/radar": "radar.html",
+  "/radar.html": "radar.html",
+  "/radar/": "radar.html"
+ },
+ "shell_groups": {
+  "operation": [
+   {
+    "href": "/paper#sala",
+    "label": "Sala de Decisão"
+   },
+   {
+    "href": "/paper#visao",
+    "label": "Paper Trading"
+   },
+   {
+    "href": "/paper#carteiras",
+    "label": "Carteiras"
+   },
+   {
+    "href": "/paper#supervisao",
+    "label": "Supervisão Humana"
+   },
+   {
+    "href": "/paper#mercado",
+    "label": "Mercado e Abertura"
+   }
+  ],
+  "lab": [
+   {
+    "href": "/radar",
+    "label": "Radar Multiativos"
+   },
+   {
+    "href": "/portfolio#global-workflow",
+    "label": "Gestor Global"
+   },
+   {
+    "href": "/paper#agentes",
+    "label": "Agentes"
+   },
+   {
+    "href": "/portfolio#ai-proposal",
+    "label": "Propostas e Simulações"
+   }
+  ],
+  "research": [
+   {
+    "href": "/h2",
+    "label": "Histórico H2 v6"
+   },
+   {
+    "href": "/#audit",
+    "label": "Auditoria Operacional"
+   },
+   {
+    "href": "/logs",
+    "label": "Logs Técnicos"
+   },
+   {
+    "href": "/legacy",
+    "label": "Backtests Legados"
+   }
+  ],
+  "overview": [
+   {
+    "href": "/#wallets",
+    "label": "Carteiras Prospectivas"
+   },
+   {
+    "href": "/#readiness",
+    "label": "Prontidão para 13/10"
+   },
+   {
+    "href": "/#audit",
+    "label": "Processos e Auditoria"
+   },
+   {
+    "href": "/radar",
+    "label": "Continuar no Radar"
+   }
+  ]
+ },
+ "shell_links_total": 17,
+ "shell_targets_unserved": [],
+ "repeated_headings_across_pages": [
+  "Sala de Decisão"
+ ],
+ "repeated_shell_labels": [],
+ "same_target_different_labels": [
+  [
+   "/#audit",
+   [
+    "Auditoria Operacional",
+    "Processos e Auditoria"
+   ]
+  ],
+  [
+   "/radar",
+   [
+    "Continuar no Radar",
+    "Radar Multiativos"
+   ]
+  ]
+ ],
+ "help_affordances_total": 0,
+ "paid_buttons": [
+  "paper.html#execute: 3. Confirmar e executar agentes",
+  "paper.html#submit-confirm: Autorizar e executar Gemini",
+  "portfolio.html#workflow-authorize: Confirmar somente esta inferência",
+  "portfolio.html#workflow-run: 4. Solicitar proposta · confirmar custo",
+  "radar.html#execute: 3. Confirmar e executar este lote"
+ ]
+}

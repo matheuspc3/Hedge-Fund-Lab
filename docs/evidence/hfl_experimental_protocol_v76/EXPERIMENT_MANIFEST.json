@@ -1,0 +1,227 @@
+{
+ "identity": "HFL-V76-ROBUSTNESS-PROTOCOL",
+ "version": "1.0.0",
+ "state": "QUALIFIED_OFFLINE",
+ "states": [
+  "DRAFT",
+  "QUALIFIED_OFFLINE",
+  "FROZEN_FOR_FUTURE_EVALUATION",
+  "AUTHORIZED_FOR_PAID_EXECUTION",
+  "EXECUTED"
+ ],
+ "frozen_at": null,
+ "human_review": null,
+ "authorization": null,
+ "execution": null,
+ "change_policy": "Any change to hypotheses, sample, metrics, scenarios or treatments after FROZEN_FOR_FUTURE_EVALUATION requires a new version; a frozen version is never overwritten.",
+ "treatments": {
+  "HFL-MULTIASSET-GLOBAL-PM-V2": {
+   "role": "treatment under evaluation (sealed, unchanged)",
+   "contracts_sha256": "159fd196879c37362ab67270b4c7ddccb2ca529e06d74d1633c3936dd36590e2",
+   "reference_record": "v74-76d07c0d32444cecaf07e875deacb519"
+  },
+  "HFL-MULTIASSET-RADAR-V1": {
+   "role": "source of official opinions",
+   "manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef",
+   "reference_run": "radar-2026-10-09-recovery-01"
+  },
+  "HFL-MULTIASSET-GLOBAL-PM-V1": {
+   "role": "historical; closed; never replicated or pooled with V2",
+   "contracts_sha256": "faf633a1dad788f3ed72e8b88b8f4c04b9bbccac4fd75277693c50f19a4eda70",
+   "closed": true
+  }
+ },
+ "controls": [
+  "ALWAYS_CASH",
+  "EQUAL_WEIGHT_ELIGIBLE",
+  "BUY_AND_HOLD_EQUAL_WEIGHT",
+  "SIGNAL_RULE_DETERMINISTIC",
+  "FIXED_WEIGHTS"
+ ],
+ "session_selection": {
+  "method": "SEEDED_UNIFORM_WITHOUT_REPLACEMENT",
+  "retrospective_window": [
+   "2026-09-01",
+   "2026-10-08"
+  ],
+  "development_sessions": [
+   "2026-10-09"
+  ],
+  "excluded_windows": "every H2 window in src/experiments/h2_evaluation.PHASE_WINDOWS (VALIDATION, FINAL_TEST)",
+  "seed": 7606,
+  "count": 10,
+  "selection_inputs": [
+   "b3_calendar",
+   "cotahist_session_presence",
+   "seed"
+  ]
+ },
+ "campaigns": [
+  {
+   "id": "c1-pilot",
+   "alternative_of": "C1",
+   "evaluation": "REPEATABILITY_ON_DEVELOPMENT_INPUTS",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "scenario": "S0",
+   "replication_group": "RG-S0-2026-10-09",
+   "sessions": [
+    "2026-10-09"
+   ],
+   "replications": 10,
+   "calls_per_attempt": {
+    "global_pm": 1,
+    "radar_committees": 0
+   },
+   "requires": []
+  },
+  {
+   "id": "c1-intermediate",
+   "alternative_of": "C1",
+   "evaluation": "REPEATABILITY_ON_DEVELOPMENT_INPUTS",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "scenario": "S0",
+   "replication_group": "RG-S0-2026-10-09",
+   "sessions": [
+    "2026-10-09"
+   ],
+   "replications": 29,
+   "calls_per_attempt": {
+    "global_pm": 1,
+    "radar_committees": 0
+   },
+   "requires": []
+  },
+  {
+   "id": "c1-extended",
+   "alternative_of": "C1",
+   "evaluation": "REPEATABILITY_ON_DEVELOPMENT_INPUTS",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "scenario": "S0",
+   "replication_group": "RG-S0-2026-10-09",
+   "sessions": [
+    "2026-10-09"
+   ],
+   "replications": 100,
+   "calls_per_attempt": {
+    "global_pm": 1,
+    "radar_committees": 0
+   },
+   "requires": []
+  },
+  {
+   "id": "c2-s1",
+   "evaluation": "STATE_SENSITIVITY_ON_DEVELOPMENT_INPUTS",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "scenario": "S1",
+   "replication_group": "RG-S1-2026-10-09",
+   "sessions": [
+    "2026-10-09"
+   ],
+   "replications": 5,
+   "calls_per_attempt": {
+    "global_pm": 1,
+    "radar_committees": 0
+   },
+   "requires": [
+    "HOLDINGS_PREPARATION_PATH_NOT_IMPLEMENTED"
+   ]
+  },
+  {
+   "id": "c2-s4",
+   "evaluation": "STATE_SENSITIVITY_ON_DEVELOPMENT_INPUTS",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "scenario": "S4",
+   "replication_group": "RG-S4-2026-10-09",
+   "sessions": [
+    "2026-10-09"
+   ],
+   "replications": 5,
+   "calls_per_attempt": {
+    "global_pm": 1,
+    "radar_committees": 0
+   },
+   "requires": [
+    "HOLDINGS_PREPARATION_PATH_NOT_IMPLEMENTED"
+   ]
+  },
+  {
+   "id": "c2-s5",
+   "evaluation": "STATE_SENSITIVITY_ON_DEVELOPMENT_INPUTS",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "scenario": "S5",
+   "replication_group": "RG-S5-2026-10-09",
+   "sessions": [
+    "2026-10-09"
+   ],
+   "replications": 5,
+   "calls_per_attempt": {
+    "global_pm": 1,
+    "radar_committees": 0
+   },
+   "requires": [
+    "HOLDINGS_PREPARATION_PATH_NOT_IMPLEMENTED"
+   ]
+  },
+  {
+   "id": "c3-oos",
+   "evaluation": "RETROSPECTIVE_OUT_OF_SAMPLE",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "scenario": "S0",
+   "replication_group": "RG-OOS-RETRO",
+   "sessions": [
+    "SELECTED_OUT_OF_SAMPLE"
+   ],
+   "replications": 1,
+   "calls_per_attempt": {
+    "global_pm": 1,
+    "radar_committees": 5
+   },
+   "requires": [
+    "COTAHIST_SESSION_VERIFICATION",
+    "PROTOCOL_FROZEN"
+   ]
+  },
+  {
+   "id": "c4-prospective",
+   "evaluation": "PROSPECTIVE",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "scenario": "S0",
+   "replication_group": "RG-PROSPECTIVE",
+   "sessions": [
+    "AFTER_FREEZE"
+   ],
+   "decisions_planned": 20,
+   "replications": 1,
+   "calls_per_attempt": {
+    "global_pm": 1,
+    "radar_committees": 5
+   },
+   "requires": [
+    "PROTOCOL_FROZEN",
+    "PAPER_LEDGER_NOT_IMPLEMENTED"
+   ]
+  }
+ ],
+ "documents": {
+  "EXPERIMENTAL_PROTOCOL.md": "daa586e2db2fa2e11db669718b0417ac6da4981bbe895dd2bb920281f79eddec",
+  "PREREGISTRATION_DRAFT.md": "9650e2b9684013bd86f4a63359068d8a7b7de7dd538f9a97064c20f999ba063b",
+  "REPETABILITY_DESIGN.md": "5c0b8d6da6840dce9d7531216e63b4eb57609d63e51f57057f7ef9a3699bcb3f",
+  "OUT_OF_SAMPLE_DESIGN.md": "cc3b3e900252987b3904e74d9d9e9944a66535f24698abe82aa4b8c17cfa77c2",
+  "PAPER_TRADING_PROTOCOL.md": "00c762ce8c4f0f61d503c8c229786999d3e6334a973ada0ae0b4761c04e835ea",
+  "BASELINES_AND_CONTROLS.md": "7d69e28cc429e6a49f8c7dfd665f3617a2250b4e1ac789892d74a1d10974a060",
+  "SCENARIO_MATRIX.json": "2631321cf4e227d8cb04ad3a2bead00de54a7c582b0754606a4a0397dc2a60f0",
+  "METRIC_CATALOG.json": "49e692d02e1d4dc26aa41d7cd5ca94d2d318df639700d63d7c6a4a2b2edd16f7",
+  "BUDGET_PLAN.json": "50d9e555291b931a7825d18093afd38592878074774566537b3c67f3e338f098"
+ },
+ "protocol_sha256": "0da31e2570debf0f077106243613033316339b04f0f6c6d6c91bc3ce0ef3bb22",
+ "supporting_documents": {
+  "README.md": "03eb55ac9bac24c9d9c235d67fa368a99f77ade2004b64dcad53a783013895dc",
+  "V75_INDEPENDENT_AUDIT.md": "4148ed839392b046499a2c432d7d58ebd849058c64821ba8b3b7b3652eb3c655",
+  "RADAR_TOKEN_ERRATUM.md": "305f14e42245d1a2e69a572721967391fe3bd678f96813b76ce7b21b41aeb397",
+  "TEST_FAILURE_TRIAGE.md": "852221ac3d06a81bc21c6dfb9d5a87db8b0a3b148108f145302141fd941ead95",
+  "REPRODUCIBILITY.md": "27f35575dfc4834ce0e7faf576223eb0dbee111fd744801aaced3677273bf8ff",
+  "RESEARCH_ROADMAP.md": "9d09ca7d596f04332c2fb5602009caafbca2ec32fbf79204b240625790578665",
+  "READINESS_REPORT.json": "8bb5f4fa4fbc7f6a513031412d3f4cb328c44073ebf1ed549937dff4f694f6b6",
+  "preservation_before.json": "06eeb43089f2869db9af7e5d80a42f3bbc942c240c55840d2778df5baf7e795a"
+ }
+}

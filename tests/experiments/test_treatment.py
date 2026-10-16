@@ -1,0 +1,331 @@
+"""Amendment 8: versão do tratamento e regra determinística da CAL-B2."""
+
+import hashlib
+
+import pytest
+
+from src.experiments import treatment
+from src.experiments.anchors import CAL_B_COMMITMENT_SHA256, CAL_B_STRATA
+
+
+def test_versao_e_parametros_v2() -> None:
+    assert treatment.H2_TREATMENT_VERSION == 6 and treatment.SCIENTIFIC_TECHNICAL_PROMPT_VERSION == 5
+    assert treatment.v2_params({"a": 1}) == {"a": 1, "technical_prompt_version": 2}
+    with pytest.raises(ValueError):
+        treatment.v2_params({"technical_prompt_version": 1})
+
+
+def test_v4_fail_preserved_and_full_development_blocked() -> None:
+    import json
+    import sys
+    from pathlib import Path
+
+    from src.agents.llm_trace import load_trace
+    from src.experiments import anchors
+
+    root = Path(__file__).resolve().parents[2]
+    sys.path.insert(0, str(root / "scripts"))
+    from h2_v4 import require_pre_live_freeze, technical_audit
+
+    manifest = root / treatment.H2_V4_DEFECT_EVIDENCE
+    m = json.loads(manifest.read_text(encoding="utf-8"))
+    records = [r for p in (manifest.parent / "traces").glob("*.jsonl") for r in load_trace(p.read_bytes())]
+    recomputed = technical_audit(records)
+    assert {g: recomputed[g] for g in ("V4-S1", "V4-S2", "V4-S3")} == {"V4-S1": 0, "V4-S2": 0, "V4-S3": 10}
+    assert recomputed["technical_votes"] == 150 and recomputed["technical_prompt_v3_only"]
+    assert m["status"] == treatment.H2_V4_DEFECT_STATUS == treatment.H2_V4_TEMPORAL_FIX_FAILED
+    assert m["complete"] and m["repetitions"] == 3
+    assert not m["gates"]["V4-S3"]["pass"] and all(m["gates"][g]["pass"] for g in ("V4-S1", "V4-S2", "V4-A", "V4-T", "V4-D"))
+    assert m["gates"]["V4-D"]["threshold"] == "< 0.90" and m["gates"]["V4-D"]["value"] == 0.4
+    assert m["target_anchors"]["2020-05-13"]["v4_live"]["V4-S3"] == 6
+    assert m["target_anchors"]["2022-03-11"]["v4_live"]["V4-S3"] == 1
+    sessions = {r.request.decision_session for r in records}
+    assert not sessions & set(anchors.CAL_B4_ANCHORS) and max(sessions) <= "2024-08-30"
+    with pytest.raises(ValueError, match="requires defect-directed hardening PASS"):
+        require_pre_live_freeze(full_development=True)
+    summary = json.loads((root / treatment.H2_V4_DEVELOPMENT_SUMMARY).read_text(encoding="utf-8"))
+    assert summary["status"] == treatment.H2_V4_DEVELOPMENT_STATUS and not summary["development_complete"]
+    assert all(not p["executed"] for n, p in summary["phases"].items() if n != "Defect-directed hardening")
+    assert summary["final_v4_params"] is None
+    assert summary["safety"]["cal_b4_sessions_touched"] == summary["safety"]["validation_final_sessions_touched"] == []
+
+
+def test_seed_publico_e_digest() -> None:
+    seed = hashlib.sha256(("HEDGE-FUND-LAB|CAL-B2|" + CAL_B_COMMITMENT_SHA256).encode()).hexdigest()
+    assert treatment.CAL_B2_SELECTION_SEED == seed
+    assert treatment.session_digest(3, "2018-07-20") == hashlib.sha256(f"{seed}|3|2018-07-20".encode()).hexdigest()
+
+
+def test_selecao_menor_digest_sem_excluidas() -> None:
+    domain = [f"2020-01-{d:02d}" for d in range(1, 31)] * 5  # 150 "sessões", 5 por estrato
+    domain = [f"{day}#{i}" for i, day in enumerate(domain)]
+    rows = treatment.select_cal_b2(domain, excluded=set())
+    blocks = treatment.stratum_sessions(domain)
+    assert [r["stratum_id"] for r in rows] == list(CAL_B_STRATA)
+    for row in rows:
+        best = min(blocks[row["stratum_id"]], key=lambda d: treatment.session_digest(row["stratum_id"], d))
+        assert row["winner"] == best and row["candidates"] == 5
+    excluded = {rows[0]["winner"]}
+    again = treatment.select_cal_b2(domain, excluded=excluded)
+    assert again[0]["winner"] != rows[0]["winner"] and again[0]["candidates"] == 4
+    assert again[1:] == rows[1:]  # excluir num estrato não mexe nos outros
+
+
+def test_cal_b2_comprometida_bate_com_a_regra_e_a_evidencia() -> None:
+    import json
+    from pathlib import Path
+
+    from src.experiments import anchors
+
+    root = Path(__file__).resolve().parents[2]
+    sel = json.loads((root / anchors.CAL_B2_SELECTION_EVIDENCE).read_text(encoding="utf-8"))
+    assert tuple(sel["cal_b2_anchors"]) == anchors.CAL_B2_ANCHORS
+    assert anchors.digest(anchors.CAL_B2_ANCHORS) == anchors.CAL_B2_COMMITMENT_SHA256 == sel["cal_b2_commitment_sha256"]
+    assert sel["seed"] == treatment.CAL_B2_SELECTION_SEED
+    assert not set(anchors.CAL_B2_ANCHORS) & set(anchors.CAL_B_ANCHORS)
+    for row in sel["strata"]:  # vencedor = menor digest, fora das exclusões
+        assert row["winner_digest"] == treatment.session_digest(row["stratum_id"], row["winner"])
+        assert row["winner"] not in row["excluded_sessions"]
+        s = next(x for x in anchors.STRATA if x.stratum_id == row["stratum_id"])
+        assert s.subset == "CAL-B" and s.first <= row["winner"] <= s.last
+    assert anchors.CAL_B2_STATUS == "CONSUMED"  # Amendment 9: lote one-shot executado
+
+
+def test_runner_recusa_janela_com_ancora_cal_b2() -> None:
+    from src.experiments import anchors
+
+    for day in anchors.CAL_B2_ANCHORS:
+        with pytest.raises(ValueError, match="CAL-B"):
+            anchors.require_cal_b_locked(day, day)
+
+
+def test_hardening_dirigido_registrado_bate_com_a_evidencia() -> None:
+    import json
+    from pathlib import Path
+
+    from src.agents.feature_semantics import TECHNICAL_SYSTEM_PROMPT_V2_SHA256
+
+    m = json.loads((Path(__file__).resolve().parents[2] / treatment.H2_V2_DEFECT_EVIDENCE).read_text(encoding="utf-8"))
+    assert m["status"] == treatment.H2_V2_DEFECT_STATUS == treatment.H2_V2_DEFECT_FIX_PASSED
+    assert all(g["pass"] for g in m["gates"].values())
+    assert m["technical_prompt_sha256"] == TECHNICAL_SYSTEM_PROMPT_V2_SHA256
+    assert m["participant_params"] == dict(treatment.H2_V2_DEFECT_PARAMS)
+    assert m["semantic_audit"]["technical_votes"] == 150
+
+
+def test_selecao_cal_a_v2_bate_com_a_evidencia() -> None:
+    import json
+    from pathlib import Path
+
+    sel = treatment.CAL_A_V2_SELECTED_CONFIG
+    s = json.loads((Path(__file__).resolve().parents[2] / sel["evidence"]).read_text(encoding="utf-8"))
+    assert s["complete"] and s["treatment_version"] == 2
+    assert s["paired_technical_audit"]["same_five_technical_responses_in_all_configs"]
+    assert s["cal_b_audit"]["cal_b_sessions_touched"] == []
+    s1 = {int(k): v for k, v in s["S1"].items()}
+    ranking = sorted(s1, key=lambda c: (-s1[c], c))
+    assert sel["config_id"] == ranking[0] == s["selected_config_id"] and tuple(ranking) == sel["ranking"]
+    assert sel["discrimination"] == ("NONE" if len(set(s1.values())) == 1 else "YES")
+    assert sel["selection_basis"] == ("PROTOCOL_TIE_FALLBACK" if sel["discrimination"] == "NONE" else "EMPIRICAL_S1")
+    grid = next(c for c in s["grid"] if c["config_id"] == sel["config_id"])
+    assert (grid["volatility_window"], grid["risk_max_volatility"]) == (sel["volatility_window"], sel["risk_max_volatility"])
+
+
+def test_selecao_sequential_dev_v2_bate_com_a_evidencia() -> None:
+    import json
+    from pathlib import Path
+
+    from src.experiments.phases import SEQUENTIAL_DEV_GRID, SEQUENTIAL_DEV_REPETITIONS
+
+    sel = treatment.SEQUENTIAL_DEV_V2_SELECTED_CONFIG
+    s = json.loads((Path(__file__).resolve().parents[2] / sel["evidence"]).read_text(encoding="utf-8"))
+    assert s["complete"] and s["treatment_version"] == 2
+    assert s["base_volatility_config"] == {"volatility_window": 21, "risk_max_volatility": 0.4}
+    assert s["paired_technical_audit"]["same_five_technical_responses_in_all_configs"]
+    assert s["cal_b_audit"]["cal_b_sessions_touched"] == []
+    s2 = {int(k): v for k, v in s["S2"].items()}
+    for cid, values in s["sharpe_by_replicate"].items():
+        assert s2[int(cid)] == sum(values) / SEQUENTIAL_DEV_REPETITIONS
+    ranking = sorted(s2, key=lambda c: (-s2[c], c))
+    assert sel["config_id"] == ranking[0] == s["selected_config_id"] and tuple(ranking) == sel["ranking"]
+    assert sel["discrimination"] == ("NONE" if len(set(s2.values())) == 1 else "YES")
+    assert sel["selection_basis"] == ("PROTOCOL_TIE_FALLBACK" if sel["discrimination"] == "NONE" else "EMPIRICAL_S2")
+    assert next(c for c in SEQUENTIAL_DEV_GRID if c["config_id"] == sel["config_id"])["risk_max_drawdown"] == sel["risk_max_drawdown"]
+    assert treatment.stress_v2_params()["risk_max_drawdown"] == 0.15
+
+
+def test_stress_v2_registrado_bate_com_a_evidencia() -> None:
+    import json
+    from pathlib import Path
+
+    from src.experiments.stress import STRESS_SELECTED_WINDOWS
+
+    s = json.loads((Path(__file__).resolve().parents[2] / treatment.STRESS_V2_EVIDENCE).read_text(encoding="utf-8"))
+    assert s["complete"] and s["treatment_version"] == 2 and s["status"] == treatment.STRESS_V2_STATUS
+    assert s["frozen_params"] == treatment.stress_v2_params()
+    assert s["windows"] == [dict(w) for w in STRESS_SELECTED_WINDOWS]  # mesmas janelas, sem reseleção
+    assert all(g["pass"] for g in s["gates"].values())
+    assert s["calibration_provenance"] == treatment.v2_calibration_provenance()
+
+
+def test_status_development_v2_e_seguranca_cal_b2() -> None:
+    import json
+    from pathlib import Path
+
+    from src.experiments import anchors
+
+    s = json.loads((Path(__file__).resolve().parents[2] / treatment.H2_V2_DEVELOPMENT_SUMMARY).read_text(encoding="utf-8"))
+    assert s["status"] == treatment.H2_V2_DEVELOPMENT_STATUS
+    assert s["cal_b2_safety"]["v2_decision_sessions_in_cal_b2"] == [] and not s["cal_b2_safety"]["executed"]
+    assert s["validation_final_safety"]["v2_sessions_at_or_after_validation"] == []
+    assert anchors.CAL_B_AUTHORIZED is False
+
+
+def test_governanca_v2_preserva_status_historico_e_fichas_em_branco() -> None:
+    """Amendment 10: CAL-B2 continua AWAITING (fichas intocadas) e a v2 sai do System Freeze."""
+    import json
+    from pathlib import Path
+
+    from src.experiments import anchors, cal_b
+
+    run = Path(__file__).resolve().parents[2] / cal_b.CAL_B2_EVIDENCE / "review"
+    reviews = [json.loads((run / f"AUTHOR_{i}.json").read_text(encoding="utf-8")) for i in (1, 2)]
+    assert all(r["reviewer"] is None for r in reviews)
+    assert all(v["material_hallucination"] is None and v["rationale_action_coherence"] is None
+               for r in reviews for v in r["anchors"].values())
+    status = cal_b.cal_b2_status(all(cal_b.CAL_B2_GATE_RESULTS.values()), reviews, anchors.CAL_B2_ANCHORS)
+    assert status == treatment.CAL_B2_HISTORICAL_STATUS == cal_b.CAL_B2_AWAITING_HUMAN_REVIEW
+    assert treatment.H2_V2_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE is True
+    assert treatment.H2_V2_SYSTEM_FREEZE_INELIGIBILITY_REASON == "CAL_B2 CONSUMED AND USED AS DEVELOPMENT EVIDENCE"
+    assert cal_b.SYSTEM_CALIBRATION_COMPLETE is False and anchors.CAL_B2_STATUS == "CONSUMED"
+
+
+def test_cal_b3_comprometida_bate_com_a_regra_e_a_evidencia() -> None:
+    """Amendment 10: seed do compromisso da CAL-B2, menor digest, fora de todo development."""
+    import json
+    from pathlib import Path
+
+    from src.experiments import anchors
+
+    seed = hashlib.sha256(("HEDGE-FUND-LAB|CAL-B3|" + anchors.CAL_B2_COMMITMENT_SHA256).encode()).hexdigest()
+    assert treatment.CAL_B3_SELECTION_SEED == seed
+    root = Path(__file__).resolve().parents[2]
+    sel = json.loads((root / anchors.CAL_B3_SELECTION_EVIDENCE).read_text(encoding="utf-8"))
+    assert tuple(sel["cal_b3_anchors"]) == anchors.CAL_B3_ANCHORS and sel["seed"] == seed
+    assert anchors.digest(anchors.CAL_B3_ANCHORS) == anchors.CAL_B3_COMMITMENT_SHA256 == sel["cal_b3_commitment_sha256"]
+    consumed = set(anchors.CAL_B_ANCHORS) | set(anchors.CAL_B2_ANCHORS) | set(anchors.CAL_A_ANCHORS)
+    assert not set(anchors.CAL_B3_ANCHORS) & consumed
+    for row in sel["strata"]:
+        assert row["winner_digest"] == treatment.session_digest(row["stratum_id"], row["winner"], seed)
+        assert row["winner"] not in row["excluded_sessions"]
+        assert {row["cal_b1_anchor"], row["cal_b2_anchor"]} <= set(row["excluded_sessions"])
+        s = next(x for x in anchors.STRATA if x.stratum_id == row["stratum_id"])
+        assert s.subset == "CAL-B" and s.first <= row["winner"] <= s.last
+    with pytest.raises(ValueError, match="CONSUMED"):  # consumida no Amendment 11: development v3 encerrado
+        treatment.require_cal_b3_committed()
+    assert anchors.CAL_B3_STATUS == "CONSUMED" and anchors.CAL_B_AUTHORIZED is False
+    for day in anchors.CAL_B3_ANCHORS:  # nenhuma janela de development a toca
+        assert day in anchors.sealed_holdout_anchors()
+        with pytest.raises(ValueError, match="CAL-B"):
+            anchors.require_cal_b_locked(day, day)
+
+
+def test_hardening_dirigido_v3_registrado_bate_com_a_evidencia() -> None:
+    import json
+    from pathlib import Path
+
+    from src.agents.feature_semantics import TECHNICAL_SYSTEM_PROMPT_V2_SHA256
+    from src.agents.risk_contract import RISK_SYSTEM_PROMPT_V2_SHA256
+    from src.experiments import anchors
+
+    m = json.loads((Path(__file__).resolve().parents[2] / treatment.H2_V3_DEFECT_EVIDENCE).read_text(encoding="utf-8"))
+    assert m["status"] == treatment.H2_V3_DEFECT_STATUS == treatment.H2_V3_DEFECT_FIX_PASSED
+    assert all(g["pass"] for g in m["gates"].values())
+    assert (m["technical_prompt_sha256"], m["risk_prompt_sha256"]) == (TECHNICAL_SYSTEM_PROMPT_V2_SHA256,
+                                                                     RISK_SYSTEM_PROMPT_V2_SHA256)
+    assert m["participant_params"] == dict(treatment.H2_V3_DEFECT_PARAMS)
+    assert m["cal_b3_commitment"] == anchors.CAL_B3_COMMITMENT_SHA256  # comprometida antes da 1a chamada v3
+    assert m["replay_audit"]["replayed"]["technical_analyst"] == 150 and not m["replay_audit"]["mismatch"]
+    assert "technical_analyst" not in m["replay_audit"]["live"]  # nenhuma chamada Technical nova
+    assert m["target_case"]["same_logical_payload_in_all_v3_calls"]
+    assert all(not c["findings"] for c in m["target_case"]["v3_risk_prompt_v2"])
+
+
+def test_selecao_cal_a_v3_bate_com_a_evidencia() -> None:
+    import json
+    from pathlib import Path
+
+    sel = treatment.CAL_A_V3_SELECTED_CONFIG
+    s = json.loads((Path(__file__).resolve().parents[2] / sel["evidence"]).read_text(encoding="utf-8"))
+    assert s["complete"] and s["treatment_version"] == 3 and s["kind"] == "CAL_A_V3"
+    assert s["paired_technical_audit"]["same_five_technical_responses_in_all_configs"]
+    assert s["cal_b_audit"]["cal_b_sessions_touched"] == []
+    assert not s["frozen_component_replay"]["mismatch"] and "technical_analyst" not in s["frozen_component_replay"]["live"]
+    s1 = {int(k): v for k, v in s["S1"].items()}
+    ranking = sorted(s1, key=lambda c: (-s1[c], c))
+    assert sel["config_id"] == ranking[0] == s["selected_config_id"] and tuple(ranking) == sel["ranking"]
+    assert sel["discrimination"] == ("NONE" if len(set(s1.values())) == 1 else "YES")
+    assert sel["selection_basis"] == ("PROTOCOL_TIE_FALLBACK" if sel["discrimination"] == "NONE" else "EMPIRICAL_S1")
+    assert [c for c in s1 if s1[c] == s1[ranking[0]]] == [2, 3, 6]  # empate no topo -> menor config_id
+    grid = next(c for c in s["grid"] if c["config_id"] == sel["config_id"])
+    assert (grid["volatility_window"], grid["risk_max_volatility"]) == (sel["volatility_window"], sel["risk_max_volatility"])
+
+
+def test_selecao_sequential_dev_v3_bate_com_a_evidencia() -> None:
+    import json
+    from pathlib import Path
+
+    from src.experiments.phases import SEQUENTIAL_DEV_GRID, SEQUENTIAL_DEV_REPETITIONS
+
+    sel = treatment.SEQUENTIAL_DEV_V3_SELECTED_CONFIG
+    s = json.loads((Path(__file__).resolve().parents[2] / sel["evidence"]).read_text(encoding="utf-8"))
+    assert s["complete"] and s["treatment_version"] == 3 and s["kind"] == "SEQUENTIAL_DEVELOPMENT_V3"
+    assert s["base_volatility_config"] == {"volatility_window": 21, "risk_max_volatility": 0.5}  # CAL-A v3
+    assert s["paired_technical_audit"]["same_five_technical_responses_in_all_configs"]
+    assert s["cal_b_audit"]["cal_b_sessions_touched"] == []
+    assert not s["frozen_component_replay"]["mismatch"] and "technical_analyst" not in s["frozen_component_replay"]["live"]
+    s2 = {int(k): v for k, v in s["S2"].items()}
+    for cid, values in s["sharpe_by_replicate"].items():
+        assert s2[int(cid)] == sum(values) / SEQUENTIAL_DEV_REPETITIONS
+    ranking = sorted(s2, key=lambda c: (-s2[c], c))
+    assert sel["config_id"] == ranking[0] == s["selected_config_id"] and tuple(ranking) == sel["ranking"]
+    assert sel["discrimination"] == ("NONE" if len(set(s2.values())) == 1 else "YES")
+    assert sel["selection_basis"] == ("PROTOCOL_TIE_FALLBACK" if sel["discrimination"] == "NONE" else "EMPIRICAL_S2")
+    assert next(c for c in SEQUENTIAL_DEV_GRID if c["config_id"] == sel["config_id"])["risk_max_drawdown"] == sel["risk_max_drawdown"]
+    assert treatment.stress_v3_params() == {**treatment.stress_v2_params(), "risk_max_volatility": 0.50,
+                                            "risk_max_drawdown": 0.25, "risk_prompt_version": 2}
+
+
+def test_stress_v3_registrado_bate_com_a_evidencia() -> None:
+    import json
+    from pathlib import Path
+
+    from src.experiments.stress import STRESS_SELECTED_WINDOWS
+
+    s = json.loads((Path(__file__).resolve().parents[2] / treatment.STRESS_V3_EVIDENCE).read_text(encoding="utf-8"))
+    assert s["complete"] and s["treatment_version"] == 3 and s["status"] == treatment.STRESS_V3_STATUS
+    assert s["frozen_params"] == treatment.stress_v3_params()
+    assert s["windows"] == [dict(w) for w in STRESS_SELECTED_WINDOWS]  # mesmas janelas, sem reseleção
+    assert all(g["pass"] for g in s["gates"].values())
+    assert s["calibration_provenance"] == treatment.v3_calibration_provenance()
+    assert not s["frozen_component_replay"]["mismatch"] and "technical_analyst" not in s["frozen_component_replay"]["live"]
+
+
+def test_status_development_v3_e_seguranca_cal_b3() -> None:
+    import json
+    from pathlib import Path
+
+    from src.experiments import anchors
+
+    s = json.loads((Path(__file__).resolve().parents[2] / treatment.H2_V3_DEVELOPMENT_SUMMARY).read_text(encoding="utf-8"))
+    assert s["status"] == treatment.H2_V3_DEVELOPMENT_STATUS
+    assert s["cal_b3_safety"]["v3_decision_sessions_in_cal_b3"] == [] and not s["cal_b3_safety"]["executed"]
+    assert s["cal_b3_safety"]["commitment"] == anchors.CAL_B3_COMMITMENT_SHA256 and s["cal_b3_safety"]["status"] == "SEALED"
+    assert s["validation_final_safety"]["v3_sessions_at_or_after_validation"] == []
+    assert s["frozen_component_replay"]["mismatches"] == 0
+    assert "technical_analyst/live" not in s["frozen_component_replay"]["totals"]  # Technical 100% replay v2
+    totals = s["risk_checker_totals_v3_development"]
+    assert totals["V3-R1"] == 0 and totals["V3-R2"] == 0
+    assert s["final_v3_params"] == treatment.stress_v3_params()
+    assert s["v2_governance"]["H2_V2_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE"] is True
+    assert anchors.CAL_B_AUTHORIZED is False

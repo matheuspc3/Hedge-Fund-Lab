@@ -1,0 +1,100 @@
+HFL · diagnóstico somente leitura · 2026-10-12T14:03:42.744562-03:00
+
+[H2 original]
+  decisão DECIDED · sessão 2026-10-09 · alvo 2026-10-13 · gerada 2026-10-10T15:17:04.881596-03:00
+  ordem: Alvo 100% na abertura de 13/10/2026; aguarda o preço observado e a reconciliação.
+  decisão existente: não repetir a inferência desta sessão.
+
+[Supervisão]
+  estado AGUARDANDO_APROVACAO · prazo 2026-10-13T10:00:00-03:00 · aprovação nenhuma
+  auditoria íntegra · 1 eventos
+
+[Carteiras e benchmarks]
+  IA H2 v6: patrimônio 100000.0 · caixa 100000.0 · posições nenhuma · marca 2026-10-09 · ordem para 2026-10-13
+  Buy & Hold: patrimônio 100000.0 · caixa 100000.0 · posições nenhuma · marca 2026-10-09 · ordem para 2026-10-13
+  SMA Regime 50/200: patrimônio 100000.0 · caixa 100000.0 · posições nenhuma · marca 2026-10-09 · ordem para 2026-10-13
+  Bollinger Estado 20/2: patrimônio 100000.0 · caixa 100000.0 · posições nenhuma · marca 2026-10-09 · ordem nenhuma
+  H2 v6 Supervisionada: patrimônio 100000.0 · caixa 100000.0 · posições nenhuma · marca 2026-10-09 · ordem nenhuma
+
+[Radar oficial · execução radar-2026-10-09-recovery-01 · sessão 2026-10-09]
+  5 inputs prontos; 0/5 pareceres oficiais · preflight do lote bloqueado
+  preparo (equivale ao botão de /radar; grava, sem Gemini): .venv/Scripts/python.exe -B scripts/radar_runs.py prepare --run radar-2026-10-09-recovery-01
+  PETR4: AWAITING_RADAR_AUTHORIZATION · input FROZEN · parecer PENDING
+      sessão 2026-10-09 · 311 barras desde 2025-07-16 · input e1b5f1f44bce8392… · barras 6a5c6ce8db87c105…
+      fonte b3_cotahist_ohlcv+yfinance_adjustment_factor · fechamento bruto 56.0 · ajustado 56.0
+      normalização NO_NORMALIZATION_NEEDED (RADAR_CORPORATE_EVENTS_V2)
+      risco individual: vol21 0.392326 / limite 0.5 · sem parecer de risco
+      preflight gemini_api_key_missing · Input congelado; parecer pendente: preflight Radar e autorização paga própria do lote.
+  VALE3: AWAITING_RADAR_AUTHORIZATION · input FROZEN · parecer PENDING
+      sessão 2026-10-09 · 311 barras desde 2025-07-16 · input f89465ef779f2a10… · barras b1cb92fc355a47f9…
+      fonte b3_cotahist_ohlcv+yfinance_adjustment_factor · fechamento bruto 67.9 · ajustado 67.9
+      normalização NO_NORMALIZATION_NEEDED (RADAR_CORPORATE_EVENTS_V2)
+      risco individual: vol21 0.237709 / limite 0.5 · sem parecer de risco
+      preflight gemini_api_key_missing · Input congelado; parecer pendente: preflight Radar e autorização paga própria do lote.
+  ITUB4: AWAITING_RADAR_AUTHORIZATION · input FROZEN · parecer PENDING
+      sessão 2026-10-09 · 311 barras desde 2025-07-16 · input a1ddd28411fcc69f… · barras b54861315e0bbb3d…
+      fonte b3_cotahist_ohlcv+yfinance_adjustment_factor · fechamento bruto 50.47 · ajustado 50.47
+      normalização NORMALIZED_CONFIRMED_EVENT (RADAR_CORPORATE_EVENTS_V2): BONIFICACAO 2025-12-26 x1.03 (PN EB N1)
+      risco individual: vol21 0.429197 / limite 0.5 · sem parecer de risco
+      preflight gemini_api_key_missing · Input congelado; parecer pendente: preflight Radar e autorização paga própria do lote.
+  WEGE3: AWAITING_RADAR_AUTHORIZATION · input FROZEN · parecer PENDING
+      sessão 2026-10-09 · 311 barras desde 2025-07-16 · input 0de4b28e88e5cdb9… · barras 3e8c8ac94ccac077…
+      fonte b3_cotahist_ohlcv+yfinance_adjustment_factor · fechamento bruto 51.47 · ajustado 51.47
+      normalização NO_NORMALIZATION_NEEDED (RADAR_CORPORATE_EVENTS_V2)
+      risco individual: vol21 0.215187 / limite 0.5 · sem parecer de risco
+      preflight gemini_api_key_missing · Input congelado; parecer pendente: preflight Radar e autorização paga própria do lote.
+  BBAS3: AWAITING_RADAR_AUTHORIZATION · input FROZEN · parecer PENDING
+      sessão 2026-10-09 · 311 barras desde 2025-07-16 · input 542ef758f4134161… · barras bbe4441fb88daf0f…
+      fonte b3_cotahist_ohlcv+yfinance_adjustment_factor · fechamento bruto 24.64 · ajustado 24.64
+      normalização NO_NORMALIZATION_NEEDED (RADAR_CORPORATE_EVENTS_V2)
+      risco individual: vol21 0.544844 / limite 0.5 · RESTRIÇÃO: veto determinístico esperado · sem parecer de risco
+      preflight gemini_api_key_missing · Input congelado; parecer pendente: preflight Radar e autorização paga própria do lote. Restrição de risco: volatilidade 21d 0.545 acima do limite 0.5; o Risk vetará por regra determinística (parecer completo, recomendação MANTER).
+  pendências para Gemini: gemini_api_key_missing
+
+[Execuções Radar (registry = índice; autoridade = registros de cada raiz)]
+  registry revisão 3 · selecionada radar-2026-10-09-recovery-01 · 3 execução(ões)
+  radar-2026-10-09-original: INCIDENT_PRESERVED · INCIDENTE INCIDENT_2026_10_12_NETWORK_GUARD
+      raiz data/radar/hfl_multiasset_v1 · sessão 2026-10-09 · fonte B3_COTAHIST_YFINANCE_ADJUSTED (OFFICIAL) · universo PETR4 VALE3 ITUB4 WEGE3 BBAS3
+      tratamento HFL-MULTIASSET-RADAR-V1 manifesto 77d75777f6b6a4b5…
+      inputs 5/5 · pareceres 0 · claims 5 · falhas 5 · chamadas reservadas 25 · respostas gravadas 0
+      integridade OK · aceita novas chamadas: NÃO · disponível ao Global PM: não
+      orçamento próprio US$ 5.0 · reservado US$ 3.31776 (resultado incerto US$ 3.31776) · custo observado pelos tokens US$ 0.0 · faturado confirmado: DESCONHECIDO
+      próximo lote: 0 chamadas planejadas (máx. 0) · reserva US$ 0.0 · exposição agregada US$ 3.31776 / limite local US$ 5.0 · autorização de orçamento NOT_REQUIRED
+      reserva d38776682ccf…: US$ 3.31776 · OUTCOME_UNCERTAIN · LOCAL_BLOCK_BEFORE_CONNECT_BILLING_UNCONFIRMED
+  radar-2026-10-09-recovery-01: INPUTS_READY (aggregate_budget_authorization_required) · SELECIONADA
+      raiz data/radar/hfl_multiasset_v1_recovery_01 · sessão 2026-10-09 · fonte B3_COTAHIST_YFINANCE_ADJUSTED (OFFICIAL) · universo PETR4 VALE3 ITUB4 WEGE3 BBAS3
+      tratamento HFL-MULTIASSET-RADAR-V1 manifesto 77d75777f6b6a4b5… · nova instância do mesmo tratamento de radar-2026-10-09-original
+      inputs 5/5 · pareceres 0 · claims 0 · falhas 0 · chamadas reservadas 0 · respostas gravadas 0
+      integridade OK · aceita novas chamadas: sim · disponível ao Global PM: não
+      orçamento próprio US$ 3.32 · reservado US$ 0 (resultado incerto US$ 0) · custo observado pelos tokens US$ 0.0 · faturado confirmado: DESCONHECIDO
+      próximo lote: 29 chamadas planejadas (máx. 30) · reserva US$ 3.31776 · exposição agregada US$ 6.63552 / limite local US$ 5.0 · autorização de orçamento ABSENT
+      comparação econômica com radar-2026-10-09-original: sem divergência material · PETR4 EQUIVALENT_WITHIN_TOLERANCE, VALE3 EQUIVALENT_WITHIN_TOLERANCE, ITUB4 EQUIVALENT_WITHIN_TOLERANCE, WEGE3 EQUIVALENT_WITHIN_TOLERANCE, BBAS3 EQUIVALENT_WITHIN_TOLERANCE
+  radar-demo-v4: COMPLETED (analyses_outside_run_identity)
+      raiz data/radar/demo-v4 · sessão 2026-10-09 · fonte SYNTHETIC_OFFLINE_NOT_MARKET_DATA (SYNTHETIC) · universo PETR4 VALE3 ITUB4 BBAS3 WEGE3
+      tratamento HFL-MULTIASSET-RADAR-V1 manifesto da109a3ed98ad009…
+      inputs 5/5 · pareceres 5 · claims 5 · falhas 0 · chamadas reservadas 30 · respostas gravadas 30
+      integridade OK · aceita novas chamadas: NÃO · disponível ao Global PM: sim · análises fora da identidade: VALE3/2026-10-08
+
+[Global PM]
+  elegibilidade oficial: BLOQUEADA · 5 inputs prontos; 0/5 pareceres oficiais · faltam PETR4, VALE3, ITUB4, WEGE3, BBAS3 · contexto oficial só deve ser preparado perto do uso (validade 24 h); autorização Radar não vale para o Global PM.
+  v7-3558f0253cf44dd0a00c93d7be73e56f · SYNTHETIC_DEMO · VALID_PROPOSAL · expira 2026-10-13T00:16:46.287213+00:00
+
+[Mercado]
+  última sessão observada 2026-10-09 · último fechamento do calendário 2026-10-09 · coleta 2026-10-10T14:54:51.409659-03:00
+  próxima sessão 2026-10-13 · abertura prevista 2026-10-13T10:00:00-03:00 (previsão de calendário, não confirma leilão)
+  cotação intradiária indisponível nesta consulta.
+
+[Jobs incompletos, incertos ou bloqueados]
+  nenhum
+
+[Integridade]
+  H2: íntegra · 1 decisão(ões) · manifesto dc118ce9841df612d030f40e5993858eacc6d06e41eff173706fc3a72d3acb98
+  V5 demo: íntegra
+
+[Ações manuais pendentes]
+  PRÓXIMA: Aprovar ou rejeitar a supervisionada até 13/10/2026 10:00 BRT.
+  info: Após o COTAHIST de 13/10/2026: preparar o novo fechamento e conferir a reconciliação da intenção.
+  info: Radar radar-2026-10-09-original: Falha local confirmada — lote preservado — não reutilizável para novas chamadas. (INCIDENT_2026_10_12_NETWORK_GUARD)
+  lab: Radar radar-2026-10-09-recovery-01: 5 inputs prontos; 0/5 pareceres oficiais. Global PM aguarda os pareceres de todos.
+
+Nada foi baixado, gravado, aprovado, inferido ou reconciliado por este diagnóstico.

@@ -1,0 +1,63 @@
+{
+ "records": [
+  {
+   "id": "v7-5a78ea5d15214e37bcae18f167ffcee3",
+   "status": "REJECTED_BY_VALIDATOR",
+   "operations": 0,
+   "context_sha256": "0f5f7554ca18c9f898f799fdb6d50d3e583d6efaedef9965c7b463aa047e67d6"
+  },
+  {
+   "id": "v74-76d07c0d32444cecaf07e875deacb519",
+   "status": "VALID_PROPOSAL",
+   "operations": 0,
+   "context_sha256": "c4879f282017a59c8e6b520a423150a10c722cdda507ababe2c2d8eee850f210"
+  }
+ ],
+ "h2": [
+  {
+   "id": "h2:ai",
+   "status": "PENDENTE",
+   "trades": 0,
+   "mark": {
+    "session": "2026-10-09",
+    "close": 56.0
+   }
+  },
+  {
+   "id": "h2:buy_and_hold",
+   "status": "PENDENTE",
+   "trades": 0,
+   "mark": {
+    "session": "2026-10-09",
+    "close": 56.0
+   }
+  },
+  {
+   "id": "h2:sma_regime_h2_proposed",
+   "status": "PENDENTE",
+   "trades": 0,
+   "mark": {
+    "session": "2026-10-09",
+    "close": 56.0
+   }
+  },
+  {
+   "id": "h2:bollinger_state_h2_proposed",
+   "status": "SEM_PENDENCIA",
+   "trades": 0,
+   "mark": {
+    "session": "2026-10-09",
+    "close": 56.0
+   }
+  },
+  {
+   "id": "h2:h2_v6_supervised",
+   "status": "EXPIRADA",
+   "trades": 0,
+   "mark": {
+    "session": "2026-10-09",
+    "close": 56.0
+   }
+  }
+ ]
+}

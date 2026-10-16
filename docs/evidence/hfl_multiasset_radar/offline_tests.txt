@@ -1,0 +1,28 @@
+test_budget_global_missing_credentials_and_paid_consent (__main__.RadarChecks.test_budget_global_missing_credentials_and_paid_consent) ... ok
+test_five_complete_committees_and_read_only_lookup (__main__.RadarChecks.test_five_complete_committees_and_read_only_lookup) ... ok
+test_http_origin_csrf_api_and_no_llm_on_get (__main__.RadarChecks.test_http_origin_csrf_api_and_no_llm_on_get) ... 127.0.0.1 - - [11/Oct/2026 03:16:26] "GET /api/radar/status HTTP/1.1" 200 -
+127.0.0.1 - - [11/Oct/2026 03:16:26] "POST /api/radar/universe HTTP/1.1" 200 -
+127.0.0.1 - - [11/Oct/2026 03:16:26] "POST /api/radar/universe HTTP/1.1" 403 -
+127.0.0.1 - - [11/Oct/2026 03:16:26] "GET /radar HTTP/1.1" 200 -
+127.0.0.1 - - [11/Oct/2026 03:16:27] "GET /radar.css HTTP/1.1" 200 -
+127.0.0.1 - - [11/Oct/2026 03:16:27] "GET /radar.js HTTP/1.1" 200 -
+127.0.0.1 - - [11/Oct/2026 03:16:27] "GET /api/radar/detail?ticker=PETR4&session=2026-10-09 HTTP/1.1" 200 -
+ok
+test_journal_loss_cannot_trigger_replacement_transport (__main__.RadarChecks.test_journal_loss_cannot_trigger_replacement_transport) ... ok
+test_lock_prevents_second_process_and_is_released (__main__.RadarChecks.test_lock_prevents_second_process_and_is_released) ... ok
+test_lost_claim_cannot_promote_existing_journal_to_fresh (__main__.RadarChecks.test_lost_claim_cannot_promote_existing_journal_to_fresh) ... ok
+test_offline_network_guard (__main__.RadarChecks.test_offline_network_guard) ... ok
+test_original_artifacts_and_manifest_integrity (__main__.RadarChecks.test_original_artifacts_and_manifest_integrity) ... ok
+test_original_storage_and_path_traversal_refused (__main__.RadarChecks.test_original_storage_and_path_traversal_refused) ... ok
+test_partial_committee_failure_preserves_siblings_and_no_replacement (__main__.RadarChecks.test_partial_committee_failure_preserves_siblings_and_no_replacement) ... ok
+test_preflight_individual_batch_different_sessions_and_no_writes (__main__.RadarChecks.test_preflight_individual_batch_different_sessions_and_no_writes) ... ok
+test_recover_durable_responses_after_publication_crash (__main__.RadarChecks.test_recover_durable_responses_after_publication_crash) ... ok
+test_reinference_confirmation_and_frozen_tamper_refused (__main__.RadarChecks.test_reinference_confirmation_and_frozen_tamper_refused) ... ok
+test_request_concurrency_limit_and_journal_before_transport (__main__.RadarChecks.test_request_concurrency_limit_and_journal_before_transport) ... ok
+test_short_missing_nontrading_and_corporate_events (__main__.RadarChecks.test_short_missing_nontrading_and_corporate_events) ... ok
+test_zero_one_five_selection_and_validation (__main__.RadarChecks.test_zero_one_five_selection_and_validation) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 20.694s
+
+OK

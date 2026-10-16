@@ -3,26 +3,27 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hedge-fund-lab · Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css" />
+    <title>Legacy · Backtests históricos · Hedge-Fund-Lab</title>
+    <link rel="stylesheet" href="/style.css" />
+<link rel="stylesheet" href="/shell.css?v=7"><script src="/shell.js?v=7" defer></script>
 </head>
-<body>
+<body class="hfl-platform">
+<!-- platform-shell -->
+<aside class="hfl-warning" aria-label="Etapa anterior">Legacy · etapa anterior do projeto, preservada somente para consulta e documentação do TCC. A reorganização não executa, cancela ou reconcilia intenções antigas e não comprova encerramento financeiro. <a href="/legacy">Acervo histórico</a> · <a href="/">Carteiras multiativos</a></aside>
 
     <!-- ─── Header ─── -->
-    <header class="header">
+    <div class="header module-header">
         <div>
-            <h1>HEDGE-FUND-LAB</h1>
-            <span class="subtitle">Laboratório Quantitativo de Backtesting · Dashboard</span>
+            <h1>Backtests legados</h1>
+            <span class="subtitle">Exportação histórica estática · registro somente leitura <button class="ds-help" data-help="backtesting"></button></span>
         </div>
         <div class="header-right">
             <span class="status" id="data-status">● Carregando...</span>
         </div>
-    </header>
+    </div>
 
-    <!-- ─── Tab Navigation ─── -->
+    <p class="hfl-warning" id="main" tabindex="-1">Backtests legados · export histórico estático, separado das carteiras prospectivas. Resultados descritivos; não representam desempenho financeiro real.</p>
+<!-- ─── Tab Navigation ─── -->
     <div class="tab-bar">
         <button class="tab active" data-tab="portfolio">Portfólio Multi-Ativo</button>
         <button class="tab" data-tab="analise">Análise por Ativo</button>
@@ -196,7 +197,7 @@
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="indicator-charts">
                     <div class="card chart-card">
                         <div class="card-title">RSI (14)</div>
                         <div class="chart-container">
@@ -237,9 +238,8 @@
     <!-- ─── Filosofia ─── -->
     <section class="philosophy" id="philosophy-text"></section>
 
-    <!-- Chart.js (CDN) -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
-    <script src="app.js"></script>
+    <!-- Chart.js local -->
+    <script src="/vendor/chart.umd.js"></script>
+    <script src="/app.js?v=7"></script>
 </body>
 </html>

@@ -1,0 +1,98 @@
+{
+  "criterion": "HEDGE-FUND-LAB PREMIUM V2 — HUMAN SUPERVISION PAPER TRADING READY",
+  "checked_on": "2026-10-10",
+  "code_commit": "3cff317",
+  "fix_commits": [
+    "4a78788",
+    "3cff317"
+  ],
+  "tests": {
+    "supervised_passed": 36,
+    "focused_passed": 82,
+    "full_suite": {
+      "passed": 1499,
+      "failed": 10,
+      "duration_seconds": 516.61,
+      "new_regressions": [],
+      "known_failures": [
+        {
+          "test": "tests.experiments.test_cal_b4_safety::test_v5_development_s3_failure_blocks_further_phases",
+          "classification": "outdated_historical_expectation"
+        },
+        {
+          "test": "tests.experiments.test_spec::test_registry_cobre_os_cinco_classicos_e_o_participante_llm",
+          "classification": "outdated_historical_expectation"
+        },
+        {
+          "test": "tests.experiments.test_v6_phase_routing::test_structural_failure_prevents_phase_selection_and_progression",
+          "classification": "outdated_historical_expectation"
+        },
+        {
+          "test": "tests.pipeline.test_flows.TestPipelineFlow::test_full_flow_success",
+          "classification": "environment_postgresql_5435"
+        },
+        {
+          "test": "tests.pipeline.test_flows.TestPipelineFlow::test_partial_flow_returns_explicit_failure_summary",
+          "classification": "environment_postgresql_5435"
+        },
+        {
+          "test": "tests.pipeline.test_flows.TestPipelineFlow::test_extract_retry_on_failure",
+          "classification": "environment_postgresql_5435"
+        },
+        {
+          "test": "tests.pipeline.test_flows.TestPipelineFlow::test_custom_tickers",
+          "classification": "environment_postgresql_5435"
+        },
+        {
+          "test": "tests.pipeline.test_flows.TestPipelineFlow::test_single_ticker",
+          "classification": "environment_postgresql_5435"
+        },
+        {
+          "test": "tests.pipeline.test_flows.TestPipelineFlow::test_empty_tickers",
+          "classification": "environment_postgresql_5435"
+        },
+        {
+          "test": "tests.pipeline.test_flows.TestPipelineFlow::test_default_tickers_from_settings",
+          "classification": "environment_postgresql_5435"
+        }
+      ],
+      "external_socket_and_dns_blocked": true,
+      "real_gemini_keys_removed": true
+    }
+  },
+  "protected": {
+    "files": 265,
+    "changed": [],
+    "checker": "scripts/check_h2_forward_dashboard.py"
+  },
+  "real_wallet": {
+    "inception": "2026-10-09",
+    "initialized_at": "2026-10-10T21:02:07.690651-03:00",
+    "portfolio": {
+      "cash": 100000.0,
+      "units": 0.0
+    },
+    "human_actions": 0,
+    "audit": {
+      "ok": true,
+      "events": 1,
+      "errors": []
+    }
+  },
+  "browser": {
+    "engine": "Chrome via browser-use",
+    "widths": [
+      1440,
+      640,
+      420
+    ],
+    "checks": 12,
+    "console_errors_or_warnings": [],
+    "horizontal_overflow": false,
+    "non_get_requests": 0
+  },
+  "new_gemini_calls": 0,
+  "real_orders": 0,
+  "real_validation_or_final_runs": 0,
+  "push": false
+}

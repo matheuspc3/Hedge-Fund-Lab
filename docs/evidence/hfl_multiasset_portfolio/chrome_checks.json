@@ -1,0 +1,58 @@
+{
+  "browser": "Chrome",
+  "tab": "906191171",
+  "url": "http://localhost:8088/portfolio",
+  "desktop": {
+    "body": 1425,
+    "document": 1425,
+    "height": 1000,
+    "width": 1440
+  },
+  "mobile": {
+    "body": 405,
+    "document": 405,
+    "height": 900,
+    "scrollY": 0,
+    "width": 420
+  },
+  "tablet": {
+    "width": 640,
+    "body": 625,
+    "document": 625
+  },
+  "default": {
+    "width": 1536,
+    "body": 1521,
+    "document": 1521
+  },
+  "scenarios": [
+    {
+      "scenario": "buy",
+      "valid": true
+    },
+    {
+      "scenario": "sell_cash",
+      "valid": true,
+      "no_purchase": true
+    },
+    {
+      "scenario": "partial",
+      "valid": true
+    },
+    {
+      "scenario": "rebalance",
+      "valid": true
+    },
+    {
+      "scenario": "hold",
+      "valid": true
+    },
+    {
+      "scenario": "rotation",
+      "valid": true
+    }
+  ],
+  "invalid_allocation_blocked": true,
+  "console": [],
+  "provider_calls": 0
+}

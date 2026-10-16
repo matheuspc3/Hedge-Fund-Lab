@@ -1,0 +1,24 @@
+{
+ "hfl_multiasset_radar": {
+  "files": 10766,
+  "changed": [],
+  "missing": []
+ },
+ "hfl_multiasset_portfolio": {
+  "files": 10922,
+  "changed": [],
+  "missing": []
+ },
+ "hfl_global_pm": {
+  "files": 11027,
+  "changed": [],
+  "missing": []
+ },
+ "hfl_platform_v7": {
+  "files": 11094,
+  "changed": [],
+  "missing": []
+ },
+ "scientific_identity_sha256": "dc118ce9841df612d030f40e5993858eacc6d06e41eff173706fc3a72d3acb98",
+ "decision_2026_10_09_sha256": "27e51c949aebac155b1d890c6fff74d1a242852d7f5c8d3a30cdc602a6a09ddc"
+}

@@ -1,0 +1,4 @@
+All checks passed!
+4 files already formatted
+node --check dashboard/global-pm.js: ok
+node --check dashboard/global-workflow.js: ok

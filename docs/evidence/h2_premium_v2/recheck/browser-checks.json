@@ -1,0 +1,89 @@
+{
+  "checks": [
+    {
+      "area": "Visão Geral",
+      "error": false,
+      "heading": "Visão Geral",
+      "scrollWidth": 1425,
+      "width": 1440
+    },
+    {
+      "area": "Sala de Decisão",
+      "error": false,
+      "heading": "Sala de Decisão",
+      "scrollWidth": 1425,
+      "width": 1440
+    },
+    {
+      "area": "Carteiras",
+      "error": false,
+      "heading": "Carteiras",
+      "scrollWidth": 1425,
+      "width": 1440
+    },
+    {
+      "area": "Agentes",
+      "error": false,
+      "heading": "Agentes",
+      "scrollWidth": 1425,
+      "width": 1440
+    },
+    {
+      "area": "Visão Geral",
+      "error": false,
+      "heading": "Visão Geral",
+      "scrollWidth": 625,
+      "width": 640
+    },
+    {
+      "area": "Sala de Decisão",
+      "error": false,
+      "heading": "Sala de Decisão",
+      "scrollWidth": 625,
+      "width": 640
+    },
+    {
+      "area": "Carteiras",
+      "error": false,
+      "heading": "Carteiras",
+      "scrollWidth": 625,
+      "width": 640
+    },
+    {
+      "area": "Agentes",
+      "error": false,
+      "heading": "Agentes",
+      "scrollWidth": 625,
+      "width": 640
+    },
+    {
+      "area": "Visão Geral",
+      "error": false,
+      "heading": "Visão Geral",
+      "scrollWidth": 405,
+      "width": 420
+    },
+    {
+      "area": "Sala de Decisão",
+      "error": false,
+      "heading": "Sala de Decisão",
+      "scrollWidth": 405,
+      "width": 420
+    },
+    {
+      "area": "Carteiras",
+      "error": false,
+      "heading": "Carteiras",
+      "scrollWidth": 405,
+      "width": 420
+    },
+    {
+      "area": "Agentes",
+      "error": false,
+      "heading": "Agentes",
+      "scrollWidth": 405,
+      "width": 420
+    }
+  ],
+  "console": []
+}

@@ -1,0 +1,225 @@
+{
+  "kind": "STRESS_PROBING",
+  "freeze": "STRESS_PROBING_FREEZE_V1",
+  "started_utc": "2026-10-06T03:02:02Z",
+  "finished_utc": "2026-10-06T03:06:15Z",
+  "wall_clock_seconds": 252.5,
+  "git_commit": "54d3d05b8125d79226ee3f07e156321bc066917a",
+  "freeze_commit": "6a64c34e23509ea080ba761421a6b0b91476b856",
+  "snapshot_id": "20261004T201258177516Z-b4cf39fc761f251d2dd18e787008345a",
+  "treatment_version": 2,
+  "frozen_params": {
+    "ticker": "PETR4.SA",
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "temperature": 1.0,
+    "max_output_tokens": 8192,
+    "analyst_count": 5,
+    "consensus_threshold": 0.6,
+    "require_all_votes": true,
+    "decision_frequency": 1,
+    "strict_inputs": true,
+    "portfolio_inversion_policy": "fail",
+    "long_target_weight": 1.0,
+    "risk_max_concentration": 1.0,
+    "risk_max_volatility": 0.4,
+    "risk_max_drawdown": 0.15,
+    "volatility_window": 21,
+    "retry_attempts": 6,
+    "retry_base_delay": 2.0,
+    "thinking_level": "low",
+    "technical_prompt_version": 2
+  },
+  "calibration_provenance": {
+    "CAL_A_V2_DISCRIMINATION": "NONE",
+    "CAL_A_V2_SELECTION_BASIS": "PROTOCOL_TIE_FALLBACK",
+    "SEQUENTIAL_DEV_V2_DISCRIMINATION": "YES",
+    "SEQUENTIAL_DEV_V2_SELECTION_BASIS": "EMPIRICAL_S2"
+  },
+  "repetitions": 3,
+  "cost_spec": {
+    "brokerage_fixed": 0.0,
+    "spread_bps": 5.0,
+    "tax_rate": 0.00032
+  },
+  "sharpe_definition": "H2_SCIENTIFIC_SHARPE_DEFINITION_V1",
+  "windows": [
+    {
+      "stress_id": "S1",
+      "category": "MAX_DRAWDOWN",
+      "stratum_id": 11,
+      "start": "2020-02-07",
+      "last_decision": "2020-04-22",
+      "end": "2020-04-23"
+    },
+    {
+      "stress_id": "S2",
+      "category": "MAX_REALIZED_VOLATILITY",
+      "stratum_id": 2,
+      "start": "2018-03-29",
+      "last_decision": "2018-06-11",
+      "end": "2018-06-12"
+    },
+    {
+      "stress_id": "S3",
+      "category": "WORST_DAILY_RETURN",
+      "stratum_id": 29,
+      "start": "2023-10-02",
+      "last_decision": "2023-12-12",
+      "end": "2023-12-13"
+    },
+    {
+      "stress_id": "S4",
+      "category": "MAX_ABS_OVERNIGHT_GAP",
+      "stratum_id": 4,
+      "start": "2018-08-24",
+      "last_decision": "2018-11-06",
+      "end": "2018-11-07"
+    }
+  ],
+  "failure": "DirtyRepositoryError: the repository working tree has uncommitted changes; a run started from it cannot be reproduced from a commit alone. Commit or stash the changes — or run from a readable git checkout — or pass allow_dirty=True to ExperimentRunner, an explicit development-only escape that records clean_source=false in the manifest.",
+  "complete": false,
+  "trajectories": [
+    {
+      "stress_id": "S1",
+      "category": "MAX_DRAWDOWN",
+      "stratum_id": 11,
+      "start": "2020-02-07",
+      "last_decision": "2020-04-22",
+      "end": "2020-04-23",
+      "replicate": 1,
+      "spec_hash": "4f59514c4a5fdd0d7fdb9241c571d73ebf718c9874350956a40dcd82a4bf5fce",
+      "run_id": "20261006T030614888741Z-85db6370cf17",
+      "run_dir": "20261006T030614888741Z-85db6370cf17",
+      "runs_root": "docs/evidence/stress_v2/run_20261006T030202Z/runs",
+      "settlement_session": "2020-04-23",
+      "data_end": "2020-04-23",
+      "wall_clock_seconds": 252.4
+    }
+  ],
+  "gates": {
+    "S-A": {
+      "result": "1 final failures; 11 trajectories missing",
+      "pass": false
+    },
+    "S-T": {
+      "result": "0 truncations",
+      "pass": true
+    },
+    "S-C": {
+      "result": "0 boundary/causal violations",
+      "pass": false
+    },
+    "S-R": {
+      "result": "0 hard-risk contract violations",
+      "pass": false
+    }
+  },
+  "coverage": {
+    "drawdown_rule": "NOT_EXERCISED",
+    "volatility_rule": "EXERCISED",
+    "flags": [
+      "HISTORICAL_STRESS_DRAWDOWN_RULE_NOT_EXERCISED"
+    ]
+  },
+  "per_trajectory": {
+    "S1-r1": {
+      "boundary_audit": {
+        "decision_sessions_equal_window": true,
+        "orders_outside_window": [],
+        "equity_first_last": [
+          "2020-02-07",
+          "2020-04-23"
+        ],
+        "equity_bounds_ok": true,
+        "settlement_is_window_end": true,
+        "data_end_is_window_end": true,
+        "trace_sessions_outside_decisions": [],
+        "cal_b_sessions_touched": [],
+        "validation_or_final_access": false,
+        "violations": 0
+      },
+      "risk_audit": {
+        "violations": [],
+        "trace_metric_mismatches": [],
+        "buy_decisions": 6,
+        "volatility_rule_exercised": "YES",
+        "buys_with_volatility_above_limit": 1,
+        "drawdown_rule_exercised": "NO",
+        "buys_with_drawdown_above_limit_deciding": 0,
+        "buys_with_drawdown_above_limit_masked_by_volatility": 1,
+        "breach_buys_by_final_cause": {
+          "RISK_VETO_VOLATILITY": 2
+        }
+      },
+      "truncations": 0,
+      "final_failed_calls": 0,
+      "DESCRIPTIVE ONLY — NO SELECTION AUTHORITY": {
+        "scientific_sharpe": -2.8400407838763724,
+        "terminal_net_return": -0.1374584343899381,
+        "max_strategy_drawdown": 0.15879175661990103,
+        "sortino": -2.9295953498157647,
+        "turnover_traded_notional_over_capital": 1.8624301019918628,
+        "trades": 2,
+        "time_in_market": 0.16,
+        "max_current_drawdown_at_decisions": 0.158792,
+        "max_recent_volatility_at_decisions": 1.936493,
+        "technical_explicit_holds": 19,
+        "technical_no_majority": 0,
+        "hard_volatility_vetoes": 1,
+        "hard_drawdown_vetoes": 0,
+        "llm_risk_vetoes": 0,
+        "portfolio_holds": 0,
+        "buy_at_target_noop": 4,
+        "final_causes": {
+          "ACTION_BUY": 1,
+          "ACTION_SELL": 25,
+          "BUY_AT_TARGET_NOOP": 4,
+          "RISK_VETO_VOLATILITY": 1,
+          "TECH_EXPLICIT_HOLD": 19
+        },
+        "risk_rule_counts": {
+          "None": 45,
+          "CONCENTRATION": 4,
+          "VOLATILITY": 1
+        }
+      },
+      "operational": {
+        "decision_sessions": 50,
+        "logical_calls": 277,
+        "logical_calls_by_stage": {
+          "technical_analyst": 250,
+          "risk_manager": 1,
+          "portfolio_manager": 26
+        },
+        "provider_retries": 0,
+        "token_usage": {
+          "completion_tokens": 31427,
+          "prompt_tokens": 227362,
+          "thoughts_tokens": 2857,
+          "total_tokens": 261646
+        },
+        "call_latency_ms": {
+          "p50": 2613.1425000203308,
+          "p90": 3562.47400000575,
+          "total": 776464.0
+        },
+        "wall_clock_seconds": 252.4
+      }
+    }
+  },
+  "stochastic_robustness_DESCRIPTIVE ONLY — NO SELECTION AUTHORITY": {},
+  "operational": {
+    "live_calls": 277,
+    "bank_hits": 0,
+    "every_call_live_and_independent": true,
+    "http_attempts": 277,
+    "attempt_outcomes": {
+      "http_200": 277
+    },
+    "http_status_counts": {},
+    "cost": "not computed: no versioned API pricing source in the repository"
+  },
+  "cal_b_authorized": false,
+  "status": "STRESS PROBING INCOMPLETE OR FAILED"
+}

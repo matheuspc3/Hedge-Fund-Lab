@@ -1,0 +1,35 @@
+{
+  "tested_commit": "c58b31b",
+  "baseline_effective_failed": 15,
+  "initial_failed": 17,
+  "final_failed": 14,
+  "final_passed": 1752,
+  "final_subtests_passed": 61,
+  "duration_seconds": 870.2,
+  "new_vs_baseline": [],
+  "resolved_after_initial": [
+    "tests/test_radar_runs.py::test_radar_page_registry_unavailable_is_an_empty_blocked_state",
+    "tests/test_radar_runs.py::test_radar_page_run_switch_cancels_pending_and_never_mixes_runs",
+    "tests/test_ui_v763.py::test_market_radar_interactions"
+  ],
+  "baseline_not_repeated": [
+    "tests/pipeline/test_snapshot.py::test_manifest_adulterado_e_rejeitado[code]"
+  ],
+  "final_failures": [
+    "tests/experiments/test_cal_b4_safety.py::test_v5_development_s3_failure_blocks_further_phases",
+    "tests/experiments/test_spec.py::test_registry_cobre_os_cinco_classicos_e_o_participante_llm",
+    "tests/experiments/test_v6_phase_routing.py::test_structural_failure_prevents_phase_selection_and_progression",
+    "tests/pipeline/test_flows.py::TestPipelineFlow::test_custom_tickers",
+    "tests/pipeline/test_flows.py::TestPipelineFlow::test_default_tickers_from_settings",
+    "tests/pipeline/test_flows.py::TestPipelineFlow::test_empty_tickers",
+    "tests/pipeline/test_flows.py::TestPipelineFlow::test_extract_retry_on_failure",
+    "tests/pipeline/test_flows.py::TestPipelineFlow::test_full_flow_success",
+    "tests/pipeline/test_flows.py::TestPipelineFlow::test_partial_flow_returns_explicit_failure_summary",
+    "tests/pipeline/test_flows.py::TestPipelineFlow::test_single_ticker",
+    "tests/test_global_pm.py::GlobalPMChecks::test_31_original_ledgers_preserved",
+    "tests/test_multiasset_portfolio.py::IntegrationChecks::test_original_scientific_radar_and_ledger_preservation",
+    "tests/test_radar_runs.py::test_real_itub4_bonus_normalized_and_bbas3_restricted",
+    "tests/test_radar_runs.py::test_real_recovery_has_five_official_inputs_equivalent_to_original"
+  ],
+  "raw_sha256": "277cf59bbbee5c718553039eca92cc73b9a29b1a361c8cc5698258c435f1c3ba"
+}

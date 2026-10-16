@@ -1,0 +1,73 @@
+HFL · diagnóstico somente leitura · 2026-10-12T02:28:12.704829-03:00
+
+[H2 original]
+  decisão DECIDED · sessão 2026-10-09 · alvo 2026-10-13 · gerada 2026-10-10T15:17:04.881596-03:00
+  ordem: Alvo 100% na abertura de 13/10/2026; aguarda o preço observado e a reconciliação.
+  decisão existente: não repetir a inferência desta sessão.
+
+[Supervisão]
+  estado AGUARDANDO_APROVACAO · prazo 2026-10-13T10:00:00-03:00 · aprovação nenhuma
+  auditoria íntegra · 1 eventos
+
+[Carteiras e benchmarks]
+  IA H2 v6: patrimônio 100000.0 · caixa 100000.0 · posições nenhuma · marca 2026-10-09 · ordem para 2026-10-13
+  Buy & Hold: patrimônio 100000.0 · caixa 100000.0 · posições nenhuma · marca 2026-10-09 · ordem para 2026-10-13
+  SMA Regime 50/200: patrimônio 100000.0 · caixa 100000.0 · posições nenhuma · marca 2026-10-09 · ordem para 2026-10-13
+  Bollinger Estado 20/2: patrimônio 100000.0 · caixa 100000.0 · posições nenhuma · marca 2026-10-09 · ordem nenhuma
+  H2 v6 Supervisionada: patrimônio 100000.0 · caixa 100000.0 · posições nenhuma · marca 2026-10-09 · ordem nenhuma
+
+[Radar oficial · sessão 2026-10-09]
+  4 inputs prontos; 0/5 pareceres oficiais · preflight do lote bloqueado
+  preparo (equivale ao botão de /radar; grava, sem Gemini): .venv/Scripts/python.exe -B scripts/radar_corporate_events.py prepare --session 2026-10-09 --tickers PETR4 VALE3 ITUB4 WEGE3 BBAS3
+  PETR4: AWAITING_RADAR_AUTHORIZATION · input FROZEN · parecer PENDING
+      sessão 2026-10-09 · 311 barras desde 2025-07-16 · input 61a0f5912dbdef20… · barras 6d7ae0896ded630d…
+      fonte b3_cotahist_ohlcv+yfinance_adjustment_factor · fechamento bruto 56.0 · ajustado 56.0
+      normalização NO_NORMALIZATION_NEEDED (ORIGINAL_V4_GUARD_PASSED)
+      risco individual: vol21 0.392326 / limite 0.5 · sem parecer de risco
+      preflight gemini_api_key_missing · Input congelado; parecer pendente: preflight Radar e autorização paga própria do lote.
+  VALE3: AWAITING_RADAR_AUTHORIZATION · input FROZEN · parecer PENDING
+      sessão 2026-10-09 · 311 barras desde 2025-07-16 · input 6bb5c279395c029a… · barras 8017a56b5369948f…
+      fonte b3_cotahist_ohlcv+yfinance_adjustment_factor · fechamento bruto 67.9 · ajustado 67.9
+      normalização NO_NORMALIZATION_NEEDED (ORIGINAL_V4_GUARD_PASSED)
+      risco individual: vol21 0.237709 / limite 0.5 · sem parecer de risco
+      preflight gemini_api_key_missing · Input congelado; parecer pendente: preflight Radar e autorização paga própria do lote.
+  ITUB4: INPUT_BLOCKED · input UNRESOLVED_DIVERGENCE · parecer NONE
+      preflight INPUT_REQUIRED · Preparar dados em /radar (botão 1) ou pelo CLI equivalente; gratuito, grava inputs, sem Gemini. O bloqueio registrado é anterior ou não confirmado pela B3: se persistir após o preparo normalizado, o ativo fica fora.
+      erro registrado: ValueError: split-like mismatch between yfinance and B3 closes: {2025: 0.9708737739656967, 2026: 0.9999999928491858}
+  WEGE3: AWAITING_RADAR_AUTHORIZATION · input FROZEN · parecer PENDING
+      sessão 2026-10-09 · 311 barras desde 2025-07-16 · input 0881353b24ad32ee… · barras 2a033d6b9a7893a6…
+      fonte b3_cotahist_ohlcv+yfinance_adjustment_factor · fechamento bruto 51.47 · ajustado 51.47
+      normalização NO_NORMALIZATION_NEEDED (ORIGINAL_V4_GUARD_PASSED)
+      risco individual: vol21 0.215187 / limite 0.5 · sem parecer de risco
+      preflight gemini_api_key_missing · Input congelado; parecer pendente: preflight Radar e autorização paga própria do lote.
+  BBAS3: AWAITING_RADAR_AUTHORIZATION · input FROZEN · parecer PENDING
+      sessão 2026-10-09 · 311 barras desde 2025-07-16 · input a5ae08ab56db2672… · barras 2b95cac2dc12e738…
+      fonte b3_cotahist_ohlcv+yfinance_adjustment_factor · fechamento bruto 24.64 · ajustado 24.64
+      normalização NO_NORMALIZATION_NEEDED (ORIGINAL_V4_GUARD_PASSED)
+      risco individual: vol21 0.544844 / limite 0.5 · RESTRIÇÃO: veto determinístico esperado · sem parecer de risco
+      preflight gemini_api_key_missing · Input congelado; parecer pendente: preflight Radar e autorização paga própria do lote. Restrição de risco: volatilidade 21d 0.545 acima do limite 0.5; o Risk vetará por regra determinística (parecer completo, recomendação MANTER).
+  pendências para Gemini: gemini_api_key_missing
+
+[Global PM]
+  elegibilidade oficial: BLOQUEADA · 4 inputs prontos; 0/5 pareceres oficiais · faltam PETR4, VALE3, ITUB4, WEGE3, BBAS3 · contexto oficial só deve ser preparado perto do uso (validade 24 h); autorização Radar não vale para o Global PM.
+  v7-3558f0253cf44dd0a00c93d7be73e56f · SYNTHETIC_DEMO · VALID_PROPOSAL · expira 2026-10-13T00:16:46.287213+00:00
+
+[Mercado]
+  última sessão observada 2026-10-09 · último fechamento do calendário 2026-10-09 · coleta 2026-10-10T14:54:51.409659-03:00
+  próxima sessão 2026-10-13 · abertura prevista 2026-10-13T10:00:00-03:00 (previsão de calendário, não confirma leilão)
+  cotação intradiária indisponível nesta consulta.
+
+[Jobs incompletos, incertos ou bloqueados]
+  nenhum
+
+[Integridade]
+  H2: íntegra · 1 decisão(ões) · manifesto dc118ce9841df612d030f40e5993858eacc6d06e41eff173706fc3a72d3acb98
+  V5 demo: íntegra
+
+[Ações manuais pendentes]
+  PRÓXIMA: Aprovar ou rejeitar a supervisionada até 13/10/2026 10:00 BRT.
+  info: Após o COTAHIST de 13/10/2026: preparar o novo fechamento e conferir a reconciliação da intenção.
+  lab: Radar oficial: 4 inputs prontos; 0/5 pareceres oficiais; bloqueados: ITUB4. Global PM aguarda os pareceres de todos.
+
+Nada foi baixado, gravado, aprovado, inferido ou reconciliado por este diagnóstico.
+exit=0

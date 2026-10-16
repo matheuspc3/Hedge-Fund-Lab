@@ -1,0 +1,186 @@
+{
+  "kind": "H2_B0_V5",
+  "treatment_version": 5,
+  "freeze": "H2_METHODOLOGICAL_FREEZE_V1",
+  "financial_metrics": "none computed (no settlement)",
+  "started_utc": "2026-10-07T23:33:07Z",
+  "finished_utc": "2026-10-07T23:34:20Z",
+  "git_commit": "117bc25ecc7126c8ebd98d6a34b5208f00150710",
+  "python": "3.13.9",
+  "participant_params": {
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "temperature": 1.0,
+    "max_output_tokens": 8192,
+    "analyst_count": 5,
+    "consensus_threshold": 0.6,
+    "require_all_votes": true,
+    "decision_frequency": 1,
+    "strict_inputs": true,
+    "portfolio_inversion_policy": "fail",
+    "long_target_weight": 1.0,
+    "risk_max_concentration": 1.0,
+    "risk_max_volatility": 0.5,
+    "risk_max_drawdown": 0.25,
+    "volatility_window": 21,
+    "retry_attempts": 6,
+    "retry_base_delay": 2.0,
+    "thinking_level": "low",
+    "technical_prompt_version": 4,
+    "risk_prompt_version": 2
+  },
+  "participant_spec_sha256": {
+    "SYN": "45bcfe0d2647e53ee6647fa4c1d1b80b723527ddd160f44ffffe6bcea2a5bee7",
+    "PETR4.SA": "44f218c21ade5b95d98f119b17b169570a31fe6a5812d982d9e08770de909e9e"
+  },
+  "capability": {
+    "status": "QUALIFIED",
+    "qualified": [
+      "max_output_tokens",
+      "temperature",
+      "thinking_level"
+    ],
+    "model": "gemini-3.8-flash"
+  },
+  "runtime": {
+    "provider": "gemini",
+    "api": "v1beta models.generateContent"
+  },
+  "resolved_models": {
+    "gemini-3.8-flash": 67
+  },
+  "H": {
+    "H_SYN_VERSION": 1,
+    "H_syn_payload_digests": {
+      "steady_uptrend": "4f7eed9707fadf2876256376355098acf0ea8707e49a5acfad4b54cbb4781971",
+      "steady_downtrend": "a20048684533b98c69f40e10672264df277d16a3edd9cd0c875622219476be23",
+      "range_low_vol": "5a2ae2c2973086b67b6405d3d88fbe365ae4efc63bdcc92df3696e69e4469cfa",
+      "range_high_vol": "ddf2a6995d4fef8c8605522e7f69c6daa86bd0773eec010887d93787787bbcee",
+      "extended_rally": "b277d7cb1cbf4878156440bbb39ec851062a8964647598f454416e156128016c",
+      "extended_selloff": "0854c1709ff5ede12f6772639616c1eb24aa2812ec31e0e55bf45543724e21e7",
+      "mixed_signals": "354eb83d38ba9d7751426aa3aa74655be577c217d11c8066d9b235e35432b821",
+      "volatility_breach": "3af92337d74006928d9ec4a4f331b6cfbfa3613c1d4f66a7b319523c200b3ca5"
+    },
+    "H_real_ticker": "PETR4.SA",
+    "H_real_sessions": [
+      "2019-04-09",
+      "2020-06-30",
+      "2021-09-17",
+      "2022-12-07"
+    ],
+    "H_real_snapshot_id": "20261004T201258177516Z-b4cf39fc761f251d2dd18e787008345a",
+    "H_real_snapshot_identity_digest": "b4cf39fc761f251d2dd18e787008345aaf02bd9e19f913390c510338b84ee7d4",
+    "states": [
+      "syn-v1:steady_uptrend",
+      "syn-v1:steady_downtrend",
+      "syn-v1:range_low_vol",
+      "syn-v1:range_high_vol",
+      "syn-v1:extended_rally",
+      "syn-v1:extended_selloff",
+      "syn-v1:mixed_signals",
+      "syn-v1:volatility_breach",
+      "real:PETR4.SA:2019-04-09",
+      "real:PETR4.SA:2020-06-30",
+      "real:PETR4.SA:2021-09-17",
+      "real:PETR4.SA:2022-12-07"
+    ],
+    "repetitions": 1
+  },
+  "aborted": null,
+  "diagnostics": {
+    "decision_count": 12,
+    "failure_count": 0,
+    "failure_causes": {},
+    "buy_at_target_noop_count": 0,
+    "explicit_hold_rate": 0.5,
+    "no_majority_abstention_rate": 0.0,
+    "risk_veto_rate": 0.0,
+    "portfolio_hold_rate": 0.0,
+    "total_hold_rate": 0.5,
+    "same_state_flip_rate": null,
+    "same_state_disagreement_rate": null,
+    "max_tokens_count": 0
+  },
+  "gates": {
+    "G-A": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "G-T": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "G-I": {
+      "value": 0.5,
+      "threshold": "< 0.90",
+      "pass": true
+    },
+    "G-F": {
+      "value": null,
+      "threshold": "<= 0.10",
+      "pass": true
+    }
+  },
+  "gates_pass": true,
+  "operational": {
+    "logical_calls": 67,
+    "logical_calls_by_stage": {
+      "technical_analyst": 60,
+      "portfolio_manager": 6,
+      "risk_manager": 1
+    },
+    "http_attempts": 67,
+    "recovered_retries": 0,
+    "backoff_seconds_scheduled": 0,
+    "retry_after_seconds_requested": 0,
+    "final_error_calls": 0,
+    "attempt_outcomes": {
+      "http_200": 67
+    },
+    "http_status_counts": {},
+    "http_429": 0,
+    "http_503": 0,
+    "transient_error_rate": 0.0,
+    "attempt_latency_ms": {
+      "p50": 2861.2,
+      "p90": 4078.8,
+      "max": 13539.8
+    },
+    "token_usage_totals": {
+      "completion_tokens": 7482,
+      "prompt_tokens": 106588,
+      "total_tokens": 114070
+    },
+    "cost": "not computed: no pricing source is recorded in the repository",
+    "wall_clock_seconds": 73.8
+  },
+  "checker_freeze": {
+    "version": 3,
+    "source_sha256": {
+      "src/agents/feature_semantics.py": "fb2cfa36feba26b5e8f622828e03aa8fcfd25b1f7a0567d387f82baf9f056169",
+      "scripts/h2_v4.py": "630e7d8f862d4b5ffe5d8052911928e23f51634eaafcc88292ae0ef74a539f8e"
+    },
+    "source_blobs": {
+      "src/agents/feature_semantics.py": "57c0b1b0548455b897fdf0149c177a9bcd7b2557",
+      "scripts/h2_v4.py": "672f6931ce19254acb147a2bc93705f542018ea1"
+    },
+    "regression_report": "docs/evidence/h2_v4/technical_checker_v3/calibration_report.json",
+    "carry_forward_audit": "docs/evidence/h2_v5/pre_live_audit.json",
+    "offline_regression": "docs/evidence/h2_v5/checker_regression.json"
+  },
+  "technical_audit": {
+    "technical_votes": 60,
+    "rates": {
+      "V5-S1": 0.0,
+      "V5-S2": 0.0,
+      "V5-S3": 0.0
+    },
+    "flagged": [],
+    "V5-S1": 0,
+    "V5-S2": 0,
+    "V5-S3": 0,
+    "technical_prompt_v4_only": true
+  }
+}

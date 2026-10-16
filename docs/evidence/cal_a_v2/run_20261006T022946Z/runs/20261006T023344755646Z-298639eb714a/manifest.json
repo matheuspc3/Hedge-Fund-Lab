@@ -1,0 +1,191 @@
+{
+  "artifacts": {
+    "equity_curve": "equity.csv",
+    "trades": "trades.csv"
+  },
+  "code": {
+    "git_commit": "7fb50dd6614c85bba42cc1d0a3e8fd559f44ab09",
+    "git_dirty": false,
+    "project_version": "0.1.0",
+    "python": "3.13.9"
+  },
+  "cost_model": {
+    "brokerage_fixed": 0.0,
+    "spread_bps": 5.0,
+    "tax_rate": 0.00032
+  },
+  "created_at": "2026-10-06T02:33:44.755646Z",
+  "equity_points": 2,
+  "evaluation_evidence": {
+    "available_history_sessions": 1646,
+    "data_end": "2026-08-31",
+    "data_start": "2016-01-04",
+    "evaluated_sessions": 1,
+    "first_decision_session": "2022-08-23",
+    "last_decision_session": "2022-08-23",
+    "settlement_session": "2022-08-24",
+    "warmup_calendar_days": 2423,
+    "warmup_sessions": 1645
+  },
+  "execution": {
+    "price_representation": "adjusted_total_return",
+    "quantity_mode": "fractional_notional",
+    "semantics": "OPENING_AUCTION_EXECUTION"
+  },
+  "experiment_spec": {
+    "costs": {
+      "brokerage_fixed": 0.0,
+      "spread_bps": 5.0,
+      "tax_rate": 0.00032
+    },
+    "evaluation": {
+      "decision_end": "2022-08-23",
+      "decision_start": "2022-08-23",
+      "minimum_history_sessions": 504
+    },
+    "execution": {
+      "quantity_mode": "fractional_notional"
+    },
+    "initial_capital": 100000.0,
+    "metrics": {
+      "mar": 0.0,
+      "periods_per_year": 252,
+      "risk_free_rate": 0.0
+    },
+    "participant": {
+      "kind": "llm_agent",
+      "params": {
+        "analyst_count": 5,
+        "consensus_threshold": 0.6,
+        "decision_frequency": 1,
+        "long_target_weight": 1.0,
+        "max_output_tokens": 8192,
+        "model": "gemini-3.8-flash",
+        "portfolio_inversion_policy": "fail",
+        "provider": "gemini",
+        "require_all_votes": true,
+        "retry_attempts": 6,
+        "retry_base_delay": 2.0,
+        "risk_max_concentration": 1.0,
+        "risk_max_drawdown": 0.25,
+        "risk_max_volatility": 0.4,
+        "strict_inputs": true,
+        "technical_prompt_version": 2,
+        "temperature": 1.0,
+        "thinking_level": "low",
+        "ticker": "PETR4.SA",
+        "volatility_window": 63
+      }
+    },
+    "schema_version": 3,
+    "snapshot_id": "20261004T201258177516Z-b4cf39fc761f251d2dd18e787008345a"
+  },
+  "final_equity": 100000.0,
+  "initial_capital": 100000.0,
+  "llm_contract": {
+    "feature_schema_version": 2,
+    "numeric_precision": 6
+  },
+  "metric_configuration": {
+    "mar": 0.0,
+    "periods_per_year": 252,
+    "risk_free_rate": 0.0
+  },
+  "metrics": {
+    "annualized_return": 0.0,
+    "annualized_volatility": 0.0,
+    "max_drawdown": 0.0,
+    "max_drawdown_duration": 0,
+    "sharpe_ratio": 0.0,
+    "sortino_ratio": 0.0,
+    "total_return": 0.0
+  },
+  "participant": {
+    "kind": "llm_agent",
+    "params": {
+      "analyst_count": 5,
+      "consensus_threshold": 0.6,
+      "decision_frequency": 1,
+      "long_target_weight": 1.0,
+      "max_output_tokens": 8192,
+      "model": "gemini-3.8-flash",
+      "portfolio_inversion_policy": "fail",
+      "provider": "gemini",
+      "require_all_votes": true,
+      "retry_attempts": 6,
+      "retry_base_delay": 2.0,
+      "risk_max_concentration": 1.0,
+      "risk_max_drawdown": 0.25,
+      "risk_max_volatility": 0.4,
+      "strict_inputs": true,
+      "technical_prompt_version": 2,
+      "temperature": 1.0,
+      "thinking_level": "low",
+      "ticker": "PETR4.SA",
+      "volatility_window": 63
+    }
+  },
+  "participant_artifacts": {
+    "llm_calls": {
+      "bytes": 27212,
+      "call_count": 5,
+      "error_count": 0,
+      "path": "llm_calls.jsonl",
+      "schema_version": 2,
+      "sha256": "a4ccff44c0575c9b2ed44f656137f66c10ffc78a9ab7b1ce6c0552482e997da1"
+    },
+    "llm_decisions": {
+      "bytes": 559,
+      "decision_count": 1,
+      "not_eligible_count": 0,
+      "path": "decisions.jsonl",
+      "schema_version": 1,
+      "sha256": "d0fc7edd039d4085360ecc6a5bb2c9601cc9701a623653e147ec547259810665"
+    }
+  },
+  "reproducibility": {
+    "allow_dirty": false,
+    "clean_source": true
+  },
+  "run_context": {
+    "case_id": "cal-a-c4-a16-r2",
+    "phase": "CALIBRATION"
+  },
+  "run_id": "20261006T023344755646Z-298639eb714a",
+  "schema_version": 5,
+  "snapshot": {
+    "created_at": "2026-10-04T20:12:58.177516Z",
+    "effective_end": "2026-08-31",
+    "effective_start": "2016-01-04",
+    "files": [
+      {
+        "path": "data/PETR4.SA.csv",
+        "sha256": "7b6a0018191028ecea2ee66785c27f771a721aa4a96c4953ca87ac6d688c3ffa",
+        "size": 252665,
+        "ticker": "PETR4.SA"
+      }
+    ],
+    "identity_digest": "b4cf39fc761f251d2dd18e787008345aaf02bd9e19f913390c510338b84ee7d4",
+    "path": "data/snapshots/20261004T201258177516Z-b4cf39fc761f251d2dd18e787008345a",
+    "quality": {
+      "all_tickers_complete": true,
+      "ohlcv_valid": true,
+      "scientific_ready": true,
+      "status": "ready",
+      "tickers_attention_required": []
+    },
+    "requested_end": "2026-08-31",
+    "requested_start": "2016-01-01",
+    "schema_version": 3,
+    "snapshot_id": "20261004T201258177516Z-b4cf39fc761f251d2dd18e787008345a",
+    "tickers": [
+      "PETR4.SA"
+    ]
+  },
+  "spec_hash": "79c1b360dd2c7e4bb1e21e1abf5f0bc33f1e4132078098df08c594fe3d1ca540",
+  "total_transaction_cost": 0.0,
+  "trade_count": 0,
+  "universe": [
+    "PETR4.SA"
+  ]
+}

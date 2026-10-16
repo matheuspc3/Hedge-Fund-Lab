@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agentes · Hedge Fund Lab</title>
+<link rel="stylesheet" href="/radar.css?v=763"><link rel="stylesheet" href="/shell.css?v=7"><link rel="stylesheet" href="/market.css?v=763">
+<script src="/shell.js?v=7" defer></script><script src="/market-ui.js?v=763" defer></script><script src="/radar.js?v=763" defer></script>
+<script src="/radar-analysis.js?v=1" defer></script>
+<script src="/wallet-manager.js?v=1" defer></script>
+</head><body class="hfl-platform">
+<!-- platform-shell -->
+<main id="main" class="market-main">
+<div class="product-heading"><div><h1 class="ds-title">Agentes da carteira</h1><p>Escolha o dia, confira os dados e revise o custo antes de executar.</p></div><div class="product-actions"><a href="#new-analysis">+ Nova análise</a></div></div>
+<nav class="product-stage-tabs" aria-label="Etapas da análise"><a href="#new-analysis" data-agent-stage="setup">1 · Configurar</a><a href="#analysis-workflow" data-agent-stage="workflow">2 · Dados e custo</a><a href="#analysis-results" data-agent-stage="results">3 · Resultados</a></nav>
+<div class="product-agent-setup" data-agent-screen="setup"><section id="new-analysis"><h2>Nova análise</h2><ol class="product-stepper"><li><b>1</b> Configurar</li><li><b>2</b> Dados e custo</li><li><b>3</b> Resultado</li></ol>
+<p>Escolha a carteira e o dia-alvo. Por padrão, usamos amanhã ou a próxima sessão planejada quando amanhã não houver pregão.</p>
+<form id="new-analysis-form"><div class="controls">
+<label for="analysis-wallet">Carteira<select id="analysis-wallet" required><option value="">Carregando carteiras…</option></select></label>
+<label for="analysis-target">Dia-alvo da análise<input id="analysis-target" type="date" required aria-describedby="analysis-date-note"></label>
+<label for="analysis-reference">Dados até o fechamento de<input id="analysis-reference" type="date" required aria-describedby="analysis-date-note"></label>
+<label for="analysis-tickers">Ativos do quórum (até cinco, separados por vírgula)<input id="analysis-tickers" required value="PETR4, VALE3, ITUB4, WEGE3, BBAS3"></label>
+</div><p id="analysis-wallet-state"></p><p id="analysis-date-note"></p>
+<p>O comitê avalia ativos individualmente. O gestor final recebe posições, caixa e dia-alvo para propor quantidades na etapa Resultados. Criar este registro não chama agentes nem movimenta a carteira.</p>
+<button id="analysis-create" type="submit" disabled>Criar análise e continuar →</button>
+<p id="analysis-status" role="status" aria-live="polite"></p></form>
+</section><aside class="product-panel product-history-panel"><h2>Seu histórico</h2><div id="analysis-history"></div><h3>Outras execuções registradas</h3><div class="market-filters"><label>Execução Radar consultada<select id="radar-run"><option value="">Consultando registro…</option></select></label><button id="refresh" data-action="read">Atualizar consulta</button><a id="radar-to-market" class="ds-btn" href="/market">Explorar ativos →</a></div>
+</aside></div>
+<div data-agent-screen="workflow" hidden><p id="analysis-context" class="product-compact-context" hidden></p>
+<p><a id="analysis-return" class="ds-btn" href="/" hidden>Voltar à carteira desta análise →</a></p>
+<p id="radar-source" class="ds-lead" role="status"></p><div id="error" role="alert" hidden></div>
+<div id="radar-overview" class="ds-kpis market-overview" aria-live="polite"></div>
+<ol class="ds-flow" hidden aria-label="Jornada da análise"><li><strong>Universo</strong><span>Ativos da sessão registrada</span></li><li><strong>Comitês</strong><span>Votos individuais de IA</span></li><li><strong>Consenso</strong><span>Agregação técnica</span></li><li class="is-gate"><strong>Risk</strong><span>Restrições antes do resultado</span></li><li><strong>Resultado final</strong><span>Parecer consultivo por ativo</span></li></ol>
+<section class="product-workflow market-operations" id="analysis-workflow"><h2>Verificar dados e custo</h2><div class="guided-actions"><button type="button" id="guided-check" disabled>Verificar dados e custo →</button></div><p id="guided-status" role="status" aria-live="polite">Crie uma análise ou escolha uma execução para continuar. Esta etapa não chama agentes.</p><p>Esta área pode gravar dados. Inferência paga <button class="ds-help" data-help="inferencia-paga"></button> exige preflight, consentimento e autorização do backend. Abrir detalhes não inicia processos.</p>
+    <section class="card" aria-labelledby="workflow-title">
+      <div class="section-head"><div><p class="eyebrow">03 / EXECUÇÃO CONTROLADA</p><h2 id="workflow-title">Revise o lote antes de confirmar</h2></div><span id="job" role="status" class="muted"></span></div>
+      <p class="steps">Os dados são preparados e verificados pelo botão acima. Uma chamada paga só acontece após sua autorização explícita.</p>
+      <div class="controls"><label>Sessão de referência<input id="session" type="date" required></label><label>Fonte de preparação<select id="mode"><option value="live">B3 oficial + fator ajustado</option><option value="synthetic">Exemplo sintético · offline</option></select></label><label>Orçamento do lote (USD)<input id="budget" type="number" min="0.01" max="5" step="0.000001" value="5"></label></div>
+
+      <details id="diagnostic-details"><summary>Ver diagnóstico e prontidão por ativo</summary><div id="input-check" aria-live="polite" class="preflight" hidden></div></details><div id="preflight-result" aria-live="polite" class="preflight"><p class="muted">Selecione pelo menos um ativo. Abrir esta página ou consultar registros não executa agentes.</p></div>
+      <section id="budget-review" class="preflight" aria-labelledby="budget-review-title" hidden>
+        <h3 id="budget-review-title">Revisar orçamento agregado</h3>
+        <p id="budget-review-summary"></p>
+        <label for="aggregate-budget">Teto agregado que aceito para esta execução (USD)</label>
+        <input id="aggregate-budget" type="number" min="0.01" step="0.000001" inputmode="decimal" aria-describedby="aggregate-budget-help">
+        <p id="aggregate-budget-help" class="muted small">Inclui as reservas anteriores e o novo lote. Autoriza os valores apresentados nesta execução; mudanças exigem nova revisão. Não altera o limite geral nem libera reservas antigas.</p>
+        <label class="check consent"><input id="budget-consent" type="checkbox"> Revisei as reservas e autorizo esta exposição agregada para a execução indicada.</label>
+        <button type="button" id="budget-authorize" data-action="authorize" disabled>Registrar autorização de orçamento</button>
+        <p id="budget-review-status" role="status" aria-live="polite"></p>
+      </section>
+      <div id="confirmation" hidden><label class="check consent"><input id="paid" type="checkbox"> Autorizo chamadas pagas Gemini para este lote e aceito o teto reservado apresentado acima.</label><button id="execute" data-action="paid" disabled>3. Revisar custo e executar este lote</button></div>
+    </section>
+<details class="technical-options"><summary>Ativos, preparação manual e recuperação</summary><div class="metrics"><article><span>UNIVERSO REGISTRADO</span><strong id="universe-count">—</strong></article><article><span>ÚLTIMA SESSÃO ENCERRADA NO CALENDÁRIO</span><strong id="closed">—</strong></article><article><span>RESERVAS DA EXECUÇÃO · USD</span><strong id="budget-used">—</strong></article></div>
+    <section class="card" aria-labelledby="universe-title">
+      <div class="section-head"><div><p class="eyebrow">02 / UNIVERSO DE PESQUISA</p><h2 id="universe-title">Selecione suas empresas</h2></div><span class="muted">Até cinco ações da B3</span></div>
+      <form id="add-form"><label for="ticker-search">Pesquisar ticker</label><div class="search"><input id="ticker-search" list="ticker-options" maxlength="10" placeholder="Ex.: PETR4" autocomplete="off" required><datalist id="ticker-options"></datalist><button type="submit">Adicionar ativo <span aria-hidden="true">+</span></button></div></form>
+      <p class="muted small" id="catalog-note">Exemplos técnicos: PETR4, VALE3, ITUB4, WEGE3 e BBAS3. Sem recomendação de compra.</p>
+      <div id="universe" class="universe" role="group" aria-label="Ativos selecionados para análise"></div>
+    </section>
+      <div class="actions"><button id="prepare" data-action="prepare">1. Preparar dados</button><button id="preflight" class="secondary" data-action="verify">2. Verificar requisitos (preflight)</button><label class="check"><input id="replay" type="checkbox"> Recuperar somente offline</label></div></details></section>
+</div><div id="analysis-results" data-agent-screen="results" hidden><details class="product-panel"><summary>Resumo por ativo</summary><section class="ds-section" aria-labelledby="assets-title"><div class="ds-section-head"><h2 id="assets-title">Universo analisado</h2><span class="market-history">◷ Fotografia histórica</span></div><div id="radar-assets" class="ds-grid market-assets"></div></section></details>
+<section class="product-panel ds-section" id="wallet-manager" aria-labelledby="manager-title" hidden>
+<div class="ds-section-head"><div><p class="ds-eyebrow">GESTOR DO PORTFÓLIO</p><h2 id="manager-title">Plano de alocação da carteira</h2></div><button id="manager-refresh" type="button">Atualizar proposta</button></div>
+<p id="manager-context"></p><p>Depois dos pareceres individuais, o gestor considera posições e caixa para propor quantidades. Venda pode ser parcial ou total; compra pode aumentar uma posição. Gerar proposta e aprovar movimentações são ações separadas.</p>
+<form id="manager-prepare-form"><div class="controls"><label for="manager-cost">Taxa simulada por compra/venda (%)<input id="manager-cost" type="number" min="0" max="5" step="0.01" required placeholder="Informe, inclusive se for zero" aria-describedby="manager-cost-help"></label><label for="manager-budget">Teto desta chamada do gestor (USD)<input id="manager-budget" type="number" min="0.01" max="5" step="0.01" value="0.25" required></label></div><p id="manager-cost-help">Percentual sobre o valor negociado: 5 significa 5% por operação. Este campo não é o preço da ação nem o custo da IA.</p><button type="submit" id="manager-prepare">Preparar proposta e revisar custo</button></form>
+<p id="manager-status" role="status" aria-live="polite"></p><p id="manager-error" role="alert" hidden></p>
+<section id="manager-inference" hidden><p id="manager-estimate"></p><label class="check consent"><input id="manager-paid" type="checkbox"> Autorizo uma chamada paga do gestor, separada dos comitês por ativo, até a reserva apresentada.</label><button id="manager-run" type="button" disabled>Gerar plano de alocação</button></section>
+<label for="manager-history">Propostas preservadas desta análise<select id="manager-history"><option value="">Nenhuma proposta</option></select></label>
+<button id="manager-replay" type="button" hidden>Recuperar resposta gravada · sem nova chamada</button>
+<details id="manager-attempts" hidden><summary>Consultar falhas e recuperações preservadas</summary><ul id="manager-failures"></ul></details>
+<div id="manager-result" hidden><p id="manager-price-note"></p>
+<section id="manager-approval"><h3>Executar plano simulado</h3><p>Revise a prévia e aprove para registrar a cesta na carteira. Usaremos os <strong>preços de referência indicados acima</strong>, na data de hoje; cotação do momento ainda não está integrada.</p><button id="manager-preview" type="button" class="product-primary">Ver prévia das movimentações →</button>
+<div id="manager-preview-box" hidden><p id="manager-effect"></p><label class="check consent"><input id="manager-financial" type="checkbox"> Revisei quantidades, preços de referência, custos e caixa. Aprovo registrar esta cesta simulada.</label><button id="manager-apply" type="button" disabled>Aprovar e registrar movimentações simuladas</button></div></section>
+<p id="manager-receipt" role="status" tabindex="-1"></p>
+<h3 id="manager-summary"></h3><div id="manager-plan"></div><p id="manager-cash"></p><ul id="manager-risks"></ul>
+<p>Validação de caixa, quantidades e sinais. Risco global, eventos corporativos, liquidação e cotações ao vivo ainda não estão integrados a este registro manual.</p></div></section>
+<section class="ds-card ds-section" aria-labelledby="results-title">
+<div class="ds-section-head"><h2 id="results-title">Compare as decisões</h2><button id="clear-filters" class="ds-btn">Limpar filtros</button></div>
+<p>Sinal técnico, aprovação de risco e resultado final são etapas distintas. Um veto pode transformar COMPRA em MANTER.</p>
+<div class="market-filters" aria-label="Filtros de consulta"><label>Ativo<select id="filter-asset"><option value="">Todos</option></select></label><label>Sinal técnico<select id="filter-signal"><option value="">Todos</option><option>COMPRA</option><option>VENDA</option><option>MANTER</option></select></label><label>Risk<select id="filter-risk"><option value="">Todos</option><option>APROVADO</option><option>VETADO</option></select></label><label>Resultado final<select id="filter-final"><option value="">Todos</option><option>COMPRA</option><option>VENDA</option><option>MANTER</option></select></label></div>
+<p id="filter-count" role="status"></p>
+<div class="ds-table-wrap" tabindex="0" role="region" aria-label="Comparação das decisões, tabela rolável"><table class="ds-table"><caption class="ds-visually-hidden">Resultados por ativo na execução selecionada</caption><thead><tr><th scope="col">Ativo / sessão</th><th scope="col">Sinal técnico <button class="ds-help" data-help="consenso"></button></th><th scope="col">Consenso</th><th scope="col">Risk <button class="ds-help" data-help="risk"></button></th><th scope="col">Resultado final</th><th scope="col">Estado</th></tr></thead><tbody id="results"></tbody></table></div>
+      <div class="compare-controls"><label>Primeira análise<select id="compare-a"><option value="">Selecione</option></select></label><label>Segunda análise<select id="compare-b"><option value="">Selecione</option></select></label><button id="compare" class="secondary" data-action="read">Comparar duas empresas</button></div>
+      <div id="comparison" aria-live="polite"></div>
+</section>
+<section class="ds-card" id="room" aria-labelledby="room-title" hidden><div class="ds-section-head"><h2 id="room-title" tabindex="-1">Detalhe do ativo e comitê</h2><button id="close-room" class="ds-btn">Voltar à comparação</button></div><div id="room-content"></div></section>
+<p><a id="radar-to-global" class="ds-btn" href="/portfolio#global-workflow">Levar seleção à Carteira →</a></p>
+<details id="radar-audit"><summary>Histórico da execução, custos e proveniência</summary><p>Selecione outra execução no controle acima para consultar incidentes e demonstrações, preservando suas identidades.</p><section id="run-card" class="run-card" aria-label="Execução selecionada"></section></details>
+</div><footer>HEDGE-FUND-LAB · Consulta histórica · Sem ordens reais</footer></main></body></html>

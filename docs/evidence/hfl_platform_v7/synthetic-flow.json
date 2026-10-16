@@ -1,0 +1,21 @@
+{
+  "record_id": "v7-3558f0253cf44dd0a00c93d7be73e56f",
+  "mode": "SYNTHETIC_DEMO",
+  "planner": "FAKE_GLOBAL_PM_NOT_GEMINI",
+  "context_sha256": "8e48262b7533282177573f8f1b6af4f2d9acde078b00583df5da3e70ac9da12b",
+  "completed_at": "2026-10-12T00:19:53.824617+00:00",
+  "cost_usd": "0",
+  "cost_basis": "synthetic zero",
+  "execution_enabled": false,
+  "portfolio_changed": false,
+  "sha256": "5c1e9391ac019531c2f3f25cfcddea855a20d180ff441e584e04c2ebace1559a",
+  "status": "VALID_PROPOSAL",
+  "valid": true,
+  "operations": 0,
+  "target_cash_weight": "1",
+  "session": "2026-10-09",
+  "created_at": "2026-10-12T00:16:46.287213+00:00",
+  "expires_at": "2026-10-13T00:16:46.287213+00:00",
+  "explicit_browser_confirmation": true,
+  "note": "Qualification fake E; no Gemini, no portfolio execution. Native records and claims preserved locally, excluded from Git."
+}

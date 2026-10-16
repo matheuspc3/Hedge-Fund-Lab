@@ -1,0 +1,834 @@
+{
+ "identity": "HFL-V75-SCIENTIFIC-CONSOLIDATION",
+ "schema_version": 1,
+ "classes": {
+  "PRIMARY": "Resultado bruto ou selado produzido pela execução (ou código cujo hash está selado nela).",
+  "DERIVED": "Calculado deterministicamente a partir das evidências primárias.",
+  "DIAGNOSTIC": "Reprodução, contrafactual, forense ou snapshot de preservação posterior.",
+  "INTERPRETATIVE": "Análise humana ou síntese que não corresponde diretamente a um campo observado.",
+  "SYNTHETIC": "Construído com dados ou planner falsos para testes; nunca resultado do Gemini."
+ },
+ "note": "O manifesto não contém o próprio hash. Documentos .md da V7.5 são fixados pelo commit Git.",
+ "sources": [
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/PETR4/2026-10-09/bars.csv",
+   "classification": "PRIMARY",
+   "nature": "série de preços congelada",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê PETR4 da execução radar-2026-10-09-recovery-01",
+   "sha256": "6a5c6ce8db87c105569ee12a9e296ba760538dc3f93c6a981cf9e0930a44098a",
+   "bytes": 28000
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/PETR4/2026-10-09/input.json",
+   "classification": "PRIMARY",
+   "nature": "input congelado (features)",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê PETR4 da execução radar-2026-10-09-recovery-01",
+   "sha256": "e1b5f1f44bce8392d93082b11c5e5cf6bc0f2443a35011298dcec6efacb1b19d",
+   "bytes": 10052
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/PETR4/2026-10-09/claim.json",
+   "classification": "PRIMARY",
+   "nature": "claim do lote pago",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê PETR4 da execução radar-2026-10-09-recovery-01",
+   "sha256": "ad7d2a47296f6ceb2630e5ced9c60b58f09939aa65d89637c6e99461705825c7",
+   "bytes": 290
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/PETR4/2026-10-09/provider_journal.jsonl",
+   "classification": "PRIMARY",
+   "nature": "journal do provedor",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê PETR4 da execução radar-2026-10-09-recovery-01",
+   "sha256": "4c9f8bb0480c9c1736052ad6c4969d4d4ddcc67e5028723a5ccbdea27dfa8e96",
+   "bytes": 75226
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/PETR4/2026-10-09/calls.sqlite",
+   "classification": "PRIMARY",
+   "nature": "banco de chamadas",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê PETR4 da execução radar-2026-10-09-recovery-01",
+   "sha256": "cd42fadae6f5fe07f78171bb8ba69cafb14b0fb00b028c9410dfe6630504c99b",
+   "bytes": 114688
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/PETR4/2026-10-09/result.json",
+   "classification": "PRIMARY",
+   "nature": "parecer oficial selado",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê PETR4 da execução radar-2026-10-09-recovery-01",
+   "sha256": "c63d7fdb025ba5e400a6432d32c3200cb2cd4afb02337c5b2e56cc1ff9fe5328",
+   "bytes": 5155
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/VALE3/2026-10-09/bars.csv",
+   "classification": "PRIMARY",
+   "nature": "série de preços congelada",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê VALE3 da execução radar-2026-10-09-recovery-01",
+   "sha256": "b1cb92fc355a47f9c5fdaa089bc7e7be65cf9bf056980e00f1887eb1ce880104",
+   "bytes": 27134
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/VALE3/2026-10-09/input.json",
+   "classification": "PRIMARY",
+   "nature": "input congelado (features)",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê VALE3 da execução radar-2026-10-09-recovery-01",
+   "sha256": "f89465ef779f2a10d87e0151bbd8fefbae762fab7663db2c9f6f4a5ccff917dc",
+   "bytes": 10058
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/VALE3/2026-10-09/claim.json",
+   "classification": "PRIMARY",
+   "nature": "claim do lote pago",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê VALE3 da execução radar-2026-10-09-recovery-01",
+   "sha256": "9b5f53ca6a31bcc23a2066443ef315000efcc875f923902b0f4217486b02d723",
+   "bytes": 290
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/VALE3/2026-10-09/provider_journal.jsonl",
+   "classification": "PRIMARY",
+   "nature": "journal do provedor",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê VALE3 da execução radar-2026-10-09-recovery-01",
+   "sha256": "cb1135c4bad7206c5c5861a4472415fd867c92f54022bf408252a8476643ae0b",
+   "bytes": 80710
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/VALE3/2026-10-09/calls.sqlite",
+   "classification": "PRIMARY",
+   "nature": "banco de chamadas",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê VALE3 da execução radar-2026-10-09-recovery-01",
+   "sha256": "0f1cbf15dea39602d6cf4a42f14cc90d9ac68a201c7c8407aa3e3ffbadffcbc2",
+   "bytes": 122880
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/VALE3/2026-10-09/result.json",
+   "classification": "PRIMARY",
+   "nature": "parecer oficial selado",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê VALE3 da execução radar-2026-10-09-recovery-01",
+   "sha256": "cfdb44b972be1e4f91ab22f25564462ae69438c9781aa7467a716d1c640a64e8",
+   "bytes": 5291
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/ITUB4/2026-10-09/bars.csv",
+   "classification": "PRIMARY",
+   "nature": "série de preços congelada",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê ITUB4 da execução radar-2026-10-09-recovery-01",
+   "sha256": "b54861315e0bbb3db8e5edf48600e91a1780d680e25fc03e2581043047a6597a",
+   "bytes": 29193
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/ITUB4/2026-10-09/input.json",
+   "classification": "PRIMARY",
+   "nature": "input congelado (features)",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê ITUB4 da execução radar-2026-10-09-recovery-01",
+   "sha256": "a1ddd28411fcc69f665cfef9462ac63c71c74ae50dae0f82c17eddfb6435faf7",
+   "bytes": 10249
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/ITUB4/2026-10-09/claim.json",
+   "classification": "PRIMARY",
+   "nature": "claim do lote pago",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê ITUB4 da execução radar-2026-10-09-recovery-01",
+   "sha256": "239308ec0576da406bc7b10d5144c063ac378a11356cc085e423598e1f30ab02",
+   "bytes": 290
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/ITUB4/2026-10-09/provider_journal.jsonl",
+   "classification": "PRIMARY",
+   "nature": "journal do provedor",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê ITUB4 da execução radar-2026-10-09-recovery-01",
+   "sha256": "1f00e51b30d355e4353dd7ba8f35fdb8a4c7f6a3ea4c50ca0869de2305720e67",
+   "bytes": 75957
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/ITUB4/2026-10-09/calls.sqlite",
+   "classification": "PRIMARY",
+   "nature": "banco de chamadas",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê ITUB4 da execução radar-2026-10-09-recovery-01",
+   "sha256": "645cac44d7b622e78aa745d0a219e90ba34fab753e4d9b04210680859b70cc8a",
+   "bytes": 114688
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/ITUB4/2026-10-09/result.json",
+   "classification": "PRIMARY",
+   "nature": "parecer oficial selado",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê ITUB4 da execução radar-2026-10-09-recovery-01",
+   "sha256": "4f96331a5dae68d9a860577d6ce31ce7266e1846abf99c0a941c7bed651ee7d0",
+   "bytes": 5621
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/WEGE3/2026-10-09/bars.csv",
+   "classification": "PRIMARY",
+   "nature": "série de preços congelada",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê WEGE3 da execução radar-2026-10-09-recovery-01",
+   "sha256": "3e8c8ac94ccac077a3b7a59f2567f972bdea63c96290864d8fb58ed744ddae42",
+   "bytes": 28579
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/WEGE3/2026-10-09/input.json",
+   "classification": "PRIMARY",
+   "nature": "input congelado (features)",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê WEGE3 da execução radar-2026-10-09-recovery-01",
+   "sha256": "0de4b28e88e5cdb95f8b7ff58489b0bc8c4a95ceea1f0a1c42214a483bc7a1af",
+   "bytes": 10055
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/WEGE3/2026-10-09/claim.json",
+   "classification": "PRIMARY",
+   "nature": "claim do lote pago",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê WEGE3 da execução radar-2026-10-09-recovery-01",
+   "sha256": "2e2ee5311c3bbab59b91ca0d750c7bc5e07379506a11bac2b0c63d82ec6b65b1",
+   "bytes": 290
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/WEGE3/2026-10-09/provider_journal.jsonl",
+   "classification": "PRIMARY",
+   "nature": "journal do provedor",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê WEGE3 da execução radar-2026-10-09-recovery-01",
+   "sha256": "dba1aa60ad133584cf9d1d80524c8bf5bc4f42669e14e7d6fdb9b547427f48d3",
+   "bytes": 75993
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/WEGE3/2026-10-09/calls.sqlite",
+   "classification": "PRIMARY",
+   "nature": "banco de chamadas",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê WEGE3 da execução radar-2026-10-09-recovery-01",
+   "sha256": "53ac2468491164ff9614633eb9efe2b0430f73269715047157c7ddf745be563f",
+   "bytes": 114688
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/WEGE3/2026-10-09/result.json",
+   "classification": "PRIMARY",
+   "nature": "parecer oficial selado",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê WEGE3 da execução radar-2026-10-09-recovery-01",
+   "sha256": "e085e3f8f0b58649656e2f3fa60b9d5da8d761d6369f9c091d2388524fbfd118",
+   "bytes": 5091
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/BBAS3/2026-10-09/bars.csv",
+   "classification": "PRIMARY",
+   "nature": "série de preços congelada",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê BBAS3 da execução radar-2026-10-09-recovery-01",
+   "sha256": "bbe4441fb88daf0f6c84976f69ddb2ac7b64854f5ee60c92f341e0ca19066395",
+   "bytes": 28671
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/BBAS3/2026-10-09/input.json",
+   "classification": "PRIMARY",
+   "nature": "input congelado (features)",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê BBAS3 da execução radar-2026-10-09-recovery-01",
+   "sha256": "542ef758f41341611a883b4842eb7e714cfc60cde800d6a820cdab817c219363",
+   "bytes": 10056
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/BBAS3/2026-10-09/claim.json",
+   "classification": "PRIMARY",
+   "nature": "claim do lote pago",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê BBAS3 da execução radar-2026-10-09-recovery-01",
+   "sha256": "1591071694eca1618464e2fbfa7d109006e65b0bcf73ce2f01428c8e4df70cab",
+   "bytes": 290
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/BBAS3/2026-10-09/provider_journal.jsonl",
+   "classification": "PRIMARY",
+   "nature": "journal do provedor",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê BBAS3 da execução radar-2026-10-09-recovery-01",
+   "sha256": "602fb978a0cdc56afa9eb9b99ef9e578b9d1d1bf9e037830c8daed28f62b7c48",
+   "bytes": 69949
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/BBAS3/2026-10-09/calls.sqlite",
+   "classification": "PRIMARY",
+   "nature": "banco de chamadas",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê BBAS3 da execução radar-2026-10-09-recovery-01",
+   "sha256": "9b004d9522250a8bb80dd51f30834947b815f7b2897be895af319ae03982c623",
+   "bytes": 106496
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/analyses/BBAS3/2026-10-09/result.json",
+   "classification": "PRIMARY",
+   "nature": "parecer oficial selado",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "comitê BBAS3 da execução radar-2026-10-09-recovery-01",
+   "sha256": "33c2b4f747bfefafd2266c1c2e4c482dd38b0371c60ca9016321cb618cb39df1",
+   "bytes": 4806
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/reservations/1308e28defa4fa1baf0942b780d35123d675005e01f59fb60f862868d97447ae.json",
+   "classification": "PRIMARY",
+   "nature": "reserva do lote Radar",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "orçamento do lote recovery-01",
+   "sha256": "817ee48899d79cd2035fbdf58b2ba272c4f22272ed79e22235f15d38bb7859fc",
+   "bytes": 2702
+  },
+  {
+   "path": "data/radar/hfl_multiasset_v1_recovery_01/budget_authorizations/0fcb1d9b787045b702ede4ec2560416814ca323815f5ed11920a5adb5f9fc2c8.json",
+   "classification": "PRIMARY",
+   "nature": "autorização humana de orçamento",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "orçamento do lote recovery-01",
+   "sha256": "e264fd6452b5e278021923d13a00f60a90fbc976218854dd1716a85bc5f84add",
+   "bytes": 972
+  },
+  {
+   "path": "data/radar/registry.json",
+   "classification": "PRIMARY",
+   "nature": "índice de execuções Radar",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "OPERATIONAL",
+   "versioned_in_git": false,
+   "relation": "identifica recovery-01 como instância do tratamento original",
+   "sha256": "abb933c5900648b6762874625cc37e1c05c1798baaecbdd127f501df46f020ce",
+   "bytes": 2797
+  },
+  {
+   "path": "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/context.json",
+   "classification": "PRIMARY",
+   "nature": "registro Global PM: context.json",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "registro v7-5a78ea5d15214e37bcae18f167ffcee3; pareceres = 5 result.json do Radar recovery-01",
+   "sha256": "36f0fc6f38aeb7a08ff158355b9aa779d5ccb765c7b5b2be24648c6c0305757d",
+   "bytes": 193067
+  },
+  {
+   "path": "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/authorization.json",
+   "classification": "PRIMARY",
+   "nature": "registro Global PM: authorization.json",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "registro v7-5a78ea5d15214e37bcae18f167ffcee3; pareceres = 5 result.json do Radar recovery-01",
+   "sha256": "052d29dd37fd7161cf5f1202b8a5309e7cdf96750a350c62a0c9d91ceebf4e4f",
+   "bytes": 2109
+  },
+  {
+   "path": "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/claim.json",
+   "classification": "PRIMARY",
+   "nature": "registro Global PM: claim.json",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "registro v7-5a78ea5d15214e37bcae18f167ffcee3; pareceres = 5 result.json do Radar recovery-01",
+   "sha256": "ce02b18b5de40544ec623f89b85856146e9ed3c341b4bd9b249d5b6d668a72b5",
+   "bytes": 391
+  },
+  {
+   "path": "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/private/provider_journal.jsonl",
+   "classification": "PRIMARY",
+   "nature": "registro Global PM: private/provider_journal.jsonl",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "registro v7-5a78ea5d15214e37bcae18f167ffcee3; pareceres = 5 result.json do Radar recovery-01",
+   "sha256": "a3869ca2760df73e18e53ef6af1a7e25c69f3c18f0189d860b943f688f2681bb",
+   "bytes": 83766
+  },
+  {
+   "path": "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/private/calls.sqlite",
+   "classification": "PRIMARY",
+   "nature": "registro Global PM: private/calls.sqlite",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "registro v7-5a78ea5d15214e37bcae18f167ffcee3; pareceres = 5 result.json do Radar recovery-01",
+   "sha256": "5ca3198bd6135d53fc192c93f230de707ef97a14710758e5e865ef6ef879797a",
+   "bytes": 114688
+  },
+  {
+   "path": "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/result.json",
+   "classification": "PRIMARY",
+   "nature": "registro Global PM: result.json",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "registro v7-5a78ea5d15214e37bcae18f167ffcee3; pareceres = 5 result.json do Radar recovery-01",
+   "sha256": "c8069e128a331fee5c9a170800a1da4442782b5ec83c9be458a1ca146f60e140",
+   "bytes": 15852
+  },
+  {
+   "path": "data/global_pm/hfl_global_pm_v1/reservations/bdb948aff7ceaf8b473e8132872695ac2d17c1f8cc19daeeabba6ca86baf51a5.json",
+   "classification": "PRIMARY",
+   "nature": "cópia imutável da autorização (reserva)",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "registro v7-5a78ea5d15214e37bcae18f167ffcee3; pareceres = 5 result.json do Radar recovery-01",
+   "sha256": "052d29dd37fd7161cf5f1202b8a5309e7cdf96750a350c62a0c9d91ceebf4e4f",
+   "bytes": 2109
+  },
+  {
+   "path": "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/context.json",
+   "classification": "PRIMARY",
+   "nature": "registro Global PM: context.json",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "registro v74-76d07c0d32444cecaf07e875deacb519; pareceres = 5 result.json do Radar recovery-01",
+   "sha256": "e4fb74af10582d80e29bab8480ec93b727eeeabbec1de9f15efa1501e570d791",
+   "bytes": 197117
+  },
+  {
+   "path": "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/authorization.json",
+   "classification": "PRIMARY",
+   "nature": "registro Global PM: authorization.json",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "registro v74-76d07c0d32444cecaf07e875deacb519; pareceres = 5 result.json do Radar recovery-01",
+   "sha256": "f40260280171b315e39d33b0d533817a7da22f6e708aaec21c4cc4c7873cf9d0",
+   "bytes": 2143
+  },
+  {
+   "path": "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/claim.json",
+   "classification": "PRIMARY",
+   "nature": "registro Global PM: claim.json",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "registro v74-76d07c0d32444cecaf07e875deacb519; pareceres = 5 result.json do Radar recovery-01",
+   "sha256": "c268ae74b0950b103623ca872b0a2739b7d0f1bb92eff22f61fd288f090105a6",
+   "bytes": 392
+  },
+  {
+   "path": "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/private/provider_journal.jsonl",
+   "classification": "PRIMARY",
+   "nature": "registro Global PM: private/provider_journal.jsonl",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "registro v74-76d07c0d32444cecaf07e875deacb519; pareceres = 5 result.json do Radar recovery-01",
+   "sha256": "0e4ec9a5f9b19238649140a6b86cff1f959425414c18f1800ed9c482a6340a28",
+   "bytes": 92422
+  },
+  {
+   "path": "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/private/calls.sqlite",
+   "classification": "PRIMARY",
+   "nature": "registro Global PM: private/calls.sqlite",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "registro v74-76d07c0d32444cecaf07e875deacb519; pareceres = 5 result.json do Radar recovery-01",
+   "sha256": "b8102c45f51cfba7267493f897d874dbe56220a95f5d7ecc5f2d491bea761471",
+   "bytes": 126976
+  },
+  {
+   "path": "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/result.json",
+   "classification": "PRIMARY",
+   "nature": "registro Global PM: result.json",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "registro v74-76d07c0d32444cecaf07e875deacb519; pareceres = 5 result.json do Radar recovery-01",
+   "sha256": "68f0015e451ae6350ba7fb32795acfce3b634f18c09a94985e9242f80176a6eb",
+   "bytes": 17338
+  },
+  {
+   "path": "data/global_pm/hfl_global_pm_v2/reservations/13ad05f324c6a66f600d9391a1a2658af9f7d18780b6055987a216529728b938.json",
+   "classification": "PRIMARY",
+   "nature": "cópia imutável da autorização (reserva)",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "registro v74-76d07c0d32444cecaf07e875deacb519; pareceres = 5 result.json do Radar recovery-01",
+   "sha256": "f40260280171b315e39d33b0d533817a7da22f6e708aaec21c4cc4c7873cf9d0",
+   "bytes": 2143
+  },
+  {
+   "path": "data/platform/v7/radar_origins/v7-5a78ea5d15214e37bcae18f167ffcee3.json",
+   "classification": "PRIMARY",
+   "nature": "origem Radar do V1 (arquivo lateral; V1 não sela origem no contexto)",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "liga o registro V1 aos result.json do Radar recovery-01",
+   "sha256": "5477a0ee702043ea4def20db4a077c6be51fe9159b1bf7cd7c21d27c7fcdf1c0",
+   "bytes": 3179
+  },
+  {
+   "path": "scripts/multiasset_global_pm.py",
+   "classification": "PRIMARY",
+   "nature": "código do tratamento (hash selado nos contextos V1 e V2)",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": true,
+   "relation": "validador V1",
+   "sha256": "9fb7ca1606bccee582571f839176db9aea32bb5c930194c0e6ab6d1044d7658d",
+   "bytes": 26561
+  },
+  {
+   "path": "scripts/run_global_pm.py",
+   "classification": "PRIMARY",
+   "nature": "código do tratamento (hash selado nos contextos V1 e V2)",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": true,
+   "relation": "runner V1",
+   "sha256": "cb7379bc9e7ab6ba934e15da8769efb6f6e76acd2eeb7ba1d6037699cfc7e9e6",
+   "bytes": 33763
+  },
+  {
+   "path": "scripts/multiasset_global_pm_v2.py",
+   "classification": "PRIMARY",
+   "nature": "código do tratamento (hash selado no contexto V2)",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": true,
+   "relation": "prompt, schema e validador V2",
+   "sha256": "1ec1a93d6e066186c7a17dcf5a6e1c739c400ee4f6c03fe3fe57e71bd1be7127",
+   "bytes": 26243
+  },
+  {
+   "path": "scripts/run_global_pm_v2.py",
+   "classification": "PRIMARY",
+   "nature": "código do tratamento (hash selado no contexto V2)",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": true,
+   "relation": "runner V2; verificadores incident/status",
+   "sha256": "7f1919f3b4ab2a60cf08d5e3c5eb47e413d4f299c6486126410c971eb43ef675",
+   "bytes": 38722
+  },
+  {
+   "path": "docs/evidence/hfl_global_pm_v2/contracts_v2.json",
+   "classification": "DERIVED",
+   "nature": "export dos contratos V1/V2",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": true,
+   "relation": "hashes conferem com os selados nos contextos",
+   "sha256": "487719155559491436a10921fbe7453123844484dbc45baa7c27427ca6b86da1",
+   "bytes": 31006
+  },
+  {
+   "path": "docs/evidence/hfl_global_pm_v2/platform_views.json",
+   "classification": "DERIVED",
+   "nature": "visões da API (relógio simulado)",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": true,
+   "relation": "status selado x validade",
+   "sha256": "71d8688d89973bc478b547bad24251ae21e84d3bb58cd536f9f22057f39cdfb8",
+   "bytes": 19343
+  },
+  {
+   "path": "docs/evidence/hfl_global_pm_v2/incident_reproduction.json",
+   "classification": "DIAGNOSTIC",
+   "nature": "reprodução V1 + contrafactual em memória",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": true,
+   "relation": "não é segunda inferência; reproduzida de novo na V7.5",
+   "sha256": "db188142507af2fb6743a88b981b4716053916d77cb68698c702e58d0c5a7377",
+   "bytes": 3087
+  },
+  {
+   "path": "docs/evidence/hfl_incident_2026_10_12/forensics.json",
+   "classification": "DIAGNOSTIC",
+   "nature": "forense do lote Radar original (bloqueio de rede)",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": true,
+   "relation": "radar-2026-10-09-original: 0/5 comitês; não contado",
+   "sha256": "18a2edf19d33f007878a7f9ccc7c70b04ff5f12ef1ef04c2928b6a47f1d5545d",
+   "bytes": 24403
+  },
+  {
+   "path": "docs/evidence/hfl_radar_v73/compare_recovery_vs_original.json",
+   "classification": "DIAGNOSTIC",
+   "nature": "equivalência econômica dos inputs",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": true,
+   "relation": "recovery-01 x original",
+   "sha256": "00ac468df1b13c407c04a894eb1775dbf78f813fde7f7cfc93ad816b69ac84da",
+   "bytes": 6153
+  },
+  {
+   "path": "docs/evidence/hfl_radar_v73/incident_root_sha256.json",
+   "classification": "DIAGNOSTIC",
+   "nature": "hashes dos 45 arquivos do incidente",
+   "treatment": "HFL-MULTIASSET-RADAR-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": true,
+   "relation": "preservação do lote original",
+   "sha256": "fb310895a0b3d0220c40a9cd76048403d80d0650ce8671e9cd109738f228e171",
+   "bytes": 6700
+  },
+  {
+   "path": "docs/evidence/hfl_scientific_consolidation_v75/preservation_before.json",
+   "classification": "DIAGNOSTIC",
+   "nature": "snapshot de preservação antes da V7.5",
+   "treatment": null,
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": true,
+   "relation": "comparado com --since ao final",
+   "sha256": "06eeb43089f2869db9af7e5d80a42f3bbc942c240c55840d2778df5baf7e795a",
+   "bytes": 460983
+  },
+  {
+   "path": "docs/evidence/hfl_global_pm_v2/qualification.json",
+   "classification": "SYNTHETIC",
+   "nature": "índice da qualificação V2 (casos A-F)",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": true,
+   "relation": "FAKE_GLOBAL_PM_NOT_GEMINI; nunca resultado oficial",
+   "sha256": "751010bbc5e5b19335db275a658595ae9fee64f1f52ee45fbeecf9eab2cf200c",
+   "bytes": 2256
+  },
+  {
+   "path": "data/global_pm/hfl_global_pm_v1/v7-3558f0253cf44dd0a00c93d7be73e56f/result.json",
+   "classification": "SYNTHETIC",
+   "nature": "registro V1 de demonstração",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": false,
+   "relation": "FAKE_GLOBAL_PM_NOT_GEMINI; nunca resultado oficial",
+   "sha256": "ce586e6f3be83e770f5f1338e61b7d441ff4fe3f255c3c9923acb0b0d2a83705",
+   "bytes": 10707
+  },
+  {
+   "path": "docs/evidence/hfl_global_pm_v2/README.md",
+   "classification": "INTERPRETATIVE",
+   "nature": "auditoria manual do texto livre V1 (seção 9)",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V1",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": true,
+   "relation": "base do estudo de caso V1",
+   "sha256": "42c7aa67ad287ae7642310660350e41a77886c67b413ec7ebfe4d2f048826dc0",
+   "bytes": 29314
+  },
+  {
+   "path": "docs/H2_V6_OA1_VALIDATION_SCIENTIFIC_SUMMARY.md",
+   "classification": "INTERPRETATIVE",
+   "nature": "delimitação de escopo H2 (não usado em métricas)",
+   "treatment": "H2 v6",
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": true,
+   "relation": "fora do escopo da V7.5",
+   "sha256": "3cf4e98852c4a7a315ef5ce2a69e29e2f3f5fb098c86fc0013ef5345f9aaaa8e",
+   "bytes": 15606
+  },
+  {
+   "path": "docs/evidence/hfl_scientific_consolidation_v75/METRICS.json",
+   "classification": "DERIVED",
+   "nature": "métricas desta consolidação",
+   "treatment": null,
+   "immutability": "IMMUTABLE",
+   "versioned_in_git": true,
+   "relation": "recalculado por este script",
+   "sha256": "13edd5b1a69e21095f0a7592372913aa8b78b5be9df4fb71c8e92e3ad6e72216",
+   "bytes": 24558
+  }
+ ],
+ "provenance": {
+  "Resultados do Radar (relatório §6, matriz de agentes)": {
+   "metrics": [
+    "radar.opinions_completed",
+    "radar.valid_analyst_votes",
+    "radar.provider_calls",
+    "radar.risk_vetoes",
+    "radar.per_asset",
+    "radar.result_pins_match"
+   ],
+   "sources": [
+    "data/radar/hfl_multiasset_v1_recovery_01/analyses/*/2026-10-09/result.json",
+    "data/radar/hfl_multiasset_v1_recovery_01/analyses/*/2026-10-09/provider_journal.jsonl"
+   ]
+  },
+  "Incidente do lote Radar original (relatório §5)": {
+   "metrics": [
+    "radar.original_incident"
+   ],
+   "sources": [
+    "docs/evidence/hfl_incident_2026_10_12/forensics.json",
+    "docs/evidence/hfl_radar_v73/compare_recovery_vs_original.json"
+   ]
+  },
+  "Comparação V1 x V2 (COMPARISON_V1_V2.md)": {
+   "metrics": [
+    "gpm_v1.identity",
+    "gpm_v2.identity",
+    "gpm_v1.outcome",
+    "gpm_v2.outcome",
+    "gpm_v1.integrity",
+    "gpm_v2.integrity",
+    "gpm_v1.usage",
+    "gpm_v2.usage",
+    "gpm.same_opinions_v1_v2"
+   ],
+   "sources": [
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/result.json",
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/context.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/result.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/context.json"
+   ]
+  },
+  "Estudo de caso da rejeição V1 (relatório §7)": {
+   "metrics": [
+    "gpm_v1.outcome",
+    "gpm_v1.free_text_terms",
+    "gpm_v1.itub4_close_inside_upper_band"
+   ],
+   "sources": [
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/result.json",
+    "docs/evidence/hfl_global_pm_v2/incident_reproduction.json",
+    "docs/evidence/hfl_global_pm_v2/README.md"
+   ]
+  },
+  "Análise da resposta V2 (relatório §8)": {
+   "metrics": [
+    "gpm_v2.outcome",
+    "gpm_v2.integrity",
+    "gpm_v2.cited_metrics",
+    "gpm_v2.watchlist_signals_match",
+    "gpm_v2.free_text_terms"
+   ],
+   "sources": [
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/result.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/context.json",
+    "scripts/multiasset_global_pm_v2.py"
+   ]
+  },
+  "Linha do tempo (relatório §5)": {
+   "metrics": [
+    "radar.batch_window",
+    "radar.original_incident",
+    "gpm_v1.timeline",
+    "gpm_v2.timeline"
+   ],
+   "sources": [
+    "data/radar/hfl_multiasset_v1_recovery_01/analyses/*/2026-10-09/claim.json",
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/claim.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/claim.json"
+   ]
+  },
+  "Custos e tokens (COST_ACCOUNTING.md)": {
+   "metrics": [
+    "radar.tokens",
+    "radar.usd_observed_lower_bound",
+    "radar.sealed_cost_usd_sum",
+    "radar.usd_reserved",
+    "radar.usd_planning_estimate",
+    "gpm_v1.usage",
+    "gpm_v2.usage",
+    "gpm.token_delta_v2_minus_v1"
+   ],
+   "sources": [
+    "data/radar/hfl_multiasset_v1_recovery_01/reservations/1308e28defa4fa1baf0942b780d35123d675005e01f59fb60f862868d97447ae.json",
+    "data/global_pm/hfl_global_pm_v1/v7-5a78ea5d15214e37bcae18f167ffcee3/authorization.json",
+    "data/global_pm/hfl_global_pm_v2/v74-76d07c0d32444cecaf07e875deacb519/authorization.json"
+   ]
+  },
+  "Contagem de inferências e desfechos (METRICS, TCC)": {
+   "metrics": [
+    "gpm.records_by_planner",
+    "gpm.real_outcomes"
+   ],
+   "sources": [
+    "data/global_pm/*/*/result.json"
+   ]
+  },
+  "Contrafactual V1 (somente diagnóstico)": {
+   "metrics": [],
+   "sources": [
+    "docs/evidence/hfl_global_pm_v2/incident_reproduction.json",
+    "scripts/run_global_pm_v2.py"
+   ]
+  }
+ }
+}

@@ -1,0 +1,20 @@
+{
+  "kind": "H2_V5_EXPLICIT_PROVIDER_EGRESS_AUTHORIZATION",
+  "source": "explicit user authorization in this conversation",
+  "destination_host": "generativelanguage.googleapis.com",
+  "treatment_version": 5,
+  "technical_prompt_version": 4,
+  "risk_prompt_version": 2,
+  "checker_version": 3,
+  "scope": "Already prepared and versioned H2 v5 scientific protocol only",
+  "authorized_phases": ["defect-directed hardening", "Diagnostic Hardening", "B0", "CAL-A", "Sequential Development", "Stress"],
+  "authorized_payloads": ["frozen system prompts", "scientific user prompts", "eight dimensionless Technical features", "Technical signals and consensus", "Technical qualitative confidence", "conditional Risk metrics", "necessary inter-agent verdicts and rationales", "necessary Portfolio payload", "response schemas", "frozen generation options"],
+  "local_gemini_credential_use": "authorized for normal Google API authentication; no key or secrets in scientific payloads, logs or artifacts",
+  "normal_api_billing_accepted": true,
+  "excluded": ["secret values as data", ".env contents", "other credentials", "unnecessary personal information", "arbitrary computer or repository contents", "Validation", "Final Test", "CAL-B4 data or execution", "unnecessary request information"],
+  "CAL_B4": "SEALED / NOT EXECUTED",
+  "validation_final": "NOT EXECUTED",
+  "stop_on_any_defect_gate_failure": true,
+  "no_result_directed_prompt_checker_gate_threshold_or_config_changes": true,
+  "prior_automatic_review_blocker": "execution_blocker.json (historical; explicit destination authorization now supplied)"
+}

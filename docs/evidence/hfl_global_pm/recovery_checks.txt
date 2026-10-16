@@ -1,0 +1,10 @@
+test_25_llm_schema_failure_durable_no_retry (__main__.GlobalPMChecks.test_25_llm_schema_failure_durable_no_retry) ... ok
+test_29_replay_after_envelope_or_before_result_no_call (__main__.GlobalPMChecks.test_29_replay_after_envelope_or_before_result_no_call) ... ok
+test_36_consultative_budget_and_new_authorization_gate (__main__.GlobalPMChecks.test_36_consultative_budget_and_new_authorization_gate) ... ok
+test_37_context_journal_and_response_tampering (__main__.GlobalPMChecks.test_37_context_journal_and_response_tampering) ... ok
+test_38_uncertain_provider_and_live_stale_locks (__main__.GlobalPMChecks.test_38_uncertain_provider_and_live_stale_locks) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 22.295s
+
+OK

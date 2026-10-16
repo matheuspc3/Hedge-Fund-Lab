@@ -1,0 +1,74 @@
+.............................F.F...........                                            [100%]
+================================== FAILURES ===================================
+______________________ test_paper_ledger_chrome_journeys ______________________
+
+    @pytest.mark.skipif(
+        not shutil.which("node")
+        or not foundation.CHROME
+        or os.environ.get("HFL_SKIP_BROWSER"),
+        reason="Node/Chrome unavailable or browser checks disabled",
+    )
+    def test_paper_ledger_chrome_journeys():
+        foundation.Server.setUpClass()
+        try:
+            with tempfile.TemporaryDirectory(prefix="hfl-paper-ui-") as tmp:
+                report = Path(tmp) / "ui.json"
+                result = subprocess.run(
+                    [
+                        "node",
+                        str(foundation.ROOT / "scripts/ui_check_v765.mjs"),
+                        foundation.Server.base,
+                        str(report),
+                    ],
+                    cwd=foundation.ROOT,
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    timeout=600,
+                )
+                data = json.loads(report.read_text(encoding="utf-8"))
+>               assert result.returncode == 0, result.stdout + result.stderr
+E               AssertionError: {"passed":17,"failed":0,"exceptions":["Error: TypeError: Cannot read properties of null (reading 'hidden')\n    at <anonymous>:1:44\n    at Page.eval (file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_cdp_v762.mjs:111:35)\n    at async check (file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v765.mjs:20:47)\n    at async file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v765.mjs:63:5\n    at async session (file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_cdp_v762.mjs:152:12)\n    at async file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v765.mjs:11:3"]}
+E                 
+E               assert 1 == 0
+E                +  where 1 = CompletedProcess(args=['node', 'C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\scripts\\ui_check_v765.mjs', 'http:/...)\\n    at async file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v765.mjs:11:3"]}\n', stderr='').returncode
+
+tests\test_ui_v765.py:78: AssertionError
+____________________ test_portfolio_paper_browser_journeys ____________________
+
+    @pytest.mark.skipif(
+        not shutil.which("node")
+        or not foundation.CHROME
+        or os.environ.get("HFL_SKIP_BROWSER"),
+        reason="Node/Chrome unavailable or browser checks disabled",
+    )
+    def test_portfolio_paper_browser_journeys():
+        foundation.Server.setUpClass()
+        try:
+            with tempfile.TemporaryDirectory() as tmp:
+                report = Path(tmp) / "ui_checks.json"
+                done = subprocess.run(
+                    [
+                        "node",
+                        str(foundation.ROOT / "scripts/ui_check_v764.mjs"),
+                        foundation.Server.base,
+                        str(report),
+                    ],
+                    cwd=foundation.ROOT,
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    timeout=900,
+                )
+                d = json.loads(report.read_text(encoding="utf-8"))
+>               assert done.returncode == 0, done.stdout + done.stderr
+E               AssertionError: {"passed":19,"failed":0,"exceptions":["Error: TypeError: Cannot read properties of null (reading 'scrollIntoView')\n    at <anonymous>:1:71\n    at <anonymous>:1:181\n    at Page.eval (file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_cdp_v762.mjs:111:35)\n    at async Page.click (file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_cdp_v762.mjs:139:17)\n    at async file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v764.mjs:76:5\n    at async session (file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_cdp_v762.mjs:152:12)\n    at async file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v764.mjs:12:3"]}
+E                 
+E               assert 1 == 0
+E                +  where 1 = CompletedProcess(args=['node', 'C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\scripts\\ui_check_v764.mjs', 'http:/...)\\n    at async file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v764.mjs:12:3"]}\n', stderr='').returncode
+
+tests\test_ui_v764.py:65: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_ui_v765.py::test_paper_ledger_chrome_journeys - AssertionEr...
+FAILED tests/test_ui_v764.py::test_portfolio_paper_browser_journeys - Asserti...
+2 failed, 41 passed, 58 subtests passed in 82.55s (0:01:22)

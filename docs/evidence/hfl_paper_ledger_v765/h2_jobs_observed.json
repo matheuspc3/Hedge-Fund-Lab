@@ -1,0 +1,74 @@
+[
+ {
+  "file": "job-0d6c0f1f5e960ab4d099a7a6ad4a51a6.json",
+  "command": "preflight",
+  "status": null,
+  "stage": "DECISION_EXISTS",
+  "created_at": null,
+  "updated_at": null,
+  "finished_at": "2026-10-10T17:05:42.996785-03:00"
+ },
+ {
+  "file": "job-17b985d36d81d79c6a830ef003a9171c.json",
+  "command": "prepare",
+  "status": null,
+  "stage": "Runner concluído; consulte registros",
+  "created_at": null,
+  "updated_at": null,
+  "finished_at": "2026-10-10T17:10:06.295433-03:00"
+ },
+ {
+  "file": "job-40d4c0a5c0a1ea7bb11afaa17ac772f7.json",
+  "command": "preflight",
+  "status": null,
+  "stage": "DECISION_EXISTS",
+  "created_at": null,
+  "updated_at": null,
+  "finished_at": "2026-10-10T16:36:52.404139-03:00"
+ },
+ {
+  "file": "job-5204277bbc1b68d953a7bb61b99d9ad3.json",
+  "command": "benchmarks",
+  "status": null,
+  "stage": "Benchmarks determinísticos verificados",
+  "created_at": null,
+  "updated_at": null,
+  "finished_at": "2026-10-10T17:10:34.418784-03:00"
+ },
+ {
+  "file": "job-7555bb43bba90632c3caa7b86062fa25.json",
+  "command": "prepare",
+  "status": null,
+  "stage": "Runner concluído; consulte registros",
+  "created_at": null,
+  "updated_at": null,
+  "finished_at": "2026-10-10T16:34:46.340050-03:00"
+ },
+ {
+  "file": "job-92ca5e8545c7ca8898db0dd6ab78b9cb.json",
+  "command": "preflight",
+  "status": null,
+  "stage": "DECISION_EXISTS",
+  "created_at": null,
+  "updated_at": null,
+  "finished_at": "2026-10-10T17:10:18.695876-03:00"
+ },
+ {
+  "file": "job-b8780a444aae9106e0ef8ee35afcf99b.json",
+  "command": "benchmarks",
+  "status": null,
+  "stage": "Benchmarks determinísticos verificados",
+  "created_at": null,
+  "updated_at": null,
+  "finished_at": "2026-10-10T16:43:00.994135-03:00"
+ },
+ {
+  "file": "job-e166ab2f6786d748dbda21fe06810879.json",
+  "command": "preflight",
+  "status": null,
+  "stage": "DECISION_EXISTS",
+  "created_at": null,
+  "updated_at": null,
+  "finished_at": "2026-10-10T16:44:03.894828-03:00"
+ }
+]

@@ -1,0 +1,14 @@
+{
+  "passed": 0,
+  "failed": 1,
+  "results": [
+    {
+      "name": "runner",
+      "ok": false,
+      "error": "Error: wait_timeout: window.Chart && Chart.getChart('chart-portfolio-equity')\n    at wait (file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v763.mjs:34:13)\n    at async file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v763.mjs:49:5\n    at async session (file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_cdp_v762.mjs:152:12)\n    at async file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v763.mjs:17:3"
+    }
+  ],
+  "blocked": [],
+  "mocked": [],
+  "exceptions": []
+}

@@ -1,0 +1,126 @@
+................F...........................F........................... [ 33%]
+...F.............................. [ 48%]
+........................................................................ [ 81%]
+........................................                                 [100%]
+================================== FAILURES ===================================
+______ AccountingChecks.test_accounting_property_many_rounding_sequences ______
+
+self = <test_multiasset_portfolio.AccountingChecks testMethod=test_accounting_property_many_rounding_sequences>
+
+    def test_accounting_property_many_rounding_sequences(self):
+        # Differing integer sizes force proportional cent rounding; no money/units created.
+        self.store.append(
+            "MARKED",
+            {"marks": book.marks(DAY, {**PRICES, "PETR4": "40.26"})},
+            "rounding-marks",
+        )
+        for index in range(6):
+            q = str(index + 20)
+            oid = "b" + str(index)
+            self.reserve([{**op(oid, quantity=q), "limit_price": "40.26"}], "r" + oid)
+            self.fill("f" + oid)
+            self.settle(oid)
+            partial = "partial" + str(index)
+            self.reserve(
+                [{**op(partial, side="SELL", quantity="1"), "limit_price": "40.26"}],
+                "r" + partial,
+            )
+            self.fill("f" + partial)
+            sell = "s" + str(index)
+            self.reserve(
+                [
+                    {
+                        **op(sell, side="SELL", quantity=str(int(q) - 1)),
+                        "limit_price": "40.26",
+                    }
+                ],
+                "r" + sell,
+            )
+            self.fill("f" + sell)
+>           self.settle(partial)
+
+tests\test_multiasset_portfolio.py:415: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_multiasset_portfolio.py:127: in settle
+    self.store.append(
+scripts\multiasset_portfolio.py:801: in append
+    self.checkpoint(next_state, [*events, event])
+scripts\multiasset_portfolio.py:749: in checkpoint
+    write(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = WindowsPath('C:/Users/LUCAS/Meu Canto/TCC/Hedge-Fund-Lab/data/portfolio/hfl_multiasset_v1/demo-check-a3d8886bd22141469d03329ea82a054a/snapshot.json')
+value = {'schema_version': 1, 'identity': 'HFL-MULTIASSET-PORTFOLIO-V1', 'sequence': 34, 'event_sha256': '355b6827fe16ff97c1c0f8a2b83db0627ba5a663ff67b7a1b273bab7f9d8419c', ...}
+immutable = False
+
+    def write(path, value, *, immutable=False):
+        """fsync then same-directory atomic publication; never truncate a record."""
+        path = Path(path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        data = value if isinstance(value, bytes) else (canonical_json(value) + "\n").encode()
+        if immutable and path.exists():
+            if path.read_bytes() != data:
+                raise ValueError("immutable_record_differs")
+            return
+        fd, name = tempfile.mkstemp(dir=path.parent, suffix=".tmp")
+        try:
+            with os.fdopen(fd, "wb") as stream:
+                stream.write(data)
+                stream.flush()
+                os.fsync(stream.fileno())
+>           os.replace(name, path)
+E           PermissionError: [WinError 5] Acesso negado: 'C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\data\\portfolio\\hfl_multiasset_v1\\demo-check-a3d8886bd22141469d03329ea82a054a\\tmpp4l_6ris.tmp' -> 'C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\data\\portfolio\\hfl_multiasset_v1\\demo-check-a3d8886bd22141469d03329ea82a054a\\snapshot.json'
+
+scripts\multiasset_radar.py:111: PermissionError
+__ IntegrationChecks.test_original_scientific_radar_and_ledger_preservation ___
+
+self = <test_multiasset_portfolio.IntegrationChecks testMethod=test_original_scientific_radar_and_ledger_preservation>
+
+    def test_original_scientific_radar_and_ledger_preservation(self):
+        baseline = book.read(
+            ROOT / "docs/evidence/hfl_multiasset_portfolio/preservation_baseline.json"
+        )
+        for name, expected in baseline.items():
+            path = ROOT / name
+            if not path.exists() and name.startswith("data/"):
+                continue  # Ignored local records can be absent in a clean checkout.
+>           self.assertEqual(book.sha_file(path), expected, name)
+E           AssertionError: '7304445202609016d5ead85e532c1e21a521deae103a6a8bd8f24b0c074e430e' != '5167d1142cfee5859a56753273295f06fa3998c140c5edae4424584ead16a9ed'
+E           - 7304445202609016d5ead85e532c1e21a521deae103a6a8bd8f24b0c074e430e
+E           + 5167d1142cfee5859a56753273295f06fa3998c140c5edae4424584ead16a9ed
+E            : data/radar/hfl_multiasset_v1/job.json
+
+tests\test_multiasset_portfolio.py:893: AssertionError
+______________ GlobalPMChecks.test_31_original_ledgers_preserved ______________
+
+self = <test_global_pm.GlobalPMChecks testMethod=test_31_original_ledgers_preserved>
+
+    def test_31_original_ledgers_preserved(self):
+        expected = json.loads(
+            (ROOT / "docs/evidence/hfl_global_pm/preservation_baseline.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        changed = [
+            name
+            for name, sha in expected.items()
+            if not (ROOT / name).is_file() or b.sha_file(ROOT / name) != sha
+        ]
+>       self.assertEqual(changed, [])
+E       AssertionError: Lists differ: ['data/radar/hfl_multiasset_v1/job.json', [44 chars]son'] != []
+E       
+E       First list contains 2 additional elements.
+E       First extra element 0:
+E       'data/radar/hfl_multiasset_v1/job.json'
+E       
+E       + []
+E       - ['data/radar/hfl_multiasset_v1/job.json',
+E       -  'data/radar/hfl_multiasset_v1/last_prepare.json']
+
+tests\test_global_pm.py:533: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_multiasset_portfolio.py::AccountingChecks::test_accounting_property_many_rounding_sequences
+FAILED tests/test_multiasset_portfolio.py::IntegrationChecks::test_original_scientific_radar_and_ledger_preservation
+FAILED tests/test_global_pm.py::GlobalPMChecks::test_31_original_ledgers_preserved
+3 failed, 215 passed, 38 subtests passed in 817.87s (0:13:37)
+exit=1

@@ -1,0 +1,57 @@
+............................................F........................... [ 28%]
+...F.............................. [ 41%]
+........................................................................ [ 69%]
+........................................................................ [ 98%]
+.....                                                                    [100%]
+================================== FAILURES ===================================
+__ IntegrationChecks.test_original_scientific_radar_and_ledger_preservation ___
+
+self = <test_multiasset_portfolio.IntegrationChecks testMethod=test_original_scientific_radar_and_ledger_preservation>
+
+    def test_original_scientific_radar_and_ledger_preservation(self):
+        baseline = book.read(
+            ROOT / "docs/evidence/hfl_multiasset_portfolio/preservation_baseline.json"
+        )
+        for name, expected in baseline.items():
+            path = ROOT / name
+            if not path.exists() and name.startswith("data/"):
+                continue  # Ignored local records can be absent in a clean checkout.
+>           self.assertEqual(book.sha_file(path), expected, name)
+E           AssertionError: '7304445202609016d5ead85e532c1e21a521deae103a6a8bd8f24b0c074e430e' != '5167d1142cfee5859a56753273295f06fa3998c140c5edae4424584ead16a9ed'
+E           - 7304445202609016d5ead85e532c1e21a521deae103a6a8bd8f24b0c074e430e
+E           + 5167d1142cfee5859a56753273295f06fa3998c140c5edae4424584ead16a9ed
+E            : data/radar/hfl_multiasset_v1/job.json
+
+tests\test_multiasset_portfolio.py:893: AssertionError
+______________ GlobalPMChecks.test_31_original_ledgers_preserved ______________
+
+self = <test_global_pm.GlobalPMChecks testMethod=test_31_original_ledgers_preserved>
+
+    def test_31_original_ledgers_preserved(self):
+        expected = json.loads(
+            (ROOT / "docs/evidence/hfl_global_pm/preservation_baseline.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        changed = [
+            name
+            for name, sha in expected.items()
+            if not (ROOT / name).is_file() or b.sha_file(ROOT / name) != sha
+        ]
+>       self.assertEqual(changed, [])
+E       AssertionError: Lists differ: ['data/radar/hfl_multiasset_v1/job.json', [44 chars]son'] != []
+E       
+E       First list contains 2 additional elements.
+E       First extra element 0:
+E       'data/radar/hfl_multiasset_v1/job.json'
+E       
+E       + []
+E       - ['data/radar/hfl_multiasset_v1/job.json',
+E       -  'data/radar/hfl_multiasset_v1/last_prepare.json']
+
+tests\test_global_pm.py:533: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_multiasset_portfolio.py::IntegrationChecks::test_original_scientific_radar_and_ledger_preservation
+FAILED tests/test_global_pm.py::GlobalPMChecks::test_31_original_ledgers_preserved
+2 failed, 253 passed, 38 subtests passed in 930.89s (0:15:30)
+exit=1

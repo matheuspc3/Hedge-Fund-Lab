@@ -1,0 +1,79 @@
+{
+  "viewports": [
+    {
+      "analysts": 5,
+      "executeDisabled": true,
+      "scrollWidth": 1425,
+      "width": 1440
+    },
+    {
+      "analysts": 5,
+      "executeDisabled": true,
+      "scrollWidth": 625,
+      "width": 640
+    },
+    {
+      "analysts": 5,
+      "executeDisabled": true,
+      "scrollWidth": 405,
+      "width": 420
+    }
+  ],
+  "historicalTabs": [
+    {
+      "tab": "Decisões",
+      "visible": [
+        {
+          "id": "tab-decisions",
+          "text": 389
+        }
+      ]
+    },
+    {
+      "tab": "Comparações",
+      "visible": [
+        {
+          "id": "tab-compare",
+          "text": 2994
+        }
+      ]
+    },
+    {
+      "tab": "Multiagente",
+      "visible": [
+        {
+          "id": "tab-agents",
+          "text": 4071
+        }
+      ]
+    },
+    {
+      "tab": "Experimentos",
+      "visible": [
+        {
+          "id": "tab-experiments",
+          "text": 1480
+        }
+      ]
+    },
+    {
+      "tab": "Auditoria",
+      "visible": [
+        {
+          "id": "tab-audit",
+          "text": 18002
+        }
+      ]
+    },
+    {
+      "tab": "Visão geral",
+      "visible": [
+        {
+          "id": "tab-overview",
+          "text": 872
+        }
+      ]
+    }
+  ],
+  "consoleErrors": []
+}

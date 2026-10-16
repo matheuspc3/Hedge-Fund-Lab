@@ -1,0 +1,158 @@
+{
+  "checks": [
+    {
+      "name": "overview-1440",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "error": false,
+      "state": "Aguardando aprovação",
+      "overflow": false
+    },
+    {
+      "name": "room-1440",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "error": false,
+      "state": "Aguardando aprovação",
+      "overflow": false
+    },
+    {
+      "name": "supervision-1440",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "error": false,
+      "state": "Aguardando aprovação",
+      "overflow": false
+    },
+    {
+      "name": "wallets-supervised-1440",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "error": false,
+      "state": "Aguardando aprovação",
+      "overflow": false
+    },
+    {
+      "name": "agents-1440",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "error": false,
+      "state": "Aguardando aprovação",
+      "overflow": false
+    },
+    {
+      "name": "overview-640",
+      "scrollWidth": 640,
+      "width": 640,
+      "error": false,
+      "state": "Aguardando aprovação",
+      "overflow": false
+    },
+    {
+      "name": "room-640",
+      "scrollWidth": 640,
+      "width": 640,
+      "error": false,
+      "state": "Aguardando aprovação",
+      "overflow": false
+    },
+    {
+      "name": "supervision-640",
+      "scrollWidth": 640,
+      "width": 640,
+      "error": false,
+      "state": "Aguardando aprovação",
+      "overflow": false
+    },
+    {
+      "name": "wallets-supervised-640",
+      "scrollWidth": 640,
+      "width": 640,
+      "error": false,
+      "state": "Aguardando aprovação",
+      "overflow": false
+    },
+    {
+      "name": "agents-640",
+      "scrollWidth": 640,
+      "width": 640,
+      "error": false,
+      "state": "Aguardando aprovação",
+      "overflow": false
+    },
+    {
+      "name": "overview-420",
+      "scrollWidth": 420,
+      "width": 420,
+      "error": false,
+      "state": "Aguardando aprovação",
+      "overflow": false
+    },
+    {
+      "name": "room-420",
+      "scrollWidth": 420,
+      "width": 420,
+      "error": false,
+      "state": "Aguardando aprovação",
+      "overflow": false
+    },
+    {
+      "name": "supervision-420",
+      "scrollWidth": 420,
+      "width": 420,
+      "error": false,
+      "state": "Aguardando aprovação",
+      "overflow": false
+    },
+    {
+      "name": "wallets-supervised-420",
+      "scrollWidth": 420,
+      "width": 420,
+      "error": false,
+      "state": "Aguardando aprovação",
+      "overflow": false
+    },
+    {
+      "name": "agents-420",
+      "scrollWidth": 420,
+      "width": 420,
+      "error": false,
+      "state": "Aguardando aprovação",
+      "overflow": false
+    },
+    {
+      "name": "supervision-not-executed-1440",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "error": false,
+      "state": "Não executada · limite de preço",
+      "overflow": false
+    },
+    {
+      "name": "approval-dialog-1440",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "error": false,
+      "state": "Aguardando aprovação",
+      "overflow": false
+    },
+    {
+      "name": "supervision-approved-1440",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "error": false,
+      "state": "Aprovada",
+      "overflow": false
+    }
+  ],
+  "consoleErrors": [],
+  "nonGetRequests": [
+    "http://127.0.0.1:8084/api/forward/supervision/approve"
+  ],
+  "dialog": {
+    "open": true,
+    "submitDisabled": true
+  },
+  "postsBeforeConfirm": 0,
+  "approvedState": "APROVADA"
+}

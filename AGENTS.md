@@ -30,3 +30,15 @@ Rules:
 Not lazy about: understanding the problem (read it fully and trace the real flow before picking a rung, a small diff you don't understand is just laziness dressed up as efficiency), input validation at trust boundaries, error handling that prevents data loss, security, accessibility, the calibration real hardware needs (the platform is never the spec ideal, a clock drifts, a sensor reads off), anything explicitly requested. Lazy code without its check is unfinished: non-trivial logic leaves ONE runnable check behind, the smallest thing that fails if the logic breaks (an assert-based demo/self-check or one small test file; no frameworks, no fixtures). Trivial one-liners need no test.
 
 (Yes, this file also applies to agents working on the ponytail repo itself. Especially to them.)
+
+## Hedge-Fund-Lab: direção e continuidade
+
+Antes de iniciar uma tarefa, leia [a direção e decisões do produto](docs/DIRECAO_DO_PROJETO.md)
+e o [roadmap ativo](docs/ROADMAP.md). Vincule a entrega à decisão DP e ao item
+do roadmap aplicáveis; explique o resultado concreto esperado. O objetivo atual
+é acompanhar e comparar carteiras simuladas diariamente, com a carteira como
+tela inicial e decisões/operações/patrimônio rastreáveis.
+Não redirecione o projeto nem contrarie decisões aceitas sem discutir a mudança
+com Lucas. Escolhas rotineiras dentro desse objetivo não exigem nova confirmação.
+Ao concluir, informe verificação, limites e próximo passo; atualize os documentos
+ativos se o estado mudou. Preserve o histórico das decisões e evidências seladas.

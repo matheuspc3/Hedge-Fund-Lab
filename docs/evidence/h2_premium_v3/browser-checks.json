@@ -1,0 +1,150 @@
+{
+  "widths": [
+    1440,
+    640,
+    420
+  ],
+  "layout": [
+    {
+      "agents": 32,
+      "client": 1425,
+      "scroll": 1425,
+      "view": "visao",
+      "visible": true,
+      "width": 1440
+    },
+    {
+      "agents": 32,
+      "client": 1425,
+      "scroll": 1425,
+      "view": "carteiras",
+      "visible": true,
+      "width": 1440
+    },
+    {
+      "agents": 32,
+      "client": 1425,
+      "scroll": 1425,
+      "view": "agentes",
+      "visible": true,
+      "width": 1440
+    },
+    {
+      "agents": 32,
+      "client": 625,
+      "scroll": 625,
+      "view": "visao",
+      "visible": true,
+      "width": 640
+    },
+    {
+      "agents": 32,
+      "client": 625,
+      "scroll": 625,
+      "view": "carteiras",
+      "visible": true,
+      "width": 640
+    },
+    {
+      "agents": 32,
+      "client": 625,
+      "scroll": 625,
+      "view": "agentes",
+      "visible": true,
+      "width": 640
+    },
+    {
+      "agents": 32,
+      "client": 405,
+      "scroll": 405,
+      "view": "visao",
+      "visible": true,
+      "width": 420
+    },
+    {
+      "agents": 32,
+      "client": 405,
+      "scroll": 405,
+      "view": "carteiras",
+      "visible": true,
+      "width": 420
+    },
+    {
+      "agents": 32,
+      "client": 405,
+      "scroll": 405,
+      "view": "agentes",
+      "visible": true,
+      "width": 420
+    },
+    {
+      "client": 1425,
+      "scroll": 1425,
+      "view": "mercado",
+      "visible": true,
+      "width": 1440
+    },
+    {
+      "client": 625,
+      "scroll": 625,
+      "view": "mercado",
+      "visible": true,
+      "width": 640
+    },
+    {
+      "client": 405,
+      "scroll": 405,
+      "view": "mercado",
+      "visible": true,
+      "width": 420
+    },
+    {
+      "client": 1425,
+      "scroll": 1425,
+      "view": "sala",
+      "visible": true,
+      "width": 1440
+    },
+    {
+      "client": 625,
+      "scroll": 625,
+      "view": "sala",
+      "visible": true,
+      "width": 640
+    },
+    {
+      "client": 405,
+      "scroll": 405,
+      "view": "sala",
+      "visible": true,
+      "width": 420
+    }
+  ],
+  "scenarios": [
+    {
+      "price": "54",
+      "result": "Cenário hipotético · COMPRA\nBLOQUEADA NO CENÁRIO\n\nGap de baixa 3.57% acima do limite 2.00%.\n\nFechamento bruto de referência\nR$ 56,00\nAbertura hipotética bruta\nR$ 54,00\nGap hipotético\n▼ -3,57%\nExposição-alvo\n5%\nValor estimado da ordem\nR$ 0,00\nQuantidade fracionária estimada\n0\nCustos estimados\nR$ 0,00\nCaixa após o cenário\nR$ 100.000,00\nPatrimônio na abertura após custos\nR$ 100.000,00\nConcentração após custos\n0%\nPreço ajustado estimado\nR$ 54,00\nFator ajustado / bruto conhecido\n1\nCondição\tValor aplicado\tEstado\nGap de alta máximo (%)\t2%\tDentro do limite\nGap de baixa máximo (%)\t2%\tFora do limite\nPreço máximo de compra (R$)\tR$ 56,00\tDentro do limite\nConcentração máxima (%)\t5%\tDentro do limite\n\nEstimativa na abertura, sem variação posterior: fator ajustado/bruto do último fechamento congelado. Proventos futuros podem alterar esse fator. Não é cotação observada nem execução.\n\nsessions/2026-10-09/bars.csv + input.json; abertura hipotética"
+    },
+    {
+      "price": "55",
+      "result": "Cenário hipotético · COMPRA\nPERMITIDA NO CENÁRIO\n\nOperação permitida neste cenário hipotético; nenhuma ordem criada.\n\nFechamento bruto de referência\nR$ 56,00\nAbertura hipotética bruta\nR$ 55,00\nGap hipotético\n▼ -1,79%\nExposição-alvo\n5%\nValor estimado da ordem\nR$ 4.999,80\nQuantidade fracionária estimada\n90,905364\nCustos estimados\nR$ 4,10\nCaixa após o cenário\nR$ 94.996,11\nPatrimônio na abertura após custos\nR$ 99.995,90\nConcentração após custos\n5%\nPreço ajustado estimado\nR$ 55,00\nFator ajustado / bruto conhecido\n1\nCondição\tValor aplicado\tEstado\nGap de alta máximo (%)\t2%\tDentro do limite\nGap de baixa máximo (%)\t2%\tDentro do limite\nPreço máximo de compra (R$)\tR$ 56,00\tDentro do limite\nConcentração máxima (%)\t5%\tDentro do limite\n\nEstimativa na abertura, sem variação posterior: fator ajustado/bruto do último fechamento congelado. Proventos futuros podem alterar esse fator. Não é cotação observada nem execução.\n\nsessions/2026-10-09/bars.csv + input.json; abertura hipotética"
+    },
+    {
+      "price": "56",
+      "result": "Cenário hipotético · COMPRA\nPERMITIDA NO CENÁRIO\n\nOperação permitida neste cenário hipotético; nenhuma ordem criada.\n\nFechamento bruto de referência\nR$ 56,00\nAbertura hipotética bruta\nR$ 56,00\nGap hipotético\n0%\nExposição-alvo\n5%\nValor estimado da ordem\nR$ 4.999,80\nQuantidade fracionária estimada\n89,282054\nCustos estimados\nR$ 4,10\nCaixa após o cenário\nR$ 94.996,11\nPatrimônio na abertura após custos\nR$ 99.995,90\nConcentração após custos\n5%\nPreço ajustado estimado\nR$ 56,00\nFator ajustado / bruto conhecido\n1\nCondição\tValor aplicado\tEstado\nGap de alta máximo (%)\t2%\tDentro do limite\nGap de baixa máximo (%)\t2%\tDentro do limite\nPreço máximo de compra (R$)\tR$ 56,00\tDentro do limite\nConcentração máxima (%)\t5%\tDentro do limite\n\nEstimativa na abertura, sem variação posterior: fator ajustado/bruto do último fechamento congelado. Proventos futuros podem alterar esse fator. Não é cotação observada nem execução.\n\nsessions/2026-10-09/bars.csv + input.json; abertura hipotética"
+    },
+    {
+      "price": "56.5",
+      "result": "Cenário hipotético · COMPRA\nBLOQUEADA NO CENÁRIO\n\nAbertura bruta R$ 56.50 viola o limite de preço R$ 56.00.\n\nFechamento bruto de referência\nR$ 56,00\nAbertura hipotética bruta\nR$ 56,50\nGap hipotético\n▲ +0,89%\nExposição-alvo\n5%\nValor estimado da ordem\nR$ 0,00\nQuantidade fracionária estimada\n0\nCustos estimados\nR$ 0,00\nCaixa após o cenário\nR$ 100.000,00\nPatrimônio na abertura após custos\nR$ 100.000,00\nConcentração após custos\n0%\nPreço ajustado estimado\nR$ 56,50\nFator ajustado / bruto conhecido\n1\nCondição\tValor aplicado\tEstado\nGap de alta máximo (%)\t2%\tDentro do limite\nGap de baixa máximo (%)\t2%\tDentro do limite\nPreço máximo de compra (R$)\tR$ 56,00\tFora do limite\nConcentração máxima (%)\t5%\tDentro do limite\n\nEstimativa na abertura, sem variação posterior: fator ajustado/bruto do último fechamento congelado. Proventos futuros podem alterar esse fator. Não é cotação observada nem execução.\n\nsessions/2026-10-09/bars.csv + input.json; abertura hipotética"
+    },
+    {
+      "price": "57.5",
+      "result": "Cenário hipotético · COMPRA\nBLOQUEADA NO CENÁRIO\n\nGap de alta 2.68% acima do limite 2.00%.\n\nFechamento bruto de referência\nR$ 56,00\nAbertura hipotética bruta\nR$ 57,50\nGap hipotético\n▲ +2,68%\nExposição-alvo\n5%\nValor estimado da ordem\nR$ 0,00\nQuantidade fracionária estimada\n0\nCustos estimados\nR$ 0,00\nCaixa após o cenário\nR$ 100.000,00\nPatrimônio na abertura após custos\nR$ 100.000,00\nConcentração após custos\n0%\nPreço ajustado estimado\nR$ 57,50\nFator ajustado / bruto conhecido\n1\nCondição\tValor aplicado\tEstado\nGap de alta máximo (%)\t2%\tFora do limite\nGap de baixa máximo (%)\t2%\tDentro do limite\nPreço máximo de compra (R$)\tR$ 56,00\tFora do limite\nConcentração máxima (%)\t5%\tDentro do limite\n\nEstimativa na abertura, sem variação posterior: fator ajustado/bruto do último fechamento congelado. Proventos futuros podem alterar esse fator. Não é cotação observada nem execução.\n\nsessions/2026-10-09/bars.csv + input.json; abertura hipotética"
+    },
+    {
+      "price": "54.88",
+      "result": "Cenário hipotético · COMPRA\nPERMITIDA NO CENÁRIO\n\nOperação permitida neste cenário hipotético; nenhuma ordem criada.\n\nFechamento bruto de referência\nR$ 56,00\nAbertura hipotética bruta\nR$ 54,88\nGap hipotético\n▼ -2%\nExposição-alvo\n5%\nValor estimado da ordem\nR$ 4.999,80\nQuantidade fracionária estimada\n91,104136\nCustos estimados\nR$ 4,10\nCaixa após o cenário\nR$ 94.996,11\nPatrimônio na abertura após custos\nR$ 99.995,90\nConcentração após custos\n5%\nPreço ajustado estimado\nR$ 54,88\nFator ajustado / bruto conhecido\n1\nCondição\tValor aplicado\tEstado\nGap de alta máximo (%)\t2%\tDentro do limite\nGap de baixa máximo (%)\t2%\tDentro do limite\nPreço máximo de compra (R$)\tR$ 56,00\tDentro do limite\nConcentração máxima (%)\t5%\tDentro do limite\n\nEstimativa na abertura, sem variação posterior: fator ajustado/bruto do último fechamento congelado. Proventos futuros podem alterar esse fator. Não é cotação observada nem execução.\n\nsessions/2026-10-09/bars.csv + input.json; abertura hipotética"
+    }
+  ],
+  "console_errors_or_warnings": []
+}

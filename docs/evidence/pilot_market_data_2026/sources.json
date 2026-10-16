@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "documents": {
+    "b3_calendar_041_2026.pdf": {
+      "url": "https://www.b3.com.br/data/files/20/57/01/AA/06A1F910ADC36BE9AC094EA8/OC%20041-2026-VNC%20ERRATA%20-%20CALENDARIO%20DE%20FERIADOS%20EM%202026_PT.pdf",
+      "final_url": "https://www.b3.com.br/data/files/20/57/01/AA/06A1F910ADC36BE9AC094EA8/OC%20041-2026-VNC%20ERRATA%20-%20CALENDARIO%20DE%20FERIADOS%20EM%202026_PT.pdf",
+      "retrieved_at": "2026-10-14T02:14:11.720603+00:00",
+      "sha256": "82d42d34a3d856db380581be9b239b79475daf6530f5fe66ae9643013ac34958",
+      "bytes": 265414,
+      "content_type": "application/pdf",
+      "document": "Oficio Circular 041/2026-VNC; Anexo 1, Quadros A/B",
+      "version": "2026-06-30; errata do OC003/2026",
+      "scope": "2026-01-01/2026-12-31; exclusoes, nao lista positiva de sessoes"
+    },
+    "cotahist_layout_20201005.pdf": {
+      "url": "https://www.b3.com.br/data/files/33/67/B9/50/D84057102C784E47AC094EA8/SeriesHistoricas_Layout.pdf",
+      "final_url": "https://www.b3.com.br/data/files/33/67/B9/50/D84057102C784E47AC094EA8/SeriesHistoricas_Layout.pdf",
+      "retrieved_at": "2026-10-14T02:14:11.915955+00:00",
+      "sha256": "8b9633c44e1dc2229fb529931b4deb1d29fda9305a027d9c2c90a7ca96e8268f",
+      "bytes": 421286,
+      "content_type": "application/pdf",
+      "document": "Layout COTAHIST",
+      "version": "2020-10-05 rev02; capa ainda rev01/2017",
+      "scope": "245 bytes; registros 00/01/99"
+    },
+    "historical_quotes.html": {
+      "url": "https://www.b3.com.br/pt_br/market-data-e-indices/servicos-de-dados/market-data/historico/mercado-a-vista/cotacoes-historicas/",
+      "final_url": "https://www.b3.com.br/pt_br/market-data-e-indices/servicos-de-dados/market-data/historico/mercado-a-vista/cotacoes-historicas/",
+      "retrieved_at": "2026-10-14T02:14:12.014681+00:00",
+      "sha256": "25273b10354788556a6fdddcc0f2e8cf88a4d04073a1d913ada8bc237e068d3c",
+      "bytes": 54500,
+      "content_type": "text/html; charset=UTF-8",
+      "document": "Cotacoes historicas B3",
+      "version": "snapshot da pagina publica",
+      "scope": "RAW, ZIP/TXT; restricao de coleta automatizada"
+    },
+    "historical_download_page.html": {
+      "url": "https://www.b3.com.br/pt_br/market-data-e-indices/servicos-de-dados/market-data/historico/mercado-a-vista/series-historicas/",
+      "final_url": "https://www.b3.com.br/pt_br/market-data-e-indices/servicos-de-dados/market-data/historico/mercado-a-vista/series-historicas/",
+      "retrieved_at": "2026-10-14T02:14:12.142054+00:00",
+      "sha256": "37e4cbe5a143111975c2ec73f646cbe2c4fcd86b2bb320f4082967ffd8bc8a9a",
+      "bytes": 51879,
+      "content_type": "text/html; charset=UTF-8",
+      "document": "Series historicas B3",
+      "version": "snapshot da pagina publica",
+      "scope": "pagina que referencia seletor diario/mensal/anual"
+    },
+    "download_selector.html": {
+      "url": "https://bvmf.bmfbovespa.com.br/pt-br/cotacoes-historicas/FormSeriesHistoricasArq.asp",
+      "final_url": "https://bvmf.bmfbovespa.com.br/pt-br/cotacoes-historicas/FormSeriesHistoricasArq.asp",
+      "retrieved_at": "2026-10-14T02:16:11.820378+00:00",
+      "sha256": "a8d8521335732dd016af0a68757ff6645116fa8acbb110dfa193a22cfbc7b23c",
+      "bytes": 15893,
+      "content_type": "text/html",
+      "document": "FormSeriesHistoricasArq.asp B3",
+      "version": "snapshot do seletor; sem baixar cotacoes",
+      "scope": "series diarias do ano corrente; nomes COTAHIST_DDDMMAAAA.ZIP"
+    },
+    "settlement_transition.html": {
+      "url": "https://b3.com.br/pt_br/noticias/liquidacao-d-1.htm",
+      "final_url": "https://b3.com.br/pt_br/noticias/liquidacao-d-1.htm",
+      "retrieved_at": "2026-10-14T02:14:12.564253+00:00",
+      "sha256": "21cdd82a013a46469c1a6903f840717915ad482ed5971a1a03716e94beb1ccab",
+      "bytes": 56604,
+      "content_type": "text/html; charset=UTF-8",
+      "document": "B3 anuncia reducao D+2 para D+1",
+      "version": "2025-09-05",
+      "scope": "D+1 previsto fevereiro/2028; D+2 corrente para acoes"
+    },
+    "trading_hours.html": {
+      "url": "https://www.b3.com.br/pt_br/solucoes/plataformas/puma-trading-system/para-participantes-e-traders/horario-de-negociacao/acoes/",
+      "final_url": "https://www.b3.com.br/pt_br/solucoes/plataformas/puma-trading-system/para-participantes-e-traders/horario-de-negociacao/acoes/",
+      "retrieved_at": "2026-10-14T02:16:12.177650+00:00",
+      "sha256": "87495ac67c9a27418bd8d0612d90de27c0e42ec038105ef9c78a5c82215a584d",
+      "bytes": 63281,
+      "content_type": "text/html; charset=UTF-8",
+      "document": "Grade horaria acoes B3",
+      "version": "snapshot sem vigencia congelada por sessao",
+      "scope": "fases de negociacao; nao prova horario de publicacao COTAHIST"
+    },
+    "terms_of_use.html": {
+      "url": "https://www.b3.com.br/pt_br/termos-de-uso-e-protecao-de-dados/termos-de-uso/",
+      "final_url": "https://www.b3.com.br/pt_br/termos-de-uso-e-protecao-de-dados/termos-de-uso/",
+      "retrieved_at": "2026-10-14T02:22:12.282837+00:00",
+      "sha256": "337a71ec7db0b3976c9ad893750ef806ff2b2c371c7980775e87f698bcf57042",
+      "bytes": 36129,
+      "content_type": "text/html; charset=UTF-8",
+      "document": "Termos de Uso B3",
+      "version": "snapshot sem data de revisao declarada",
+      "scope": "uso informativo/pessoal; restricoes de redistribuicao/difusao"
+    },
+    "trading_regulation_20250630.pdf": {
+      "url": "https://b3.com.br/data/files/0B/D0/80/95/753D0A105BF9020AAC094EA8/Regulamento%20de%20Negociacao%20da%20B3.pdf",
+      "final_url": "https://b3.com.br/data/files/0B/D0/80/95/753D0A105BF9020AAC094EA8/Regulamento%20de%20Negociacao%20da%20B3.pdf",
+      "retrieved_at": "2026-10-14T02:24:10.319420+00:00",
+      "sha256": "6eeb6e4495d274f5caa4f2fee06a2c43d70d0ce1c4f3134f414eb5f52627e398",
+      "bytes": 841351,
+      "content_type": "application/pdf",
+      "document": "Regulamento de Negociacao B3; art30",
+      "version": "2025-06-30",
+      "scope": "calendarios anuais e possibilidade de interrupcao/cancelamento"
+    }
+  },
+  "acquisitions": {},
+  "calendar": {
+    "nature": "B3_PUBLIC_CALENDAR_DOCUMENTATION",
+    "source": "OC041_2026_VNC",
+    "document_coverage": [
+      "2026-01-01",
+      "2026-12-31"
+    ],
+    "requested_coverage": [
+      "2026-10-13",
+      "2026-11-30"
+    ],
+    "status": "BLOCKED_POSITIVE_SESSION_COVERAGE",
+    "reason": "OC041 proves closures, not an explicit positive session enumeration; no weekday/business-day inference is authorized.",
+    "sessions": [],
+    "observed_sessions": [],
+    "documented_closures": [
+      "2026-01-01",
+      "2026-02-16",
+      "2026-02-17",
+      "2026-04-03",
+      "2026-04-21",
+      "2026-05-01",
+      "2026-06-04",
+      "2026-09-07",
+      "2026-10-12",
+      "2026-11-02",
+      "2026-11-20",
+      "2026-12-24",
+      "2026-12-25",
+      "2026-12-31"
+    ],
+    "hours_status": "REFERENCE_ONLY_NOT_FROZEN_PER_SESSION",
+    "settlement_model": "CASH_EQUITIES_D_PLUS_2; NOT_A_SETTLEMENT_CONFIRMATION",
+    "evidence_files": [
+      "b3_calendar_041_2026.pdf",
+      "trading_regulation_20250630.pdf",
+      "settlement_transition.html",
+      "trading_hours.html"
+    ]
+  },
+  "source_contract": {
+    "format": "COTAHIST_DAILY_245",
+    "publication_deadline": null,
+    "revision_schedule": null,
+    "availability": "IMPORT_TIME_CONSERVATIVE_BOUND",
+    "automated_price_collection": "RESTRICTED_BY_PUBLIC_PAGE",
+    "usage_approval": "PENDING_FOR_PILOT_DISTRIBUTION",
+    "authorized_price_file": null
+  }
+}

@@ -1,0 +1,191 @@
+{
+  "kind": "RISK_RATIONALE_CHECKER_V2_CALIBRATION",
+  "instrument_change_only": "treatment version, Risk prompt, model, spec and system responses unchanged; no live rerun",
+  "checker_version": 2,
+  "checker_v1_blob": "7636ad26e3ed7777c38d532e2ab4267f268359de",
+  "checker_v2_blob": "1ff4343a8e5d24ec4f8c71349a64771a21aa3636",
+  "calibration_script_blob": "09aee853de8edd2cb6aef9ffa2f518e8874330ef",
+  "golden_corpus_sha256": "19f59ae99a8437d023409b9bedd4ae6b83bc4c41c328871124a1d4f0d8e672bb",
+  "corpus": {
+    "items": 247,
+    "development": 210,
+    "synthetic": 37,
+    "development_verdicts": {
+      "APROVADO": 173,
+      "VETADO": 37
+    },
+    "development_sources": {
+      "v1": 67,
+      "v2": 73,
+      "v3": 70
+    }
+  },
+  "verdict_text_contradiction_confusion": {
+    "v1": {
+      "true_positive": 8,
+      "false_positive": 9,
+      "false_negative": 4,
+      "true_negative": 226
+    },
+    "v2": {
+      "true_positive": 12,
+      "false_positive": 0,
+      "false_negative": 0,
+      "true_negative": 235
+    }
+  },
+  "by_category": {
+    "CONCESSIVE": {
+      "items": 1,
+      "v1_vtc": 0,
+      "v2_vtc": 0
+    },
+    "DEVELOPMENT_APPROVAL": {
+      "items": 171,
+      "v1_vtc": 0,
+      "v2_vtc": 0
+    },
+    "DEVELOPMENT_VETO": {
+      "items": 16,
+      "v1_vtc": 0,
+      "v2_vtc": 0
+    },
+    "EN_NEGATION_SUPPORTS_VERDICT": {
+      "items": 6,
+      "v1_vtc": 2,
+      "v2_vtc": 0
+    },
+    "EN_TRUE_CONTRADICTION": {
+      "items": 3,
+      "v1_vtc": 2,
+      "v2_vtc": 3
+    },
+    "FROZEN_INVALID_V1": {
+      "items": 21,
+      "v1_vtc": 0,
+      "v2_vtc": 0
+    },
+    "HARD_RULE_REFERENCE": {
+      "items": 3,
+      "v1_vtc": 2,
+      "v2_vtc": 0
+    },
+    "KNOWN_FALSE_POSITIVE_V1": {
+      "items": 2,
+      "v1_vtc": 2,
+      "v2_vtc": 0
+    },
+    "PT_NEGATION_SUPPORTS_VERDICT": {
+      "items": 12,
+      "v1_vtc": 3,
+      "v2_vtc": 0
+    },
+    "PT_PLAIN_VERDICT": {
+      "items": 3,
+      "v1_vtc": 0,
+      "v2_vtc": 0
+    },
+    "PT_TRUE_CONTRADICTION": {
+      "items": 9,
+      "v1_vtc": 6,
+      "v2_vtc": 9
+    }
+  },
+  "acceptance": {
+    "known_false_positives": 2,
+    "known_false_positives_remaining": 0,
+    "frozen_invalid_cases": 21,
+    "frozen_invalid_regressions": 0,
+    "V3-R1_preserved": true,
+    "V3-R2_preserved": true,
+    "CONFIDENCE_ONLY_DECISION_preserved": true,
+    "VERDICT_TEXT_CONTRADICTION_corrected": true,
+    "corpus_mismatches": 0,
+    "pass": true
+  },
+  "mismatches": [],
+  "v3_development_offline_reapplication": {
+    "v3 B0": {
+      "risk_llm_responses": 2,
+      "verdicts": {
+        "APROVADO": 2
+      },
+      "v1_V3-R1": 0,
+      "v1_V3-R2": 0,
+      "v1_V3-R3": 0,
+      "v2_V3-R1": 0,
+      "v2_V3-R2": 0,
+      "v2_V3-R3": 0
+    },
+    "v3 CAL-A": {
+      "risk_llm_responses": 20,
+      "verdicts": {
+        "APROVADO": 20
+      },
+      "v1_V3-R1": 0,
+      "v1_V3-R2": 0,
+      "v1_V3-R3": 0,
+      "v2_V3-R1": 0,
+      "v2_V3-R2": 0,
+      "v2_V3-R3": 0
+    },
+    "v3 Hardening": {
+      "risk_llm_responses": 11,
+      "verdicts": {
+        "APROVADO": 11
+      },
+      "v1_V3-R1": 0,
+      "v1_V3-R2": 0,
+      "v1_V3-R3": 1,
+      "v2_V3-R1": 0,
+      "v2_V3-R2": 0,
+      "v2_V3-R3": 0
+    },
+    "v3 Sequential Dev": {
+      "risk_llm_responses": 11,
+      "verdicts": {
+        "APROVADO": 11
+      },
+      "v1_V3-R1": 0,
+      "v1_V3-R2": 0,
+      "v1_V3-R3": 0,
+      "v2_V3-R1": 0,
+      "v2_V3-R2": 0,
+      "v2_V3-R3": 0
+    },
+    "v3 Stress": {
+      "risk_llm_responses": 17,
+      "verdicts": {
+        "APROVADO": 17
+      },
+      "v1_V3-R1": 0,
+      "v1_V3-R2": 0,
+      "v1_V3-R3": 1,
+      "v2_V3-R1": 0,
+      "v2_V3-R2": 0,
+      "v2_V3-R3": 0
+    },
+    "v3 defect hardening (CAL-B2 x R=3)": {
+      "risk_llm_responses": 9,
+      "verdicts": {
+        "APROVADO": 9
+      },
+      "v1_V3-R1": 0,
+      "v1_V3-R2": 0,
+      "v1_V3-R3": 0,
+      "v2_V3-R1": 0,
+      "v2_V3-R2": 0,
+      "v2_V3-R3": 0
+    }
+  },
+  "v3_development_offline_totals": {
+    "v1_V3-R1": 0,
+    "v1_V3-R2": 0,
+    "v1_V3-R3": 2,
+    "v2_V3-R1": 0,
+    "v2_V3-R2": 0,
+    "v2_V3-R3": 0
+  },
+  "known_ceiling": "negation scope closes only at an affirmed predicate (há/é/foi...), adversative or sentence boundary; 'Com drawdown nulo e sem concentração há fatores...' style prefixes and double negation are not resolved",
+  "cal_b3_dates_read": 0
+}

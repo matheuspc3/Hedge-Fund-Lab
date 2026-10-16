@@ -1,0 +1,5 @@
+All checks passed!
+7 files already formatted
+node --check dashboard/radar.js: ok
+node --check dashboard/global-workflow.js: ok
+node --check dashboard/platform.js: ok

@@ -1,0 +1,325 @@
+{
+ "identity": "HFL-V76-BUDGET-PLAN",
+ "schema_version": 1,
+ "paid_calls_authorized": 0,
+ "caps": {
+  "global_pm_sealed_v2_cap_usd": "5.00",
+  "global_pm_reserved_v1_v2_usd": "0.319488",
+  "global_pm_remaining_usd": "4.680512",
+  "global_pm_max_new_calls": 29,
+  "radar_aggregate_cap_usd": "5.0",
+  "radar_reserved_all_runs_usd": "6.63552"
+ },
+ "unit_reserves_usd": {
+  "global_pm_call": "0.159744",
+  "radar_committee": "0.663552"
+ },
+ "out_of_sample_sessions": [
+  "2026-09-01",
+  "2026-09-04",
+  "2026-09-10",
+  "2026-09-11",
+  "2026-09-14",
+  "2026-09-17",
+  "2026-09-29",
+  "2026-10-05",
+  "2026-10-06",
+  "2026-10-07"
+ ],
+ "campaigns": [
+  {
+   "id": "c1-pilot",
+   "evaluation": "REPEATABILITY_ON_DEVELOPMENT_INPUTS",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "scenario": "S0",
+   "sessions": [
+    "2026-10-09"
+   ],
+   "replications": 10,
+   "attempts": 10,
+   "first_attempt_id": "v76-c1-pilot-20261009-r001",
+   "attempt_ids_sha256": "535e5a43632d2ca221aae917b139ea35a3ed1b8d6a842279ea260df554d49623",
+   "calls": {
+    "global_pm": 10,
+    "radar_committees": 0,
+    "radar_calls_max": 0
+   },
+   "usd": {
+    "reserve_global_pm": "1.597440",
+    "reserve_radar": "0.000000",
+    "reserve_total": "1.597440",
+    "observed_floor_reference": "0.24904500",
+    "billed": "UNKNOWN_UNTIL_PROVIDER_INVOICE"
+   },
+   "precision": {
+    "normal_approx_half_width95_at_p50": 0.3099,
+    "zero_rejection_upper_bound95": 0.258866
+   },
+   "status": "PLANNED_NOT_AUTHORIZED",
+   "blocks": []
+  },
+  {
+   "id": "c1-intermediate",
+   "evaluation": "REPEATABILITY_ON_DEVELOPMENT_INPUTS",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "scenario": "S0",
+   "sessions": [
+    "2026-10-09"
+   ],
+   "replications": 29,
+   "attempts": 29,
+   "first_attempt_id": "v76-c1-intermediate-20261009-r001",
+   "attempt_ids_sha256": "f097691056f8a59cd6b64bf9152bc2b1b6224349f767e154d1e42493f9ffffdb",
+   "calls": {
+    "global_pm": 29,
+    "radar_committees": 0,
+    "radar_calls_max": 0
+   },
+   "usd": {
+    "reserve_global_pm": "4.632576",
+    "reserve_radar": "0.000000",
+    "reserve_total": "4.632576",
+    "observed_floor_reference": "0.72223050",
+    "billed": "UNKNOWN_UNTIL_PROVIDER_INVOICE"
+   },
+   "precision": {
+    "normal_approx_half_width95_at_p50": 0.182,
+    "zero_rejection_upper_bound95": 0.098145
+   },
+   "status": "PLANNED_NOT_AUTHORIZED",
+   "blocks": []
+  },
+  {
+   "id": "c1-extended",
+   "evaluation": "REPEATABILITY_ON_DEVELOPMENT_INPUTS",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "scenario": "S0",
+   "sessions": [
+    "2026-10-09"
+   ],
+   "replications": 100,
+   "attempts": 100,
+   "first_attempt_id": "v76-c1-extended-20261009-r001",
+   "attempt_ids_sha256": "61fe73e52e4ef22e8605bd965ef7246e8522ddaf22da2ad2a49c0f933a5dcdd7",
+   "calls": {
+    "global_pm": 100,
+    "radar_committees": 0,
+    "radar_calls_max": 0
+   },
+   "usd": {
+    "reserve_global_pm": "15.974400",
+    "reserve_radar": "0.000000",
+    "reserve_total": "15.974400",
+    "observed_floor_reference": "2.49045000",
+    "billed": "UNKNOWN_UNTIL_PROVIDER_INVOICE"
+   },
+   "precision": {
+    "normal_approx_half_width95_at_p50": 0.098,
+    "zero_rejection_upper_bound95": 0.029513
+   },
+   "status": "BLOCKED",
+   "blocks": [
+    "BUDGET_EXCEEDS_SEALED_V2_CAP_REQUIRES_NEW_TREATMENT_OR_DECISION"
+   ]
+  },
+  {
+   "id": "c2-s1",
+   "evaluation": "STATE_SENSITIVITY_ON_DEVELOPMENT_INPUTS",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "scenario": "S1",
+   "sessions": [
+    "2026-10-09"
+   ],
+   "replications": 5,
+   "attempts": 5,
+   "first_attempt_id": "v76-c2-s1-20261009-r001",
+   "attempt_ids_sha256": "30d54bea71927079cb1a325739e8059ecce90d8a26c4441bce27ae826eaa9ef6",
+   "calls": {
+    "global_pm": 5,
+    "radar_committees": 0,
+    "radar_calls_max": 0
+   },
+   "usd": {
+    "reserve_global_pm": "0.798720",
+    "reserve_radar": "0.000000",
+    "reserve_total": "0.798720",
+    "observed_floor_reference": "0.12452250",
+    "billed": "UNKNOWN_UNTIL_PROVIDER_INVOICE"
+   },
+   "precision": {
+    "normal_approx_half_width95_at_p50": 0.4383,
+    "zero_rejection_upper_bound95": 0.45072
+   },
+   "status": "BLOCKED",
+   "blocks": [
+    "HOLDINGS_PREPARATION_PATH_NOT_IMPLEMENTED"
+   ]
+  },
+  {
+   "id": "c2-s4",
+   "evaluation": "STATE_SENSITIVITY_ON_DEVELOPMENT_INPUTS",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "scenario": "S4",
+   "sessions": [
+    "2026-10-09"
+   ],
+   "replications": 5,
+   "attempts": 5,
+   "first_attempt_id": "v76-c2-s4-20261009-r001",
+   "attempt_ids_sha256": "2ddd7770615399619eb0cb7e8c60129957a3a4eb2df44cc5c05c3f7a1478f12d",
+   "calls": {
+    "global_pm": 5,
+    "radar_committees": 0,
+    "radar_calls_max": 0
+   },
+   "usd": {
+    "reserve_global_pm": "0.798720",
+    "reserve_radar": "0.000000",
+    "reserve_total": "0.798720",
+    "observed_floor_reference": "0.12452250",
+    "billed": "UNKNOWN_UNTIL_PROVIDER_INVOICE"
+   },
+   "precision": {
+    "normal_approx_half_width95_at_p50": 0.4383,
+    "zero_rejection_upper_bound95": 0.45072
+   },
+   "status": "BLOCKED",
+   "blocks": [
+    "HOLDINGS_PREPARATION_PATH_NOT_IMPLEMENTED"
+   ]
+  },
+  {
+   "id": "c2-s5",
+   "evaluation": "STATE_SENSITIVITY_ON_DEVELOPMENT_INPUTS",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "scenario": "S5",
+   "sessions": [
+    "2026-10-09"
+   ],
+   "replications": 5,
+   "attempts": 5,
+   "first_attempt_id": "v76-c2-s5-20261009-r001",
+   "attempt_ids_sha256": "09bec788c78949a82972aa25b940b57f8928cc574d35c3557089265a253b0232",
+   "calls": {
+    "global_pm": 5,
+    "radar_committees": 0,
+    "radar_calls_max": 0
+   },
+   "usd": {
+    "reserve_global_pm": "0.798720",
+    "reserve_radar": "0.000000",
+    "reserve_total": "0.798720",
+    "observed_floor_reference": "0.12452250",
+    "billed": "UNKNOWN_UNTIL_PROVIDER_INVOICE"
+   },
+   "precision": {
+    "normal_approx_half_width95_at_p50": 0.4383,
+    "zero_rejection_upper_bound95": 0.45072
+   },
+   "status": "BLOCKED",
+   "blocks": [
+    "HOLDINGS_PREPARATION_PATH_NOT_IMPLEMENTED"
+   ]
+  },
+  {
+   "id": "c3-oos",
+   "evaluation": "RETROSPECTIVE_OUT_OF_SAMPLE",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "scenario": "S0",
+   "sessions": [
+    "2026-09-01",
+    "2026-09-04",
+    "2026-09-10",
+    "2026-09-11",
+    "2026-09-14",
+    "2026-09-17",
+    "2026-09-29",
+    "2026-10-05",
+    "2026-10-06",
+    "2026-10-07"
+   ],
+   "replications": 1,
+   "attempts": 10,
+   "first_attempt_id": "v76-c3-oos-20260901-r001",
+   "attempt_ids_sha256": "cf9c4c6e9d666048f7dcfcb6ed844f32b7ccb7dc02c71cb1c2a8aa6aa582298f",
+   "calls": {
+    "global_pm": 10,
+    "radar_committees": 50,
+    "radar_calls_max": 300
+   },
+   "usd": {
+    "reserve_global_pm": "1.597440",
+    "reserve_radar": "33.177600",
+    "reserve_total": "34.775040",
+    "observed_floor_reference": "0.68043750",
+    "billed": "UNKNOWN_UNTIL_PROVIDER_INVOICE"
+   },
+   "precision": {
+    "normal_approx_half_width95_at_p50": 0.3099,
+    "zero_rejection_upper_bound95": 0.258866
+   },
+   "status": "BLOCKED",
+   "blocks": [
+    "COTAHIST_SESSION_VERIFICATION",
+    "PROTOCOL_FROZEN",
+    "RADAR_AGGREGATE_EXCEEDS_CAP_REQUIRES_HUMAN_BUDGET_AUTHORIZATION"
+   ]
+  },
+  {
+   "id": "c4-prospective",
+   "evaluation": "PROSPECTIVE",
+   "treatment": "HFL-MULTIASSET-GLOBAL-PM-V2",
+   "scenario": "S0",
+   "sessions": [
+    "AFTER_FREEZE_01",
+    "AFTER_FREEZE_02",
+    "AFTER_FREEZE_03",
+    "AFTER_FREEZE_04",
+    "AFTER_FREEZE_05",
+    "AFTER_FREEZE_06",
+    "AFTER_FREEZE_07",
+    "AFTER_FREEZE_08",
+    "AFTER_FREEZE_09",
+    "AFTER_FREEZE_10",
+    "AFTER_FREEZE_11",
+    "AFTER_FREEZE_12",
+    "AFTER_FREEZE_13",
+    "AFTER_FREEZE_14",
+    "AFTER_FREEZE_15",
+    "AFTER_FREEZE_16",
+    "AFTER_FREEZE_17",
+    "AFTER_FREEZE_18",
+    "AFTER_FREEZE_19",
+    "AFTER_FREEZE_20"
+   ],
+   "replications": 1,
+   "attempts": 20,
+   "first_attempt_id": "v76-c4-prospective-after_freeze_01-r001",
+   "attempt_ids_sha256": "eabde2b59188e1a56870bc7dc454c45f8d3a466719b06723674c3562b62b4090",
+   "calls": {
+    "global_pm": 20,
+    "radar_committees": 100,
+    "radar_calls_max": 600
+   },
+   "usd": {
+    "reserve_global_pm": "3.194880",
+    "reserve_radar": "66.355200",
+    "reserve_total": "69.550080",
+    "observed_floor_reference": "1.36087500",
+    "billed": "UNKNOWN_UNTIL_PROVIDER_INVOICE"
+   },
+   "precision": {
+    "normal_approx_half_width95_at_p50": 0.2191,
+    "zero_rejection_upper_bound95": 0.139108
+   },
+   "status": "BLOCKED",
+   "blocks": [
+    "PROTOCOL_FROZEN",
+    "PAPER_LEDGER_NOT_IMPLEMENTED",
+    "RADAR_AGGREGATE_EXCEEDS_CAP_REQUIRES_HUMAN_BUDGET_AUTHORIZATION"
+   ]
+  }
+ ],
+ "errors": [],
+ "plan_sha256": "c9487033aa2bec43f302264af5a5a148bfa9cae77da03a738c6990472d6b1f80"
+}

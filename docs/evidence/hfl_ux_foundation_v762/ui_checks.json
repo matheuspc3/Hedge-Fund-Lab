@@ -1,0 +1,572 @@
+{
+ "passed": 113,
+ "failed": 0,
+ "requests": 821,
+ "results": [
+  {
+   "name": "nav:home:single_global_nav",
+   "ok": true,
+   "detail": "{\"navs\":1,\"legacyNavs\":0,\"legacyLabels\":[],\"area\":\"inicio\",\"section\":null,\"crumbs\":[\"Hedge-Fund-Lab\",\"Início\"],\"env\":\"AMBIENTE EXPERIMENTAL · SEM ORDENS REAIS\",\"versions\":false,\"title\":\"Início · Hedge-Fund-Lab\",\"overflow\":0,\"h1\":1}"
+  },
+  {
+   "name": "nav:home:no_legacy_labels",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "nav:home:area",
+   "ok": true,
+   "detail": "{\"navs\":1,\"legacyNavs\":0,\"legacyLabels\":[],\"area\":\"inicio\",\"section\":null,\"crumbs\":[\"Hedge-Fund-Lab\",\"Início\"],\"env\":\"AMBIENTE EXPERIMENTAL · SEM ORDENS REAIS\",\"versions\":false,\"title\":\"Início · Hedge-Fund-Lab\",\"overflow\":0,\"h1\":1}"
+  },
+  {
+   "name": "nav:home:no_version_branding",
+   "ok": true,
+   "detail": "Início · Hedge-Fund-Lab"
+  },
+  {
+   "name": "nav:home:breadcrumb",
+   "ok": true,
+   "detail": "[\"Hedge-Fund-Lab\",\"Início\"]"
+  },
+  {
+   "name": "ds:home:tokens_loaded",
+   "ok": true,
+   "detail": "[\"#6a8199\",\"#6a8199\"]"
+  },
+  {
+   "name": "help:home:ids_valid",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "layout:home:desktop:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "nav:radar:single_global_nav",
+   "ok": true,
+   "detail": "{\"navs\":1,\"legacyNavs\":0,\"legacyLabels\":[],\"area\":\"mercado\",\"section\":\"Radar de comitês\",\"crumbs\":[\"Hedge-Fund-Lab\",\"Mercado\",\"Radar de comitês\"],\"env\":\"CONSULTIVO · PARECERES DE IA, SEM ORDENS\",\"versions\":false,\"title\":\"Radar · Mercado · Hedge-Fund-Lab\",\"overflow\":0,\"h1\":1}"
+  },
+  {
+   "name": "nav:radar:no_legacy_labels",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "nav:radar:area",
+   "ok": true,
+   "detail": "{\"navs\":1,\"legacyNavs\":0,\"legacyLabels\":[],\"area\":\"mercado\",\"section\":\"Radar de comitês\",\"crumbs\":[\"Hedge-Fund-Lab\",\"Mercado\",\"Radar de comitês\"],\"env\":\"CONSULTIVO · PARECERES DE IA, SEM ORDENS\",\"versions\":false,\"title\":\"Radar · Mercado · Hedge-Fund-Lab\",\"overflow\":0,\"h1\":1}"
+  },
+  {
+   "name": "nav:radar:no_version_branding",
+   "ok": true,
+   "detail": "Radar · Mercado · Hedge-Fund-Lab"
+  },
+  {
+   "name": "nav:radar:breadcrumb",
+   "ok": true,
+   "detail": "[\"Hedge-Fund-Lab\",\"Mercado\",\"Radar de comitês\"]"
+  },
+  {
+   "name": "ds:radar:tokens_loaded",
+   "ok": true,
+   "detail": "[\"#6a8199\",\"#6a8199\"]"
+  },
+  {
+   "name": "ds:radar:control_border_3to1",
+   "ok": true,
+   "detail": "rgb(106, 129, 153)"
+  },
+  {
+   "name": "help:radar:ids_valid",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "layout:radar:desktop:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "nav:portfolio:single_global_nav",
+   "ok": true,
+   "detail": "{\"navs\":1,\"legacyNavs\":0,\"legacyLabels\":[],\"area\":\"carteira\",\"section\":\"Gestor Global: registros\",\"crumbs\":[\"Hedge-Fund-Lab\",\"Carteira multiativos\",\"Gestor Global: registros\"],\"env\":\"HIPOTÉTICA · CONSULTIVA · SEM EXECUÇÃO\",\"versions\":false,\"title\":\"Carteira multiativos · Hedge-Fund-Lab\",\"overflow\":0,\"h1\":1}"
+  },
+  {
+   "name": "nav:portfolio:no_legacy_labels",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "nav:portfolio:area",
+   "ok": true,
+   "detail": "{\"navs\":1,\"legacyNavs\":0,\"legacyLabels\":[],\"area\":\"carteira\",\"section\":\"Gestor Global: registros\",\"crumbs\":[\"Hedge-Fund-Lab\",\"Carteira multiativos\",\"Gestor Global: registros\"],\"env\":\"HIPOTÉTICA · CONSULTIVA · SEM EXECUÇÃO\",\"versions\":false,\"title\":\"Carteira multiativos · Hedge-Fund-Lab\",\"overflow\":0,\"h1\":1}"
+  },
+  {
+   "name": "nav:portfolio:no_version_branding",
+   "ok": true,
+   "detail": "Carteira multiativos · Hedge-Fund-Lab"
+  },
+  {
+   "name": "nav:portfolio:breadcrumb",
+   "ok": true,
+   "detail": "[\"Hedge-Fund-Lab\",\"Carteira multiativos\",\"Gestor Global: registros\"]"
+  },
+  {
+   "name": "ds:portfolio:tokens_loaded",
+   "ok": true,
+   "detail": "[\"#6a8199\",\"#6a8199\"]"
+  },
+  {
+   "name": "ds:portfolio:control_border_3to1",
+   "ok": true,
+   "detail": "rgb(106, 129, 153)"
+  },
+  {
+   "name": "help:portfolio:ids_valid",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "layout:portfolio:desktop:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "nav:paper:single_global_nav",
+   "ok": true,
+   "detail": "{\"navs\":1,\"legacyNavs\":0,\"legacyLabels\":[],\"area\":\"operacao\",\"section\":\"Resumo das carteiras\",\"crumbs\":[\"Hedge-Fund-Lab\",\"Operação diária PETR4\",\"Resumo das carteiras\"],\"env\":\"PAPER PROSPECTIVO · CARTEIRAS VIRTUAIS\",\"versions\":false,\"title\":\"Operação diária PETR4 · Hedge-Fund-Lab\",\"overflow\":0,\"h1\":5}"
+  },
+  {
+   "name": "nav:paper:no_legacy_labels",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "nav:paper:area",
+   "ok": true,
+   "detail": "{\"navs\":1,\"legacyNavs\":0,\"legacyLabels\":[],\"area\":\"operacao\",\"section\":\"Resumo das carteiras\",\"crumbs\":[\"Hedge-Fund-Lab\",\"Operação diária PETR4\",\"Resumo das carteiras\"],\"env\":\"PAPER PROSPECTIVO · CARTEIRAS VIRTUAIS\",\"versions\":false,\"title\":\"Operação diária PETR4 · Hedge-Fund-Lab\",\"overflow\":0,\"h1\":5}"
+  },
+  {
+   "name": "nav:paper:no_version_branding",
+   "ok": true,
+   "detail": "Operação diária PETR4 · Hedge-Fund-Lab"
+  },
+  {
+   "name": "nav:paper:breadcrumb",
+   "ok": true,
+   "detail": "[\"Hedge-Fund-Lab\",\"Operação diária PETR4\",\"Resumo das carteiras\"]"
+  },
+  {
+   "name": "ds:paper:tokens_loaded",
+   "ok": true,
+   "detail": "[\"#6a8199\",\"#6a8199\"]"
+  },
+  {
+   "name": "ds:paper:control_border_3to1",
+   "ok": true,
+   "detail": "rgb(106, 129, 153)"
+  },
+  {
+   "name": "help:paper:ids_valid",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "layout:paper:desktop:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "nav:h2:single_global_nav",
+   "ok": true,
+   "detail": "{\"navs\":1,\"legacyNavs\":0,\"legacyLabels\":[],\"area\":\"pesquisa\",\"section\":\"Experimento H2\",\"crumbs\":[\"Hedge-Fund-Lab\",\"Pesquisa\",\"Experimento H2\"],\"env\":\"REGISTRO HISTÓRICO · SOMENTE LEITURA\",\"versions\":false,\"title\":\"Experimento H2 · Pesquisa · Hedge-Fund-Lab\",\"overflow\":0,\"h1\":1}"
+  },
+  {
+   "name": "nav:h2:no_legacy_labels",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "nav:h2:area",
+   "ok": true,
+   "detail": "{\"navs\":1,\"legacyNavs\":0,\"legacyLabels\":[],\"area\":\"pesquisa\",\"section\":\"Experimento H2\",\"crumbs\":[\"Hedge-Fund-Lab\",\"Pesquisa\",\"Experimento H2\"],\"env\":\"REGISTRO HISTÓRICO · SOMENTE LEITURA\",\"versions\":false,\"title\":\"Experimento H2 · Pesquisa · Hedge-Fund-Lab\",\"overflow\":0,\"h1\":1}"
+  },
+  {
+   "name": "nav:h2:no_version_branding",
+   "ok": true,
+   "detail": "Experimento H2 · Pesquisa · Hedge-Fund-Lab"
+  },
+  {
+   "name": "nav:h2:breadcrumb",
+   "ok": true,
+   "detail": "[\"Hedge-Fund-Lab\",\"Pesquisa\",\"Experimento H2\"]"
+  },
+  {
+   "name": "ds:h2:tokens_loaded",
+   "ok": true,
+   "detail": "[\"#6a8199\",\"#6a8199\"]"
+  },
+  {
+   "name": "help:h2:ids_valid",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "layout:h2:desktop:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "nav:logs:single_global_nav",
+   "ok": true,
+   "detail": "{\"navs\":1,\"legacyNavs\":0,\"legacyLabels\":[],\"area\":\"auditoria\",\"section\":\"Logs técnicos\",\"crumbs\":[\"Hedge-Fund-Lab\",\"Auditoria\",\"Logs técnicos\"],\"env\":\"SOMENTE LEITURA · REGISTROS E INTEGRIDADE\",\"versions\":false,\"title\":\"Logs técnicos · Auditoria · Hedge-Fund-Lab\",\"overflow\":0,\"h1\":0}"
+  },
+  {
+   "name": "nav:logs:no_legacy_labels",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "nav:logs:area",
+   "ok": true,
+   "detail": "{\"navs\":1,\"legacyNavs\":0,\"legacyLabels\":[],\"area\":\"auditoria\",\"section\":\"Logs técnicos\",\"crumbs\":[\"Hedge-Fund-Lab\",\"Auditoria\",\"Logs técnicos\"],\"env\":\"SOMENTE LEITURA · REGISTROS E INTEGRIDADE\",\"versions\":false,\"title\":\"Logs técnicos · Auditoria · Hedge-Fund-Lab\",\"overflow\":0,\"h1\":0}"
+  },
+  {
+   "name": "nav:logs:no_version_branding",
+   "ok": true,
+   "detail": "Logs técnicos · Auditoria · Hedge-Fund-Lab"
+  },
+  {
+   "name": "nav:logs:breadcrumb",
+   "ok": true,
+   "detail": "[\"Hedge-Fund-Lab\",\"Auditoria\",\"Logs técnicos\"]"
+  },
+  {
+   "name": "ds:logs:tokens_loaded",
+   "ok": true,
+   "detail": "[\"#6a8199\",\"#6a8199\"]"
+  },
+  {
+   "name": "help:logs:ids_valid",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "layout:logs:desktop:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "nav:legacy:single_global_nav",
+   "ok": true,
+   "detail": "{\"navs\":1,\"legacyNavs\":0,\"legacyLabels\":[],\"area\":\"pesquisa\",\"section\":\"Backtests legados\",\"crumbs\":[\"Hedge-Fund-Lab\",\"Pesquisa\",\"Backtests legados\"],\"env\":\"REGISTRO HISTÓRICO · SOMENTE LEITURA\",\"versions\":false,\"title\":\"Backtests legados · Pesquisa · Hedge-Fund-Lab\",\"overflow\":0,\"h1\":1}"
+  },
+  {
+   "name": "nav:legacy:no_legacy_labels",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "nav:legacy:area",
+   "ok": true,
+   "detail": "{\"navs\":1,\"legacyNavs\":0,\"legacyLabels\":[],\"area\":\"pesquisa\",\"section\":\"Backtests legados\",\"crumbs\":[\"Hedge-Fund-Lab\",\"Pesquisa\",\"Backtests legados\"],\"env\":\"REGISTRO HISTÓRICO · SOMENTE LEITURA\",\"versions\":false,\"title\":\"Backtests legados · Pesquisa · Hedge-Fund-Lab\",\"overflow\":0,\"h1\":1}"
+  },
+  {
+   "name": "nav:legacy:no_version_branding",
+   "ok": true,
+   "detail": "Backtests legados · Pesquisa · Hedge-Fund-Lab"
+  },
+  {
+   "name": "nav:legacy:breadcrumb",
+   "ok": true,
+   "detail": "[\"Hedge-Fund-Lab\",\"Pesquisa\",\"Backtests legados\"]"
+  },
+  {
+   "name": "ds:legacy:tokens_loaded",
+   "ok": true,
+   "detail": "[\"#6a8199\",\"#6a8199\"]"
+  },
+  {
+   "name": "help:legacy:ids_valid",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "layout:legacy:desktop:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "layout:home:notebook:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "layout:radar:notebook:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "layout:portfolio:notebook:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "layout:paper:notebook:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "layout:h2:notebook:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "layout:logs:notebook:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "layout:legacy:notebook:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "layout:home:tablet:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "layout:radar:tablet:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "layout:portfolio:tablet:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "layout:paper:tablet:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "layout:h2:tablet:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "layout:logs:tablet:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "layout:legacy:tablet:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "layout:home:phone:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "layout:radar:phone:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "layout:portfolio:phone:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "layout:paper:phone:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "layout:h2:phone:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "layout:logs:phone:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "layout:legacy:phone:no_horizontal_overflow",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "route:/paper#agentes",
+   "ok": true,
+   "detail": "{\"navs\":1,\"legacyNavs\":0,\"legacyLabels\":[],\"area\":\"pesquisa\",\"section\":\"Catálogo de agentes H2\",\"crumbs\":[\"Hedge-Fund-Lab\",\"Pesquisa\",\"Catálogo de agentes H2\"],\"env\":\"REGISTRO HISTÓRICO · SOMENTE LEITURA\",\"versions\":false,\"title\":\"Operação diária PETR4 · Hedge-Fund-Lab\",\"overflow\":0,\"h1\":5}"
+  },
+  {
+   "name": "route:/paper#supervisao",
+   "ok": true,
+   "detail": "{\"navs\":1,\"legacyNavs\":0,\"legacyLabels\":[],\"area\":\"operacao\",\"section\":\"Decisão do dia\",\"crumbs\":[\"Hedge-Fund-Lab\",\"Operação diária PETR4\",\"Decisão do dia\"],\"env\":\"PAPER PROSPECTIVO · CARTEIRAS VIRTUAIS\",\"versions\":false,\"title\":\"Operação diária PETR4 · Hedge-Fund-Lab\",\"overflow\":0,\"h1\":5}"
+  },
+  {
+   "name": "route:/#audit",
+   "ok": true,
+   "detail": "{\"navs\":1,\"legacyNavs\":0,\"legacyLabels\":[],\"area\":\"auditoria\",\"section\":\"Registros e processos\",\"crumbs\":[\"Hedge-Fund-Lab\",\"Auditoria\",\"Registros e processos\"],\"env\":\"SOMENTE LEITURA · REGISTROS E INTEGRIDADE\",\"versions\":false,\"title\":\"Início · Hedge-Fund-Lab\",\"overflow\":0,\"h1\":1}"
+  },
+  {
+   "name": "route:/#wallets",
+   "ok": true,
+   "detail": "{\"navs\":1,\"legacyNavs\":0,\"legacyLabels\":[],\"area\":\"inicio\",\"section\":null,\"crumbs\":[\"Hedge-Fund-Lab\",\"Início\"],\"env\":\"AMBIENTE EXPERIMENTAL · SEM ORDENS REAIS\",\"versions\":false,\"title\":\"Início · Hedge-Fund-Lab\",\"overflow\":0,\"h1\":1}"
+  },
+  {
+   "name": "route:/h2#provisional/audit",
+   "ok": true,
+   "detail": "{\"navs\":1,\"legacyNavs\":0,\"legacyLabels\":[],\"area\":\"pesquisa\",\"section\":\"Experimento H2\",\"crumbs\":[\"Hedge-Fund-Lab\",\"Pesquisa\",\"Experimento H2\"],\"env\":\"REGISTRO HISTÓRICO · SOMENTE LEITURA\",\"versions\":false,\"title\":\"Experimento H2 · Pesquisa · Hedge-Fund-Lab\",\"overflow\":0,\"h1\":1}"
+  },
+  {
+   "name": "route:/portfolio#ai-proposal",
+   "ok": true,
+   "detail": "{\"navs\":1,\"legacyNavs\":0,\"legacyLabels\":[],\"area\":\"carteira\",\"section\":\"Propostas e simulações\",\"crumbs\":[\"Hedge-Fund-Lab\",\"Carteira multiativos\",\"Propostas e simulações\"],\"env\":\"HIPOTÉTICA · CONSULTIVA · SEM EXECUÇÃO\",\"versions\":false,\"title\":\"Carteira multiativos · Hedge-Fund-Lab\",\"overflow\":0,\"h1\":1}"
+  },
+  {
+   "name": "deeplink:radar_run_kept",
+   "ok": true,
+   "detail": "{\"search\":\"?run=radar-2026-10-09-recovery-01\",\"select\":\"radar-2026-10-09-recovery-01\",\"carteira\":\"/portfolio?run=radar-2026-10-09-recovery-01#global-workflow\"}"
+  },
+  {
+   "name": "deeplink:run_carried_to_carteira",
+   "ok": true,
+   "detail": "{\"search\":\"?run=radar-2026-10-09-recovery-01\",\"select\":\"radar-2026-10-09-recovery-01\",\"carteira\":\"/portfolio?run=radar-2026-10-09-recovery-01#global-workflow\"}"
+  },
+  {
+   "name": "deeplink:reload_keeps_run",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "deeplink:portfolio_run_kept",
+   "ok": true,
+   "detail": "{\"search\":\"?run=radar-2026-10-09-recovery-01\",\"mercado\":\"/radar?run=radar-2026-10-09-recovery-01\",\"mode\":true}"
+  },
+  {
+   "name": "history:hash_navigation_and_back",
+   "ok": true,
+   "detail": "{\"afterClick\":\"Carteiras prospectivas\",\"afterBack\":\"Decisão do dia\"}"
+  },
+  {
+   "name": "keyboard:skip_link_first",
+   "ok": true,
+   "detail": "hfl-skip"
+  },
+  {
+   "name": "keyboard:reaches_primary_nav_with_focus_ring",
+   "ok": true,
+   "detail": "{\"text\":\"Início\",\"outline\":\"solid\",\"width\":\"3px\"}"
+  },
+  {
+   "name": "help:opens_on_click",
+   "ok": true,
+   "detail": "{\"open\":true,\"expanded\":\"true\",\"focusInside\":true,\"title\":\"Sem ordens reais\",\"role\":\"dialog\"}"
+  },
+  {
+   "name": "help:escape_closes_and_returns_focus",
+   "ok": true,
+   "detail": "{\"open\":false,\"focus\":\"sem-ordens-reais\",\"expanded\":\"false\"}"
+  },
+  {
+   "name": "help:opens_with_keyboard_enter",
+   "ok": true,
+   "detail": "{\"open\":true}"
+  },
+  {
+   "name": "help:close_button",
+   "ok": true,
+   "detail": "{\"open\":false,\"focus\":\"sem-ordens-reais\"}"
+  },
+  {
+   "name": "help:stays_open_while_reading",
+   "ok": true,
+   "detail": "{\"open\":true}"
+  },
+  {
+   "name": "help:center_lists_and_filters_glossary",
+   "ok": true,
+   "detail": "{\"open\":true,\"visible\":[\"glossario-drawdown\"],\"total\":36}"
+  },
+  {
+   "name": "help:touch_opens_within_viewport",
+   "ok": true,
+   "detail": "{\"open\":true,\"left\":12,\"right\":378,\"vw\":390}"
+  },
+  {
+   "name": "mobile:menu_collapsed",
+   "ok": true,
+   "detail": "{\"menu\":\"flex\",\"nav\":\"none\"}"
+  },
+  {
+   "name": "mobile:menu_opens_by_tap",
+   "ok": true,
+   "detail": "{\"expanded\":\"true\",\"nav\":\"block\",\"links\":6,\"safety\":\"flex\"}"
+  },
+  {
+   "name": "mobile:escape_closes_menu",
+   "ok": true,
+   "detail": "{\"expanded\":\"false\",\"focus\":\"hfl-menu\"}"
+  },
+  {
+   "name": "v1:paid_triggers_disabled_and_hidden",
+   "ok": true,
+   "detail": "[[\"workflow-prepare\",true,true],[\"workflow-preflight\",true,true],[\"workflow-run\",true,true],[\"workflow-authorize\",true,true]]"
+  },
+  {
+   "name": "v1:closed_notice_visible",
+   "ok": true,
+   "detail": "⊝\nTratamento encerrado\n Novas inferências pelo painel estão desativadas\n\nEste tratamento (HFL-MULTIASSET-GLOBAL-PM-V1) foi encerrado para novas inferências. Os resultados anteriores permanecem disponíveis para consulta e auditoria. ?\n\nO tratamento vigente, HFL-MULTIASSET-GLOBAL-PM-V2, é executado somente pelo CLI, com verificação de requisitos e autorização humana separadas. Este painel não oferece atalho pago para ele."
+  },
+  {
+   "name": "v1:forced_clicks_do_nothing",
+   "ok": true,
+   "detail": "{\"dialog\":false,\"triggered\":[]}"
+  },
+  {
+   "name": "v1:history_still_consultable_and_rejected",
+   "ok": true,
+   "detail": "CONSULTIVO COM GEMINI \n✕\nRejeitada pelo validador\nREJECTED_BY_VALIDATOR\n\nBloqueado · REJECTED_BY_VALIDATOR\n\nSnapshot hipotético: patrimônio R$ 100.000,00 · caixa R$ 100.000,00 · sessão 2026-10-09.\n\nObservação 12/10/2026, 15:18:04 BRT · validade 13/10/2026, 15:18:04 BRT.\nModelo previsto gemini-3.8-fl"
+  },
+  {
+   "name": "v2:still_valid_and_no_paid_shortcut",
+   "ok": true,
+   "detail": "{\"current\":\"CONSULTIVO COM GEMINI \\n✓\\nProposta validada\\nVALID_PROPOSAL\\n\\nProcesso concluído · VALID_PROPOSAL\\n\\nIdentidade V2: preflight e execução somente pelo CLI, com autorização humana separada. Esta página só consulta.\\n\\nSnapshot hipotético: patrimônio R$ 100.000,00 · caixa R$ 100.000,00 · sessão 2026-10-09.\\n\\nObservação 12/10/2026, 17:29:22 BRT · validade 13/10/2026, 17:29:22 BRT.\\nModelo previsto gemini-3.8-flash · nenhuma execução financeira\\nRegistro v74-76d07c0d32444cecaf07e875deacb519\\nIdentidade HFL-MULTIASSET-GLOBAL-PM-V2\\nContexto c4879f282017a59c8e6b520a423150a10c722cdda507ababe2c2d8eee850f210\\nOrigem Radar: radar-2026-10-09-recovery-01 · sessão 2026-10-09 · OFFICIAL · VERIFIED (congelada no preparo; trocar a execução selecionada não altera este contexto)\",\"run\":true,\"preflight\":true}"
+  },
+  {
+   "name": "states:home_shows_real_v1_v2",
+   "ok": true,
+   "detail": "[{\"state\":\"COMPLETED\",\"tone\":\"neutral\",\"text\":\"●\\nExecução concluída\\nCOMPLETED\",\"icon\":\"●\"},{\"state\":\"VALID_PROPOSAL\",\"tone\":\"ok\",\"text\":\"✓\\nProposta validada\\nVALID_PROPOSAL\",\"icon\":\"✓\"},{\"state\":\"REJECTED_BY_VALIDATOR\",\"tone\":\"error\",\"text\":\"✕\\nRejeitada pelo validador\\nREJECTED_BY_VALIDATOR\",\"icon\":\"✕\"},{\"state\":\"COMPLETED\",\"tone\":\"neutral\",\"text\":\"●\\nDecisão registrada\\nCOMPLETED\",\"icon\":\"●\"},{\"state\":\"COMPLETED\",\"tone\":\"neutral\",\"text\":\"●\\nHashes conferem\\nCOMPLETED\",\"icon\":\"●\"}]"
+  },
+  {
+   "name": "actions:paid_vs_read_distinct",
+   "ok": true,
+   "detail": "[[\"prepare\",\"prepare\",\"\\\"✎\\\" / \\\"\\\"\"],[\"preflight\",\"verify\",\"\\\"☑\\\" / \\\"\\\"\"],[\"execute\",\"paid\",\"\\\"¤\\\" / \\\"\\\"\"],[\"refresh\",\"read\",\"\\\"◎\\\" / \\\"\\\"\"],[\"compare\",\"read\",\"\\\"◎\\\" / \\\"\\\"\"]]"
+  },
+  {
+   "name": "h2:no_final_test_control",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "safety:only_get_no_provider",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "console:no_errors",
+   "ok": true,
+   "detail": "[]"
+  }
+ ]
+}

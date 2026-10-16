@@ -1,0 +1,13 @@
+{
+  "anchor": "2021-02-18",
+  "repetition": 1,
+  "history_rows": 1268,
+  "history_first_session": "2016-01-04",
+  "history_last_session": "2021-02-18",
+  "execution": "none: decision and intent only; open(t+1) never read",
+  "recovery_used": false,
+  "replayed_calls": 0,
+  "live_calls": 7,
+  "wall_clock_seconds": 8.0,
+  "sealed_utc": "2026-10-08T22:12:51Z"
+}

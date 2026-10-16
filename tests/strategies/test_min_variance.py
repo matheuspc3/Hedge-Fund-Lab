@@ -2,7 +2,6 @@
 
 import numpy as np
 import pandas as pd
-import pytest
 
 from src.strategies.min_variance import MinVariance
 
@@ -61,10 +60,12 @@ class TestMinVariance:
     def test_optimize_weights_2_ativos(self):
         """_optimize_weights com 2 ativos: pesos somam 1."""
         rng = np.random.default_rng(42)
-        retornos = pd.DataFrame({
-            "A": rng.normal(0.001, 0.02, 252),
-            "B": rng.normal(0.001, 0.03, 252),
-        })
+        retornos = pd.DataFrame(
+            {
+                "A": rng.normal(0.001, 0.02, 252),
+                "B": rng.normal(0.001, 0.03, 252),
+            }
+        )
         pesos = MinVariance._optimize_weights(retornos)
         assert len(pesos) == 2
         assert abs(pesos.sum() - 1.0) < 1e-6

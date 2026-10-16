@@ -1,0 +1,74 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+_________________ test_manifest_adulterado_e_rejeitado[code] __________________
+
+tmp_path = WindowsPath('C:/Users/LUCAS/Meu Canto/TCC/Hedge-Fund-Lab/.pytest_temp/v764-code-inside-00354e2716964cf88e606ca892d51d80/test_manifest_adulterado_e_rej0')
+mutate = <function <lambda> at 0x000001C9E235E340>
+
+    @pytest.mark.parametrize(
+        "mutate",
+        [
+            lambda m: m["quality"].update(scientific_ready=False, status="attention"),
+            lambda m: m["coverage"][0].update(missing_sessions_count=5),
+            lambda m: m["coverage"][0].update(complete=False),
+            lambda m: m["coverage"][0].update(coverage_ratio=0.1),
+            lambda m: m["files"][0].update(sha256="0" * 64),
+            lambda m: m["files"][0].update(size=1),
+            lambda m: m.update(tickers=["ITUB4.SA"]),
+            lambda m: m["files"][0].update(ticker="ITUB4.SA"),
+            lambda m: m.update(requested_start="2019-01-01"),
+            lambda m: m.update(effective_end="2030-01-01"),
+            lambda m: m["calendar"].update(extra_closures=["2020-01-06"]),
+            lambda m: m["source"].update(name="outra-fonte"),
+            lambda m: m["pipeline"].update(extractor="outro.extrator"),
+            lambda m: m["code"].update(git_dirty=False),
+            lambda m: m.update(created_at="2020-01-02T00:00:00.000000Z"),
+        ],
+        ids=[
+            "quality",
+            "coverage-missing",
+            "coverage-complete",
+            "coverage-ratio",
+            "files-sha256",
+            "files-size",
+            "tickers",
+            "files-ticker",
+            "requested-interval",
+            "effective-interval",
+            "calendar",
+            "source",
+            "pipeline",
+            "code",
+            "created-at",
+        ],
+    )
+    def test_manifest_adulterado_e_rejeitado(tmp_path: Path, mutate):
+        """Adulterar o manifest quebra a identidade, sem tocar em CSV algum."""
+        snapshot, _ = _build(tmp_path, COMPLETE_DATES)
+        csv_before = (snapshot.path / "data/PETR4.SA.csv").read_bytes()
+    
+>       _rewrite_manifest(snapshot, mutate)
+
+tests\pipeline\test_snapshot.py:485: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+snapshot = DatasetSnapshot(snapshot_id='20261013T134338228786Z-4bc3024f08f6aa432ff1a76c2f39f41a', path=WindowsPath('C:/Users/LUCA...ustment":"auto_adjust=true","price_representation":"adjusted_total_return","version":"1.5.1"},"tickers":["PETR4.SA"]}')
+mutate = <function <lambda> at 0x000001C9E235E340>
+
+    def _rewrite_manifest(snapshot, mutate) -> dict:
+        """Edita o manifest publicado sem recalcular a identidade do snapshot.
+    
+        Falha se a mutação não mudou nada: um teste de adulteração que não adultera
+        passaria por engano.
+        """
+        original = json.loads(snapshot.manifest_path.read_text(encoding="utf-8"))
+        manifest = json.loads(json.dumps(original))
+        mutate(manifest)
+>       assert manifest != original, "a mutação precisa alterar o manifest"
+E       AssertionError: a mutação precisa alterar o manifest
+E       assert {'action_files': [{'events': 0, 'path': 'actions/PETR4.SA.csv', 'sha256': '3d1f653bc6b898c7b5a7e81f4af2d25820d8c9ae0f7... [{'complete': True, 'coverage_ratio': 1.0, 'effective_end': '2020-01-10', 'effective_start': '2020-01-02', ...}], ...} != {'action_files': [{'events': 0, 'path': 'actions/PETR4.SA.csv', 'sha256': '3d1f653bc6b898c7b5a7e81f4af2d25820d8c9ae0f7... [{'complete': True, 'coverage_ratio': 1.0, 'effective_end': '2020-01-10', 'effective_start': '2020-01-02', ...}], ...}
+
+tests\pipeline\test_snapshot.py:382: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/pipeline/test_snapshot.py::test_manifest_adulterado_e_rejeitado[code]
+1 failed in 2.31s

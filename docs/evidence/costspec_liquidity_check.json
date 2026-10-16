@@ -1,0 +1,185 @@
+{
+  "label": "LIQUIDITY DIAGNOSTIC EVIDENCE — NOT SCIENTIFIC MARKET INPUT",
+  "method_version": "costspec-nominal-liquidity-v1",
+  "purpose": "EXPERIMENT_PROTOCOL.md §10 — ADV check do CostSpec",
+  "calculation_date": "2026-09-28",
+  "provenance": {
+    "git_commit": "1fe23780cceb0b613a903543625e1866e4dd8560",
+    "git_dirty": true,
+    "script": "scripts/analyze_nominal_liquidity.py",
+    "script_sha256": "09fcf8c493bd1c8b743040a1b9cc718930b2701c21bc7ec64638e923c3485646"
+  },
+  "provider": "yfinance",
+  "provider_version": "1.5.1",
+  "auto_adjust": false,
+  "requested_symbols": [
+    "ABEV3.SA",
+    "BBAS3.SA",
+    "BBDC4.SA",
+    "CMIG4.SA",
+    "ITUB4.SA",
+    "PETR4.SA",
+    "RENT3.SA",
+    "SUZB3.SA",
+    "VALE3.SA",
+    "WEGE3.SA"
+  ],
+  "requested_start": "2016-01-01",
+  "requested_end_inclusive": "2026-08-04",
+  "daily_financial_volume": "Close * Volume; volume zero e sessão ausente excluídos",
+  "calendar": "sessões com barra completa (Open > 0 e Close > 0) em todos os símbolos",
+  "minimum_history_sessions": 504,
+  "rolling_sessions": 252,
+  "eligible_start": "2018-01-02",
+  "eligible_end": "2026-08-04",
+  "eligible_sessions": 2135,
+  "order_notional_brl": 100000.0,
+  "provider_sanity": {
+    "status": "PASS",
+    "split_checks": [
+      {
+        "symbol": "BBAS3.SA",
+        "session": "2024-04-16",
+        "expected_ratio": 2.0,
+        "recorded_ratio": 2.0,
+        "window_sessions": 20,
+        "median_fv_before_brl": 409447890.38,
+        "median_fv_after_brl": 404687910.63,
+        "fv_change": 0.988375,
+        "coherent": true
+      },
+      {
+        "symbol": "WEGE3.SA",
+        "session": "2021-04-28",
+        "expected_ratio": 2.0,
+        "recorded_ratio": 2.0,
+        "window_sessions": 20,
+        "median_fv_before_brl": 387791061.22,
+        "median_fv_after_brl": 300818787.89,
+        "fv_change": 0.775724,
+        "coherent": true
+      },
+      {
+        "symbol": "RENT3.SA",
+        "session": "2017-11-23",
+        "expected_ratio": 3.0,
+        "recorded_ratio": 3.0,
+        "window_sessions": 20,
+        "median_fv_before_brl": 75995232.46,
+        "median_fv_after_brl": 48407854.07,
+        "fv_change": 0.636985,
+        "coherent": true
+      }
+    ]
+  },
+  "tickers": {
+    "ABEV3.SA": {
+      "sessions_used": 2134,
+      "sessions_excluded_zero_volume": 1,
+      "median_eligible_adv_brl": 344227640.74,
+      "latest_252_median_adv_brl": 366215092.74,
+      "worst_252_median_adv_brl": 279290719.23,
+      "worst_252_window_end": "2019-01-10",
+      "order_to_median_adv": 0.00029051,
+      "order_to_worst_adv": 0.00035805
+    },
+    "BBAS3.SA": {
+      "sessions_used": 2131,
+      "sessions_excluded_zero_volume": 4,
+      "median_eligible_adv_brl": 478383551.85,
+      "latest_252_median_adv_brl": 515754926.55,
+      "worst_252_median_adv_brl": 376285472.79,
+      "worst_252_window_end": "2019-01-10",
+      "order_to_median_adv": 0.00020904,
+      "order_to_worst_adv": 0.00026576
+    },
+    "BBDC4.SA": {
+      "sessions_used": 2133,
+      "sessions_excluded_zero_volume": 2,
+      "median_eligible_adv_brl": 599848770.57,
+      "latest_252_median_adv_brl": 536725024.59,
+      "worst_252_median_adv_brl": 405788195.21,
+      "worst_252_window_end": "2019-01-10",
+      "order_to_median_adv": 0.00016671,
+      "order_to_worst_adv": 0.00024643
+    },
+    "CMIG4.SA": {
+      "sessions_used": 2133,
+      "sessions_excluded_zero_volume": 2,
+      "median_eligible_adv_brl": 116255950.41,
+      "latest_252_median_adv_brl": 125091800.44,
+      "worst_252_median_adv_brl": 84849260.97,
+      "worst_252_window_end": "2019-01-10",
+      "order_to_median_adv": 0.00086017,
+      "order_to_worst_adv": 0.00117856
+    },
+    "ITUB4.SA": {
+      "sessions_used": 2134,
+      "sessions_excluded_zero_volume": 1,
+      "median_eligible_adv_brl": 790349812.05,
+      "latest_252_median_adv_brl": 900182918.67,
+      "worst_252_median_adv_brl": 577118325.31,
+      "worst_252_window_end": "2019-01-10",
+      "order_to_median_adv": 0.00012653,
+      "order_to_worst_adv": 0.00017327
+    },
+    "PETR4.SA": {
+      "sessions_used": 2134,
+      "sessions_excluded_zero_volume": 1,
+      "median_eligible_adv_brl": 1445022568.84,
+      "latest_252_median_adv_brl": 1328183101.04,
+      "worst_252_median_adv_brl": 970231809.93,
+      "worst_252_window_end": "2025-12-10",
+      "order_to_median_adv": 6.92e-05,
+      "order_to_worst_adv": 0.00010307
+    },
+    "RENT3.SA": {
+      "sessions_used": 2134,
+      "sessions_excluded_zero_volume": 1,
+      "median_eligible_adv_brl": 293555218.96,
+      "latest_252_median_adv_brl": 314631325.21,
+      "worst_252_median_adv_brl": 108213669.87,
+      "worst_252_window_end": "2019-01-10",
+      "order_to_median_adv": 0.00034065,
+      "order_to_worst_adv": 0.0009241
+    },
+    "SUZB3.SA": {
+      "sessions_used": 2134,
+      "sessions_excluded_zero_volume": 1,
+      "median_eligible_adv_brl": 273710959.33,
+      "latest_252_median_adv_brl": 258805144.71,
+      "worst_252_median_adv_brl": 184053855.78,
+      "worst_252_window_end": "2019-01-10",
+      "order_to_median_adv": 0.00036535,
+      "order_to_worst_adv": 0.00054332
+    },
+    "VALE3.SA": {
+      "sessions_used": 2133,
+      "sessions_excluded_zero_volume": 2,
+      "median_eligible_adv_brl": 1453574608.76,
+      "latest_252_median_adv_brl": 1379517738.04,
+      "worst_252_median_adv_brl": 816784513.46,
+      "worst_252_window_end": "2019-01-10",
+      "order_to_median_adv": 6.88e-05,
+      "order_to_worst_adv": 0.00012243
+    },
+    "WEGE3.SA": {
+      "sessions_used": 2133,
+      "sessions_excluded_zero_volume": 2,
+      "median_eligible_adv_brl": 232092707.97,
+      "latest_252_median_adv_brl": 332036558.32,
+      "worst_252_median_adv_brl": 46867094.5,
+      "worst_252_window_end": "2019-01-10",
+      "order_to_median_adv": 0.00043086,
+      "order_to_worst_adv": 0.00213369
+    }
+  },
+  "worst_case": {
+    "ticker": "WEGE3.SA",
+    "worst_252_median_adv_brl": 46867094.5,
+    "order_to_worst_adv": 0.00213369,
+    "rolling_window_end": "2019-01-10"
+  },
+  "content_sha256_method": "sha256 do JSON canônico (sort_keys, separadores compactos, UTF-8) deste documento sem o campo content_sha256",
+  "content_sha256": "5da7f8d8eab29dbf4e8a0ae1c64c1b155942a289176bab4b0371b3b558d1fb61"
+}

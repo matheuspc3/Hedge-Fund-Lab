@@ -1,0 +1,44 @@
+{
+  "identity": "HFL-MULTIASSET-RADAR-V1",
+  "session": "2026-10-09",
+  "items": [
+    {
+      "ticker": "PETR4",
+      "session": "2026-10-09",
+      "ready": false,
+      "error": "gemini_api_key_missing"
+    },
+    {
+      "ticker": "VALE3",
+      "session": "2026-10-09",
+      "ready": false,
+      "error": "gemini_api_key_missing"
+    },
+    {
+      "ticker": "ITUB4",
+      "session": "2026-10-09",
+      "ready": false,
+      "error": "[Errno 2] No such file or directory: 'C:\\\\Users\\\\LUCAS\\\\Meu Canto\\\\TCC\\\\Hedge-Fund-Lab\\\\data\\\\radar\\\\hfl_multiasset_v1\\\\analyses\\\\ITUB4\\\\2026-10-09\\\\input.json'"
+    },
+    {
+      "ticker": "WEGE3",
+      "session": "2026-10-09",
+      "ready": false,
+      "error": "gemini_api_key_missing"
+    },
+    {
+      "ticker": "BBAS3",
+      "session": "2026-10-09",
+      "ready": false,
+      "error": "gemini_api_key_missing"
+    }
+  ],
+  "replay": false,
+  "max_usd": 5.0,
+  "usd_reserved": 0,
+  "global_budget_used": 0,
+  "global_budget_cap": 5.0,
+  "usd_estimated": 0,
+  "ready": false,
+  "confirmation_token": "045887b924ee2bba57abbe70c11721427d47099885e86f891dee57e6da2d3d3f"
+}

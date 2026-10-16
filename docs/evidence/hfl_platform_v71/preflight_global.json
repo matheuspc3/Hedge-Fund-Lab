@@ -1,0 +1,156 @@
+{
+ "official_readiness": {
+  "session": "2026-10-09",
+  "items": [
+   {
+    "ticker": "PETR4",
+    "session": "2026-10-09",
+    "state": "AWAITING_RADAR_AUTHORIZATION",
+    "action": "Input pronto: preflight Radar e autorização paga própria do lote."
+   },
+   {
+    "ticker": "VALE3",
+    "session": "2026-10-09",
+    "state": "AWAITING_RADAR_AUTHORIZATION",
+    "action": "Input pronto: preflight Radar e autorização paga própria do lote."
+   },
+   {
+    "ticker": "ITUB4",
+    "session": "2026-10-09",
+    "state": "INPUT_BLOCKED",
+    "error": "ValueError: split-like mismatch between yfinance and B3 closes: {2025: 0.9708737739656967, 2026: 0.9999999928491858}",
+    "action": "Evento corporativo (bonificação/desdobramento): preparar com .venv/Scripts/python.exe -B scripts/radar_corporate_events.py prepare --session 2026-10-09 --tickers ITUB4"
+   },
+   {
+    "ticker": "WEGE3",
+    "session": "2026-10-09",
+    "state": "AWAITING_RADAR_AUTHORIZATION",
+    "action": "Input pronto: preflight Radar e autorização paga própria do lote."
+   },
+   {
+    "ticker": "BBAS3",
+    "session": "2026-10-09",
+    "state": "AWAITING_RADAR_AUTHORIZATION",
+    "action": "Input pronto: preflight Radar e autorização paga própria do lote."
+   }
+  ],
+  "missing": [
+   "PETR4",
+   "VALE3",
+   "ITUB4",
+   "WEGE3",
+   "BBAS3"
+  ],
+  "global_pm_ready": false,
+  "provider_calls": 0
+ },
+ "official_selection": {
+  "identity": "HFL-MULTIASSET-GLOBAL-PM-V1",
+  "mode": "CONSULTATIVE_SANDBOX",
+  "session": "2026-10-09",
+  "items": [
+   {
+    "ticker": "PETR4",
+    "status": "MISSING_OR_INELIGIBLE",
+    "reason": "Parecer completo e íntegro desta fonte/sessão necessário; nada foi gerado."
+   },
+   {
+    "ticker": "VALE3",
+    "status": "MISSING_OR_INELIGIBLE",
+    "reason": "Parecer completo e íntegro desta fonte/sessão necessário; nada foi gerado."
+   },
+   {
+    "ticker": "ITUB4",
+    "status": "MISSING_OR_INELIGIBLE",
+    "reason": "Parecer completo e íntegro desta fonte/sessão necessário; nada foi gerado."
+   },
+   {
+    "ticker": "WEGE3",
+    "status": "MISSING_OR_INELIGIBLE",
+    "reason": "Parecer completo e íntegro desta fonte/sessão necessário; nada foi gerado."
+   },
+   {
+    "ticker": "BBAS3",
+    "status": "MISSING_OR_INELIGIBLE",
+    "reason": "Parecer completo e íntegro desta fonte/sessão necessário; nada foi gerado."
+   }
+  ],
+  "status": "INSUFFICIENT_DATA",
+  "missing": [
+   "PETR4",
+   "VALE3",
+   "ITUB4",
+   "WEGE3",
+   "BBAS3"
+  ],
+  "selected": [
+   "PETR4",
+   "VALE3",
+   "ITUB4",
+   "WEGE3",
+   "BBAS3"
+  ],
+  "provider_calls": 0,
+  "radar_cost_preview": {
+   "authorization_scope": "RADAR_ONLY_SEPARATE",
+   "missing_count": 5,
+   "calls_max": 30,
+   "usd_estimated": "0.14625",
+   "usd_reserved": "3.317760",
+   "planning_only": true
+  },
+  "global_pm_cost_preview": {
+   "authorization_scope": "GLOBAL_PM_ONLY_SEPARATE",
+   "calls_max": 1,
+   "usd_reserved_ceiling": "0.159744",
+   "usd_estimated": null,
+   "estimate_note": "Estimativa depende do contexto congelado; nenhum custo autorizado nesta consulta."
+  },
+  "execution_enabled": false
+ },
+ "synthetic_v7_context": {
+  "schema_version": 1,
+  "identity": "HFL-MULTIASSET-GLOBAL-PM-V1",
+  "record_id": "v7-3558f0253cf44dd0a00c93d7be73e56f",
+  "context_sha256": "8e48262b7533282177573f8f1b6af4f2d9acde078b00583df5da3e70ac9da12b",
+  "snapshot_sha256": "bf9a1ddeb9cacb97ed362ac0321340ca4614aebb3117c395d9662bfac51a7a20",
+  "opinion_hashes": {
+   "BBAS3": "03c65df3e321873a512e6918f26107b6326128e3296ad7edafb209f9099b1076",
+   "ITUB4": "fc9c2f7c5ff9fab35ab55117d9bb6acfb3cb3ab3a89aaef2c9256688c32bacae",
+   "PETR4": "0f141e9412cb65122497658e1203185f45a923649b302b77709bb34a6c8d5b59",
+   "VALE3": "f61ad719204edaddc8447b334c78d6284f81bb82e9a81130d5a7f694f16b1fa5",
+   "WEGE3": "5e96994c272dad5f204800ed6c8d1d8ca87c0b02a28825f4e7e77d5e1477bd57"
+  },
+  "contracts_sha256": "faf633a1dad788f3ed72e8b88b8f4c04b9bbccac4fd75277693c50f19a4eda70",
+  "mode": "SYNTHETIC_DEMO",
+  "expires_at": "2026-10-13T00:16:46.287213+00:00",
+  "max_usd": "0.25",
+  "paid": false,
+  "usd_estimated": "0",
+  "usd_reserved": "0",
+  "budget_used": "0",
+  "budget_cap": "5.00",
+  "estimate": {
+   "calls_max": 1,
+   "http_attempts_max": 1,
+   "usd_estimated": "0.0144256875",
+   "usd_reserved": "0.159744",
+   "input_bytes_estimated": 26937,
+   "input_bytes_max": 65536,
+   "output_tokens_max": 8192,
+   "estimate_basis": "Planning: 4 UTF-8 bytes/input token, 2500 output incl thinking; not observed usage.",
+   "reserve_basis": "Full input byte ceiling + output limit at higher announced rates; uncertain reservations never released.",
+   "price_source": "https://ai.google.dev/gemini-api/docs/pricing",
+   "price_checked": "2026-10-11"
+  },
+  "ready": false,
+  "errors": [
+   "already_claimed_replay_only"
+  ],
+  "execution_enabled": false,
+  "confirmation_token": "6caa4284fd43e4eb6d2fbe1e0cc9e394b709e9c474fc57a82c9508de378290cc",
+  "sha256": "cec04a5b7d84e5241f1053175ff895b75897d5cda84d0fa8e12a99151a514b14",
+  "native_state": "BLOCKED",
+  "state": "BLOCKED"
+ }
+}

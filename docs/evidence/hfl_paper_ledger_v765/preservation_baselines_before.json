@@ -1,0 +1,43 @@
+{
+ "baselines": {
+  "hfl_global_pm": {
+   "files": 11027,
+   "changed": 2
+  },
+  "hfl_multiasset_portfolio": {
+   "files": 10922,
+   "changed": 2
+  },
+  "hfl_multiasset_radar": {
+   "files": 10766,
+   "changed": 0
+  },
+  "hfl_platform_v7": {
+   "files": 11094,
+   "changed": 2
+  }
+ },
+ "changes": {
+  "data/radar/hfl_multiasset_v1/job.json": {
+   "category": "OPERATIONAL",
+   "reason": "Estado do job da API Radar.",
+   "current": "7304445202609016d5ead85e532c1e21a521deae103a6a8bd8f24b0c074e430e",
+   "before": {
+    "hfl_global_pm": "5167d1142cfee5859a56753273295f06fa3998c140c5edae4424584ead16a9ed",
+    "hfl_multiasset_portfolio": "5167d1142cfee5859a56753273295f06fa3998c140c5edae4424584ead16a9ed",
+    "hfl_platform_v7": "5167d1142cfee5859a56753273295f06fa3998c140c5edae4424584ead16a9ed"
+   }
+  },
+  "data/radar/hfl_multiasset_v1/last_prepare.json": {
+   "category": "OPERATIONAL",
+   "reason": "Relatório da última chamada de prepare; não é índice nem autoridade sobre inputs.",
+   "current": "3b97f1592c329c0c1db967d6fd74ddbe2cdd9c4ea3490dcde1e060d054e453b1",
+   "before": {
+    "hfl_global_pm": "2414ff966717ebb83b066b10aa78abf324539f479492ae4e5d536c6563b6ef92",
+    "hfl_multiasset_portfolio": "2414ff966717ebb83b066b10aa78abf324539f479492ae4e5d536c6563b6ef92",
+    "hfl_platform_v7": "2414ff966717ebb83b066b10aa78abf324539f479492ae4e5d536c6563b6ef92"
+   }
+  }
+ },
+ "violations": []
+}

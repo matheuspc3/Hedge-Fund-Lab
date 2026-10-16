@@ -1,0 +1,29 @@
+{
+ "status": "LEDGER_QUALIFIED_OFFLINE",
+ "identity": "HFL-MULTIASSET-PAPER-LEDGER-V1",
+ "official_execution_enabled": false,
+ "runtime_tested_commit": "d91e5c5",
+ "post_regression_runtime_changes": false,
+ "targeted": {
+  "passed": 49,
+  "subtests_passed": 68
+ },
+ "browser": {
+  "passed": 30,
+  "failed": 0,
+  "external_or_write_attempts": 0
+ },
+ "regression": {
+  "passed": 1801,
+  "preexisting_failed": 14,
+  "subtests_passed": 129,
+  "new_failures": []
+ },
+ "protected_files": 11250,
+ "violations": [],
+ "calendar_coverage_end": "2026-08-31",
+ "paid_inference": false,
+ "real_orders": false,
+ "official_paper_orders": false,
+ "push": false
+}

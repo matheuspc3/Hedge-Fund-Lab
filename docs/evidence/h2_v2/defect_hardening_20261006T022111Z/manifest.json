@@ -1,0 +1,140 @@
+{
+  "kind": "H2_V2_DEFECT_DIRECTED_HARDENING",
+  "treatment_version": 2,
+  "technical_prompt_version": 2,
+  "technical_prompt_sha256": "a3dec11f4c8911397c0f04ec5c0b7eb6265c420b3b6f7e3f494dd79ca43782e1",
+  "financial_metrics": "none computed (no settlement, no t+1)",
+  "started_utc": "2026-10-06T02:21:11Z",
+  "finished_utc": "2026-10-06T02:22:39Z",
+  "git_commit": "a96d78c071f004d2c0a488137d1e644c0105b03b",
+  "participant_params": {
+    "ticker": "PETR4.SA",
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "temperature": 1.0,
+    "max_output_tokens": 8192,
+    "analyst_count": 5,
+    "consensus_threshold": 0.6,
+    "require_all_votes": true,
+    "decision_frequency": 1,
+    "strict_inputs": true,
+    "portfolio_inversion_policy": "fail",
+    "long_target_weight": 1.0,
+    "risk_max_concentration": 1.0,
+    "risk_max_volatility": 0.4,
+    "risk_max_drawdown": 0.25,
+    "volatility_window": 21,
+    "retry_attempts": 6,
+    "retry_base_delay": 2.0,
+    "thinking_level": "low",
+    "technical_prompt_version": 2
+  },
+  "capability": {
+    "status": "QUALIFIED",
+    "qualified": [
+      "max_output_tokens",
+      "temperature",
+      "thinking_level"
+    ]
+  },
+  "states": [
+    "cal-b1:2018-07-19",
+    "cal-b1:2019-03-07",
+    "cal-b1:2019-10-15",
+    "cal-b1:2020-06-01",
+    "cal-b1:2021-01-13",
+    "cal-b1:2021-08-20",
+    "cal-b1:2022-03-31",
+    "cal-b1:2022-11-04",
+    "cal-b1:2023-06-15",
+    "cal-b1:2024-01-22"
+  ],
+  "repetitions": 3,
+  "cal_b2_commitment": "518dd9ddc132244726fc40b2939684876c6f69bf6bad67ea1f91a78fc4e9b167",
+  "aborted": null,
+  "diagnostics": {
+    "decision_count": 30,
+    "failure_count": 0,
+    "failure_causes": {},
+    "buy_at_target_noop_count": 0,
+    "explicit_hold_rate": 0.7333333333333333,
+    "no_majority_abstention_rate": 0.0,
+    "risk_veto_rate": 0.13333333333333333,
+    "portfolio_hold_rate": 0.0,
+    "total_hold_rate": 0.8666666666666666,
+    "same_state_flip_rate": 0.0,
+    "same_state_disagreement_rate": 0.13333333333333333,
+    "max_tokens_count": 0
+  },
+  "semantic_audit": {
+    "technical_votes": 150,
+    "votes_with_contradiction": 0,
+    "votes_with_transition": 0,
+    "contradiction_rate": 0.0,
+    "transition_rate": 0.0,
+    "flagged": []
+  },
+  "truncations": 0,
+  "gates": {
+    "V2-S1": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "V2-S2": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "V2-A": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "V2-T": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "V2-D": {
+      "value": 0.8666666666666666,
+      "threshold": "< 0.9",
+      "pass": true
+    }
+  },
+  "status": "H2_V2 MINIMAL DEFECT FIX PASSED",
+  "v1_cal_b1_reference_DESCRIPTIVE": {
+    "technical_votes": 50,
+    "votes_with_contradiction": 32,
+    "votes_with_transition": 33,
+    "contradiction_rate": 0.64,
+    "transition_rate": 0.66,
+    "total_hold_rate": 0.9,
+    "tech_explicit_hold_rate": 0.8
+  },
+  "operational": {
+    "logical_calls": 158,
+    "logical_calls_by_stage": {
+      "technical_analyst": 150,
+      "risk_manager": 4,
+      "portfolio_manager": 4
+    },
+    "http_attempts": 159,
+    "attempt_outcomes": {
+      "http_200": 158,
+      "ProviderTransportError": 1
+    },
+    "recovered_retries": 1,
+    "token_usage_totals": {
+      "completion_tokens": 18972,
+      "prompt_tokens": 134647,
+      "total_tokens": 156212,
+      "thoughts_tokens": 2593
+    },
+    "resolved_models": {
+      "gemini-3.8-flash": 158
+    },
+    "wall_clock_seconds": 88.4,
+    "cost": "not computed: no pricing source is recorded in the repository"
+  }
+}

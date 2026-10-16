@@ -1,0 +1,21 @@
+{
+  "kind": "CAL_B3_STATUS",
+  "computed_utc": "2026-10-07T21:49:00Z",
+  "status": "CAL_B3_FAIL — HOLDOUT CONSUMED",
+  "automatic_pass": true,
+  "consumption": "CONSUMED (10/10 anchors, R=1)",
+  "system_calibration_complete": false,
+  "next": null,
+  "primary_human_reviewers_required": 1,
+  "second_review_status": "NOT_REVIEWED — NONBLOCKING",
+  "second_independent_review": [
+    "NOT REQUIRED FOR PROGRESSION",
+    "RECOMMENDED AS LATER AUDIT"
+  ],
+  "h2_final_treatment_version": null,
+  "H2_V3_NOT_ELIGIBLE_FOR_SYSTEM_FREEZE": true,
+  "ineligibility_reason": "CAL_B3 HUMAN REVIEW FAILURE — UNSUPPORTED TEMPORAL CLAIMS",
+  "failure_code": "UNSUPPORTED_TEMPORAL_STATE_CLAIM",
+  "failed_primary_review_anchors": ["2020-05-13", "2022-03-11"],
+  "future_returns_consulted": false
+}

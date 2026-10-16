@@ -1,0 +1,98 @@
+{
+  "checked_at_utc": "2026-10-10T20:04:41.401385+00:00",
+  "criterion": "H2 V6 FORWARD DASHBOARD — OPERATIONAL PAPER TRADING READY",
+  "protected": {
+    "baseline_sha256": "cad6b8d3c2f2d3ec47516dd1a6370c7ef04c9704f34a567f6818d0ce9abe7410",
+    "files": 265,
+    "changed": [],
+    "original_forward_sha256": {
+      "data/forward/h2_v6_paper/cotahist/COTAHIST_A2026.ZIP": "d55b48e43c9d08561b595b7eb46f954fd1fa6051e0126220a2c36e8ac167fc11",
+      "data/forward/h2_v6_paper/sessions/2026-10-09/bars.csv": "1918f5370b554614c2d39766fce8902c2a108186592f7269472dca33f25b6993",
+      "data/forward/h2_v6_paper/sessions/2026-10-09/decision.json": "27e51c949aebac155b1d890c6fff74d1a242852d7f5c8d3a30cdc602a6a09ddc",
+      "data/forward/h2_v6_paper/sessions/2026-10-09/input.json": "8acf2b53eb36c4936de1d1c6b1f19d143ce31777c43d7ec83da2eadf25d957d7",
+      "data/forward/h2_v6_paper/sessions/2026-10-09/llm_trace.jsonl": "456e84af3e10a8556282e5f2f4dfdaf90a3e950ff4c9c8bc768e9e0345ae55b7",
+      "data/forward/h2_v6_paper/sessions/2026-10-09/provider.sqlite": "f998939f193c77dd8bd145738434db16b9fa6183fc06c701c33614497d53198a",
+      "data/forward/h2_v6_paper/sessions/2026-10-09/provider_journal.jsonl": "3cf317304386cd89e2712a17a18adfec703cf90d3b0fd874b10cbde43c562187",
+      "data/forward/h2_v6_paper/sessions/2026-10-09/reconciliation.json": "b0e5d9c56c8997b7765f6fc31200230e4cebb54dca11f6ba616e3afa3eac86e8",
+      "data/forward/h2_v6_paper/state.json": "421ecf999abb0aefb75e89b468e32d13cf4cb2c1c7f653e9be226766b3277181"
+    }
+  },
+  "focused_tests": {
+    "passed": 40,
+    "failed": 0,
+    "duration_seconds": 89.24,
+    "new_isolation_reader_recheck": "1 passed"
+  },
+  "full_suite_at_commit_689840c": {
+    "passed": 1451,
+    "failed": 12,
+    "skipped": 0,
+    "failures": [
+      "tests/experiments/test_cal_b4_safety.py::test_v5_development_s3_failure_blocks_further_phases",
+      "tests/experiments/test_h2_v6_provisional.py::test_oa1_validation_seal_and_dashboard",
+      "tests/experiments/test_spec.py::test_registry_cobre_os_cinco_classicos_e_o_participante_llm",
+      "tests/experiments/test_v6_phase_routing.py::test_structural_failure_prevents_phase_selection_and_progression",
+      "tests/pipeline/test_flows.py::TestPipelineFlow::test_custom_tickers",
+      "tests/pipeline/test_flows.py::TestPipelineFlow::test_default_tickers_from_settings",
+      "tests/pipeline/test_flows.py::TestPipelineFlow::test_empty_tickers",
+      "tests/pipeline/test_flows.py::TestPipelineFlow::test_extract_retry_on_failure",
+      "tests/pipeline/test_flows.py::TestPipelineFlow::test_full_flow_success",
+      "tests/pipeline/test_flows.py::TestPipelineFlow::test_partial_flow_returns_explicit_failure_summary",
+      "tests/pipeline/test_flows.py::TestPipelineFlow::test_single_ticker",
+      "tests/pipeline/test_snapshot.py::test_manifest_adulterado_e_rejeitado[code]"
+    ],
+    "external_network_blocked": true
+  },
+  "ruff": "passed",
+  "node_syntax": "passed",
+  "browser_evidence": "browser-checks.json",
+  "new_gemini_calls": 0,
+  "dashboard_paid_claims": 0,
+  "real_validation_or_final_runs": 0,
+  "wallets": [
+    {
+      "strategy": "ai",
+      "equity": 100000.0,
+      "costs": 0,
+      "executed_trades": 0,
+      "pending": {
+        "decision_session": "2026-10-09",
+        "target_session": "2026-10-13",
+        "target_weight": 1.0
+      },
+      "comparable": true
+    },
+    {
+      "strategy": "buy_and_hold",
+      "equity": 100000.0,
+      "costs": 0,
+      "executed_trades": 0,
+      "pending": {
+        "decision_session": null,
+        "target_session": "2026-10-13",
+        "target_weight": 1
+      },
+      "comparable": true
+    },
+    {
+      "strategy": "sma_regime_h2_proposed",
+      "equity": 100000.0,
+      "costs": 0,
+      "executed_trades": 0,
+      "pending": {
+        "decision_session": "2026-10-09",
+        "target_session": "2026-10-13",
+        "target_weight": 1.0
+      },
+      "comparable": true
+    },
+    {
+      "strategy": "bollinger_state_h2_proposed",
+      "equity": 100000.0,
+      "costs": 0,
+      "executed_trades": 0,
+      "pending": null,
+      "comparable": true
+    }
+  ]
+}

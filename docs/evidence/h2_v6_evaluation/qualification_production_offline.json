@@ -1,0 +1,2000 @@
+{
+  "integration": {
+    "validation": {
+      "mode": "PRODUCTION_PATH_QUALIFIED_WITH_SYNTHETIC_DATA",
+      "phase": "VALIDATION",
+      "plan_hash": "06aadd51d0bfb576840818d2e9adf5f9ede1b2f79054c7a13b661b963bfed291",
+      "amendment_status": "H2_V6 EVALUATION AMENDMENT PROPOSED — AWAITING AUTHOR APPROVAL",
+      "R": 3,
+      "statistics": {
+        "sharpe_individual": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sharpe_buy_and_hold": 0.6562762365988178,
+        "delta_individual": [
+          -0.6562762365988178,
+          -0.6562762365988178,
+          -0.6562762365988178
+        ],
+        "mean": 0.0,
+        "min": 0.0,
+        "max": 0.0,
+        "sd_between_runs_ddof1": 0.0,
+        "delta": -0.6562762365988178,
+        "sharpe_degenerate": true,
+        "confirmatory_contrasts": 0,
+        "inference": "DESCRIPTIVE_ONLY"
+      },
+      "individual": [
+        {
+          "slot": "L01",
+          "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-L01-06aadd51d0bf",
+          "metrics": {
+            "annualized_return": 0.0,
+            "annualized_volatility": 0.0,
+            "max_drawdown": 0.0,
+            "max_drawdown_duration": 0,
+            "sharpe_ratio": 0.0,
+            "sortino_ratio": 0.0,
+            "total_return": 0.0
+          },
+          "secondary": {
+            "sortino": {
+              "technical_value": 0.0,
+              "economic_value": null,
+              "degenerate": true,
+              "reason": "ZERO_DOWNSIDE",
+              "downside_deviation": 0.0,
+              "observations": 247
+            },
+            "turnover": 0.0,
+            "executed_notional": 0.0,
+            "executed_orders": 0,
+            "total_cost": 0.0
+          }
+        },
+        {
+          "slot": "L02",
+          "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-L02-06aadd51d0bf",
+          "metrics": {
+            "annualized_return": 0.0,
+            "annualized_volatility": 0.0,
+            "max_drawdown": 0.0,
+            "max_drawdown_duration": 0,
+            "sharpe_ratio": 0.0,
+            "sortino_ratio": 0.0,
+            "total_return": 0.0
+          },
+          "secondary": {
+            "sortino": {
+              "technical_value": 0.0,
+              "economic_value": null,
+              "degenerate": true,
+              "reason": "ZERO_DOWNSIDE",
+              "downside_deviation": 0.0,
+              "observations": 247
+            },
+            "turnover": 0.0,
+            "executed_notional": 0.0,
+            "executed_orders": 0,
+            "total_cost": 0.0
+          }
+        },
+        {
+          "slot": "L03",
+          "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-L03-06aadd51d0bf",
+          "metrics": {
+            "annualized_return": 0.0,
+            "annualized_volatility": 0.0,
+            "max_drawdown": 0.0,
+            "max_drawdown_duration": 0,
+            "sharpe_ratio": 0.0,
+            "sortino_ratio": 0.0,
+            "total_return": 0.0
+          },
+          "secondary": {
+            "sortino": {
+              "technical_value": 0.0,
+              "economic_value": null,
+              "degenerate": true,
+              "reason": "ZERO_DOWNSIDE",
+              "downside_deviation": 0.0,
+              "observations": 247
+            },
+            "turnover": 0.0,
+            "executed_notional": 0.0,
+            "executed_orders": 0,
+            "total_cost": 0.0
+          }
+        }
+      ],
+      "benchmarks": [
+        {
+          "kind": "buy_and_hold",
+          "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-buy_and_hold-06aadd51d0bf",
+          "metrics": {
+            "annualized_return": 0.03379757516028414,
+            "annualized_volatility": 0.05276507051920208,
+            "max_drawdown": -0.0401710953234899,
+            "max_drawdown_duration": 52,
+            "sharpe_ratio": 0.6562762365988178,
+            "sortino_ratio": 0.9474575763697883,
+            "total_return": 0.03311600657199887
+          },
+          "secondary": {
+            "sortino": {
+              "technical_value": 0.9474575763697883,
+              "economic_value": 0.9474575763697883,
+              "degenerate": false,
+              "reason": null,
+              "downside_deviation": 0.0023023596132740755,
+              "observations": 247
+            },
+            "turnover": 0.9991806718490838,
+            "executed_notional": 99918.06718490837,
+            "executed_orders": 1,
+            "total_cost": 81.93281509162487
+          }
+        },
+        {
+          "kind": "sma_regime_h2_proposed",
+          "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-sma_regime_h2_proposed-06aadd51d0bf",
+          "metrics": {
+            "annualized_return": 0.03379757516028414,
+            "annualized_volatility": 0.05276507051920208,
+            "max_drawdown": -0.0401710953234899,
+            "max_drawdown_duration": 52,
+            "sharpe_ratio": 0.6562762365988178,
+            "sortino_ratio": 0.9474575763697883,
+            "total_return": 0.03311600657199887
+          },
+          "secondary": {
+            "sortino": {
+              "technical_value": 0.9474575763697883,
+              "economic_value": 0.9474575763697883,
+              "degenerate": false,
+              "reason": null,
+              "downside_deviation": 0.0023023596132740755,
+              "observations": 247
+            },
+            "turnover": 0.9991806718490838,
+            "executed_notional": 99918.06718490837,
+            "executed_orders": 1,
+            "total_cost": 81.93281509162487
+          }
+        },
+        {
+          "kind": "bollinger_state_h2_proposed",
+          "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-bollinger_state_h2_proposed-06aadd51d0bf",
+          "metrics": {
+            "annualized_return": 0.0207795591941613,
+            "annualized_volatility": 0.036842090466564906,
+            "max_drawdown": -0.03723928344308505,
+            "max_drawdown_duration": 226,
+            "sharpe_ratio": 0.5763696413344785,
+            "sortino_ratio": 1.5807659122667568,
+            "total_return": 0.020363097065575708
+          },
+          "secondary": {
+            "sortino": {
+              "technical_value": 1.5807659122667568,
+              "economic_value": 1.5807659122667568,
+              "degenerate": false,
+              "reason": null,
+              "downside_deviation": 0.0008462087847258716,
+              "observations": 247
+            },
+            "turnover": 10.293951508712336,
+            "executed_notional": 1029395.1508712335,
+            "executed_orders": 10,
+            "total_cost": 844.1040237144117
+          }
+        }
+      ],
+      "manifest_sha256": "dc118ce9841df612d030f40e5993858eacc6d06e41eff173706fc3a72d3acb98"
+    },
+    "final": {
+      "mode": "PRODUCTION_PATH_QUALIFIED_WITH_SYNTHETIC_DATA",
+      "phase": "FINAL_TEST",
+      "plan_hash": "cb71ed3d398dfa3e8e89db2d57cfb4fa7d93e3a401ca28f9e9badb0acb38bc10",
+      "amendment_status": "H2_V6 EVALUATION AMENDMENT PROPOSED — AWAITING AUTHOR APPROVAL",
+      "R": 3,
+      "statistics": {
+        "sharpe_individual": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sharpe_buy_and_hold": 0.6262682697763852,
+        "delta_individual": [
+          -0.6262682697763852,
+          -0.6262682697763852,
+          -0.6262682697763852
+        ],
+        "mean": 0.0,
+        "min": 0.0,
+        "max": 0.0,
+        "sd_between_runs_ddof1": 0.0,
+        "delta": -0.6262682697763852,
+        "sharpe_degenerate": true,
+        "status": "INCONCLUSIVE_DEGENERATE",
+        "p": null,
+        "lower95": null,
+        "superiority": false,
+        "degenerate_draws": 5000,
+        "confirmatory_contrasts": 1,
+        "B": 5000,
+        "seed": 20261008,
+        "mean_block": 10,
+        "rank": 4751,
+        "indices_sha256": "5c808778e943157a4b18e8f9bdb6fb2cc856af742ba97927e6f35dd672cb8075",
+        "roots_sha256": "1007cb47953584d77f6acaebb7b8f83d6261f099ce68d2c55ebed182b9ca8205"
+      },
+      "individual": [
+        {
+          "slot": "L01",
+          "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\final\\runs\\H2-V6-FINAL_TEST-L01-cb71ed3d398d",
+          "metrics": {
+            "annualized_return": 0.0,
+            "annualized_volatility": 0.0,
+            "max_drawdown": 0.0,
+            "max_drawdown_duration": 0,
+            "sharpe_ratio": 0.0,
+            "sortino_ratio": 0.0,
+            "total_return": 0.0
+          },
+          "secondary": {
+            "sortino": {
+              "technical_value": 0.0,
+              "economic_value": null,
+              "degenerate": true,
+              "reason": "ZERO_DOWNSIDE",
+              "downside_deviation": 0.0,
+              "observations": 249
+            },
+            "turnover": 0.0,
+            "executed_notional": 0.0,
+            "executed_orders": 0,
+            "total_cost": 0.0
+          }
+        },
+        {
+          "slot": "L02",
+          "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\final\\runs\\H2-V6-FINAL_TEST-L02-cb71ed3d398d",
+          "metrics": {
+            "annualized_return": 0.0,
+            "annualized_volatility": 0.0,
+            "max_drawdown": 0.0,
+            "max_drawdown_duration": 0,
+            "sharpe_ratio": 0.0,
+            "sortino_ratio": 0.0,
+            "total_return": 0.0
+          },
+          "secondary": {
+            "sortino": {
+              "technical_value": 0.0,
+              "economic_value": null,
+              "degenerate": true,
+              "reason": "ZERO_DOWNSIDE",
+              "downside_deviation": 0.0,
+              "observations": 249
+            },
+            "turnover": 0.0,
+            "executed_notional": 0.0,
+            "executed_orders": 0,
+            "total_cost": 0.0
+          }
+        },
+        {
+          "slot": "L03",
+          "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\final\\runs\\H2-V6-FINAL_TEST-L03-cb71ed3d398d",
+          "metrics": {
+            "annualized_return": 0.0,
+            "annualized_volatility": 0.0,
+            "max_drawdown": 0.0,
+            "max_drawdown_duration": 0,
+            "sharpe_ratio": 0.0,
+            "sortino_ratio": 0.0,
+            "total_return": 0.0
+          },
+          "secondary": {
+            "sortino": {
+              "technical_value": 0.0,
+              "economic_value": null,
+              "degenerate": true,
+              "reason": "ZERO_DOWNSIDE",
+              "downside_deviation": 0.0,
+              "observations": 249
+            },
+            "turnover": 0.0,
+            "executed_notional": 0.0,
+            "executed_orders": 0,
+            "total_cost": 0.0
+          }
+        }
+      ],
+      "benchmarks": [
+        {
+          "kind": "buy_and_hold",
+          "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\final\\runs\\H2-V6-FINAL_TEST-buy_and_hold-cb71ed3d398d",
+          "metrics": {
+            "annualized_return": 0.033251953323812034,
+            "annualized_volatility": 0.05459936170624881,
+            "max_drawdown": -0.03932308330935749,
+            "max_drawdown_duration": 52,
+            "sharpe_ratio": 0.6262682697763852,
+            "sortino_ratio": 0.9448064355385,
+            "total_return": 0.03284966532839895
+          },
+          "secondary": {
+            "sortino": {
+              "technical_value": 0.9448064355385,
+              "economic_value": 0.9448064355385,
+              "degenerate": false,
+              "reason": null,
+              "downside_deviation": 0.002279842581632312,
+              "observations": 249
+            },
+            "turnover": 0.9991806718490838,
+            "executed_notional": 99918.06718490837,
+            "executed_orders": 1,
+            "total_cost": 81.93281509162487
+          }
+        },
+        {
+          "kind": "sma_regime_h2_proposed",
+          "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\final\\runs\\H2-V6-FINAL_TEST-sma_regime_h2_proposed-cb71ed3d398d",
+          "metrics": {
+            "annualized_return": 0.033251953323812034,
+            "annualized_volatility": 0.05459936170624881,
+            "max_drawdown": -0.03932308330935749,
+            "max_drawdown_duration": 52,
+            "sharpe_ratio": 0.6262682697763852,
+            "sortino_ratio": 0.9448064355385,
+            "total_return": 0.03284966532839895
+          },
+          "secondary": {
+            "sortino": {
+              "technical_value": 0.9448064355385,
+              "economic_value": 0.9448064355385,
+              "degenerate": false,
+              "reason": null,
+              "downside_deviation": 0.002279842581632312,
+              "observations": 249
+            },
+            "turnover": 0.9991806718490838,
+            "executed_notional": 99918.06718490837,
+            "executed_orders": 1,
+            "total_cost": 81.93281509162487
+          }
+        },
+        {
+          "kind": "bollinger_state_h2_proposed",
+          "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\final\\runs\\H2-V6-FINAL_TEST-bollinger_state_h2_proposed-cb71ed3d398d",
+          "metrics": {
+            "annualized_return": -0.019791375416658097,
+            "annualized_volatility": 0.018834252515834857,
+            "max_drawdown": -0.03708796781203113,
+            "max_drawdown_duration": 222,
+            "sharpe_ratio": -1.0519397854205788,
+            "sortino_ratio": -1.588522791415654,
+            "total_return": -0.01955808312129126
+          },
+          "secondary": {
+            "sortino": {
+              "technical_value": -1.588522791415654,
+              "economic_value": -1.588522791415654,
+              "degenerate": false,
+              "reason": null,
+              "downside_deviation": 0.0007856797304496658,
+              "observations": 249
+            },
+            "turnover": 7.920702656442919,
+            "executed_notional": 792070.2656442919,
+            "executed_orders": 8,
+            "total_cost": 649.4976178283192
+          }
+        }
+      ],
+      "manifest_sha256": "dc118ce9841df612d030f40e5993858eacc6d06e41eff173706fc3a72d3acb98"
+    },
+    "negative_validation": {
+      "mode": "PRODUCTION_PATH_QUALIFIED_WITH_SYNTHETIC_DATA",
+      "phase": "VALIDATION",
+      "plan_hash": "06aadd51d0bfb576840818d2e9adf5f9ede1b2f79054c7a13b661b963bfed291",
+      "amendment_status": "H2_V6 EVALUATION AMENDMENT PROPOSED — AWAITING AUTHOR APPROVAL",
+      "R": 3,
+      "statistics": {
+        "sharpe_individual": [
+          -5.947301634637195,
+          -5.947301634637195,
+          -5.947301634637195
+        ],
+        "sharpe_buy_and_hold": 0.6562762365988178,
+        "delta_individual": [
+          -6.603577871236013,
+          -6.603577871236013,
+          -6.603577871236013
+        ],
+        "mean": -5.947301634637195,
+        "min": -5.947301634637195,
+        "max": -5.947301634637195,
+        "sd_between_runs_ddof1": 0.0,
+        "delta": -6.603577871236013,
+        "sharpe_degenerate": false,
+        "confirmatory_contrasts": 0,
+        "inference": "DESCRIPTIVE_ONLY"
+      },
+      "individual": [
+        {
+          "slot": "L01",
+          "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\negative_validation\\runs\\H2-V6-VALIDATION-L01-06aadd51d0bf",
+          "metrics": {
+            "annualized_return": -0.19731320460463087,
+            "annualized_volatility": 0.036825059803378746,
+            "max_drawdown": -0.19858863598195226,
+            "max_drawdown_duration": 247,
+            "sharpe_ratio": -5.947301634637195,
+            "sortino_ratio": -5.801375866299146,
+            "total_return": -0.19380510294199804
+          },
+          "secondary": {
+            "sortino": {
+              "technical_value": -5.801375866299146,
+              "economic_value": -5.801375866299146,
+              "degenerate": false,
+              "reason": null,
+              "downside_deviation": 0.0023781111657092003,
+              "observations": 247
+            },
+            "turnover": 219.09116593421246,
+            "executed_notional": 21909116.593421247,
+            "executed_orders": 247,
+            "total_cost": 17965.47560660542
+          }
+        },
+        {
+          "slot": "L02",
+          "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\negative_validation\\runs\\H2-V6-VALIDATION-L02-06aadd51d0bf",
+          "metrics": {
+            "annualized_return": -0.19731320460463087,
+            "annualized_volatility": 0.036825059803378746,
+            "max_drawdown": -0.19858863598195226,
+            "max_drawdown_duration": 247,
+            "sharpe_ratio": -5.947301634637195,
+            "sortino_ratio": -5.801375866299146,
+            "total_return": -0.19380510294199804
+          },
+          "secondary": {
+            "sortino": {
+              "technical_value": -5.801375866299146,
+              "economic_value": -5.801375866299146,
+              "degenerate": false,
+              "reason": null,
+              "downside_deviation": 0.0023781111657092003,
+              "observations": 247
+            },
+            "turnover": 219.09116593421246,
+            "executed_notional": 21909116.593421247,
+            "executed_orders": 247,
+            "total_cost": 17965.47560660542
+          }
+        },
+        {
+          "slot": "L03",
+          "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\negative_validation\\runs\\H2-V6-VALIDATION-L03-06aadd51d0bf",
+          "metrics": {
+            "annualized_return": -0.19731320460463087,
+            "annualized_volatility": 0.036825059803378746,
+            "max_drawdown": -0.19858863598195226,
+            "max_drawdown_duration": 247,
+            "sharpe_ratio": -5.947301634637195,
+            "sortino_ratio": -5.801375866299146,
+            "total_return": -0.19380510294199804
+          },
+          "secondary": {
+            "sortino": {
+              "technical_value": -5.801375866299146,
+              "economic_value": -5.801375866299146,
+              "degenerate": false,
+              "reason": null,
+              "downside_deviation": 0.0023781111657092003,
+              "observations": 247
+            },
+            "turnover": 219.09116593421246,
+            "executed_notional": 21909116.593421247,
+            "executed_orders": 247,
+            "total_cost": 17965.47560660542
+          }
+        }
+      ],
+      "benchmarks": [
+        {
+          "kind": "buy_and_hold",
+          "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\negative_validation\\runs\\H2-V6-VALIDATION-buy_and_hold-06aadd51d0bf",
+          "metrics": {
+            "annualized_return": 0.03379757516028414,
+            "annualized_volatility": 0.05276507051920208,
+            "max_drawdown": -0.0401710953234899,
+            "max_drawdown_duration": 52,
+            "sharpe_ratio": 0.6562762365988178,
+            "sortino_ratio": 0.9474575763697883,
+            "total_return": 0.03311600657199887
+          },
+          "secondary": {
+            "sortino": {
+              "technical_value": 0.9474575763697883,
+              "economic_value": 0.9474575763697883,
+              "degenerate": false,
+              "reason": null,
+              "downside_deviation": 0.0023023596132740755,
+              "observations": 247
+            },
+            "turnover": 0.9991806718490838,
+            "executed_notional": 99918.06718490837,
+            "executed_orders": 1,
+            "total_cost": 81.93281509162487
+          }
+        },
+        {
+          "kind": "sma_regime_h2_proposed",
+          "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\negative_validation\\runs\\H2-V6-VALIDATION-sma_regime_h2_proposed-06aadd51d0bf",
+          "metrics": {
+            "annualized_return": 0.03379757516028414,
+            "annualized_volatility": 0.05276507051920208,
+            "max_drawdown": -0.0401710953234899,
+            "max_drawdown_duration": 52,
+            "sharpe_ratio": 0.6562762365988178,
+            "sortino_ratio": 0.9474575763697883,
+            "total_return": 0.03311600657199887
+          },
+          "secondary": {
+            "sortino": {
+              "technical_value": 0.9474575763697883,
+              "economic_value": 0.9474575763697883,
+              "degenerate": false,
+              "reason": null,
+              "downside_deviation": 0.0023023596132740755,
+              "observations": 247
+            },
+            "turnover": 0.9991806718490838,
+            "executed_notional": 99918.06718490837,
+            "executed_orders": 1,
+            "total_cost": 81.93281509162487
+          }
+        },
+        {
+          "kind": "bollinger_state_h2_proposed",
+          "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\negative_validation\\runs\\H2-V6-VALIDATION-bollinger_state_h2_proposed-06aadd51d0bf",
+          "metrics": {
+            "annualized_return": 0.0207795591941613,
+            "annualized_volatility": 0.036842090466564906,
+            "max_drawdown": -0.03723928344308505,
+            "max_drawdown_duration": 226,
+            "sharpe_ratio": 0.5763696413344785,
+            "sortino_ratio": 1.5807659122667568,
+            "total_return": 0.020363097065575708
+          },
+          "secondary": {
+            "sortino": {
+              "technical_value": 1.5807659122667568,
+              "economic_value": 1.5807659122667568,
+              "degenerate": false,
+              "reason": null,
+              "downside_deviation": 0.0008462087847258716,
+              "observations": 247
+            },
+            "turnover": 10.293951508712336,
+            "executed_notional": 1029395.1508712335,
+            "executed_orders": 10,
+            "total_cost": 844.1040237144117
+          }
+        }
+      ],
+      "manifest_sha256": "dc118ce9841df612d030f40e5993858eacc6d06e41eff173706fc3a72d3acb98"
+    },
+    "costs_valid": {
+      "0": {
+        "statistics": {
+          "sharpe_individual": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sharpe_buy_and_hold": 0.6693148839190505,
+          "delta_individual": [
+            -0.6693148839190505,
+            -0.6693148839190505,
+            -0.6693148839190505
+          ],
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "sd_between_runs_ddof1": 0.0,
+          "delta": -0.6693148839190505,
+          "sharpe_degenerate": true
+        },
+        "confirmatory_contrasts": 0,
+        "individual": [
+          {
+            "slot": "L01",
+            "status": "COMPLETE_EXACT_REPLAY",
+            "metrics": {
+              "annualized_return": 0.0,
+              "annualized_volatility": 0.0,
+              "max_drawdown": 0.0,
+              "max_drawdown_duration": 0,
+              "sharpe_ratio": 0.0,
+              "sortino_ratio": 0.0,
+              "total_return": 0.0
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.0,
+                "economic_value": null,
+                "degenerate": true,
+                "reason": "ZERO_DOWNSIDE",
+                "downside_deviation": 0.0,
+                "observations": 247
+              },
+              "turnover": 0.0,
+              "executed_notional": 0.0,
+              "executed_orders": 0,
+              "total_cost": 0.0
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-L01-cost-0-06aadd51d0bf"
+          },
+          {
+            "slot": "L02",
+            "status": "COMPLETE_EXACT_REPLAY",
+            "metrics": {
+              "annualized_return": 0.0,
+              "annualized_volatility": 0.0,
+              "max_drawdown": 0.0,
+              "max_drawdown_duration": 0,
+              "sharpe_ratio": 0.0,
+              "sortino_ratio": 0.0,
+              "total_return": 0.0
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.0,
+                "economic_value": null,
+                "degenerate": true,
+                "reason": "ZERO_DOWNSIDE",
+                "downside_deviation": 0.0,
+                "observations": 247
+              },
+              "turnover": 0.0,
+              "executed_notional": 0.0,
+              "executed_orders": 0,
+              "total_cost": 0.0
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-L02-cost-0-06aadd51d0bf"
+          },
+          {
+            "slot": "L03",
+            "status": "COMPLETE_EXACT_REPLAY",
+            "metrics": {
+              "annualized_return": 0.0,
+              "annualized_volatility": 0.0,
+              "max_drawdown": 0.0,
+              "max_drawdown_duration": 0,
+              "sharpe_ratio": 0.0,
+              "sortino_ratio": 0.0,
+              "total_return": 0.0
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.0,
+                "economic_value": null,
+                "degenerate": true,
+                "reason": "ZERO_DOWNSIDE",
+                "downside_deviation": 0.0,
+                "observations": 247
+              },
+              "turnover": 0.0,
+              "executed_notional": 0.0,
+              "executed_orders": 0,
+              "total_cost": 0.0
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-L03-cost-0-06aadd51d0bf"
+          }
+        ],
+        "benchmarks": [
+          {
+            "kind": "buy_and_hold-cost-0",
+            "metrics": {
+              "annualized_return": 0.03432477145080992,
+              "annualized_volatility": 0.052475623928762614,
+              "max_drawdown": -0.04017109532348984,
+              "max_drawdown_duration": 52,
+              "sharpe_ratio": 0.6693148839190505,
+              "sortino_ratio": 0.9720318350294517,
+              "total_return": 0.03363239932960238
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.9720318350294517,
+                "economic_value": 0.9720318350294517,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.0022761838343019736,
+                "observations": 247
+              },
+              "turnover": 0.9996801023672425,
+              "executed_notional": 99968.01023672425,
+              "executed_orders": 1,
+              "total_cost": 31.989763275751763
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-buy_and_hold-cost-0-06aadd51d0bf"
+          },
+          {
+            "kind": "sma_regime_h2_proposed-cost-0",
+            "metrics": {
+              "annualized_return": 0.03432477145080992,
+              "annualized_volatility": 0.052475623928762614,
+              "max_drawdown": -0.04017109532348984,
+              "max_drawdown_duration": 52,
+              "sharpe_ratio": 0.6693148839190505,
+              "sortino_ratio": 0.9720318350294517,
+              "total_return": 0.03363239932960238
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.9720318350294517,
+                "economic_value": 0.9720318350294517,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.0022761838343019736,
+                "observations": 247
+              },
+              "turnover": 0.9996801023672425,
+              "executed_notional": 99968.01023672425,
+              "executed_orders": 1,
+              "total_cost": 31.989763275751763
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-sma_regime_h2_proposed-cost-0-06aadd51d0bf"
+          },
+          {
+            "kind": "bollinger_state_h2_proposed-cost-0",
+            "metrics": {
+              "annualized_return": 0.026000080743628473,
+              "annualized_volatility": 0.037027810192147674,
+              "max_drawdown": -0.03338052687462879,
+              "max_drawdown_duration": 226,
+              "sharpe_ratio": 0.7114305272848334,
+              "sortino_ratio": 2.05859860132489,
+              "total_return": 0.02547769014648993
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 2.05859860132489,
+                "economic_value": 2.05859860132489,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.0008060993700807368,
+                "observations": 247
+              },
+              "turnover": 10.319714281229572,
+              "executed_notional": 1031971.4281229572,
+              "executed_orders": 10,
+              "total_cost": 330.2308569993463
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-bollinger_state_h2_proposed-cost-0-06aadd51d0bf"
+          }
+        ]
+      },
+      "5": {
+        "statistics": {
+          "sharpe_individual": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sharpe_buy_and_hold": 0.6562762365988178,
+          "delta_individual": [
+            -0.6562762365988178,
+            -0.6562762365988178,
+            -0.6562762365988178
+          ],
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "sd_between_runs_ddof1": 0.0,
+          "delta": -0.6562762365988178,
+          "sharpe_degenerate": true
+        },
+        "confirmatory_contrasts": 0,
+        "individual": [
+          {
+            "slot": "L01",
+            "status": "BASELINE_REUSED",
+            "metrics": {
+              "annualized_return": 0.0,
+              "annualized_volatility": 0.0,
+              "max_drawdown": 0.0,
+              "max_drawdown_duration": 0,
+              "sharpe_ratio": 0.0,
+              "sortino_ratio": 0.0,
+              "total_return": 0.0
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.0,
+                "economic_value": null,
+                "degenerate": true,
+                "reason": "ZERO_DOWNSIDE",
+                "downside_deviation": 0.0,
+                "observations": 247
+              },
+              "turnover": 0.0,
+              "executed_notional": 0.0,
+              "executed_orders": 0,
+              "total_cost": 0.0
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-L01-06aadd51d0bf"
+          },
+          {
+            "slot": "L02",
+            "status": "BASELINE_REUSED",
+            "metrics": {
+              "annualized_return": 0.0,
+              "annualized_volatility": 0.0,
+              "max_drawdown": 0.0,
+              "max_drawdown_duration": 0,
+              "sharpe_ratio": 0.0,
+              "sortino_ratio": 0.0,
+              "total_return": 0.0
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.0,
+                "economic_value": null,
+                "degenerate": true,
+                "reason": "ZERO_DOWNSIDE",
+                "downside_deviation": 0.0,
+                "observations": 247
+              },
+              "turnover": 0.0,
+              "executed_notional": 0.0,
+              "executed_orders": 0,
+              "total_cost": 0.0
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-L02-06aadd51d0bf"
+          },
+          {
+            "slot": "L03",
+            "status": "BASELINE_REUSED",
+            "metrics": {
+              "annualized_return": 0.0,
+              "annualized_volatility": 0.0,
+              "max_drawdown": 0.0,
+              "max_drawdown_duration": 0,
+              "sharpe_ratio": 0.0,
+              "sortino_ratio": 0.0,
+              "total_return": 0.0
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.0,
+                "economic_value": null,
+                "degenerate": true,
+                "reason": "ZERO_DOWNSIDE",
+                "downside_deviation": 0.0,
+                "observations": 247
+              },
+              "turnover": 0.0,
+              "executed_notional": 0.0,
+              "executed_orders": 0,
+              "total_cost": 0.0
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-L03-06aadd51d0bf"
+          }
+        ],
+        "benchmarks": [
+          {
+            "kind": "buy_and_hold",
+            "metrics": {
+              "annualized_return": 0.03379757516028414,
+              "annualized_volatility": 0.05276507051920208,
+              "max_drawdown": -0.0401710953234899,
+              "max_drawdown_duration": 52,
+              "sharpe_ratio": 0.6562762365988178,
+              "sortino_ratio": 0.9474575763697883,
+              "total_return": 0.03311600657199887
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.9474575763697883,
+                "economic_value": 0.9474575763697883,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.0023023596132740755,
+                "observations": 247
+              },
+              "turnover": 0.9991806718490838,
+              "executed_notional": 99918.06718490837,
+              "executed_orders": 1,
+              "total_cost": 81.93281509162487
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-buy_and_hold-06aadd51d0bf"
+          },
+          {
+            "kind": "sma_regime_h2_proposed",
+            "metrics": {
+              "annualized_return": 0.03379757516028414,
+              "annualized_volatility": 0.05276507051920208,
+              "max_drawdown": -0.0401710953234899,
+              "max_drawdown_duration": 52,
+              "sharpe_ratio": 0.6562762365988178,
+              "sortino_ratio": 0.9474575763697883,
+              "total_return": 0.03311600657199887
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.9474575763697883,
+                "economic_value": 0.9474575763697883,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.0023023596132740755,
+                "observations": 247
+              },
+              "turnover": 0.9991806718490838,
+              "executed_notional": 99918.06718490837,
+              "executed_orders": 1,
+              "total_cost": 81.93281509162487
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-sma_regime_h2_proposed-06aadd51d0bf"
+          },
+          {
+            "kind": "bollinger_state_h2_proposed",
+            "metrics": {
+              "annualized_return": 0.0207795591941613,
+              "annualized_volatility": 0.036842090466564906,
+              "max_drawdown": -0.03723928344308505,
+              "max_drawdown_duration": 226,
+              "sharpe_ratio": 0.5763696413344785,
+              "sortino_ratio": 1.5807659122667568,
+              "total_return": 0.020363097065575708
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 1.5807659122667568,
+                "economic_value": 1.5807659122667568,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.0008462087847258716,
+                "observations": 247
+              },
+              "turnover": 10.293951508712336,
+              "executed_notional": 1029395.1508712335,
+              "executed_orders": 10,
+              "total_cost": 844.1040237144117
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-bollinger_state_h2_proposed-06aadd51d0bf"
+          }
+        ]
+      },
+      "10": {
+        "statistics": {
+          "sharpe_individual": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sharpe_buy_and_hold": 0.6433571423324871,
+          "delta_individual": [
+            -0.6433571423324871,
+            -0.6433571423324871,
+            -0.6433571423324871
+          ],
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "sd_between_runs_ddof1": 0.0,
+          "delta": -0.6433571423324871,
+          "sharpe_degenerate": true
+        },
+        "confirmatory_contrasts": 0,
+        "individual": [
+          {
+            "slot": "L01",
+            "status": "COMPLETE_EXACT_REPLAY",
+            "metrics": {
+              "annualized_return": 0.0,
+              "annualized_volatility": 0.0,
+              "max_drawdown": 0.0,
+              "max_drawdown_duration": 0,
+              "sharpe_ratio": 0.0,
+              "sortino_ratio": 0.0,
+              "total_return": 0.0
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.0,
+                "economic_value": null,
+                "degenerate": true,
+                "reason": "ZERO_DOWNSIDE",
+                "downside_deviation": 0.0,
+                "observations": 247
+              },
+              "turnover": 0.0,
+              "executed_notional": 0.0,
+              "executed_orders": 0,
+              "total_cost": 0.0
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-L01-cost-10-06aadd51d0bf"
+          },
+          {
+            "slot": "L02",
+            "status": "COMPLETE_EXACT_REPLAY",
+            "metrics": {
+              "annualized_return": 0.0,
+              "annualized_volatility": 0.0,
+              "max_drawdown": 0.0,
+              "max_drawdown_duration": 0,
+              "sharpe_ratio": 0.0,
+              "sortino_ratio": 0.0,
+              "total_return": 0.0
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.0,
+                "economic_value": null,
+                "degenerate": true,
+                "reason": "ZERO_DOWNSIDE",
+                "downside_deviation": 0.0,
+                "observations": 247
+              },
+              "turnover": 0.0,
+              "executed_notional": 0.0,
+              "executed_orders": 0,
+              "total_cost": 0.0
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-L02-cost-10-06aadd51d0bf"
+          },
+          {
+            "slot": "L03",
+            "status": "COMPLETE_EXACT_REPLAY",
+            "metrics": {
+              "annualized_return": 0.0,
+              "annualized_volatility": 0.0,
+              "max_drawdown": 0.0,
+              "max_drawdown_duration": 0,
+              "sharpe_ratio": 0.0,
+              "sortino_ratio": 0.0,
+              "total_return": 0.0
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.0,
+                "economic_value": null,
+                "degenerate": true,
+                "reason": "ZERO_DOWNSIDE",
+                "downside_deviation": 0.0,
+                "observations": 247
+              },
+              "turnover": 0.0,
+              "executed_notional": 0.0,
+              "executed_orders": 0,
+              "total_cost": 0.0
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-L03-cost-10-06aadd51d0bf"
+          }
+        ],
+        "benchmarks": [
+          {
+            "kind": "buy_and_hold-cost-10",
+            "metrics": {
+              "annualized_return": 0.03327091069733923,
+              "annualized_volatility": 0.053057157567085206,
+              "max_drawdown": -0.04017109532348987,
+              "max_drawdown_duration": 52,
+              "sharpe_ratio": 0.6433571423324871,
+              "sortino_ratio": 0.9234144703610009,
+              "total_return": 0.03260012952641311
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.9234144703610009,
+                "economic_value": 0.9234144703610009,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.002328622879532207,
+                "observations": 247
+              },
+              "turnover": 0.9986817401030639,
+              "executed_notional": 99868.1740103064,
+              "executed_orders": 1,
+              "total_cost": 131.82598969360444
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-buy_and_hold-cost-10-06aadd51d0bf"
+          },
+          {
+            "kind": "sma_regime_h2_proposed-cost-10",
+            "metrics": {
+              "annualized_return": 0.03327091069733923,
+              "annualized_volatility": 0.053057157567085206,
+              "max_drawdown": -0.04017109532348987,
+              "max_drawdown_duration": 52,
+              "sharpe_ratio": 0.6433571423324871,
+              "sortino_ratio": 0.9234144703610009,
+              "total_return": 0.03260012952641311
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.9234144703610009,
+                "economic_value": 0.9234144703610009,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.002328622879532207,
+                "observations": 247
+              },
+              "turnover": 0.9986817401030639,
+              "executed_notional": 99868.1740103064,
+              "executed_orders": 1,
+              "total_cost": 131.82598969360444
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-sma_regime_h2_proposed-cost-10-06aadd51d0bf"
+          },
+          {
+            "kind": "bollinger_state_h2_proposed-cost-10",
+            "metrics": {
+              "annualized_return": 0.015585596596402906,
+              "annualized_volatility": 0.03672277441516393,
+              "max_drawdown": -0.04108263895413984,
+              "max_drawdown_duration": 226,
+              "sharpe_ratio": 0.43921421345510153,
+              "sortino_ratio": 1.1356639280536955,
+              "total_return": 0.015274008970240782
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 1.1356639280536955,
+                "economic_value": 1.1356639280536955,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.000894667721440861,
+                "observations": 247
+              },
+              "turnover": 10.268276043872856,
+              "executed_notional": 1026827.6043872857,
+              "executed_orders": 10,
+              "total_cost": 1355.412437791217
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-bollinger_state_h2_proposed-cost-10-06aadd51d0bf"
+          }
+        ]
+      },
+      "20": {
+        "statistics": {
+          "sharpe_individual": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sharpe_buy_and_hold": 0.6178799278333311,
+          "delta_individual": [
+            -0.6178799278333311,
+            -0.6178799278333311,
+            -0.6178799278333311
+          ],
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "sd_between_runs_ddof1": 0.0,
+          "delta": -0.6178799278333311,
+          "sharpe_degenerate": true
+        },
+        "confirmatory_contrasts": 0,
+        "individual": [
+          {
+            "slot": "L01",
+            "status": "COMPLETE_EXACT_REPLAY",
+            "metrics": {
+              "annualized_return": 0.0,
+              "annualized_volatility": 0.0,
+              "max_drawdown": 0.0,
+              "max_drawdown_duration": 0,
+              "sharpe_ratio": 0.0,
+              "sortino_ratio": 0.0,
+              "total_return": 0.0
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.0,
+                "economic_value": null,
+                "degenerate": true,
+                "reason": "ZERO_DOWNSIDE",
+                "downside_deviation": 0.0,
+                "observations": 247
+              },
+              "turnover": 0.0,
+              "executed_notional": 0.0,
+              "executed_orders": 0,
+              "total_cost": 0.0
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-L01-cost-20-06aadd51d0bf"
+          },
+          {
+            "slot": "L02",
+            "status": "COMPLETE_EXACT_REPLAY",
+            "metrics": {
+              "annualized_return": 0.0,
+              "annualized_volatility": 0.0,
+              "max_drawdown": 0.0,
+              "max_drawdown_duration": 0,
+              "sharpe_ratio": 0.0,
+              "sortino_ratio": 0.0,
+              "total_return": 0.0
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.0,
+                "economic_value": null,
+                "degenerate": true,
+                "reason": "ZERO_DOWNSIDE",
+                "downside_deviation": 0.0,
+                "observations": 247
+              },
+              "turnover": 0.0,
+              "executed_notional": 0.0,
+              "executed_orders": 0,
+              "total_cost": 0.0
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-L02-cost-20-06aadd51d0bf"
+          },
+          {
+            "slot": "L03",
+            "status": "COMPLETE_EXACT_REPLAY",
+            "metrics": {
+              "annualized_return": 0.0,
+              "annualized_volatility": 0.0,
+              "max_drawdown": 0.0,
+              "max_drawdown_duration": 0,
+              "sharpe_ratio": 0.0,
+              "sortino_ratio": 0.0,
+              "total_return": 0.0
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.0,
+                "economic_value": null,
+                "degenerate": true,
+                "reason": "ZERO_DOWNSIDE",
+                "downside_deviation": 0.0,
+                "observations": 247
+              },
+              "turnover": 0.0,
+              "executed_notional": 0.0,
+              "executed_orders": 0,
+              "total_cost": 0.0
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-L03-cost-20-06aadd51d0bf"
+          }
+        ],
+        "benchmarks": [
+          {
+            "kind": "buy_and_hold-cost-20",
+            "metrics": {
+              "annualized_return": 0.032219174049154864,
+              "annualized_volatility": 0.05364902850789338,
+              "max_drawdown": -0.04017109532348984,
+              "max_drawdown_duration": 52,
+              "sharpe_ratio": 0.6178799278333311,
+              "sortino_ratio": 0.8768677938300066,
+              "total_return": 0.03156991948418475
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.8768677938300066,
+                "economic_value": 0.8768677938300066,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.0023813956691894466,
+                "observations": 247
+              },
+              "turnover": 0.9976853699417351,
+              "executed_notional": 99768.53699417351,
+              "executed_orders": 1,
+              "total_cost": 231.46300582648257
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-buy_and_hold-cost-20-06aadd51d0bf"
+          },
+          {
+            "kind": "sma_regime_h2_proposed-cost-20",
+            "metrics": {
+              "annualized_return": 0.032219174049154864,
+              "annualized_volatility": 0.05364902850789338,
+              "max_drawdown": -0.04017109532348984,
+              "max_drawdown_duration": 52,
+              "sharpe_ratio": 0.6178799278333311,
+              "sortino_ratio": 0.8768677938300066,
+              "total_return": 0.03156991948418475
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.8768677938300066,
+                "economic_value": 0.8768677938300066,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.0023813956691894466,
+                "observations": 247
+              },
+              "turnover": 0.9976853699417351,
+              "executed_notional": 99768.53699417351,
+              "executed_orders": 1,
+              "total_cost": 231.46300582648257
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-sma_regime_h2_proposed-cost-20-06aadd51d0bf"
+          },
+          {
+            "kind": "bollinger_state_h2_proposed-cost-20",
+            "metrics": {
+              "annualized_return": 0.005276798307717101,
+              "annualized_volatility": 0.03668518067238414,
+              "max_drawdown": -0.048723399993524395,
+              "max_drawdown_duration": 226,
+              "sharpe_ratio": 0.16153158654515654,
+              "sortino_ratio": 0.3690133022325921,
+              "total_return": 0.005171829657755644
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.3690133022325921,
+                "economic_value": 0.3690133022325921,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.0010115930307180662,
+                "observations": 247
+              },
+              "turnover": 10.217185657017719,
+              "executed_notional": 1021718.565701772,
+              "executed_orders": 10,
+              "total_cost": 2370.3870724281114
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\validation\\runs\\H2-V6-VALIDATION-bollinger_state_h2_proposed-cost-20-06aadd51d0bf"
+          }
+        ]
+      }
+    },
+    "costs_divergent": {
+      "0": {
+        "statistics": null,
+        "confirmatory_contrasts": 0,
+        "individual": [
+          {
+            "slot": "L01",
+            "status": "COST_SENSITIVITY_NOT_ESTIMABLE — EXACT_REPLAY_INVALID",
+            "metrics": null,
+            "secondary": null,
+            "reason": "ReplayMismatchError: replayed call #12 does not match recorded call '2024-09-03|portfolio_manager|-|000012': user_prompt_sha256 recorded='e809c044b008dd0d00fcaae094a2004ffee667f5e79bd1e0dbc6927455b01e6e' replayed='851912b1788e4e54b7b8710f7087099d57c0a736d0c3946bd7c01ce2ef542b1e'",
+            "affected_identity": "c553984bb4a9403906f89f6925b1adac2b2618f7c8707c5f32f7b80833e04d48",
+            "affected_call": "2024-09-03|portfolio_manager|-|000012",
+            "consumed_calls": 12
+          },
+          {
+            "slot": "L02",
+            "status": "COST_SENSITIVITY_NOT_ESTIMABLE — EXACT_REPLAY_INVALID",
+            "metrics": null,
+            "secondary": null,
+            "reason": "ReplayMismatchError: replayed call #12 does not match recorded call '2024-09-03|portfolio_manager|-|000012': user_prompt_sha256 recorded='e809c044b008dd0d00fcaae094a2004ffee667f5e79bd1e0dbc6927455b01e6e' replayed='851912b1788e4e54b7b8710f7087099d57c0a736d0c3946bd7c01ce2ef542b1e'",
+            "affected_identity": "c553984bb4a9403906f89f6925b1adac2b2618f7c8707c5f32f7b80833e04d48",
+            "affected_call": "2024-09-03|portfolio_manager|-|000012",
+            "consumed_calls": 12
+          },
+          {
+            "slot": "L03",
+            "status": "COST_SENSITIVITY_NOT_ESTIMABLE — EXACT_REPLAY_INVALID",
+            "metrics": null,
+            "secondary": null,
+            "reason": "ReplayMismatchError: replayed call #12 does not match recorded call '2024-09-03|portfolio_manager|-|000012': user_prompt_sha256 recorded='e809c044b008dd0d00fcaae094a2004ffee667f5e79bd1e0dbc6927455b01e6e' replayed='851912b1788e4e54b7b8710f7087099d57c0a736d0c3946bd7c01ce2ef542b1e'",
+            "affected_identity": "c553984bb4a9403906f89f6925b1adac2b2618f7c8707c5f32f7b80833e04d48",
+            "affected_call": "2024-09-03|portfolio_manager|-|000012",
+            "consumed_calls": 12
+          }
+        ],
+        "benchmarks": [
+          {
+            "kind": "buy_and_hold-cost-0",
+            "metrics": {
+              "annualized_return": 0.03432477145080992,
+              "annualized_volatility": 0.052475623928762614,
+              "max_drawdown": -0.04017109532348984,
+              "max_drawdown_duration": 52,
+              "sharpe_ratio": 0.6693148839190505,
+              "sortino_ratio": 0.9720318350294517,
+              "total_return": 0.03363239932960238
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.9720318350294517,
+                "economic_value": 0.9720318350294517,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.0022761838343019736,
+                "observations": 247
+              },
+              "turnover": 0.9996801023672425,
+              "executed_notional": 99968.01023672425,
+              "executed_orders": 1,
+              "total_cost": 31.989763275751763
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\negative_validation\\runs\\H2-V6-VALIDATION-buy_and_hold-cost-0-06aadd51d0bf"
+          },
+          {
+            "kind": "sma_regime_h2_proposed-cost-0",
+            "metrics": {
+              "annualized_return": 0.03432477145080992,
+              "annualized_volatility": 0.052475623928762614,
+              "max_drawdown": -0.04017109532348984,
+              "max_drawdown_duration": 52,
+              "sharpe_ratio": 0.6693148839190505,
+              "sortino_ratio": 0.9720318350294517,
+              "total_return": 0.03363239932960238
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.9720318350294517,
+                "economic_value": 0.9720318350294517,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.0022761838343019736,
+                "observations": 247
+              },
+              "turnover": 0.9996801023672425,
+              "executed_notional": 99968.01023672425,
+              "executed_orders": 1,
+              "total_cost": 31.989763275751763
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\negative_validation\\runs\\H2-V6-VALIDATION-sma_regime_h2_proposed-cost-0-06aadd51d0bf"
+          },
+          {
+            "kind": "bollinger_state_h2_proposed-cost-0",
+            "metrics": {
+              "annualized_return": 0.026000080743628473,
+              "annualized_volatility": 0.037027810192147674,
+              "max_drawdown": -0.03338052687462879,
+              "max_drawdown_duration": 226,
+              "sharpe_ratio": 0.7114305272848334,
+              "sortino_ratio": 2.05859860132489,
+              "total_return": 0.02547769014648993
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 2.05859860132489,
+                "economic_value": 2.05859860132489,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.0008060993700807368,
+                "observations": 247
+              },
+              "turnover": 10.319714281229572,
+              "executed_notional": 1031971.4281229572,
+              "executed_orders": 10,
+              "total_cost": 330.2308569993463
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\negative_validation\\runs\\H2-V6-VALIDATION-bollinger_state_h2_proposed-cost-0-06aadd51d0bf"
+          }
+        ]
+      },
+      "5": {
+        "statistics": {
+          "sharpe_individual": [
+            -5.947301634637195,
+            -5.947301634637195,
+            -5.947301634637195
+          ],
+          "sharpe_buy_and_hold": 0.6562762365988178,
+          "delta_individual": [
+            -6.603577871236013,
+            -6.603577871236013,
+            -6.603577871236013
+          ],
+          "mean": -5.947301634637195,
+          "min": -5.947301634637195,
+          "max": -5.947301634637195,
+          "sd_between_runs_ddof1": 0.0,
+          "delta": -6.603577871236013,
+          "sharpe_degenerate": false
+        },
+        "confirmatory_contrasts": 0,
+        "individual": [
+          {
+            "slot": "L01",
+            "status": "BASELINE_REUSED",
+            "metrics": {
+              "annualized_return": -0.19731320460463087,
+              "annualized_volatility": 0.036825059803378746,
+              "max_drawdown": -0.19858863598195226,
+              "max_drawdown_duration": 247,
+              "sharpe_ratio": -5.947301634637195,
+              "sortino_ratio": -5.801375866299146,
+              "total_return": -0.19380510294199804
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": -5.801375866299146,
+                "economic_value": -5.801375866299146,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.0023781111657092003,
+                "observations": 247
+              },
+              "turnover": 219.09116593421246,
+              "executed_notional": 21909116.593421247,
+              "executed_orders": 247,
+              "total_cost": 17965.47560660542
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\negative_validation\\runs\\H2-V6-VALIDATION-L01-06aadd51d0bf"
+          },
+          {
+            "slot": "L02",
+            "status": "BASELINE_REUSED",
+            "metrics": {
+              "annualized_return": -0.19731320460463087,
+              "annualized_volatility": 0.036825059803378746,
+              "max_drawdown": -0.19858863598195226,
+              "max_drawdown_duration": 247,
+              "sharpe_ratio": -5.947301634637195,
+              "sortino_ratio": -5.801375866299146,
+              "total_return": -0.19380510294199804
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": -5.801375866299146,
+                "economic_value": -5.801375866299146,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.0023781111657092003,
+                "observations": 247
+              },
+              "turnover": 219.09116593421246,
+              "executed_notional": 21909116.593421247,
+              "executed_orders": 247,
+              "total_cost": 17965.47560660542
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\negative_validation\\runs\\H2-V6-VALIDATION-L02-06aadd51d0bf"
+          },
+          {
+            "slot": "L03",
+            "status": "BASELINE_REUSED",
+            "metrics": {
+              "annualized_return": -0.19731320460463087,
+              "annualized_volatility": 0.036825059803378746,
+              "max_drawdown": -0.19858863598195226,
+              "max_drawdown_duration": 247,
+              "sharpe_ratio": -5.947301634637195,
+              "sortino_ratio": -5.801375866299146,
+              "total_return": -0.19380510294199804
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": -5.801375866299146,
+                "economic_value": -5.801375866299146,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.0023781111657092003,
+                "observations": 247
+              },
+              "turnover": 219.09116593421246,
+              "executed_notional": 21909116.593421247,
+              "executed_orders": 247,
+              "total_cost": 17965.47560660542
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\negative_validation\\runs\\H2-V6-VALIDATION-L03-06aadd51d0bf"
+          }
+        ],
+        "benchmarks": [
+          {
+            "kind": "buy_and_hold",
+            "metrics": {
+              "annualized_return": 0.03379757516028414,
+              "annualized_volatility": 0.05276507051920208,
+              "max_drawdown": -0.0401710953234899,
+              "max_drawdown_duration": 52,
+              "sharpe_ratio": 0.6562762365988178,
+              "sortino_ratio": 0.9474575763697883,
+              "total_return": 0.03311600657199887
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.9474575763697883,
+                "economic_value": 0.9474575763697883,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.0023023596132740755,
+                "observations": 247
+              },
+              "turnover": 0.9991806718490838,
+              "executed_notional": 99918.06718490837,
+              "executed_orders": 1,
+              "total_cost": 81.93281509162487
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\negative_validation\\runs\\H2-V6-VALIDATION-buy_and_hold-06aadd51d0bf"
+          },
+          {
+            "kind": "sma_regime_h2_proposed",
+            "metrics": {
+              "annualized_return": 0.03379757516028414,
+              "annualized_volatility": 0.05276507051920208,
+              "max_drawdown": -0.0401710953234899,
+              "max_drawdown_duration": 52,
+              "sharpe_ratio": 0.6562762365988178,
+              "sortino_ratio": 0.9474575763697883,
+              "total_return": 0.03311600657199887
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.9474575763697883,
+                "economic_value": 0.9474575763697883,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.0023023596132740755,
+                "observations": 247
+              },
+              "turnover": 0.9991806718490838,
+              "executed_notional": 99918.06718490837,
+              "executed_orders": 1,
+              "total_cost": 81.93281509162487
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\negative_validation\\runs\\H2-V6-VALIDATION-sma_regime_h2_proposed-06aadd51d0bf"
+          },
+          {
+            "kind": "bollinger_state_h2_proposed",
+            "metrics": {
+              "annualized_return": 0.0207795591941613,
+              "annualized_volatility": 0.036842090466564906,
+              "max_drawdown": -0.03723928344308505,
+              "max_drawdown_duration": 226,
+              "sharpe_ratio": 0.5763696413344785,
+              "sortino_ratio": 1.5807659122667568,
+              "total_return": 0.020363097065575708
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 1.5807659122667568,
+                "economic_value": 1.5807659122667568,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.0008462087847258716,
+                "observations": 247
+              },
+              "turnover": 10.293951508712336,
+              "executed_notional": 1029395.1508712335,
+              "executed_orders": 10,
+              "total_cost": 844.1040237144117
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\negative_validation\\runs\\H2-V6-VALIDATION-bollinger_state_h2_proposed-06aadd51d0bf"
+          }
+        ]
+      },
+      "10": {
+        "statistics": null,
+        "confirmatory_contrasts": 0,
+        "individual": [
+          {
+            "slot": "L01",
+            "status": "COST_SENSITIVITY_NOT_ESTIMABLE — EXACT_REPLAY_INVALID",
+            "metrics": null,
+            "secondary": null,
+            "reason": "ReplayMismatchError: replayed call #12 does not match recorded call '2024-09-03|portfolio_manager|-|000012': user_prompt_sha256 recorded='e809c044b008dd0d00fcaae094a2004ffee667f5e79bd1e0dbc6927455b01e6e' replayed='375d8516c30fd499f13a98403bc5f078faf68e5bebc16017ffe6c0f9ca05feed'",
+            "affected_identity": "c553984bb4a9403906f89f6925b1adac2b2618f7c8707c5f32f7b80833e04d48",
+            "affected_call": "2024-09-03|portfolio_manager|-|000012",
+            "consumed_calls": 12
+          },
+          {
+            "slot": "L02",
+            "status": "COST_SENSITIVITY_NOT_ESTIMABLE — EXACT_REPLAY_INVALID",
+            "metrics": null,
+            "secondary": null,
+            "reason": "ReplayMismatchError: replayed call #12 does not match recorded call '2024-09-03|portfolio_manager|-|000012': user_prompt_sha256 recorded='e809c044b008dd0d00fcaae094a2004ffee667f5e79bd1e0dbc6927455b01e6e' replayed='375d8516c30fd499f13a98403bc5f078faf68e5bebc16017ffe6c0f9ca05feed'",
+            "affected_identity": "c553984bb4a9403906f89f6925b1adac2b2618f7c8707c5f32f7b80833e04d48",
+            "affected_call": "2024-09-03|portfolio_manager|-|000012",
+            "consumed_calls": 12
+          },
+          {
+            "slot": "L03",
+            "status": "COST_SENSITIVITY_NOT_ESTIMABLE — EXACT_REPLAY_INVALID",
+            "metrics": null,
+            "secondary": null,
+            "reason": "ReplayMismatchError: replayed call #12 does not match recorded call '2024-09-03|portfolio_manager|-|000012': user_prompt_sha256 recorded='e809c044b008dd0d00fcaae094a2004ffee667f5e79bd1e0dbc6927455b01e6e' replayed='375d8516c30fd499f13a98403bc5f078faf68e5bebc16017ffe6c0f9ca05feed'",
+            "affected_identity": "c553984bb4a9403906f89f6925b1adac2b2618f7c8707c5f32f7b80833e04d48",
+            "affected_call": "2024-09-03|portfolio_manager|-|000012",
+            "consumed_calls": 12
+          }
+        ],
+        "benchmarks": [
+          {
+            "kind": "buy_and_hold-cost-10",
+            "metrics": {
+              "annualized_return": 0.03327091069733923,
+              "annualized_volatility": 0.053057157567085206,
+              "max_drawdown": -0.04017109532348987,
+              "max_drawdown_duration": 52,
+              "sharpe_ratio": 0.6433571423324871,
+              "sortino_ratio": 0.9234144703610009,
+              "total_return": 0.03260012952641311
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.9234144703610009,
+                "economic_value": 0.9234144703610009,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.002328622879532207,
+                "observations": 247
+              },
+              "turnover": 0.9986817401030639,
+              "executed_notional": 99868.1740103064,
+              "executed_orders": 1,
+              "total_cost": 131.82598969360444
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\negative_validation\\runs\\H2-V6-VALIDATION-buy_and_hold-cost-10-06aadd51d0bf"
+          },
+          {
+            "kind": "sma_regime_h2_proposed-cost-10",
+            "metrics": {
+              "annualized_return": 0.03327091069733923,
+              "annualized_volatility": 0.053057157567085206,
+              "max_drawdown": -0.04017109532348987,
+              "max_drawdown_duration": 52,
+              "sharpe_ratio": 0.6433571423324871,
+              "sortino_ratio": 0.9234144703610009,
+              "total_return": 0.03260012952641311
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.9234144703610009,
+                "economic_value": 0.9234144703610009,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.002328622879532207,
+                "observations": 247
+              },
+              "turnover": 0.9986817401030639,
+              "executed_notional": 99868.1740103064,
+              "executed_orders": 1,
+              "total_cost": 131.82598969360444
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\negative_validation\\runs\\H2-V6-VALIDATION-sma_regime_h2_proposed-cost-10-06aadd51d0bf"
+          },
+          {
+            "kind": "bollinger_state_h2_proposed-cost-10",
+            "metrics": {
+              "annualized_return": 0.015585596596402906,
+              "annualized_volatility": 0.03672277441516393,
+              "max_drawdown": -0.04108263895413984,
+              "max_drawdown_duration": 226,
+              "sharpe_ratio": 0.43921421345510153,
+              "sortino_ratio": 1.1356639280536955,
+              "total_return": 0.015274008970240782
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 1.1356639280536955,
+                "economic_value": 1.1356639280536955,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.000894667721440861,
+                "observations": 247
+              },
+              "turnover": 10.268276043872856,
+              "executed_notional": 1026827.6043872857,
+              "executed_orders": 10,
+              "total_cost": 1355.412437791217
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\negative_validation\\runs\\H2-V6-VALIDATION-bollinger_state_h2_proposed-cost-10-06aadd51d0bf"
+          }
+        ]
+      },
+      "20": {
+        "statistics": null,
+        "confirmatory_contrasts": 0,
+        "individual": [
+          {
+            "slot": "L01",
+            "status": "COST_SENSITIVITY_NOT_ESTIMABLE — EXACT_REPLAY_INVALID",
+            "metrics": null,
+            "secondary": null,
+            "reason": "ReplayMismatchError: replayed call #12 does not match recorded call '2024-09-03|portfolio_manager|-|000012': user_prompt_sha256 recorded='e809c044b008dd0d00fcaae094a2004ffee667f5e79bd1e0dbc6927455b01e6e' replayed='69121de4e0524997110fb19129e33ba63a696cd8d92edeb789beca79184f3574'",
+            "affected_identity": "c553984bb4a9403906f89f6925b1adac2b2618f7c8707c5f32f7b80833e04d48",
+            "affected_call": "2024-09-03|portfolio_manager|-|000012",
+            "consumed_calls": 12
+          },
+          {
+            "slot": "L02",
+            "status": "COST_SENSITIVITY_NOT_ESTIMABLE — EXACT_REPLAY_INVALID",
+            "metrics": null,
+            "secondary": null,
+            "reason": "ReplayMismatchError: replayed call #12 does not match recorded call '2024-09-03|portfolio_manager|-|000012': user_prompt_sha256 recorded='e809c044b008dd0d00fcaae094a2004ffee667f5e79bd1e0dbc6927455b01e6e' replayed='69121de4e0524997110fb19129e33ba63a696cd8d92edeb789beca79184f3574'",
+            "affected_identity": "c553984bb4a9403906f89f6925b1adac2b2618f7c8707c5f32f7b80833e04d48",
+            "affected_call": "2024-09-03|portfolio_manager|-|000012",
+            "consumed_calls": 12
+          },
+          {
+            "slot": "L03",
+            "status": "COST_SENSITIVITY_NOT_ESTIMABLE — EXACT_REPLAY_INVALID",
+            "metrics": null,
+            "secondary": null,
+            "reason": "ReplayMismatchError: replayed call #12 does not match recorded call '2024-09-03|portfolio_manager|-|000012': user_prompt_sha256 recorded='e809c044b008dd0d00fcaae094a2004ffee667f5e79bd1e0dbc6927455b01e6e' replayed='69121de4e0524997110fb19129e33ba63a696cd8d92edeb789beca79184f3574'",
+            "affected_identity": "c553984bb4a9403906f89f6925b1adac2b2618f7c8707c5f32f7b80833e04d48",
+            "affected_call": "2024-09-03|portfolio_manager|-|000012",
+            "consumed_calls": 12
+          }
+        ],
+        "benchmarks": [
+          {
+            "kind": "buy_and_hold-cost-20",
+            "metrics": {
+              "annualized_return": 0.032219174049154864,
+              "annualized_volatility": 0.05364902850789338,
+              "max_drawdown": -0.04017109532348984,
+              "max_drawdown_duration": 52,
+              "sharpe_ratio": 0.6178799278333311,
+              "sortino_ratio": 0.8768677938300066,
+              "total_return": 0.03156991948418475
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.8768677938300066,
+                "economic_value": 0.8768677938300066,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.0023813956691894466,
+                "observations": 247
+              },
+              "turnover": 0.9976853699417351,
+              "executed_notional": 99768.53699417351,
+              "executed_orders": 1,
+              "total_cost": 231.46300582648257
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\negative_validation\\runs\\H2-V6-VALIDATION-buy_and_hold-cost-20-06aadd51d0bf"
+          },
+          {
+            "kind": "sma_regime_h2_proposed-cost-20",
+            "metrics": {
+              "annualized_return": 0.032219174049154864,
+              "annualized_volatility": 0.05364902850789338,
+              "max_drawdown": -0.04017109532348984,
+              "max_drawdown_duration": 52,
+              "sharpe_ratio": 0.6178799278333311,
+              "sortino_ratio": 0.8768677938300066,
+              "total_return": 0.03156991948418475
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.8768677938300066,
+                "economic_value": 0.8768677938300066,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.0023813956691894466,
+                "observations": 247
+              },
+              "turnover": 0.9976853699417351,
+              "executed_notional": 99768.53699417351,
+              "executed_orders": 1,
+              "total_cost": 231.46300582648257
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\negative_validation\\runs\\H2-V6-VALIDATION-sma_regime_h2_proposed-cost-20-06aadd51d0bf"
+          },
+          {
+            "kind": "bollinger_state_h2_proposed-cost-20",
+            "metrics": {
+              "annualized_return": 0.005276798307717101,
+              "annualized_volatility": 0.03668518067238414,
+              "max_drawdown": -0.048723399993524395,
+              "max_drawdown_duration": 226,
+              "sharpe_ratio": 0.16153158654515654,
+              "sortino_ratio": 0.3690133022325921,
+              "total_return": 0.005171829657755644
+            },
+            "secondary": {
+              "sortino": {
+                "technical_value": 0.3690133022325921,
+                "economic_value": 0.3690133022325921,
+                "degenerate": false,
+                "reason": null,
+                "downside_deviation": 0.0010115930307180662,
+                "observations": 247
+              },
+              "turnover": 10.217185657017719,
+              "executed_notional": 1021718.565701772,
+              "executed_orders": 10,
+              "total_cost": 2370.3870724281114
+            },
+            "path": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\.pytest_temp\\h2-production-gwxg730v\\negative_validation\\runs\\H2-V6-VALIDATION-bollinger_state_h2_proposed-cost-20-06aadd51d0bf"
+          }
+        ]
+      }
+    },
+    "native_fake_calls": 3705,
+    "negative_native_fake_calls": 4818,
+    "invalid_cost_dispositions": 9
+  },
+  "metrics": {
+    "synthetic_bootstrap": {
+      "sharpe_individual": [
+        1.0841722055768563,
+        0.5433065008566935,
+        1.3142859781305263
+      ],
+      "sharpe_buy_and_hold": 0.8894605518775975,
+      "delta_individual": [
+        0.1947116536992588,
+        -0.346154051020904,
+        0.42482542625292874
+      ],
+      "mean": 0.9805882281880254,
+      "min": 0.5433065008566935,
+      "max": 1.3142859781305263,
+      "sd_between_runs_ddof1": 0.39578980390243185,
+      "delta": 0.09112767631042784,
+      "sharpe_degenerate": false,
+      "status": "ESTIMABLE",
+      "p": 0.0001999600079984003,
+      "lower95": 0.08465820203369814,
+      "superiority": true,
+      "degenerate_draws": 0,
+      "confirmatory_contrasts": 1,
+      "B": 5000,
+      "seed": 20261008,
+      "mean_block": 10,
+      "rank": 4751,
+      "indices_sha256": "cec5427e9c8d3bbdeaaca586eea158ae6156ddd005f19e962e69a6b34ac0f470",
+      "roots_sha256": "c53e35819778969df818c31c1ff77e235a65a090967d9a0d7801e1a01d6fd4bf"
+    },
+    "benchmark_spec_sha256": {
+      "buy_and_hold": "cbdb92508d9766c5668b2500eea837cce3f5384d117f08a61765765829be0ef1",
+      "sma_regime_h2_proposed": "9fec52feb42a4dcea4ff7ca6973db348e03cf3efb92fe64252ac32e373f02bc5",
+      "bollinger_state_h2_proposed": "1ba8fddb165ec8b4bec5025f7be1ee38a8ff5e5e30d7e88c9b24958e2ec47345"
+    }
+  },
+  "preservation": {
+    "historical_files": 6752,
+    "unchanged_historical_files": 6750,
+    "permitted_infrastructure_patch": {
+      "src/experiments/participants.py": {
+        "before_sha256": "02aa8bb058611fcf635b8e084ecc0077a35832c5c0bceb50fe073650b908ae04",
+        "after_sha256": "0b0b249e15bd28f9332cf4d151c9cfe390600d82f152215f6d0aeffdea52c587"
+      },
+      "src/experiments/runner.py": {
+        "before_sha256": "a969d9fe0b3d813394de22f5fb1736849cb48092d21d8eb39dd4a2263f6f6d6b",
+        "after_sha256": "428f70cac15c79f1949bb66b22dccee0af0a9c6052ccbfa94edfa8a2645b4bea"
+      }
+    }
+  },
+  "status": "H2_V6 EVALUATION PRODUCTION PATH QUALIFIED OFFLINE — AWAITING FORMAL APPROVAL AND SYSTEM FREEZE",
+  "manifest_sha256": "dc118ce9841df612d030f40e5993858eacc6d06e41eff173706fc3a72d3acb98",
+  "checks": [
+    "durable reservation/raw/validated response crash boundaries; reopen; no extra inference",
+    "real SQLite commit rollback proves never-reserved recovery; lost bank schema cannot recreate calls",
+    "reserved-before-send and transport-invalid envelope recovery fail closed",
+    "provider errors remain errors; frozen transient retry and exact error/response replay",
+    "frozen malformed-HTTP retry obtains next fake envelope; both raw attempts remain durable",
+    "concurrent analyst calls have unique durable sequences; journal corruption fails closed",
+    "normal static registry; exact benchmark specs; fresh instances; no registry mutation",
+    "phase-specific consent, digest and reserved-data guards; candidates cannot enable real runs",
+    "R3 native fake HTTP, independent slots, durable-before-transport; concurrent command refused; idempotency",
+    "published-without-seal exact recovery preserves journal/artifacts and makes no new transport",
+    "valid exact cost replay and 24 closed dispositions; negative contrast releases; Final bound to checkpoint",
+    "corrupted/incomplete Validation blocks Final before client construction, independent of performance",
+    "synthetic Final only after complete identical Validation; A degeneracy retained; no reserved outcomes",
+    "negative financial returns release on integrity; divergent cost replay N/A/null; no subset/no new calls",
+    "operational publication errors interrupt rather than become descriptive N/A; incomplete phase cannot release",
+    "abandoned exclusive lock fails closed; no automatic replacement or rerun",
+    "historical 6752 identities, declared infrastructure exceptions only; raw/anchor/audit seals and treatment intact"
+  ],
+  "check_groups": 17,
+  "elapsed_seconds": 1303.57,
+  "provider_calls": 0,
+  "data": "GENERATED_SYNTHETIC_ONLY",
+  "real_validation_executed": false,
+  "real_final_executed": false,
+  "academic_approval": false,
+  "system_freeze_executed": false,
+  "individual_synthetic_artifacts": "TEMPORARY; REMOVED AFTER CHECKS"
+}

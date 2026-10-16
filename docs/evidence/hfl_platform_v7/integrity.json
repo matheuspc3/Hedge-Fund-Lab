@@ -1,0 +1,10 @@
+{
+  "protected_files": 11094,
+  "changed": [],
+  "ok": true,
+  "baseline_sha256": "d34d69e2681bd70cc7b2dccca6121164a44181532ccc19ee0b2896c8445f018d",
+  "elapsed_seconds": 14.97,
+  "decision_2026_10_09_sha256": "27e51c949aebac155b1d890c6fff74d1a242852d7f5c8d3a30cdc602a6a09ddc",
+  "src_files": 66,
+  "verification": "byte hashes only; no scientific execution or provider calls"
+}

@@ -1,0 +1,35 @@
+/* V7.6.4: all colors, spacing and focus inherit the shared design system. */
+#portfolio-views {display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-block:var(--sp-5)}
+#portfolio-views a {padding:var(--sp-3);border:1px solid var(--border-control);border-radius:var(--radius-md);text-decoration:none;min-height:44px}
+#portfolio-views a[aria-current] {background:var(--surface-3);color:var(--accent);border-color:var(--accent)}
+.monitor-toolbar {display:flex;align-items:end;flex-wrap:wrap;gap:var(--sp-4);margin-block:var(--sp-5)}
+.monitor-toolbar label {display:grid;gap:var(--sp-2);max-width:100%;flex:1}
+.monitor-toolbar select {width:100%;min-width:0;max-width:100%}
+.monitor-grid {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp-3);margin-block:var(--sp-5)}
+.monitor-grid article {padding:var(--sp-4)}
+.monitor-grid strong {display:block;font-size:var(--fs-xl);margin-top:var(--sp-2);overflow-wrap:anywhere}
+.monitor-grid span {color:var(--muted)}
+#monitoring pre,#decision-detail pre {max-height:480px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}
+.monitor-hash {display:block;overflow-wrap:anywhere;font-family:var(--font-mono);max-width:32ch}
+.monitor-section {margin-block:var(--sp-5)}
+.monitor-section h2,.monitor-section h3 {margin-bottom:var(--sp-3)}
+#monitoring table,#global-workflow table {width:100%;border-collapse:collapse;white-space:nowrap}
+#monitoring th,#monitoring td,#global-workflow th,#global-workflow td {padding:var(--sp-3);border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+#global-workflow td:last-child {white-space:normal;min-width:220px;max-width:65ch}
+.monitor-dates {display:flex;flex-wrap:wrap;gap:var(--sp-5)}
+#monitoring [hidden],[data-portfolio-view][hidden],#monitoring[hidden],#decision-detail[hidden],#decision-list[hidden] {display:none!important}
+#monitoring h2,#monitoring code,#decision-detail code {overflow-wrap:anywhere}
+#simulador {border-top:4px solid var(--state-synthetic);padding-top:var(--sp-5)}
+@media(max-width:1024px){.monitor-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.monitor-grid{grid-template-columns:minmax(0,1fr)}#portfolio-views a{flex:1 1 45%}.monitor-toolbar button{width:100%}.monitor-dates{display:block}}
+
+.monitor-composition{max-width:360px; margin-block:var(--sp-4)}
+.monitor-demo{display:flex;align-items:center;gap:var(--sp-3);min-height:44px}
+.monitor-demo input{width:20px;height:20px;flex:none}
+#monitor-pagination{display:flex;align-items:center;flex-wrap:wrap;gap:var(--sp-3);margin-block:var(--sp-4)}
+
+/* The page tabs replace the shell's duplicate section links on Portfolio. */
+.portfolio-page .hfl-shell .hfl-secondary{display:none}
+#global-workflow table{table-layout:auto}
+#global-workflow td{white-space:normal;overflow-wrap:anywhere;min-width:100px;max-width:65ch}
+#monitor-secondary strong{font-size:var(--fs-lg)}

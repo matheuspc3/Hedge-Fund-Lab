@@ -1,0 +1,95 @@
+{
+  "identity": "HFL-MULTIASSET-GLOBAL-PM-V1",
+  "record_id": "v7-5a78ea5d15214e37bcae18f167ffcee3",
+  "planner": "GEMINI_GLOBAL_PM",
+  "mode": "CONSULTATIVE_SANDBOX",
+  "context_sha256": "0f5f7554ca18c9f898f799fdb6d50d3e583d6efaedef9965c7b463aa047e67d6",
+  "result_sha256": "6fc83a20441ac28f46f96a574bf40b33a4d1da4b59ed31488a01688407a62856",
+  "file_sha256": {
+    "authorization.json": "052d29dd37fd7161cf5f1202b8a5309e7cdf96750a350c62a0c9d91ceebf4e4f",
+    "claim.json": "ce02b18b5de40544ec623f89b85856146e9ed3c341b4bd9b249d5b6d668a72b5",
+    "context.json": "36f0fc6f38aeb7a08ff158355b9aa779d5ccb765c7b5b2be24648c6c0305757d",
+    "private/calls.sqlite": "5ca3198bd6135d53fc192c93f230de707ef97a14710758e5e865ef6ef879797a",
+    "private/provider_journal.jsonl": "a3869ca2760df73e18e53ef6af1a7e25c69f3c18f0189d860b943f688f2681bb",
+    "result.json": "c8069e128a331fee5c9a170800a1da4442782b5ec83c9be458a1ca146f60e140"
+  },
+  "status_at_validation": "REJECTED_BY_VALIDATOR",
+  "status_now": "REJECTED_BY_VALIDATOR",
+  "replayed_validation_identical": true,
+  "errors": [
+    {
+      "stage": "GLOBAL_PM_VALIDATOR",
+      "code": "explanation_selection_inconsistent"
+    }
+  ],
+  "financial_validation": {
+    "valid": true,
+    "risk_projected": "OK",
+    "operations": 0,
+    "estimated_costs": "0",
+    "projected_exposure": "0",
+    "projected_cash_available": "100000.00",
+    "sector_status": "NOT_EVALUATED_NO_RELIABLE_METADATA"
+  },
+  "declared_lists": {
+    "not_selected": [
+      "BBAS3",
+      "VALE3",
+      "WEGE3"
+    ],
+    "deferred_opportunities": [
+      "ITUB4",
+      "PETR4"
+    ]
+  },
+  "derived_lists": {
+    "not_selected": [
+      "BBAS3",
+      "ITUB4",
+      "PETR4",
+      "VALE3",
+      "WEGE3"
+    ],
+    "deferred_opportunities": []
+  },
+  "counterfactual": {
+    "classification": "DIAGNOSTIC_IN_MEMORY_ONLY_NOT_A_CORRECTION_NOT_SEALED",
+    "changed_fields": {
+      "not_selected": [
+        "BBAS3",
+        "ITUB4",
+        "PETR4",
+        "VALE3",
+        "WEGE3"
+      ],
+      "deferred_opportunities": []
+    },
+    "status": "VALID_PROPOSAL",
+    "errors": []
+  },
+  "usage": {
+    "provider_tokens": {
+      "completion_tokens": 2519,
+      "prompt_tokens": 18794,
+      "source": "provider",
+      "thoughts_tokens": null,
+      "total_tokens": 21313
+    },
+    "usd_reserved": "0.159744",
+    "billed_usd": null,
+    "billed_status": "NOT_CONFIRMED_NO_PROVIDER_INVOICE",
+    "status": "UNKNOWN",
+    "thoughts": "NOT_REPORTED",
+    "totals": "CONSISTENT_WITHOUT_THOUGHTS_FIELD",
+    "usd_estimated": null,
+    "usd_observed_lower_bound": "0.02354175",
+    "rates_usd_million": {
+      "input": "0.75",
+      "output": "3.75"
+    },
+    "price_source": "https://ai.google.dev/gemini-api/docs/pricing",
+    "price_checked": "2026-10-11",
+    "basis": "Estimate only when prompt, completion and thoughts are reported and sum to the total; otherwise UNKNOWN with the reported-token lower bound. Never an invoice."
+  },
+  "v1_cost_usd_recorded": null
+}

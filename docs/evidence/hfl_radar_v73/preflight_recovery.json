@@ -1,0 +1,120 @@
+{
+  "run": "radar-2026-10-09-recovery-01",
+  "session": "2026-10-09",
+  "treatment": {
+    "identity": "HFL-MULTIASSET-RADAR-V1",
+    "manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef",
+    "model": "gemini-3.8-flash"
+  },
+  "radar_preflight": {
+    "identity": "HFL-MULTIASSET-RADAR-V1",
+    "session": "2026-10-09",
+    "items": [
+      {
+        "ticker": "PETR4",
+        "session": "2026-10-09",
+        "ready": false,
+        "error": "gemini_api_key_missing"
+      },
+      {
+        "ticker": "VALE3",
+        "session": "2026-10-09",
+        "ready": false,
+        "error": "gemini_api_key_missing"
+      },
+      {
+        "ticker": "ITUB4",
+        "session": "2026-10-09",
+        "ready": false,
+        "error": "gemini_api_key_missing"
+      },
+      {
+        "ticker": "WEGE3",
+        "session": "2026-10-09",
+        "ready": false,
+        "error": "gemini_api_key_missing"
+      },
+      {
+        "ticker": "BBAS3",
+        "session": "2026-10-09",
+        "ready": false,
+        "error": "gemini_api_key_missing"
+      }
+    ],
+    "replay": false,
+    "max_usd": 3.32,
+    "usd_reserved": 0,
+    "global_budget_used": 0,
+    "global_budget_cap": 5.0,
+    "usd_estimated": 0,
+    "ready": false,
+    "confirmation_token": "adb1b037474c8bebbc43c5c33f07f9e4cad7be1deb1b8ad47bc27e7ce96ba1cb"
+  },
+  "budget": {
+    "run": "radar-2026-10-09-recovery-01",
+    "run_budget_usd": 3.32,
+    "run_reserved_usd": 0,
+    "planned": {
+      "tickers": [
+        "PETR4",
+        "VALE3",
+        "ITUB4",
+        "WEGE3",
+        "BBAS3"
+      ],
+      "calls_max": 30,
+      "calls_planned": 29,
+      "usd_estimated": 0.14625,
+      "usd_reserved": 3.31776
+    },
+    "runs": [
+      {
+        "run": "radar-2026-10-09-original",
+        "incident": "INCIDENT_2026_10_12_NETWORK_GUARD",
+        "budget_usd": 5.0,
+        "usd_reserved": 3.31776,
+        "usd_reserved_uncertain": 3.31776,
+        "usd_observed_provider_tokens": 0.0,
+        "usd_billed_confirmed": null,
+        "reservations": [
+          {
+            "batch": "d38776682ccf",
+            "usd_estimated": 0.14625,
+            "usd_reserved": 3.31776,
+            "claims": 5,
+            "outcome": "OUTCOME_UNCERTAIN",
+            "forensic": "LOCAL_BLOCK_BEFORE_CONNECT_BILLING_UNCONFIRMED"
+          }
+        ]
+      },
+      {
+        "run": "radar-2026-10-09-recovery-01",
+        "incident": null,
+        "budget_usd": 3.32,
+        "usd_reserved": 0,
+        "usd_reserved_uncertain": 0,
+        "usd_observed_provider_tokens": 0.0,
+        "usd_billed_confirmed": null,
+        "reservations": []
+      }
+    ],
+    "other_runs_reserved_usd": 3.31776,
+    "aggregate_exposure_usd": 6.63552,
+    "aggregate_cap_usd": 5.0,
+    "aggregate_policy": "NO_APPROVED_AGGREGATE_CAP_ORIGINAL_LOCAL_LIMIT_APPLIES",
+    "within_run_budget": true,
+    "within_aggregate_cap": false,
+    "budget_token": "0fcb1d9b787045b702ede4ec2560416814ca323815f5ed11920a5adb5f9fc2c8",
+    "authorization": {
+      "state": "ABSENT",
+      "required": true
+    }
+  },
+  "blockers": [
+    "aggregate_budget_authorization_required",
+    "gemini_api_key_missing"
+  ],
+  "gate": "BLOCKED",
+  "consent": "Autorizo chamadas pagas Gemini somente para a execução radar-2026-10-09-recovery-01, sessão 2026-10-09, ativos —, teto reservado US$ 0.",
+  "provider_calls": 0
+}

@@ -1,0 +1,48 @@
+test_accounting_property_many_rounding_sequences (__main__.AccountingChecks.test_accounting_property_many_rounding_sequences) ... ok
+test_buy_multiple_reserves_cost_basis_and_unsettled_units (__main__.AccountingChecks.test_buy_multiple_reserves_cost_basis_and_unsettled_units) ... ok
+test_chain_snapshot_tamper_missing_event_and_lock (__main__.AccountingChecks.test_chain_snapshot_tamper_missing_event_and_lock) ... ok
+test_corporate_cash_split_and_unreconciled_fraction (__main__.AccountingChecks.test_corporate_cash_split_and_unreconciled_fraction) ... ok
+test_crash_before_after_commit_and_recovery (__main__.AccountingChecks.test_crash_before_after_commit_and_recovery) ... ok
+test_duplicate_ids_legs_and_idempotent_retry (__main__.AccountingChecks.test_duplicate_ids_legs_and_idempotent_retry) ... ok
+test_expiry_rejection_and_stale_approval (__main__.AccountingChecks.test_expiry_rejection_and_stale_approval) ... ok
+test_initial_cash_and_decimal_boundaries (__main__.AccountingChecks.test_initial_cash_and_decimal_boundaries) ... ok
+test_insufficient_cash_short_and_concentration (__main__.AccountingChecks.test_insufficient_cash_short_and_concentration) ... ok
+test_partial_sale_and_total_sale_without_purchase (__main__.AccountingChecks.test_partial_sale_and_total_sale_without_purchase) ... ok
+test_receivable_not_spendable_and_dependency_waits (__main__.AccountingChecks.test_receivable_not_spendable_and_dependency_waits) ... ok
+test_settlement_calendar_holiday_year_boundary (__main__.AccountingChecks.test_settlement_calendar_holiday_year_boundary) ... ok
+test_full_demo_a_to_e_and_dashboard_readonly_scenarios (__main__.IntegrationChecks.test_full_demo_a_to_e_and_dashboard_readonly_scenarios) ... ok
+test_http_host_origin_get_readonly_and_no_execution_endpoint (__main__.IntegrationChecks.test_http_host_origin_get_readonly_and_no_execution_endpoint) ... 127.0.0.1 - - [11/Oct/2026 14:35:28] "GET /portfolio HTTP/1.1" 200 -
+127.0.0.1 - - [11/Oct/2026 14:35:28] "GET /portfolio.css HTTP/1.1" 200 -
+127.0.0.1 - - [11/Oct/2026 14:35:28] "GET /portfolio.js HTTP/1.1" 200 -
+127.0.0.1 - - [11/Oct/2026 14:35:28] "GET /api/portfolio/status HTTP/1.1" 200 -
+127.0.0.1 - - [11/Oct/2026 14:35:29] "GET /api/portfolio/scenario?name=rotation HTTP/1.1" 200 -
+127.0.0.1 - - [11/Oct/2026 14:35:29] "GET /api/portfolio/case?case=E HTTP/1.1" 200 -
+127.0.0.1 - - [11/Oct/2026 14:35:29] "GET /api/portfolio/status HTTP/1.1" 403 -
+127.0.0.1 - - [11/Oct/2026 14:35:29] "GET /api/portfolio/status HTTP/1.1" 403 -
+127.0.0.1 - - [11/Oct/2026 14:35:29] "POST /api/portfolio/execute HTTP/1.1" 404 -
+127.0.0.1 - - [11/Oct/2026 14:35:29] "GET /api/portfolio/scenario?name=bad HTTP/1.1" 400 -
+127.0.0.1 - - [11/Oct/2026 14:35:30] "GET /api/portfolio/status?root=../../data/forward HTTP/1.1" 400 -
+127.0.0.1 - - [11/Oct/2026 14:35:30] "GET /api/portfolio/case?case=AA HTTP/1.1" 400 -
+127.0.0.1 - - [11/Oct/2026 14:35:30] "GET /api/portfolio/status?x=1&x=2 HTTP/1.1" 400 -
+127.0.0.1 - - [11/Oct/2026 14:35:30] "GET /../data/forward/h2_v6_paper/state.json HTTP/1.1" 404 -
+ok
+test_original_scientific_radar_and_ledger_preservation (__main__.IntegrationChecks.test_original_scientific_radar_and_ledger_preservation) ... ok
+test_dependency_cycles_duplicate_leg_and_bad_quantities (__main__.ManagerChecks.test_dependency_cycles_duplicate_leg_and_bad_quantities) ... ok
+test_drawdown_and_daily_global_limits (__main__.ManagerChecks.test_drawdown_and_daily_global_limits) ... ok
+test_global_buy_selected_opportunities_and_no_op (__main__.ManagerChecks.test_global_buy_selected_opportunities_and_no_op) ... ok
+test_hash_tampering_expiry_human_rejection_and_state_change (__main__.ManagerChecks.test_hash_tampering_expiry_human_rejection_and_state_change) ... ok
+test_price_cost_limits_and_no_future_marks (__main__.ManagerChecks.test_price_cost_limits_and_no_future_marks) ... ok
+test_real_sealed_radar_adapter_is_readonly (__main__.ManagerChecks.test_real_sealed_radar_adapter_is_readonly) ... ok
+test_rebalance_sell_cash_and_deferred_rotation (__main__.ManagerChecks.test_rebalance_sell_cash_and_deferred_rotation) ... ok
+test_recovery_reserved_global_basket_no_duplicate (__main__.ManagerChecks.test_recovery_reserved_global_basket_no_duplicate) ... ok
+test_registered_validation_cannot_be_bypassed (__main__.ManagerChecks.test_registered_validation_cannot_be_bypassed) ... ok
+test_risk_covariance_matches_matrix_and_correlations (__main__.ManagerChecks.test_risk_covariance_matches_matrix_and_correlations) ... ok
+test_risk_projected_cash_to_stock_requires_history (__main__.ManagerChecks.test_risk_projected_cash_to_stock_requires_history) ... ok
+test_sector_metadata_reported_only_when_reliable (__main__.ManagerChecks.test_sector_metadata_reported_only_when_reliable) ... ok
+test_sessions_sources_veto_and_lookahead (__main__.ManagerChecks.test_sessions_sources_veto_and_lookahead) ... ok
+test_weight_validation_and_declared_weights_cannot_override_cash (__main__.ManagerChecks.test_weight_validation_and_declared_weights_cannot_override_cash) ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 42.952s
+
+OK

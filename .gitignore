@@ -10,9 +10,14 @@ build/
 venv/
 env/
 
-# IDE
+# IDE / AI Tools
 .vscode/
 .idea/
+.claude/
+
+# Obsidian: layout pessoal e cache; notas e demais configurações continuam visíveis
+.obsidian/workspace*.json
+.obsidian/cache/
 
 # Environment variables
 .env
@@ -23,6 +28,23 @@ Thumbs.db
 
 # Data cache
 data/raw/
+data/agent_runs/
+data/agent_daily/
+data/cache/
+data/snapshots/
+data/runs/
+data/forward/
+data/radar/
+data/portfolio/
+data/global_pm/
+data/platform/
+hedgefundlab.db
 
 # Dashboard data (generated)
 dashboard/data.json
+
+# Testing artifacts
+.pytest_cache/
+.pytest_temp/
+.coverage
+data/logs/

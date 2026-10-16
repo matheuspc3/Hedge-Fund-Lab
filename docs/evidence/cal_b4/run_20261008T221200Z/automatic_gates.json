@@ -1,0 +1,127 @@
+{
+  "kind": "CAL_B4_AUTOMATIC_GATES",
+  "freeze": "CAL_B4_PROTOCOL_FREEZE_V1",
+  "batch_git_commit": "0760f7286ab9c2411f23d1def39ce5694f6d74bb",
+  "audit_git_commit": "c5aa362e9d13d4b1cec86eed5ea1c9abaf9b7b79",
+  "gates": {
+    "CB4-A": {
+      "value": 0,
+      "threshold": "== 0",
+      "issues": {},
+      "pass": true
+    },
+    "CB4-S": {
+      "value": 0,
+      "threshold": "== 0",
+      "issues": {},
+      "pass": true
+    },
+    "CB4-C": {
+      "value": 0,
+      "threshold": "== 0",
+      "issues": {},
+      "pass": true
+    },
+    "CB4-HR": {
+      "value": 0,
+      "threshold": "== 0",
+      "issues": {},
+      "pass": true
+    },
+    "CB4-E": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "CB4-S1": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "CB4-S2": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "CB4-S3": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "CB4-R1": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "CB4-R2": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "CB4-R3": {
+      "value": 0,
+      "threshold": "== 0",
+      "pass": true
+    },
+    "CB4-D": {
+      "value": 0.4,
+      "threshold": "< 0.90",
+      "pass": true
+    }
+  },
+  "automatic_pass": true,
+  "hold_rates": {
+    "explicit_hold_rate": 0.4,
+    "no_majority_abstention_rate": 0.0,
+    "risk_veto_rate": 0.0,
+    "portfolio_hold_rate": 0.0,
+    "total_hold_rate": 0.4,
+    "total_holds": 4,
+    "decisions": 10,
+    "degenerate_inactive": false
+  },
+  "action_distribution": {
+    "final_cause": {
+      "ACTION_SELL": 1,
+      "ACTION_BUY": 5,
+      "TECH_EXPLICIT_HOLD": 4
+    },
+    "technical_consensus": {
+      "VENDA": 1,
+      "COMPRA": 5,
+      "MANTER": 4
+    },
+    "technical_votes": {
+      "VENDA": 5,
+      "COMPRA": 25,
+      "MANTER": 20
+    }
+  },
+  "risk_discretionary_activity": {
+    "risk_llm_calls": 5,
+    "APPROVED": 5,
+    "VETOED": 0,
+    "approval_rate": 1.0,
+    "veto_rate": 0.0,
+    "RISK_LLM_DISCRETIONARY_VETO": "NOT_OBSERVED",
+    "authority": "DESCRIPTIVE ONLY (no PASS/FAIL)"
+  },
+  "financial_outcome": "NOT COMPUTED",
+  "validation_final_access": false,
+  "system_freeze_executed": false,
+  "second_review": "NOT_REVIEWED — NONBLOCKING",
+  "operational": {
+    "logical_calls": 61,
+    "http_attempts": 61,
+    "retries": 0,
+    "transient_errors": 0,
+    "final_errors": 0,
+    "latency_ms_p50": 2886.3794000062626,
+    "latency_ms_p90": 3508.2537999987835,
+    "input_tokens": 59336,
+    "output_tokens": 10328,
+    "thinking_tokens": 360,
+    "monetary_cost": "NOT COMPUTED — NO FROZEN PRICING"
+  },
+  "status": "CAL_B4_AWAITING_PRIMARY_AUTHOR_REVIEW"
+}

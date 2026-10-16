@@ -85,3 +85,12 @@ class TestCostModel:
         """Compra e venda com mesmo valor devem ter mesmo custo (simétrico)."""
         model = CostModel(brokerage_fixed=5.0, spread_bps=20.0, tax_rate=0.0003)
         assert model.apply_buy(2000.0) == model.apply_sell(2000.0)
+
+    def test_quantidade_maxima_reserva_custos(self):
+        model = CostModel(brokerage_fixed=1.0, tax_rate=0.01)
+
+        quantity = model.max_affordable_quantity(cash=1_000.0, price=100.0)
+
+        notional = quantity * 100.0
+        assert quantity == 9
+        assert notional + model.apply_buy(notional) <= 1_000.0

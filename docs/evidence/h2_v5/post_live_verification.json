@@ -1,0 +1,16 @@
+{
+  "kind": "H2_V5_POST_LIVE_OFFLINE_VERIFICATION",
+  "passed": 134,
+  "failed": 0,
+  "errors": 0,
+  "duration_seconds": 4.14,
+  "provider_calls": 0,
+  "test_paths": ["tests/agents/test_strict_snapshot_contract.py", "tests/agents/test_temporal_contract.py", "tests/agents/test_feature_semantics.py", "tests/experiments/test_cal_b4_safety.py", "tests/experiments/test_v5_phase_routing.py", "tests/experiments/test_treatment.py"],
+  "pytest_options": "-q -p no:cacheprovider --tb=short",
+  "checks": ["frozen prompt contrast pairs", "checker v3 regression", "CAL-B4 commitment and guards", "development S3 governance blocks further phases", "phase routing", "historical treatment evidence"],
+  "preserved_checker_features_risk_portfolio_and_cal_b4_diff_from_ab7a328": "empty",
+  "technical_prompt_and_pre_live_audits_diff_from_f9c050b": "empty",
+  "scientific_status": "H2_V5 TEMPORAL CONTRACT FIX FAILED",
+  "hardening_directed_status_preserved": "H2_V5 MINIMAL DEFECT FIX PASSED",
+  "stress_executed": false
+}

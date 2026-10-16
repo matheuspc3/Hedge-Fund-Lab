@@ -1,0 +1,207 @@
+{
+  "identity": "RADAR_CORPORATE_EVENTS_V1",
+  "session": "2026-10-09",
+  "read_only": true,
+  "radar_manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef",
+  "items": [
+    {
+      "ticker": "ITUB3",
+      "ratio_before": {
+        "2025": 0.9708737743144132,
+        "2026": 1.0000000033196783
+      },
+      "events": [
+        {
+          "ex_date": "2025-12-26",
+          "yfinance_split_ratio": 1.03,
+          "b3_especi": "ON EB N1",
+          "b3_dismes": [
+            "362",
+            "363"
+          ],
+          "b3_close": [
+            36.85,
+            36.05
+          ]
+        }
+      ],
+      "ratio_after": {
+        "2025": 0.9999999871846678,
+        "2026": 1.0000000033196783
+      },
+      "status": "ELIGIBLE",
+      "last_session": "2026-10-09",
+      "bars": 311,
+      "history_start": "2025-07-16",
+      "minimum_history": 200,
+      "features": 8,
+      "risk_metrics": {
+        "asset_volatility_21": 0.425696
+      },
+      "bars_sha256": "6109c79593828be493147b65d4da4c0db79568982ea009b95fe75b72058d3c7c",
+      "inherited_factors": [],
+      "original_extractor_identical_bars": "ORIGINAL_BLOCKS: split-like mismatch between yfinance and B3 closes: {2025: 0.9708737743144132, 2026: 1.0000000033196783}",
+      "official_input": null
+    },
+    {
+      "ticker": "MGLU3",
+      "ratio_before": {
+        "2025": 0.952380895614624,
+        "2026": 1.0
+      },
+      "events": [
+        {
+          "ex_date": "2025-12-30",
+          "yfinance_split_ratio": 1.05,
+          "b3_especi": "ON EB NM",
+          "b3_dismes": [
+            "129",
+            "130"
+          ],
+          "b3_close": [
+            9.35,
+            8.94
+          ]
+        }
+      ],
+      "ratio_after": {
+        "2025": 0.9999999403953552,
+        "2026": 1.0
+      },
+      "status": "ELIGIBLE",
+      "last_session": "2026-10-09",
+      "bars": 311,
+      "history_start": "2025-07-16",
+      "minimum_history": 200,
+      "features": 8,
+      "risk_metrics": {
+        "asset_volatility_21": 1.147144
+      },
+      "bars_sha256": "6f104ff235b1b73c7e0a13e3c38c265f5d1769992adfba0b9e9921bc0027f9ab",
+      "inherited_factors": [],
+      "original_extractor_identical_bars": "ORIGINAL_BLOCKS: split-like mismatch between yfinance and B3 closes: {2025: 0.952380895614624, 2026: 1.0}",
+      "official_input": null
+    },
+    {
+      "ticker": "RADL3",
+      "ratio_before": {
+        "2025": 0.9803921381632487,
+        "2026": 1.0000000032576406
+      },
+      "events": [
+        {
+          "ex_date": "2025-12-23",
+          "yfinance_split_ratio": 1.02,
+          "b3_especi": "ON EB NM",
+          "b3_dismes": [
+            "164",
+            "165"
+          ],
+          "b3_close": [
+            23.31,
+            22.93
+          ]
+        }
+      ],
+      "ratio_after": {
+        "2025": 0.9999999809265138,
+        "2026": 1.0000000032576406
+      },
+      "status": "ELIGIBLE",
+      "last_session": "2026-10-09",
+      "bars": 311,
+      "history_start": "2025-07-16",
+      "minimum_history": 200,
+      "features": 8,
+      "risk_metrics": {
+        "asset_volatility_21": 0.497891
+      },
+      "bars_sha256": "fcdb2c477c4e4daa5e8fdfb2e5cf67e1f6b573fd9139af8f4702f89710aefa18",
+      "inherited_factors": [],
+      "original_extractor_identical_bars": "ORIGINAL_BLOCKS: split-like mismatch between yfinance and B3 closes: {2025: 0.9803921381632487, 2026: 1.0000000032576406}",
+      "official_input": null
+    },
+    {
+      "ticker": "KLBN4",
+      "ratio_before": {
+        "2025": 0.9900988974611076,
+        "2026": 0.9999999974636322
+      },
+      "events": [
+        {
+          "ex_date": "2025-12-18",
+          "yfinance_split_ratio": 1.01,
+          "b3_especi": "PN EDB N2",
+          "b3_dismes": [
+            "178",
+            "179"
+          ],
+          "b3_close": [
+            3.69,
+            3.74
+          ]
+        }
+      ],
+      "ratio_after": {
+        "2025": 0.9999998864357187,
+        "2026": 0.9999999974636322
+      },
+      "status": "ELIGIBLE",
+      "last_session": "2026-10-09",
+      "bars": 311,
+      "history_start": "2025-07-16",
+      "minimum_history": 200,
+      "features": 8,
+      "risk_metrics": {
+        "asset_volatility_21": 0.215545
+      },
+      "bars_sha256": "97b952b8b903da503851cce93093567157aee41c6fe60c9c6c99d5f2fa8260fb",
+      "inherited_factors": [],
+      "original_extractor_identical_bars": "ORIGINAL_BLOCKS: split-like mismatch between yfinance and B3 closes: {2025: 0.9900988974611076, 2026: 0.9999999974636322}",
+      "official_input": null
+    },
+    {
+      "ticker": "EGIE3",
+      "ratio_before": {
+        "2025": 0.7142857025997225,
+        "2026": 1.0
+      },
+      "events": [
+        {
+          "ex_date": "2025-11-27",
+          "yfinance_split_ratio": 1.4,
+          "b3_especi": "ON EB NM",
+          "b3_dismes": [
+            "130",
+            "131"
+          ],
+          "b3_close": [
+            44.37,
+            31.72
+          ]
+        }
+      ],
+      "ratio_after": {
+        "2025": 0.9999999823801512,
+        "2026": 1.0
+      },
+      "status": "ELIGIBLE",
+      "last_session": "2026-10-09",
+      "bars": 311,
+      "history_start": "2025-07-16",
+      "minimum_history": 200,
+      "features": 8,
+      "risk_metrics": {
+        "asset_volatility_21": 0.268979
+      },
+      "bars_sha256": "9edaefd29993ad7e66ead62ff4eeb37cd2bf520dd3439294aab4eab9a1eb818d",
+      "inherited_factors": [],
+      "original_extractor_identical_bars": "ORIGINAL_BLOCKS: split-like mismatch between yfinance and B3 closes: {2025: 0.7142857025997225, 2026: 1.0}",
+      "official_input": null
+    }
+  ],
+  "cotahist_sha256": {
+    "COTAHIST_A2025.ZIP": "6cc0ad851c8f605ca30418acac48be81f1767f6ed05b4f563772d06ae448047d",
+    "COTAHIST_A2026.ZIP": "d55b48e43c9d08561b595b7eb46f954fd1fa6051e0126220a2c36e8ac167fc11"
+  }
+}

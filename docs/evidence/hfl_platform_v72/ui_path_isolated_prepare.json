@@ -1,0 +1,283 @@
+{
+ "path": "POST /api/radar/prepare (server.main with install(), HFL_RADAR_ROOT=isolated)",
+ "last_prepare": {
+  "generated_at": "2026-10-12T02:23:25.793981-03:00",
+  "items": [
+   {
+    "session": "2026-10-09",
+    "status": "PREPARED",
+    "ticker": "PETR4"
+   },
+   {
+    "session": "2026-10-09",
+    "status": "PREPARED",
+    "ticker": "VALE3"
+   },
+   {
+    "session": "2026-10-09",
+    "status": "PREPARED",
+    "ticker": "ITUB4"
+   },
+   {
+    "session": "2026-10-09",
+    "status": "PREPARED",
+    "ticker": "WEGE3"
+   },
+   {
+    "session": "2026-10-09",
+    "status": "PREPARED",
+    "ticker": "BBAS3"
+   }
+  ]
+ },
+ "lifecycle_since_before": {
+  "changes": [
+   {
+    "path": "data/radar/hfl_multiasset_v1/analyses/ITUB4/2026-10-09/bars.csv",
+    "category": "NEW",
+    "reason": "Registro novo; passa a ser imutável.",
+    "before": null,
+    "after": "c35f5a4ba66c692a4cf4352107d743a3cdd90997be42e367e8581a181ca04155"
+   },
+   {
+    "path": "data/radar/hfl_multiasset_v1/analyses/ITUB4/2026-10-09/events/a8165c0710214b58bb4db96f1ac177af.json",
+    "category": "NEW",
+    "reason": "Registro novo; passa a ser imutável.",
+    "before": null,
+    "after": "10ec687d075a84e8f719658fd392d0f5492fffac961c51268fd552a42be753a4"
+   },
+   {
+    "path": "data/radar/hfl_multiasset_v1/analyses/ITUB4/2026-10-09/input.json",
+    "category": "NEW",
+    "reason": "Registro novo; passa a ser imutável.",
+    "before": null,
+    "after": "c310f3787446a4d11503630267543611ab93d7af439b768245b317bc0d1a88eb"
+   },
+   {
+    "path": "data/radar/hfl_multiasset_v1/cotahist/COTAHIST_A2026.ZIP",
+    "category": "OPERATIONAL",
+    "reason": "Cache de download do COTAHIST do ano corrente; cada input congelado registra o SHA que usou e nunca é relido do cache.",
+    "before": null,
+    "after": "d55b48e43c9d08561b595b7eb46f954fd1fa6051e0126220a2c36e8ac167fc11"
+   },
+   {
+    "path": "data/radar/hfl_multiasset_v1/job.json",
+    "category": "OPERATIONAL",
+    "reason": "Estado do job da API Radar.",
+    "before": null,
+    "after": "e85bfec0a5f81fb0a04fdef869d786f287b4f670d30931c869ccf04201f29531"
+   },
+   {
+    "path": "data/radar/hfl_multiasset_v1/last_prepare.json",
+    "category": "OPERATIONAL",
+    "reason": "Relatório da última chamada de prepare; não é índice nem autoridade sobre inputs.",
+    "before": null,
+    "after": "893d44b392cd7dd8dbe1442ed02268fc5980c146551805e048a57ed376152bda"
+   }
+  ],
+  "violations": []
+ },
+ "official_four_identical": {
+  "PETR4": {
+   "input.json": true,
+   "bars.csv": true
+  },
+  "VALE3": {
+   "input.json": true,
+   "bars.csv": true
+  },
+  "WEGE3": {
+   "input.json": true,
+   "bars.csv": true
+  },
+  "BBAS3": {
+   "input.json": true,
+   "bars.csv": true
+  }
+ },
+ "itub4": {
+  "input_sha256": "c310f3787446a4d11503630267543611ab93d7af439b768245b317bc0d1a88eb",
+  "raw_bar": {
+   "abertura": 49.76,
+   "fechamento": 50.47,
+   "maxima": 50.78,
+   "minima": 49.48,
+   "volume": 46994400.0
+  },
+  "adjusted_close": 50.47,
+  "history": {
+   "bars": 311,
+   "sha256": "c35f5a4ba66c692a4cf4352107d743a3cdd90997be42e367e8581a181ca04155",
+   "start": "2025-07-16"
+  },
+  "features": {
+   "bb_lower_gap": 0.323083,
+   "bb_upper_gap": -0.009664,
+   "bb_width": 0.287667,
+   "macd_ratio": 0.043548,
+   "macd_signal_ratio": 0.028938,
+   "rsi": 76.557381,
+   "sma200_gap": 0.199745,
+   "sma50_gap": 0.20215
+  },
+  "risk_metrics": {
+   "asset_volatility_21": 0.429197
+  },
+  "source": {
+   "adjustment_factor": "yfinance auto_adjust=False, Adj Close / Close per session",
+   "corporate_events": {
+    "events": [
+     {
+      "b3_close": [
+       40.26,
+       39.1
+      ],
+      "b3_dismes": [
+       "362",
+       "363"
+      ],
+      "b3_especi": "PN EB N1",
+      "ex_date": "2025-12-26",
+      "price_factor_before_ex_date": 0.970873786407767,
+      "type": "BONIFICACAO",
+      "yfinance_split_ratio": 1.03
+     }
+    ],
+    "module_sha256": "ab4d872ad68efba7ced634d0255722e5d711392ee4327c2533ac6baab677d96d",
+    "normalization": "RADAR_CORPORATE_EVENTS_V2",
+    "rule": "yfinance split restored to nominal Close only for a B3 bonificação: ESPECI ex-marker with B and DISMES change on the ex-date"
+   },
+   "cotahist_sha256": {
+    "COTAHIST_A2025.ZIP": "6cc0ad851c8f605ca30418acac48be81f1767f6ed05b4f563772d06ae448047d",
+    "COTAHIST_A2026.ZIP": "d55b48e43c9d08561b595b7eb46f954fd1fa6051e0126220a2c36e8ac167fc11"
+   },
+   "cotahist_url": "https://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_A{year}.ZIP",
+   "factor_neighbor_tolerance": 1e-06,
+   "inherited_factors": {
+    "ITUB4.SA": []
+   },
+   "name": "b3_cotahist_ohlcv+yfinance_adjustment_factor",
+   "raw_ohlcv": "B3 COTAHIST, TPMERC 010, CODBDI 02 (official)"
+  },
+  "manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef"
+ },
+ "readiness": {
+  "summary": "5 inputs prontos; 0/5 pareceres oficiais",
+  "inputs_ready": 5,
+  "opinions_complete": 0,
+  "global_pm_ready": false,
+  "gemini_pending": [
+   "gemini_api_key_missing"
+  ],
+  "radar_preflight": {
+   "ready": false,
+   "usd_reserved": 0,
+   "usd_estimated": 0,
+   "global_budget_used": 0,
+   "error": null
+  }
+ },
+ "readiness_items": [
+  {
+   "ticker": "PETR4",
+   "state": "AWAITING_RADAR_AUTHORIZATION",
+   "input_state": "FROZEN",
+   "opinion": "PENDING",
+   "risk_verdict": null,
+   "preflight": "gemini_api_key_missing",
+   "normalization": "NO_NORMALIZATION_NEEDED",
+   "risk": {
+    "asset_volatility_21": 0.392326,
+    "limit": 0.5,
+    "restricted": false
+   }
+  },
+  {
+   "ticker": "VALE3",
+   "state": "AWAITING_RADAR_AUTHORIZATION",
+   "input_state": "FROZEN",
+   "opinion": "PENDING",
+   "risk_verdict": null,
+   "preflight": "gemini_api_key_missing",
+   "normalization": "NO_NORMALIZATION_NEEDED",
+   "risk": {
+    "asset_volatility_21": 0.237709,
+    "limit": 0.5,
+    "restricted": false
+   }
+  },
+  {
+   "ticker": "ITUB4",
+   "state": "AWAITING_RADAR_AUTHORIZATION",
+   "input_state": "FROZEN",
+   "opinion": "PENDING",
+   "risk_verdict": null,
+   "preflight": "gemini_api_key_missing",
+   "normalization": "NORMALIZED_CONFIRMED_EVENT",
+   "risk": {
+    "asset_volatility_21": 0.429197,
+    "limit": 0.5,
+    "restricted": false
+   }
+  },
+  {
+   "ticker": "WEGE3",
+   "state": "AWAITING_RADAR_AUTHORIZATION",
+   "input_state": "FROZEN",
+   "opinion": "PENDING",
+   "risk_verdict": null,
+   "preflight": "gemini_api_key_missing",
+   "normalization": "NO_NORMALIZATION_NEEDED",
+   "risk": {
+    "asset_volatility_21": 0.215187,
+    "limit": 0.5,
+    "restricted": false
+   }
+  },
+  {
+   "ticker": "BBAS3",
+   "state": "AWAITING_RADAR_AUTHORIZATION",
+   "input_state": "FROZEN",
+   "opinion": "PENDING",
+   "risk_verdict": null,
+   "preflight": "gemini_api_key_missing",
+   "normalization": "NO_NORMALIZATION_NEEDED",
+   "risk": {
+    "asset_volatility_21": 0.544844,
+    "limit": 0.5,
+    "restricted": true
+   }
+  }
+ ],
+ "radar_preflight_with_placeholder_key": {
+  "ready": true,
+  "usd_reserved": 3.31776,
+  "usd_estimated": 0.14625,
+  "global_budget_used": 0,
+  "global_budget_cap": 5.0,
+  "items": [
+   [
+    "PETR4",
+    true
+   ],
+   [
+    "VALE3",
+    true
+   ],
+   [
+    "ITUB4",
+    true
+   ],
+   [
+    "WEGE3",
+    true
+   ],
+   [
+    "BBAS3",
+    true
+   ]
+  ]
+ },
+ "global_pm": "BLOCKED: complete_radar_opinion_required",
+ "claims_or_reservations": []
+}

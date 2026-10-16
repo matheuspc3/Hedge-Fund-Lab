@@ -1,0 +1,22 @@
+{
+ "baselines": {
+  "hfl_global_pm": {
+   "files": 11027,
+   "changed": 0
+  },
+  "hfl_multiasset_portfolio": {
+   "files": 10922,
+   "changed": 0
+  },
+  "hfl_multiasset_radar": {
+   "files": 10766,
+   "changed": 0
+  },
+  "hfl_platform_v7": {
+   "files": 11094,
+   "changed": 0
+  }
+ },
+ "changes": {},
+ "violations": []
+}

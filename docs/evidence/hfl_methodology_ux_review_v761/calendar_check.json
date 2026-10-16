@@ -1,0 +1,32 @@
+{
+ "identity": "HFL-V761-OOS-CALENDAR-CHECK",
+ "source": "data/radar/hfl_multiasset_v1_recovery_01/cotahist/COTAHIST_A2026.ZIP",
+ "source_sha256": "d55b48e43c9d08561b595b7eb46f954fd1fa6051e0126220a2c36e8ac167fc11",
+ "source_sha256_recorded_by_radar_inputs": "d55b48e43c9d08561b595b7eb46f954fd1fa6051e0126220a2c36e8ac167fc11",
+ "read_scope": "records dated 2026-09-01..2026-10-08 (date, CODBDI 02, TPMERC 010, ticker); earlier records skipped by date prefix",
+ "latest_date_found_from_window_start": "2026-10-09",
+ "rule_calendar_sessions": 27,
+ "cotahist_sessions_all_five": 27,
+ "rule_sessions_missing_in_cotahist": [],
+ "cotahist_sessions_not_in_rule": [],
+ "selected_sessions": [
+  "2026-09-01",
+  "2026-09-04",
+  "2026-09-10",
+  "2026-09-11",
+  "2026-09-14",
+  "2026-09-17",
+  "2026-09-29",
+  "2026-10-05",
+  "2026-10-06",
+  "2026-10-07"
+ ],
+ "selected_missing_in_cotahist": [],
+ "per_ticker_sessions": {
+  "PETR4": 27,
+  "VALE3": 27,
+  "ITUB4": 27,
+  "WEGE3": 27,
+  "BBAS3": 27
+ }
+}

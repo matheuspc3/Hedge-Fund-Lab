@@ -1,0 +1,129 @@
+{
+ "identity": "HFL-MULTIASSET-PAPER-LEDGER-V1",
+ "status": "SYNTHETIC_LIFECYCLE_PASSED",
+ "events": 27,
+ "sessions": [
+  "2026-04-17",
+  "2026-04-20",
+  "2026-04-22",
+  "2026-04-23",
+  "2026-04-24"
+ ],
+ "summary": {
+  "identity": "HFL-MULTIASSET-PORTFOLIO-V1",
+  "portfolio_id": "synthetic-v765",
+  "mode": "synthetic",
+  "session": "2026-04-24",
+  "initial_capital": "100000.00",
+  "positions": {
+   "PETR4": {
+    "basis": "2402.40",
+    "quantity": "60",
+    "reserved": "0",
+    "unsettled": "0",
+    "available": "60",
+    "average_cost": "40.04000000",
+    "raw_mark": "41.00",
+    "market_value": "2460.00",
+    "unrealized_pnl": "57.60",
+    "weight": "0.024558672666"
+   },
+   "VALE3": {
+    "basis": "6006.00",
+    "quantity": "100",
+    "reserved": "0",
+    "unsettled": "0",
+    "available": "100",
+    "average_cost": "60.06000000",
+    "raw_mark": "60.00",
+    "market_value": "6000.00",
+    "unrealized_pnl": "-6.00",
+    "weight": "0.059899201624"
+   }
+  },
+  "cash": {
+   "settled": "91708.28",
+   "reserved": "0",
+   "available": "91708.28",
+   "receivable": "0"
+  },
+  "cash_weight": "0.915542125710",
+  "receivable_weight": "0",
+  "equity": "100168.28",
+  "exposure": "0.08445787428914622473301927516",
+  "costs": "11.72",
+  "realized_pnl": "116.68",
+  "income_net": "0.00",
+  "unrealized_pnl": "51.60",
+  "drawdown": "0.0022085865126008566590297838",
+  "pending": {},
+  "executions": {
+   "buy-petr": {
+    "cost": "4.00",
+    "due_session": "2026-04-22",
+    "marks_sha256": "fa91c3b501c19a71631f9fc5ba3e57374e701b86406b00b7ba6c6ab47be9f762",
+    "operation": {
+     "cost_ceiling": "100.00",
+     "dependencies": [],
+     "funding_source": "SETTLED_CASH",
+     "limit_price": "40.00",
+     "operation_id": "buy-petr",
+     "priority": 2,
+     "quantity": "100",
+     "reasoning": "Explicit synthetic fixture; no LLM decision or official order.",
+     "side": "BUY",
+     "ticker": "PETR4"
+    },
+    "quantity": "100",
+    "raw_price": "40.00",
+    "realized_pnl": "0",
+    "trade_session": "2026-04-17"
+   },
+   "buy-vale": {
+    "cost": "6.00",
+    "due_session": "2026-04-22",
+    "marks_sha256": "fa91c3b501c19a71631f9fc5ba3e57374e701b86406b00b7ba6c6ab47be9f762",
+    "operation": {
+     "cost_ceiling": "100.00",
+     "dependencies": [],
+     "funding_source": "SETTLED_CASH",
+     "limit_price": "60.00",
+     "operation_id": "buy-vale",
+     "priority": 2,
+     "quantity": "100",
+     "reasoning": "Explicit synthetic fixture; no LLM decision or official order.",
+     "side": "BUY",
+     "ticker": "VALE3"
+    },
+    "quantity": "100",
+    "raw_price": "60.00",
+    "realized_pnl": "0",
+    "trade_session": "2026-04-17"
+   },
+   "sell-petr": {
+    "cost": "1.72",
+    "due_session": "2026-04-24",
+    "marks_sha256": "a8aa0cb3491070e92df0bedea42f030f6df29e286b57f8a54e71cff646db78ad",
+    "operation": {
+     "cost_ceiling": "100.00",
+     "dependencies": [],
+     "funding_source": null,
+     "limit_price": "43.00",
+     "operation_id": "sell-petr",
+     "priority": 1,
+     "quantity": "40",
+     "reasoning": "Explicit synthetic fixture; no LLM decision or official order.",
+     "side": "SELL",
+     "ticker": "PETR4"
+    },
+    "quantity": "40",
+    "raw_price": "43.00",
+    "realized_pnl": "116.68",
+    "trade_session": "2026-04-22"
+   }
+  },
+  "receivables": {},
+  "blocked": {},
+  "state_sha256": "251fcf215f208acc1de16a668dab2dbcd6339d8ef6a06e80ecbb20263ec2eb72"
+ }
+}

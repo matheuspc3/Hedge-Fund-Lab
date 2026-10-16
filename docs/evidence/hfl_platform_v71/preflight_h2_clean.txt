@@ -1,0 +1,115 @@
+{
+  "treatment": "H2-V6-FORWARD-PAPER",
+  "classification": "PROSPECTIVE EXPLORATORY PAPER TRADING - NOT CONFIRMATORY, NOT FINAL TEST, NO RETUNING",
+  "paper_only": true,
+  "now": "2026-10-12T00:17:53.910639-03:00",
+  "output": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\data\\forward\\h2_v6_paper",
+  "calendar": {
+    "decision_session": "2026-10-09",
+    "target_session": "2026-10-13",
+    "target_open_deadline": "2026-10-13T10:00:00-03:00",
+    "calendar_version": 2,
+    "verified_against_cotahist_through": "2026-08-31"
+  },
+  "identity": {
+    "manifest": "docs\\evidence\\h2_v6_evaluation\\system_freeze_candidate.json",
+    "manifest_sha256": "dc118ce9841df612d030f40e5993858eacc6d06e41eff173706fc3a72d3acb98",
+    "participant_sha256": "7858beb47ea9b2be9ac870f4abb72f9422782e7ff30c975eba8f3255babe4938",
+    "params": {
+      "ticker": "PETR4.SA",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "temperature": 1.0,
+      "max_output_tokens": 8192,
+      "analyst_count": 5,
+      "consensus_threshold": 0.6,
+      "require_all_votes": true,
+      "decision_frequency": 1,
+      "strict_inputs": true,
+      "portfolio_inversion_policy": "fail",
+      "long_target_weight": 1.0,
+      "risk_max_concentration": 1.0,
+      "risk_max_volatility": 0.5,
+      "risk_max_drawdown": 0.25,
+      "volatility_window": 21,
+      "retry_attempts": 6,
+      "retry_base_delay": 2.0,
+      "thinking_level": "low",
+      "technical_prompt_version": 5,
+      "risk_prompt_version": 2,
+      "technical_response_schema_version": 2
+    },
+    "costs": {
+      "brokerage_fixed": 0.0,
+      "spread_bps": 5.0,
+      "tax_rate": 0.00032
+    },
+    "execution": {
+      "quantity_mode": "fractional_notional"
+    },
+    "initial_capital": 100000.0,
+    "runner_sha256": "b5e94df041ded397787b9236fc56529744fbf2cef60daebf45f391ba74b08abd",
+    "git_head": "318e4f042b9667ed27c4f6b3a951d71045e77684"
+  },
+  "input": {
+    "sha256": "8acf2b53eb36c4936de1d1c6b1f19d143ce31777c43d7ec83da2eadf25d957d7",
+    "fetched_at": "2026-10-10T14:54:51.409659-03:00",
+    "close_used": 56.0,
+    "last_bar_official_raw": {
+      "abertura": 55.45,
+      "fechamento": 56.0,
+      "maxima": 56.8,
+      "minima": 55.1,
+      "volume": 49809400.0
+    },
+    "history": {
+      "bars": 2677,
+      "end": "2026-10-09",
+      "file": "bars.csv",
+      "sha256": "1918f5370b554614c2d39766fce8902c2a108186592f7269472dca33f25b6993",
+      "start": "2016-01-04"
+    },
+    "closed_days_before_target": [
+      {
+        "date": "2026-10-10",
+        "weekday": "Saturday"
+      },
+      {
+        "date": "2026-10-11",
+        "weekday": "Sunday"
+      },
+      {
+        "date": "2026-10-12",
+        "weekday": "Monday"
+      }
+    ]
+  },
+  "estimate_per_session": {
+    "logical_calls_expected": 5.2,
+    "logical_calls_max": 7,
+    "http_attempts_max": 42,
+    "usd_expected": 0.008,
+    "usd_prudent_budget": 0.02,
+    "usd_theoretical_ceiling": 1.32,
+    "usd_expected_per_21_sessions": 0.17,
+    "price_per_million_tokens_usd": {
+      "input": 0.75,
+      "output": 3.75
+    },
+    "price_note": "Gemini 3.8 Flash introductory price until 2026-12-31; reconfirm in billing"
+  },
+  "checks": {
+    "treatment_identity": true,
+    "after_reserved_windows": true,
+    "before_target_open": true,
+    "not_yet_decided": false,
+    "no_active_lock": true,
+    "gemini_api_key_present": true,
+    "input_frozen": true,
+    "ledger_reconciles": "FAIL: start must be on or before end"
+  },
+  "ready": false
+}
+
+PREFLIGHT: NOT READY - no execution possible
+exit=2

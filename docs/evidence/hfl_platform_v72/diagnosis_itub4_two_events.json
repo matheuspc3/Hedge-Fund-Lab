@@ -1,0 +1,68 @@
+{
+  "identity": "RADAR_CORPORATE_EVENTS_V2",
+  "session": "2026-05-29",
+  "read_only": true,
+  "radar_manifest_sha256": "77d75777f6b6a4b5fb5655d2677166ece90ba3f34ac24dc7e053834dabfa5bef",
+  "items": [
+    {
+      "ticker": "ITUB4",
+      "ratio_before": {
+        "2025": 0.9708737753185155,
+        "2026": 0.9999999907015302
+      },
+      "events": [
+        {
+          "ex_date": "2025-03-18",
+          "type": "BONIFICACAO",
+          "yfinance_split_ratio": 1.1,
+          "price_factor_before_ex_date": 0.9090909090909091,
+          "b3_especi": "PN EB N1",
+          "b3_dismes": [
+            "349",
+            "350"
+          ],
+          "b3_close": [
+            35.34,
+            32.3
+          ]
+        },
+        {
+          "ex_date": "2025-12-26",
+          "type": "BONIFICACAO",
+          "yfinance_split_ratio": 1.03,
+          "price_factor_before_ex_date": 0.970873786407767,
+          "b3_especi": "PN EB N1",
+          "b3_dismes": [
+            "362",
+            "363"
+          ],
+          "b3_close": [
+            40.26,
+            39.1
+          ]
+        }
+      ],
+      "ratio_after": {
+        "2025": 0.9999999897296173,
+        "2026": 0.9999999907015302
+      },
+      "status": "ELIGIBLE",
+      "last_session": "2026-05-29",
+      "bars": 309,
+      "history_start": "2025-03-05",
+      "minimum_history": 200,
+      "features": 8,
+      "risk_metrics": {
+        "asset_volatility_21": 0.239116
+      },
+      "bars_sha256": "b6e9e0a861625d97b0ee12fcf2cf6e5688060512d86a506c2d564b062b01c7ee",
+      "inherited_factors": [],
+      "original_extractor_identical_bars": "ORIGINAL_BLOCKS: split-like mismatch between yfinance and B3 closes: {2025: 0.9708737753185155, 2026: 0.9999999907015302}",
+      "official_input": null
+    }
+  ],
+  "cotahist_sha256": {
+    "COTAHIST_A2025.ZIP": "6cc0ad851c8f605ca30418acac48be81f1767f6ed05b4f563772d06ae448047d",
+    "COTAHIST_A2026.ZIP": "d55b48e43c9d08561b595b7eb46f954fd1fa6051e0126220a2c36e8ac167fc11"
+  }
+}

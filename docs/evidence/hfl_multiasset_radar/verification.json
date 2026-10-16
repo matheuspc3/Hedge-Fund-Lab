@@ -1,0 +1,37 @@
+{
+  "identity": "HFL-MULTIASSET-RADAR-V1",
+  "status": "HFL PREMIUM V4 — MULTIASSET RADAR READY",
+  "generated_at": "2026-10-11T03:23:32.150066-03:00",
+  "implementation_commit": "e5e44fc50d148b31953d9ae1bdb9447a4a6f0849",
+  "protected_files_verified": 10766,
+  "changed_original_files": [],
+  "original_manifest_verified": true,
+  "original_manifest_sources": 73,
+  "original_manifest_sha256": "dc118ce9841df612d030f40e5993858eacc6d06e41eff173706fc3a72d3acb98",
+  "synthetic_committees_completed": 6,
+  "fake_native_provider_calls": 36,
+  "paid_provider_calls": 0,
+  "cost_paid_usd": 0,
+  "tests": "138 passed in 98.18s",
+  "radar_specific_checks": 16,
+  "chrome_viewports": [
+    1440,
+    640,
+    420
+  ],
+  "archive_sha256": "ece4a5c4ec997f93ffc4bffe485e70e76b1cbbbbd027d4066cf6b8e6aa23c5df",
+  "cost_one_asset": {
+    "calls_max": 6,
+    "input_tokens_max_per_call": 32768,
+    "output_tokens_max_per_call": 8192,
+    "usd_estimated": 0.02925,
+    "usd_reserved": 0.663552,
+    "price_source": "https://ai.google.dev/gemini-api/docs/pricing",
+    "price_checked": "2026-10-11",
+    "currency": "USD",
+    "estimated_tokens_note": "planning assumption, not observed usage",
+    "paid": false
+  },
+  "cost_five_assets_estimated_usd": 0.14625,
+  "cost_five_assets_reserved_usd": 3.31776
+}

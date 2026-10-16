@@ -1,0 +1,56 @@
+..F                                                                      [100%]
+================================== FAILURES ===================================
+_______________________ test_market_radar_interactions ________________________
+
+    @pytest.mark.skipif(
+        not shutil.which("node")
+        or not foundation.CHROME
+        or os.environ.get("HFL_SKIP_BROWSER"),
+        reason="Node/Chrome unavailable or browser checks disabled",
+    )
+    def test_market_radar_interactions():
+        foundation.Server.setUpClass()
+        try:
+            for route in (
+                "/market",
+                "/market/",
+                "/market.html",
+                "/market.js",
+                "/market-ui.js",
+                "/market.css",
+            ):
+                with urllib.request.urlopen(
+                    foundation.Server.base + route, timeout=30
+                ) as response:
+                    assert response.status == 200
+            with tempfile.TemporaryDirectory() as tmp:
+                out = Path(tmp) / "ui_checks.json"
+                done = subprocess.run(
+                    [
+                        "node",
+                        str(ROOT / "scripts/ui_check_v763.mjs"),
+                        foundation.Server.base,
+                        str(out),
+                    ],
+                    cwd=ROOT,
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    timeout=900,
+                )
+                report = json.loads(out.read_text(encoding="utf-8"))
+>               assert done.returncode == 0, (
+                    done.stdout
+                    + done.stderr
+                    + str([r for r in report["results"] if not r["ok"]])
+                )
+E               AssertionError: {"url":"http://127.0.0.1:54493/legacy","charts":[],"error":""}
+E                 {"passed":0,"failed":1,"blocked":[]}
+E                 [{'name': 'runner', 'ok': False, 'error': "Error: wait_timeout: window.Chart && Chart.getChart('chart-portfolio-equity')\n    at wait (file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v763.mjs:34:13)\n    at async file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v763.mjs:50:5\n    at async session (file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_cdp_v762.mjs:152:12)\n    at async file:///C:/Users/LUCAS/Meu%20Canto/TCC/Hedge-Fund-Lab/scripts/ui_check_v763.mjs:17:3"}]
+E               assert 1 == 0
+E                +  where 1 = CompletedProcess(args=['node', 'C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\scripts\\ui_check_v763.mjs', 'http:/...ut='{"url":"http://127.0.0.1:54493/legacy","charts":[],"error":""}\n{"passed":0,"failed":1,"blocked":[]}\n', stderr='').returncode
+
+tests\test_ui_v763.py:54: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_ui_v763.py::test_market_radar_interactions - AssertionError...
+1 failed, 2 passed in 52.88s
