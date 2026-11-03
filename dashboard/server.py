@@ -124,7 +124,11 @@ AREAS = (
         "Auditoria",
         "/#audit",
         "SOMENTE LEITURA · REGISTROS E INTEGRIDADE",
-        (("/#audit", "Registros e processos"), ("/logs", "Logs técnicos")),
+        (
+            ("/#audit", "Registros e processos"),
+            ("/agents", "Voto por agente"),
+            ("/logs", "Atividade e registros"),
+        ),
     ),
 )
 #: Default area per page when JavaScript is unavailable; shell.js refines it by URL hash.
@@ -135,6 +139,7 @@ PRODUCT_PAGES = {
     "/wallets/new": "platform.html",
     "/laboratory": "platform.html",
     "/data": "data.html",
+    "/agents": "agents.html",
 }
 PRODUCT_AREAS = {
     "/operations": "operacoes",
@@ -144,6 +149,7 @@ PRODUCT_AREAS = {
 PAGE_AREA = {
     "platform.html": "inicio",
     "radar.html": "agentes",
+    "agents.html": "auditoria",
     "data.html": "mercado",
     "market.html": "mercado",
     "portfolio.html": "carteira",
@@ -189,6 +195,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(DIR), **kwargs)
 
+    def log_message(self, format, *args):
+        # O padrão escreve direto no stderr e nunca chega ao arquivo/SSE; roteia
+        # pelo logger para que requisições apareçam na tela de Atividade.
+        logger.info(
+            "%s - %s", self.address_string(), format % args
+        )
+
     def end_headers(self):
         self.send_header("Cache-Control", "no-store")
         self.send_header("X-Frame-Options", "DENY")
@@ -230,6 +243,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return self._serve_static(LEGACY_PAGES[path])
         if path in ("/logs", "/logs.html"):
             return self._serve_static("logs.html")
+        if path in ("/agents", "/agents/", "/agents.html"):
+            return self._serve_static("agents.html")
         if path in ("/h2", "/h2/", "/h2.html"):
             return self._serve_static("h2.html")
         if path in ("/paper", "/paper/", "/paper.html"):
@@ -362,7 +377,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             **LEGACY_PAGES,
             "/index.html": "index.html",
         }
-        for name in ("h2", "paper", "radar", "market", "portfolio", "logs"):
+        for name in ("h2", "paper", "radar", "market", "portfolio", "logs", "agents"):
             pages.update(
                 {
                     f"/{name}": f"{name}.html",
@@ -924,12 +939,23 @@ def setup():
     network_scope.install()
     # DP-27: B3 refuses the default Python agent; Radar preparation reuses urlopen.
     market_base_api.install_b3_user_agent()
-    # Configura logger mínimo para o dashboard (standalone)
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    )
+    # Configura logger mínimo para o dashboard (standalone). O file handler aponta
+    # LOG_FILE porque o SSE de /api/logs observa exatamente esse arquivo — sem ele
+    # a tela de Atividade nunca teria linhas a mostrar. Rotação em 5 MB × 3 backups:
+    # o SSE detecta truncamento ({"reset": true}) e a tela reinicia o stream.
+    # O arranque documentado `python dashboard/server.py` (Railway) não põe a
+    # raiz no sys.path.
+    if str(PROJECT_ROOT) not in sys.path:
+        sys.path.append(str(PROJECT_ROOT))
+    from logging.handlers import RotatingFileHandler
+    from src.logger import setup_logger
+    setup_logger(level="INFO", log_file=None)
+    LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+    if not any(isinstance(h, logging.FileHandler) for h in logging.getLogger().handlers):
+        fh = RotatingFileHandler(LOG_FILE, maxBytes=5_000_000, backupCount=3, encoding="utf-8")
+        fh.setLevel(logging.INFO)
+        fh.setFormatter(logging.Formatter("%(asctime)s | %(levelname)-8s | %(name)s | %(message)s", datefmt="%Y-%m-%d %H:%M:%S"))
+        logging.getLogger().addHandler(fh)
     logger.info("GEMINI_API_KEY: %s", load_gemini_key())
     # The registry's selected run, if it accepts new calls, is the only write target.
     run = radar_runs.bind(radar_api)

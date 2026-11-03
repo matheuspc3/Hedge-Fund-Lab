@@ -1,22 +1,26 @@
 <a class="hfl-skip" href="#main">Pular para o conteúdo</a>
 <link rel="stylesheet" href="/design-system.css?v=762">
-<link rel="stylesheet" href="/product.css?v=8">
+<link rel="stylesheet" href="/product.css?v=9">
 <script src="/product.js?v=6" defer></script>
 <header class="hfl-shell" data-default-area="{{area}}">
   <div class="hfl-top">
     <a class="hfl-brand" href="/"><b class="product-mark">h.</b><span>Hedge Fund<small>LAB</small></span></a>
     <button class="hfl-menu" type="button" aria-controls="hfl-navigation" aria-expanded="false">Menu</button>
   </div>
-  <div id="hfl-navigation" class="hfl-links">
-    <nav class="hfl-primary" aria-label="Navegação principal">{{areas}}</nav>
-    <nav class="hfl-archive" aria-label="Acervo histórico">{{legacy}}</nav>
-    <nav class="hfl-secondary" aria-label="Seções da área">{{links}}</nav>
-  </div>
-  <div class="hfl-context">
+  <aside id="hfl-navigation" class="hfl-links" aria-label="Navegação do laboratório">
+    <a class="hfl-brand hfl-brand--side" href="/" aria-label="Hedge Fund Lab — início"><b class="product-mark">h.</b><span>Hedge Fund<small>LAB</small></span></a>
     <nav aria-label="Você está em"><ol class="hfl-crumbs"><li><a href="/">Hedge-Fund-Lab</a></li><li data-crumb="area">{{area_label}}</li><li data-crumb="page" aria-current="page" hidden></li></ol></nav>
-    <strong class="hfl-env">{{environment}}</strong>
-  </div>
-  <div class="product-profile"><span>L</span><div>Lucas<small>Workspace pessoal</small></div></div>
+    <p class="hfl-eyebrow">Produto</p>
+    <nav class="hfl-primary" aria-label="Navegação principal">{{areas}}</nav>
+    <p class="hfl-eyebrow">Acervo</p>
+    <nav class="hfl-archive" aria-label="Acervo histórico">{{legacy}}</nav>
+    <p class="hfl-eyebrow hfl-eyebrow--area">Seções desta área</p>
+    <nav class="hfl-secondary" aria-label="Seções da área">{{links}}</nav>
+    <footer class="hfl-side-foot">
+      <strong class="hfl-env">{{environment}}</strong>
+      <div class="product-profile"><span>L</span><div>Lucas<small>Workspace pessoal</small></div></div>
+    </footer>
+  </aside>
 </header>
 <div class="product-topbar"><label for="product-wallet">Carteira selecionada<select id="product-wallet"><option value="">Carregando carteiras…</option></select></label><span id="product-nature" class="product-chip"></span><div class="product-top-actions"><button class="hfl-market-open" id="hfl-market-open" type="button" aria-haspopup="dialog" aria-controls="hfl-market-dialog">Atualizar dados</button><button class="hfl-help-open" id="hfl-help-open" type="button" aria-haspopup="dialog">Ajuda</button></div></div>
 <dialog id="hfl-market-dialog" class="hfl-market-dialog" aria-labelledby="hfl-market-title">

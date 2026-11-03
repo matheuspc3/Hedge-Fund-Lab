@@ -32,7 +32,7 @@
       $('market-overview').innerHTML=[['Sessão de referência',r.session],['Estado da execução',r.state],['Origem',r.classification],['Cobertura',r.universe.length+' ativos']].map(([label,value])=>`<article class="ds-kpi"><span class="ds-kpi-label">${label}</span><strong class="ds-kpi-value">${M.esc(value)}</strong></article>`).join('');
       $('market-coverage').textContent=`Cobertura limitada ao universo registrado: ${r.universe.join(', ')}. Fonte: ${r.source}. Sessão ${r.session}; consulta histórica, sem atualização automática de cotações.`;
       const rows=r.universe.filter(t=>!asset||asset===t).map(t=>d.items.find(i=>i.ticker===t && i.session===r.session) || {ticker:t,session:r.session,status:'NONE'});
-      $('market-assets').innerHTML=rows.length ? rows.map(row=>M.summary(row,run)).join('') : '<p class="ds-empty">Nenhum ativo disponível nesta execução.</p>';
+      $('market-assets').innerHTML=rows.length ? rows.map(row=>M.summary(row,run)).join('') : '<p class="ds-empty">Nenhum ativo disponível nesta execução. Escolha outra execução de referência acima ou atualize a consulta.</p>';
       if(asset) {
         const row=rows[0];
         const detail=row.status==='NONE'||row.status==='INTEGRITY_ERROR' ? row : await get('radar-detail?'+new URLSearchParams({run,ticker:asset,session:r.session}));
