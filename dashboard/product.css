@@ -42,7 +42,7 @@ body.hfl-platform .hfl-primary a[aria-current]{background:#edf1ff;color:var(--ac
 body.hfl-platform .hfl-archive{border-top:1px solid var(--line);padding-top:16px}
 body.hfl-platform :is(.hfl-archive,.hfl-secondary) a{padding:7px 13px;color:var(--muted);font-size:12px;border:0;text-decoration:none;border-radius:7px}
 body.hfl-platform :is(.hfl-archive,.hfl-secondary) a[aria-current]{background:var(--surface-2);color:var(--accent)}
-body.hfl-platform .hfl-context,body.hfl-platform .hfl-menu{display:none}
+body.hfl-platform .hfl-menu{display:none}
 .product-profile{display:flex;align-items:center;gap:10px;padding:15px 8px 0;border-top:1px solid var(--line);margin-top:auto;font-size:13px}
 .product-profile>span{display:grid;place-items:center;width:33px;height:33px;border-radius:50%;background:#edf1ff;color:var(--accent);font-weight:600}
 .product-profile small{display:block;font-size:11px;color:var(--muted)}
@@ -96,6 +96,18 @@ body.hfl-platform .product-top-actions button{min-height:36px;padding:7px 11px;b
 #personal-create{max-width:700px}
 .product-compare-table .ds-table{min-width:680px}
 .product-footer{margin-top:25px;padding-top:17px;border-top:1px solid var(--line);color:var(--muted);font-size:11px}
+/* IP-2026-11-03: status chips with the shared state vocabulary (item 3) and
+   sticky table headers inside scroll wrappers (item 4). Both are additive
+   classes; pages keep their own historical css untouched. */
+.product-status{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--state-neutral)}
+.product-status::before{content:'';flex:none;width:7px;height:7px;border-radius:50%;background:currentColor}
+.product-status[data-state=ok]{color:var(--state-ok)}
+.product-status[data-state=warn]{color:var(--state-warn)}
+.product-status[data-state=error]{color:var(--state-error)}
+.product-status[data-state=info]{color:var(--state-info)}
+.product-status[data-state=synthetic]{color:var(--state-synthetic)}
+.product-status[data-state=paid]{color:var(--state-paid)}
+.ds-table-wrap .ds-table th{position:sticky;top:0;z-index:2;background:var(--surface-2)}
 .product-agent-setup #new-analysis{margin:0;padding:23px;background:#fff;border:1px solid var(--line);border-radius:18px}
 [data-agent-screen=results]>details{margin-bottom:20px}
 [data-agent-screen=results] summary{min-height:40px;cursor:pointer;font-weight:500}
@@ -225,3 +237,31 @@ body[data-agent-stage=setup] .cycle-nodes [data-agent-stage=setup],body[data-age
 @media(prefers-reduced-motion:reduce){.cycle-nodes [data-state=running]>button::before{animation:none;border-style:dotted}}
 @media(max-width:1280px){.cycle-nodes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}.cycle-nodes li:nth-child(4n+1)::before{display:none}}
 @media(max-width:700px){.product-cycle{padding:14px}.cycle-nodes{grid-template-columns:minmax(0,1fr);gap:8px}.cycle-nodes li:nth-child(n)::before{display:block;top:-8px;left:19px;width:0;height:8px;border-top:0;border-left:2px solid var(--line)}.cycle-nodes li[data-state=done]+li::before{border-left-color:var(--state-ok)}.cycle-nodes li:first-child::before{display:none}body.hfl-platform .cycle-nodes button{grid-template-columns:20px minmax(0,1fr) auto;min-height:44px;padding:8px 10px}.cycle-nodes .cycle-state{grid-column:3;grid-row:1;text-align:right}.cycle-nodes button>:is(.cycle-detail,.cycle-time){display:none}}
+/* IP-2026-11-03: sidebar v2 — altura cheia, este martouts de seção, rodapé com
+   perfil e largura ampliada. Regras acompanham o HTML de shell.html (aside.hfl-links);
+   a versão antiga de barra superior ainda existe para ≲1100px. */
+body.hfl-platform .hfl-shell{width:212px;padding:22px 14px 14px;gap:0;overflow-y:auto;display:flex;flex-direction:column}
+body.hfl-platform .hfl-links{height:100%;min-height:100%;display:flex;flex-direction:column;gap:0}
+body.hfl-platform .hfl-top{display:none}
+.hfl-brand--side{display:flex}
+.hfl-eyebrow{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);font-weight:650;margin:18px 6px 7px 12px}
+.hfl-eyebrow--area{margin-top:20px}
+/* Breadcrumb compacto e vertical, agora visível na sidebar */
+.hfl-platform .hfl-crumbs{flex-direction:column;flex-wrap:wrap;gap:2px;margin:10px 4px 0;font-size:11px;line-height:1.35}
+.hfl-platform .hfl-crumbs li+li::before{content:none}
+.hfl-platform .hfl-env{font-size:9.5px;letter-spacing:1px;text-transform:uppercase;font-weight:650;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:4px 8px;display:inline-block;white-space:normal;text-align:center}
+.hfl-side-foot{margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-top:14px;border-top:1px solid var(--line)}
+.product-profile{border-top:0;margin-top:0;padding:0 2px}
+/* Hovers para acervo e seções */
+body.hfl-platform :is(.hfl-archive,.hfl-secondary) a:hover{background:var(--surface-2);color:var(--text-2)}
+body.hfl-platform .hfl-secondary a{display:flex;align-items:center;gap:8px;font-size:12.5px}
+/* Ícones refinados (WS cohesivo, flat) */
+.hfl-primary a[data-area=inicio]::before{content:'⌂' / ''}.hfl-primary a[data-area=operacoes]::before{content:'⇄' / ''}.hfl-primary a[data-area=agentes]::before{content:'◉' / ''}.hfl-primary a[data-area=comparacao]::before{content:'◫' / ''}.hfl-primary a[data-area=mercado]::before{content:'▦' / ''}
+@media(max-width:1100px){
+  body.hfl-platform{padding-left:0}
+  body.hfl-platform .hfl-shell{position:fixed;top:0;left:0;bottom:0;width:min(250px,88vw);transform:translateX(-105%);transition:transform .22s ease;box-shadow:0 18px 54px rgba(15,25,39,.28);z-index:70;background:#fff}
+  body.hfl-shell-is-open{overflow:hidden}
+  body.hfl-platform .hfl-shell.is-open,body.hfl-platform .hfl-links.is-open{transform:none}
+  body.hfl-platform .hfl-top{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--line);background:var(--surface)}
+  body.hfl-platform .hfl-menu{display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border:1px solid var(--border-control);border-radius:9px;background:var(--surface);color:var(--text);font-weight:600}
+}

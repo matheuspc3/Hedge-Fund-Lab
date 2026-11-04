@@ -18,6 +18,8 @@
   function setMenu(open) {
     menu.setAttribute('aria-expanded', String(open));
     links.classList.toggle('is-open', open);
+    shell.classList.toggle('is-open', open);
+    document.body.classList.toggle('hfl-shell-is-open', open);
   }
   menu.addEventListener('click', () => setMenu(menu.getAttribute('aria-expanded') !== 'true'));
   shell.addEventListener('keydown', (e) => {
@@ -53,7 +55,10 @@
       a.hidden = a.dataset.area !== area;
       a === section ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current');
     });
-    shell.querySelector('.hfl-secondary').hidden = secondary.filter((a) => !a.hidden).length < 2;
+    const areaSections = secondary.filter((a) => !a.hidden).length;
+    shell.querySelector('.hfl-secondary').hidden = areaSections < 2;
+    const areaEyebrow = shell.querySelector('.hfl-eyebrow--area');
+    if (areaEyebrow) areaEyebrow.hidden = areaSections < 2;
     const crumbArea = shell.querySelector('[data-crumb=area]'), crumbPage = shell.querySelector('[data-crumb=page]');
     if (areaLink) {
       crumbArea.innerHTML = '';

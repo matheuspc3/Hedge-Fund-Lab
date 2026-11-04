@@ -10,6 +10,42 @@ PAPER-02 reexecutou checks direcionados da integração e contratos reutilizados
 conforme registro abaixo. Os resultados da suíte completa são históricos.
 Estado financeiro corrente exige leitura datada.
 
+## Tela de Atividade e registros — DP-23/DP-33, 03/11/2026
+
+A rota `/logs` passa a se chamar "Atividade e registros" e segue a identidade
+de produto (tema claro DP-23, sem CSS escuro próprio). Conteúdo em três
+partes: cartões "Agora" projetados de `/api/platform/market-base`
+(ciclo diário DP-34 e último fechamento DP-27) e `/api/platform/jobs`
+(jobs em andamento); o mesmo stream narrativo SSE de `/api/logs` com filtros
+por dia, nível e módulo; e a trilha de registros (log narrativo, registros
+selados dos runs, journal CallBank), indicando onde cada coisa é guardada.
+Cópia antiga que instruía rodar o pipeline ETL legado foi removida. Nenhum
+endpoint novo, nenhuma escrita; página keyless-safe.
+
+Incrementos de identidade DP-23 aplicados em produto: cabeçalho padrão
+`product-heading` na tela de Mercado (antes usava `ds-title` avulso) e
+estado vazio do explorador com próxima ação explícita. Em `product.css`,
+chips de estado com vocabulário único (`product-status` sobre `--state-*`)
+e cabeçalho de tabela fixo dentro de `ds-table-wrap`. Páginas históricas
+(H2, paper, legacy, portfolio, index) ficam intocadas — DP-16.
+
+Nova tela `/agents` (área **Auditoria** · "Voto por agente", ao lado de "Registros e processos" e "Atividade e registros"; Agentes como área principal aponta para `/radar` — ciclo diário): consulta por run selado via projeções existentes (`radar-runs` e `radar-view`), sem endpoint novo, que expande os votos do comitê técnico por agente (Analista 1–5), pregão e ativo, com sinal, confiança e evidências (código · papel) de cada voto, consenso e risco do parecer, além de panorama por agente (último voto e alinhamento ao consenso). Um voto ausente nunca é fabricado: parecer PREPARED aparece sem sinal e falhas como recuperação por replay. Nesta instância keyless, sem registro selado de runs, a tela mostra estado vazio honesto apontando o repositório imutável. Sanity de contrato em `tests/test_agents_ui.py` (a função `expand` da página é executada em node contra a forma de `multiasset_radar.detail`; skip sem node).
+
+Navegação DP-23 revisada: a barra lateral ("sidebar") ganha identidade de produto permanente — seções "Produto" e "Acervo" com rótulos pequenos (hfl-eyebrow), ícones planos por área (`⌂ ⇄ ◉ ◫ ▦`), breadcrumb compacto "Você está em", seções da área visíveis só quando há ao menos duas, acervo e seções com hover, rodapé com perfil e faixa de ambiente, e painel off-canvas abaixo de 1100px (Menu revela/fecha, scroll da página trava). Marca exibida no topo da sidebar; barra superior estreita desaparece em desktop.
+
+Verificação: `scripts/check_docs.py` OK; HTTP externo smoke da tela e das
+duas projeções 200. Causa-raiz do "aguardando" corrigida no mesmo ciclo: o
+dashboard só logava em console (stderr cru) e `data/logs/hedgefund.log`
+nunca existia; o servidor agora anexa handler rotativo (5 MB × 3, `RotatingFileHandler`)
+reutilizando o formato de `src/logger.py`, e as linhas de requisição HTTP do
+`BaseHTTPRequestHandler` passam pelo logger, então chegam ao arquivo e ao SSE da tela.
+Limites: sem Chrome nesta máquina, os browser checks não
+rodam aqui; `tests/test_ui_v762.py` apresenta 19 falhas pré-existentes
+(asserção de contagem da navegação global espera 5 áreas, shell tem 8) —
+reproduzidas idênticas com e sem os arquivos alterados via stash.
+O catálogo de preservação continua divergindo deste clone por falta dos
+dados selados (mesmo achado B de 02/11).
+
 ## Cotações e agentes no Railway — DP-27/DP-34, 21/10/2026
 
 Corrigido o bloqueio de integridade da imagem: finais de linha das fontes

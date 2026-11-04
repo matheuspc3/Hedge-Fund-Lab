@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Voto por agente · Hedge Fund Lab</title>
+<link rel="stylesheet" href="/shell.css">
+<script src="/shell.js?v=764" defer></script>
+<style>
+/* Tela "agents" — Voto por agente. Tokens de design-system/product.css;
+   este bloco só organiza a grade local. */
+.agents-controls{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:18px}
+.agents-controls label{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:5px;font-weight:500}
+.agents-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-bottom:18px}
+.agents-cards article{padding:16px}
+.agents-cards h3{font-size:13px;margin:0 0 8px;color:var(--text-2)}
+.agents-cards .logs-value{font-size:14px;font-weight:600;line-height:1.4}
+.agents-cards .logs-detail{font-size:12px;color:var(--muted);margin-top:6px}
+.agents-table td{vertical-align:top}
+.agents-table .col-day{white-space:nowrap;color:var(--muted);font-size:12px}
+.agents-table .col-ev{font-size:11px;color:var(--muted)}
+.agents-table .col-ev div{margin-top:2px}
+@media(max-width:900px){.agents-table .col-ev{display:none}}
+</style>
+</head>
+<body class="hfl-platform" id="main" tabindex="-1">
+<!-- platform-shell -->
+<main>
+  <div class="product-heading">
+    <div><h1>Voto por agente</h1><p>O que cada analista do comitê votou em cada pregão e por quê. Consulta sobre registros selados; nenhuma decisão nova nasce daqui.</p></div>
+    <div class="product-actions"><span id="agents-conn" class="product-status" data-state="warn">Consultando…</span></div>
+  </div>
+
+  <section class="product-panel" aria-labelledby="agents-run-title">
+    <div class="product-panel-head"><h2 id="agents-run-title">Execução selada</h2><a href="/radar">Radars · ciclo diário →</a></div>
+    <div class="agents-controls">
+      <label>Run <select id="agents-run"><option value="">—</option></select></label>
+      <label>Pregão <select id="agents-day"><option value="">Todos</option></select></label>
+      <label>Ativo <select id="agents-ticker"><option value="">Todos</option></select></label>
+      <label>Agente <select id="agents-agent"><option value="">Todos</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+    </div>
+    <p id="agents-run-note" class="product-note">—</p>
+    <div id="agents-error" class="ds-alert ds-alert--error" role="alert" hidden><strong id="agents-error-title"></strong><p id="agents-error-body"></p></div>
+  </section>
+
+  <section class="product-panel" style="margin-top:20px" aria-labelledby="agents-summary-title">
+    <div class="product-panel-head"><h2 id="agents-summary-title">Panorama por agente</h2><span class="product-status" data-state="info" id="agents-counts">0 voto(s)</span></div>
+    <div id="agents-cards" class="agents-cards"></div>
+    <div id="agents-empty" class="product-empty-chart" hidden>
+      <span class="product-empty-icon" aria-hidden="true">🗳️</span>
+      <strong id="agents-empty-title">Nenhum voto para os filtros ativos</strong>
+      <p id="agents-empty-body">Escolha um run acima e aguarde a leitura dos registros selados.</p>
+    </div>
+    <div id="agents-wrap" hidden>
+      <table class="ds-table agents-table"><thead><tr><th scope="col">Pregão</th><th scope="col">Ativo</th><th scope="col">Agente</th><th scope="col">Sinal</th><th scope="col">Confiança</th><th scope="col">Por quê (evidências)</th><th scope="col">Consenso</th><th scope="col">Risco</th></tr></thead><tbody id="agents-body"></tbody></table>
+    </div>
+    <p id="agents-clamp" class="product-note product-note" hidden></p>
+  </section>
+
+  <p class="product-footer">Registros consultados por integração selada (hash verificado no carregamento). Um voto ausente nunca é fabricado: parecer PREPARED aparece sem sinal; falhas aparecem como AGUARDANDO REPLAY. As decisões do gestor ficam na <a href="/portfolio">consulta demonstrativa</a>.</p>
+</main>
+<script>
+'use strict';
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const els = {conn: $('agents-conn'), run: $('agents-run'), day: $('agents-day'),
+    ticker: $('agents-ticker'), agent: $('agents-agent'), note: $('agents-run-note'),
+    cards: $('agents-cards'), body: $('agents-body'), wrap: $('agents-wrap'),
+    empty: $('agents-empty'), emptyTitle: $('agents-empty-title'), emptyBody: $('agents-empty-body'),
+    counts: $('agents-counts'), clamp: $('agents-clamp'), err: $('agents-error'), errTitle: $('agents-error-title'), errBody: $('agents-error-body')};
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const ROLE = {SUPPORTS_COMPRA: 'sustenta compra', SUPPORTS_VENDA: 'sustenta venda', CAUTION: 'cuidado', NEUTRAL: 'neutro'};
+  const SIGNAL_TONE = {COMPRA: 'ok', VENDA: 'error', MANTER: 'neutral'};
+  const STATUS = {COMPLETED: ['ok', 'Parecer completo'], PREPARED: ['info', 'Preparado (parecer em aberto)'],
+    FAILED_REPLAY_ONLY: ['warn', 'Falha · recuperação por replay'], INTEGRITY_ERROR: ['error', 'Integridade']};
+  const chip = (tone, label) => '<span class="product-status" data-state="' + tone + '">' + esc(label) + '</span>';
+  const setConn = (tone, text) => { els.conn.dataset.state = tone; els.conn.textContent = text; };
+  const showError = (title, body) => {
+    els.errTitle.textContent = title; els.errBody.textContent = body;
+    els.err.removeAttribute('hidden');
+    setConn('error', 'Indisponível');
+  };
+  const ROWS_MAX = 400;
+  let state = {items: [], runId: ''};
+  const fill = (sel, values, keep) => {
+    const cur = keep !== undefined ? keep : sel.value;
+    sel.innerHTML = '<option value="">Todos</option>' + values.map((v) => '<option>' + esc(v) + '</option>').join('');
+    sel.value = values.includes(cur) ? cur : '';
+  };
+  function render() {
+    const fd = els.day.value, ft = els.ticker.value, fa = els.agent.value;
+    const vis = state.items.filter((i) => (!fd || i.session === fd) && (!ft || i.ticker === ft) && (!fa || String(i.analyst_id) === fa));
+    els.counts.textContent = vis.length + ' voto(s)';
+    const frag = document.createDocumentFragment();
+    vis.slice(0, ROWS_MAX).forEach((r) => {
+      const tr = document.createElement('tr');
+      const [stTone, stLabel] = STATUS[r.status] || ['neutral', r.status];
+      tr.innerHTML = '<td class="col-day">' + esc(r.session) + '</td>'
+        + '<td>' + esc(r.ticker) + (r.mode === 'synthetic' ? ' ' + chip('synthetic', 'SINTÉTICA') : '') + '<br>' + chip(stTone, stLabel) + '</td>'
+        + '<td>Analista ' + esc(r.analyst_id) + '</td>'
+        + '<td>' + (r.signal ? chip(SIGNAL_TONE[r.signal] || 'neutral', r.signal) : '—') + '</td>'
+        + '<td>' + (r.confidence == null ? '—' : Number(r.confidence).toLocaleString('pt-BR', {maximumFractionDigits: 2})) + '</td>'
+        + '<td class="col-ev">' + r.evidence.map((e) => '<div><code>' + esc(e.code) + '</code> · ' + esc(ROLE[e.role] || e.role) + '</div>').join('') + '</td>'
+        + '<td>' + (r.consensus ? esc(r.consensus.winning_signal || '—') + (r.consensus.consensus_reached ? '' : '<br>comitê dividido') : '—') + '</td>'
+        + '<td>' + (r.risk ? chip(r.risk.verdict === 'APROVADO' ? 'ok' : 'warn', r.risk.verdict) + '<br><span style="font-size:11px;color:var(--muted)">' + esc(r.recommendation || '') + '</span>' : '—') + '</td>';
+      frag.appendChild(tr);
+    });
+    els.body.textContent = '';
+    els.body.appendChild(frag);
+    els.wrap.toggleAttribute('hidden', !vis.length);
+    els.empty.toggleAttribute('hidden', !!vis.length);
+    if (!vis.length) {
+      els.emptyTitle.textContent = state.items.length ? 'Nenhum voto para os filtros ativos' : 'Nenhum parecer com votos neste run';
+      els.emptyBody.textContent = state.items.length ? 'Folgue os filtros por pregão, ativo ou agente.' : 'O run pode estar apenas preparado ou ter falhado; os registros selados em /radar mostram o estado do ciclo.';
+    }
+    if (vis.length > ROWS_MAX) {
+      els.clamp.textContent = 'Exibindo as ' + ROWS_MAX + ' primeiras de ' + vis.length + ' linhas; refine por pregão, ativo ou agente.';
+      els.clamp.removeAttribute('hidden');
+    } else { els.clamp.setAttribute('hidden', ''); }
+  }
+  function renderCards(items) {
+    const byAgent = new Map();
+    items.forEach((i) => {
+      const key = String(i.analyst_id);
+      if (!byAgent.has(key)) byAgent.set(key, {last: i, total: 0, agree: 0, unsure: 0});
+      const a = byAgent.get(key); a.total += 1;
+      if (i.consensus && i.consensus.winning_signal) {
+        if (i.signal === i.consensus.winning_signal) a.agree += 1;
+        if (!i.consensus.consensus_reached) a.unsure += 1;
+      }
+    });
+    els.cards.innerHTML = [...byAgent.entries()].sort((x, y) => x[0] - y[0]).map(([id, a]) =>
+      '<article class="product-panel"><h3>Analista ' + esc(id) + '</h3>'
+      + '<div class="logs-value">' + esc(a.last.signal || 'sem sinal') + ' · ' + esc(a.last.ticker) + '</div>'
+      + '<div class="logs-detail">Último voto: pregão ' + esc(a.last.session)
+      + ' · alinhado ao consenso em ' + a.agree + '/' + a.total
+      + (a.unsure ? ' · consenso dividido em ' + a.unsure + ' pregão(ões)' : '')
+      + '</div></article>').join('') || '';
+  }
+  function expand(items) {
+    const rows = [];
+    (items || []).forEach((i) => {
+      const votes = Array.isArray(i.votes) ? i.votes : [];
+      if (!votes.length) {
+        rows.push({session: i.session, ticker: i.ticker, analyst_id: '—', status: i.status, signal: null, confidence: null,
+          evidence: [], consensus: null, risk: null, recommendation: null, mode: i.mode});
+      }
+      votes.forEach((v) => {
+        rows.push({session: i.session, ticker: i.ticker, analyst_id: v.analyst_id, status: i.status,
+          signal: (v.signal || {}).signal, confidence: (v.signal || {}).confidence,
+          evidence: ((v.signal || {}).evidence || []).map((e) => ({code: e.code, role: e.role})),
+          consensus: i.consensus, risk: (i.risk || {}).verdict ? i.risk : null,
+          recommendation: i.recommendation, mode: i.mode});
+      });
+    });
+    return rows;
+  }
+  async function loadRun(runId) {
+    els.err.setAttribute('hidden', '');
+    setConn('warn', 'Lendo registros…');
+    const get = async (path) => {
+      try { const r = await fetch('/api/platform/' + path, {cache: 'no-store'}); const j = await r.json(); return r.ok ? j : {error: j.error || 'http_' + r.status}; }
+      catch (e) { return {error: 'rede indisponível'}; }
+    };
+    const view = await get('radar-view?' + new URLSearchParams({run: runId}));
+    if (view.error) {
+      showError('Run indisponível nesta instância', 'O registro selado de runs não respondeu (' + view.error + '). Nenhum run é carregado de outra fonte.');
+      state = {items: [], runId};
+      fill(els.day, []); fill(els.ticker, []); render(); return;
+    }
+    fill(els.day, [...new Set(view.items.map((i) => i.session))].sort().reverse());
+    fill(els.ticker, [...new Set(view.items.map((i) => i.ticker))].sort());
+    state = {items: expand(view.items), runId};
+    renderCards(state.items);
+    render();
+    setConn('ok', 'Registros selados verificados · ' + view.run.id);
+  }
+  async function boot() {
+    els.run.disabled = true;
+    let runs;
+    try {
+      const r = await fetch('/api/platform/radar-runs', {cache: 'no-store'});
+      runs = await r.json();
+      if (!r.ok) runs = {error: runs.error || 'http_' + r.status};
+    } catch (e) { runs = {error: 'rede indisponível'}; }
+    if (runs.error) {
+      showError('Registro de runs indisponível nesta instância', 'Não há registro selado de runs neste ambiente (' + runs.error + '). A tela consulta o mesmo repositório imutável usado pelo Radar e pelo ciclo diário DP-34.');
+      return;
+    }
+    els.run.innerHTML = (runs.runs || []).map((r) =>
+      '<option value="' + esc(r.id) + '"' + (r.selected ? ' selected' : '') + '>' + esc(r.id) + ' · ' + esc(r.session) + ' · ' + esc(r.mode) + (r.incident ? ' · incidente' : '') + '</option>').join('');
+    els.run.disabled = !(runs.runs || []).length;
+    if (!els.run.value) {
+      showError('Nenhum run registrado', 'Assim que o ciclo diário DP-34 (ou um run de laboratório) for selado, o run aparece no seletor acima.');
+      return;
+    }
+    await loadRun(els.run.value);
+  }
+  els.run.addEventListener('change', () => loadRun(els.run.value));
+  [els.day, els.ticker, els.agent].forEach((s) => s.addEventListener('change', render));
+  boot();
+})();
+</script>
+</body>
+</html>
