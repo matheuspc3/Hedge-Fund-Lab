@@ -979,6 +979,7 @@ def main():
         if os.environ.get("HFL_MARKET_BASE_AUTOUPDATE") != "0":
             market_base_api.start()
         daily_cycle.start()  # DP-34: only with HFL_DAILY_CYCLE=1
+        wallet_manager_api.orders.start()  # DP-35: process approved intraday orders
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:

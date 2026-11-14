@@ -152,7 +152,7 @@ def test_hub_aliases_head_query_and_cross_site_navigation(web):
 def test_redesigned_routes_get_head_and_shared_assets(web, route, area):
     status, body, headers = request(web, route)
     assert status == 200 and f'data-default-area="{area}"' in body
-    assert "/product.css?v=8" in body and "/product.js?v=6" in body
+    assert "/product.css?v=9" in body and "/product.js?v=6" in body
     head, empty, head_headers = request(web, route, "HEAD")
     assert head == 200 and not empty
     assert headers["Content-Length"] == head_headers["Content-Length"]

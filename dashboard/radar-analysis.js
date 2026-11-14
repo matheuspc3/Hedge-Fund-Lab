@@ -6,6 +6,7 @@
   const day = v => v.split('-').reverse().join('/');
   const labels = {FUTURE_ANALYSIS:'Análise para sessão futura',SAME_DAY_ANALYSIS:'Análise para hoje',HISTORICAL_REANALYSIS:'Reanálise histórica — criada agora'};
   const errors = {analysis_wallet_changed_reload:'A carteira mudou. Atualize a página e revise a seleção.',analysis_reference_must_be_closed_before_target:'Escolha uma sessão de dados já encerrada e anterior ao dia-alvo.',analysis_target_not_a_planned_session:'O dia-alvo precisa ser uma sessão do calendário disponível.',analysis_target_before_wallet_start:'O dia-alvo é anterior ao início dessa carteira.',radar_busy_or_stale_lock:'Há uma preparação/análise em andamento ou um bloqueio de recuperação. Consulte o Radar antes de criar outra.',analysis_wallet_not_found:'Carteira indisponível. Atualize a página.'};
+  errors.analysis_multiagent_requires_full_universe = 'A Multiagentes acompanha os cinco ativos mesmo com posição zerada. Atualize a página para carregar o universo completo.';
   let options, command = crypto.randomUUID().replaceAll('-',''), busy = false, revision = 0;
   const cycle = analysis => window.dispatchEvent(new CustomEvent('hfl:cycle',{detail:{analysis}}));
   async function api(query='', payload) {
@@ -20,8 +21,10 @@
   }
   function wallet() {
     const w = options.wallets.find(w=>w.id===el('analysis-wallet').value);
-    el('analysis-tickers').value = (w?.positions.length ? w.positions.map(p=>p.ticker) : options.examples).join(', ');
+    el('analysis-tickers').value = (w?.analysis_tickers || options.examples).join(', ');
+    el('analysis-tickers').readOnly = w?.strategy === 'MULTIAGENT';
     el('analysis-wallet-state').textContent = w ? `${w.nature_label} · caixa R$ ${Number(w.cash).toLocaleString('pt-BR',{minimumFractionDigits:2})} · ${w.positions.length} posição(ões). O estado atual será preservado com esta análise.` : 'Crie uma carteira na página inicial para começar.';
+    if (w?.strategy === 'MULTIAGENT') el('analysis-wallet-state').textContent += ' Os cinco ativos continuam em análise mesmo com posição zerada, permitindo novas compras.';
     history();
   }
   function reference() {
@@ -72,7 +75,7 @@
     options=d;
     el('analysis-wallet').innerHTML=d.wallets.map(w=>`<option value="${esc(w.id)}">${esc(w.name)} · ${esc(w.nature_label)}</option>`).join('') || '<option value="">Nenhuma carteira</option>';
     const query=new URLSearchParams(location.search), wanted=query.get('wallet');
-    const agents=d.wallets.find(w=>w.nature==='SIMULATION'&&w.strategy!=='BUY_HOLD'); // the wallet the agents move
+    const agents=d.wallets.find(w=>w.nature==='SIMULATION'&&w.strategy==='MULTIAGENT'); // the wallet the agents move
     if(d.wallets.some(w=>w.id===wanted))el('analysis-wallet').value=wanted;else if(agents)el('analysis-wallet').value=agents.id;
     el('analysis-target').min=d.sessions[1];el('analysis-target').max=d.sessions.at(-1);el('analysis-target').value=d.target_date;
     el('analysis-reference').min=d.sessions[0];reference();wallet();
@@ -87,7 +90,7 @@
 // preview, approval, auction) send what they already fetched as 'hfl:cycle' events; this only
 // reads it. Every control and consent stays in its own section: a click only brings it into view.
 (() => {
-  const names={created:'Análise criada',data:'Dados',budget:'Orçamento',agents:'Analistas',manager:'Gestor',preview:'Prévia',approval:'Aprovação',auction:'Leilão'};
+  const names={created:'Análise criada',data:'Dados',budget:'Orçamento',agents:'Analistas',manager:'Gestor',preview:'Prévia',approval:'Aprovação',auction:'Execução'};
   const labels={done:'concluído',running:'em andamento',you:'aguardando você',blocked:'bloqueado',pending:'pendente',skipped:'não se aplica',waiting:'aguardando o mercado'};
   const day=v=>v?v.split('-').reverse().join('/'):'—';
   const at=v=>v?new Date(v).toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
@@ -95,13 +98,14 @@
   const when=(end,start)=>[at(end),span(start,end)].filter(Boolean).join(' · ');
   const short=t=>t.length>320?t.slice(0,319)+'…':t;
   const uniq=v=>short([...new Set(v.filter(Boolean))].join(' · '));
-  const leg=o=>'leilão de '+(o.leg==='OPEN'?'abertura':'fechamento')+' de '+day(o.session);
+  const leg=o=>o.leg==='INTRADAY'?'pregão de '+day(o.session)+' (simulação intradiária)':'leilão de '+(o.leg==='OPEN'?'abertura':'fechamento')+' de '+day(o.session);
   const settled=n=>n.state==='done'||n.state==='skipped';
   function nodes({analysis:a,radar:r,manager:m}={}){
     const out=[], N=(id,state,detail='',x={})=>({id,name:names[id],state,detail,...x}), ok=id=>settled(out.find(n=>n.id===id));
     const e=m?.s, plan=Boolean(e?.result), sent=e?.order||e?.execution, moved=sent||e?.applied, expired=e?.status==='EXPIRED';
     // A manager proposal exists only after a complete quorum (manager_incomplete_quorum_* otherwise).
     const run=r?.run, job=r?.job||{}, total=run?.universe.length||0, quorum=total>0&&run.opinions===total||Boolean(e), live=job.status==='RUNNING', batch=job.command==='run';
+    const inputsReady=total>0&&run.inputs===total&&run.integrity==='OK', reserved=Number(run?.usd_reserved)>0;
     out.push(a?N('created',a.changed&&!moved?'blocked':'done',a.wallet,{time:at(a.created),reason:a.changed&&!moved?'a carteira mudou depois desta análise':'',next:'Crie outra análise para movimentar a carteira atual.'})
       :run?N('created','done','Execução '+run.id,{time:at(run.registered_at)}):N('created','pending','Consultando…'));
     // Readiness rows explain a block in words (e.g. session not yet published by B3); the
@@ -111,14 +115,15 @@
       :quorum?N('data','done','Dados verificados',{time:at(run.prepared_at)})
       :job.command==='prepare'&&live?N('data','running','Preparando e validando os dados',{time:'desde '+at(job.started_at)})
       :r.readonly?N('data','blocked','Somente leitura',{reason:'esta execução não é a operacional do servidor',next:'Crie uma nova análise para continuar.'})
-      :stuck.length||failed.length?N('data','blocked',`${(stuck.length?stuck:failed).length}/${total} ativos bloqueados`,{reason:stuck.length?uniq(stuck.map(i=>i.action||i.error)):uniq(failed.map(i=>i.error)),time:at(r.last_prepare?.generated_at),diag:true,next:'Veja o diagnóstico por ativo.'})
-      :r.report?.ready?N('data','done','Dados prontos',{time:job.command==='prepare'?when(job.finished_at,job.started_at):at(run.prepared_at)})
+      :stuck.length||!inputsReady&&failed.length?N('data','blocked',`${(stuck.length?stuck:failed).length}/${total} ativos bloqueados`,{reason:stuck.length?uniq(stuck.map(i=>i.action||i.error)):uniq(failed.map(i=>i.error)),time:at(r.last_prepare?.generated_at),diag:true,next:'Veja o diagnóstico por ativo.'})
+      :inputsReady||r.report?.ready?N('data','done','Dados prontos',{time:job.command==='prepare'?when(job.finished_at,job.started_at):at(run.prepared_at)})
       :r.report?N('data','blocked','Verificação bloqueada',{reason:uniq(r.report.items.filter(i=>!i.ready).map(i=>i.ticker+': '+i.error)),diag:true,next:'Veja o diagnóstico por ativo.'})
       :N('data','you','Verificar dados (gratuito)',{next:'Verifique os dados do dia; não há custo.'}));
     const auth=run?.budget?.authorization;
     out.push(!r?N('budget','pending','Consultando…')
       :!run.budget?N('budget','skipped','Sem custo (sintético)')
       :!quorum&&!ok('data')?N('budget','pending','Depois dos dados') // never "done" ahead of blocked data
+      :reserved?N('budget','done','Reserva do lote registrada')
       :quorum||auth.state==='VALID'||!auth.required?N('budget','done',auth.state==='VALID'?'Teto autorizado':'Sem autorização pendente')
       :r.review?N('budget','you','Digite o teto e autorize',{next:'Digite o teto agregado e marque a autorização de orçamento.'})
       :N('budget','pending','Revisão depois da verificação'));
@@ -153,7 +158,7 @@
     const x=e?.execution;
     out.push(after('auction','Depois da aprovação')||(x?.status==='EXECUTED'?N('auction','done','Executada no '+leg(x),{time:at(x.executed_at)})
       :x?N('auction','blocked',x.status==='ORDER_REJECTED'?'Ordem recusada':'Nenhuma ordem executável',{reason:short(x.reason||'consulte o recibo do gestor'),next:'Nada foi registrado; crie outra análise.'})
-      :e.order?N('auction','waiting','Aguardando o '+leg(e.order),{next:'Nada a fazer: a ordem executa ao preço oficial B3 quando ele entrar na base.'})
+      :e.order?N('auction','waiting',e.order.leg==='INTRADAY'?'Aguardando preço intradiário de '+day(e.order.session):'Aguardando o '+leg(e.order),{next:e.order.leg==='INTRADAY'?'O servidor busca a primeira barra de 1 minuto posterior à aprovação. Yahoo tem atraso ~15 min; nenhuma cotação anterior é usada.':'Nada a fazer: a ordem executa ao preço oficial B3 quando ele entrar na base.'})
       :e.applied?N('auction','done','Registrada ao preço de referência')
       :expired?N('auction','blocked','Proposta expirada',gone)
       :N('auction','pending','Depois da aprovação')));

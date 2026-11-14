@@ -542,6 +542,8 @@ def status(run, proposal):
         "compatible": compatible,
         "status": rec["execution"]["status"]
         if rec["execution"]
+        else "PENDING_INTRADAY"
+        if rec["order"] and rec["order"]["leg"] == "INTRADAY"
         else "PENDING_AUCTION"
         if rec["order"]
         else "APPLIED"  # old rule: booked at the reference price on approval
@@ -675,6 +677,7 @@ def application(c, result, payload, confirm=False):
                 "identity": "HFL-WALLET-MANAGER-QUOTES-PREVIEW-V1",
                 "proposal_sha256": result["sha256"],
                 "created_at": now.isoformat(),
+                "execution_slot": {k: schedule[k] for k in ("session", "leg")},
                 "quotes": quotes,
             }
         )
@@ -694,6 +697,7 @@ def application(c, result, payload, confirm=False):
     record = orders.read(stored)
     manual.require(
         record is not None
+        and record.get("execution_slot") == {k: schedule[k] for k in ("session", "leg")}
         and payload.get("preview_token")
         == b.digest([estimate["preview_token"], record["sha256"]]),
         "form",

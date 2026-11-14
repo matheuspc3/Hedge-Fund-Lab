@@ -243,6 +243,7 @@ def valuation(wallet, prices, session, receivable=b.ZERO, unbooked=b.ZERO):
 MANAGER_KINDS = (
     "WALLET_MANAGER_REFERENCE_PRICE_SIMULATION",  # old rule: booked at approval
     "WALLET_MANAGER_AUCTION_EXECUTION",  # DP-33: booked at the official auction
+    "WALLET_MANAGER_INTRADAY_EXECUTION",  # DP-35: first post-approval 1m bar
 )
 PERIODS = (
     ("1d", "Dia"),
@@ -371,6 +372,8 @@ def build(wallet, book, issues, *, today, last_closed, calendar):
                 **{k: t[k] for k in ("id", "ticker", "side", "quantity", "price")},
                 "origin": "MANAGER"
                 if (t.get("source") or {}).get("kind") in MANAGER_KINDS
+                else "RULE"
+                if (t.get("source") or {}).get("kind") == "RULE_STRATEGY_EXECUTION"
                 else "MANUAL",
             }
             for t in wallet["trades"]

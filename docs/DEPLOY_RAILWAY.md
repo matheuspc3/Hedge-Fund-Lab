@@ -20,6 +20,51 @@ recalcule hashes para contornar `original_source_changed` ou
 
 ## Como o contêiner sobe
 
+**Identidade conferida no servidor e no Railway em 23/10:** o TCC fica no
+projeto **Centauro ERP**, no ambiente **`tcc`**, serviço **`impartial-comfort`**.
+O nome do projeto não indica que seja o serviço de produção do ERP. Para esta
+aplicação, sempre escopar ações ao ambiente/serviço abaixo:
+
+- Projeto: `ad6797e4-d9a0-45a2-b7b8-04950c277b5b`.
+- Ambiente `tcc`: `f467c798-f6c7-48eb-be9c-5a4477e2e9cc`.
+- Serviço: `7987997f-61ea-4e23-ae05-3cda9dd50d97`.
+- Volume `hfl-data`: `8f660448-45ed-4a61-b145-118915e7b924`, `/app/data`, 20 GB.
+
+No SSH, usar **`/opt/venv/bin/python`**; o `python` do shell aponta para o
+interpretador do sistema, sem as dependências da aplicação. O shell SSH não
+herda automaticamente todas as variáveis do processo principal.
+
+Recuperação de acesso de 23/10: checagem SSH terminou com `Authorization
+successful` ao reiniciar o fluxo em `login.tailscale.com` e usar o Google da
+conta da tailnet. O login GitHub anterior havia terminado em `bad
+tailscale-authstate2 cookie`. A conexão Railway existente que lista Centauro
+ERP acessa o ambiente `tcc`; não é necessário insistir na conexão adicional
+que falha com `could not validate id_token_hint`.
+
+**Origem usada no `tcc` (23/10):** fork `LuquinhasPS/Hedge-Fund-Lab` do
+repositório `matheuspc3/Hedge-Fund-Lab`. Lucas usa o fork porque conseguiu
+selecioná-lo no Railway. O serviço segue a branch
+`fix/railway-daily-cycle-20261021`, fixado por `source.commitSha` no código
+`2baa6c38b4483fa3a5518018a3c85704fd9317d0`. Sincronizar a `main` do fork com
+o original não troca esse pin, não incorpora a branch do PR #2 à `main` e não
+publica automaticamente uma versão nova. Atualizar a versão fixada é uma ação
+separada de deploy; preservar o volume `/app/data`.
+
+DP-36 publicada após autorização explícita de Lucas: deploy
+`38c9ee72-2541-4ade-b28a-613f0b8dee46` em SUCCESS, servidor iniciado às 20:28
+de 23/10 (Brasília). A versão anterior DP-35 era `4fefe40`, deploy
+`5b2b7739-d8db-44ce-a990-514db37b54ae`, preservada no histórico do Railway.
+SMA/Bollinger foram inicializadas uma vez pelo SSH com `/opt/venv/bin/python`
+e custo de 0,03%; a atualização de mercado agora avança as duas sem IA.
+Backup anterior: `/app/data/backups/before-rule-wallets-20261023T232120Z`.
+
+DP-35/APP-05: o servidor inicia também o processador de ordens intradiárias,
+com verificação a cada 60 s, independente de `HFL_DAILY_CYCLE`. Novas aprovações
+entre os cortes usam a primeira barra Yahoo de 1 min posterior à aprovação
+(atraso ~15 min); ordens OPEN/CLOSE gravadas mantêm sua regra. O recibo conserva
+a fonte em `execution-prices.json` no mesmo volume. Não exige variável ou chave
+nova; falhas desse processador são registradas com prefixo `DP-35` nos logs.
+
 1. `tini` (PID 1) executa `scripts/railway_entrypoint.sh` e repassa o SIGTERM do
    Railway ao Python e ao `tailscaled` (parada limpa em menos de 1 s no teste local).
 2. Sem `TS_AUTHKEY` e sem identidade salva no volume, sai com código 64 (falha
@@ -80,7 +125,8 @@ padrão); não há dependência extra (HTTP da biblioteca padrão).
    | `HFL_NOTIFY_FROM` | opcional; padrão `Hedge Fund Lab <onboarding@resend.dev>` | |
    | `HFL_DAILY_CYCLE` | `0` no primeiro boot, `1` depois da migração | `0` |
    | `HFL_MARKET_BASE_AUTOUPDATE` | `0` no primeiro boot; remova (ou `1`) depois | `0` |
-   | `TS_DEBUG_MTU` | `1280`; ajuste qualificado em 21/10 para evitar timeout do handshake Chrome neste caminho | `1280` |
+   | `TS_DEBUG_MTU` | `1280`; sozinho não impediu a recorrência do timeout Chrome | `1280` |
+   | `TS_DEBUG_ALWAYS_USE_DERP` | `true`; neste ambiente, usar relay criptografado para contornar o timeout do caminho UDP direto | `true` |
 
    `TZ` não é necessário: as regras usam `ZoneInfo("America/Sao_Paulo")` (pacote
    `tzdata` do lock). Os horários do log saem em UTC. `HFL_PORT` (padrão 8081) e

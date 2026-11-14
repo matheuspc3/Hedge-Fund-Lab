@@ -64,6 +64,13 @@ def wallet_snapshot(wallet):
     }
 
 
+def default_tickers(wallet):
+    """DP-07/34: selling a Multiagentes position never removes its buy candidate."""
+    if wallet.get("strategy") == "MULTIAGENT":
+        return list(radar.EXAMPLES)
+    return [p["ticker"] for p in wallet["positions"]] or list(radar.EXAMPLES)
+
+
 def context(entry):
     path = runs.root_of(entry) / CONTEXT
     if not path.exists():
@@ -103,7 +110,11 @@ def get(query):
         }
     return {
         **choices(),
-        "wallets": [wallet_snapshot(w) for w in manual.get({})["wallets"]],
+        "wallets": [
+            {**wallet_snapshot(w), "analysis_tickers": default_tickers(w)}
+            for w in manual.get({})["wallets"]
+            if w.get("strategy") not in manual.RULE_STRATEGIES
+        ],
         "examples": list(radar.EXAMPLES),
         "selected": registry["selected"],
         "csrf_token": platform.forward_jobs.JOBS.csrf,
@@ -176,10 +187,16 @@ def create(payload):
             )
             if wallet is None:
                 raise ValueError("analysis_wallet_not_found")
+            if wallet.get("strategy") in manual.RULE_STRATEGIES:
+                raise ValueError("analysis_rule_wallet_has_no_agents")
             if wallet["revision"] != request["wallet_revision"]:
                 raise ValueError("analysis_wallet_changed_reload")
             if target < wallet["start_date"]:
                 raise ValueError("analysis_target_before_wallet_start")
+            if wallet.get("strategy") == "MULTIAGENT" and set(request["tickers"]) != set(
+                default_tickers(wallet)
+            ):
+                raise ValueError("analysis_multiagent_requires_full_universe")
             value = b.sealed(
                 {
                     "identity": IDENTITY,

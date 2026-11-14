@@ -28,6 +28,23 @@ s=states({analysis,radar:radar({run:run(0,'VALID'),report:{ready:true},paid:true
 assert.equal(s.budget,'done');assert.equal(s.agents,'you');
 list=nodes({analysis,radar:radar({run:run(2,'VALID'),job:{command:'run',status:'RUNNING',started_at:'2026-10-21T08:00:00-03:00'}})});
 assert.equal(list.find(n=>n.id==='agents').state,'running');assert.equal(list.find(n=>n.id==='agents').detail,'2/5 pareceres');
+// Confirming the batch deliberately clears the browser's preflight and checkboxes.
+// Reloading/polling must derive completed steps from verified inputs and reservations.
+for(const auth of ['NOT_REQUIRED','STALE']) {
+  const running=radar({run:{...run(0,auth),inputs:5,integrity:'OK',usd_reserved:3.31776},job:{command:'run',status:'RUNNING',started_at:'2026-10-22T10:32:40-03:00'}});
+  list=nodes({analysis,radar:running});s=states({analysis,radar:running});
+  assert.equal(s.data,'done');assert.equal(s.budget,'done');assert.equal(s.agents,'running');
+  assert.equal(summary(list).node.id,'agents');assert.equal(summary(list).state,'Analistas em andamento');
+  const partial=radar({...running,run:{...running.run,opinions:2},last_prepare:raw.last_prepare,job:{command:'run',status:'COMPLETED',outcome:{state:'PARTIAL',summary:'3 comitês pendentes'}}});
+  s=states({analysis,radar:partial});assert.equal(s.data,'done');assert.equal(s.budget,'done');assert.equal(s.agents,'blocked');
+  assert.equal(summary(nodes({analysis,radar:partial})).node.id,'agents');
+}
+const verified={...run(0,'VALID'),inputs:5,integrity:'OK',usd_reserved:0};
+s=states({analysis,radar:radar({run:verified})});assert.equal(s.data,'done');assert.equal(s.budget,'done');
+s=states({analysis,radar:radar({run:{...verified,budget:{authorization:{required:true,state:'STALE'}}}})});
+assert.equal(s.data,'done');assert.equal(s.budget,'pending'); // inputs alone never prove a paid consent
+s=states({analysis,radar:radar({run:verified,readiness:[{ticker:'PETR4',input_state:'INTEGRITY_ERROR',action:'Revise a integridade.'}]})});
+assert.equal(s.data,'blocked');assert.equal(s.budget,'pending'); // current errors still block
 s=states({analysis,radar:radar({run:run(3,'VALID'),job:{command:'run',status:'COMPLETED',outcome:{state:'PARTIAL',summary:'2 comitês pendentes'}}})});
 assert.equal(s.agents,'blocked');
 const done=radar({run:run(5,'VALID'),job:{command:'run',status:'COMPLETED',started_at:'2026-10-21T08:00:00-03:00',finished_at:'2026-10-21T08:04:00-03:00',outcome:{state:'COMPLETED'}}});
@@ -42,6 +59,13 @@ const order={approved_at:'2026-10-21T09:10:00-03:00',leg:'CLOSE',session:'2026-1
 list=nodes({analysis,radar:done,manager:manager({s:entry({status:'PENDING_AUCTION',result:plan,order})})});
 assert.equal(list.find(n=>n.id==='auction').state,'waiting');assert.equal(list.find(n=>n.id==='auction').detail,'Aguardando o leilão de fechamento de 21/10/2026');
 assert.equal(summary(list).state,'Aguardando o leilão de fechamento de 21/10/2026');
+const intraday={...order,leg:'INTRADAY',session:'2026-10-22'};
+list=nodes({analysis,radar:done,manager:manager({s:entry({status:'PENDING_INTRADAY',result:plan,order:intraday})})});
+assert.equal(list.find(n=>n.id==='auction').name,'Execução');
+assert.equal(list.find(n=>n.id==='auction').detail,'Aguardando preço intradiário de 22/10/2026');
+assert.ok(list.find(n=>n.id==='auction').next.includes('posterior à aprovação'));
+list=nodes({analysis,radar:done,manager:manager({s:entry({status:'EXECUTED',result:plan,order:intraday,execution:{...intraday,status:'EXECUTED',executed_at:'2026-10-22T10:52:00-03:00'}})})});
+assert.ok(list.every(n=>n.state==='done'));assert.ok(!list.at(-1).detail.includes('leilão'));
 list=nodes({analysis:{...analysis,changed:true},radar:done,manager:manager({s:entry({status:'EXECUTED',result:plan,order,execution:{status:'EXECUTED',leg:'CLOSE',session:'2026-10-21',executed_at:'2026-10-22T08:00:00-03:00'}})})});
 assert.ok(list.every(n=>n.state==='done'));assert.equal(summary(list).state,'Ciclo concluído'); // its own order changed the wallet
 assert.equal(states({analysis:{...analysis,changed:true},radar:radar()}).created,'blocked'); // a changed wallet needs a new analysis

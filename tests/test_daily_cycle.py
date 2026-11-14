@@ -147,6 +147,25 @@ def test_unpublished_reference_session_blocks_before_creating(analysis_lab, monk
     assert not [r for r in dc.runs.load()["runs"] if r.startswith("radar-ui-")]
 
 
+def test_daily_analysis_keeps_sold_out_asset_in_universe(analysis_lab, monkeypatch):  # noqa: F811
+    wallet = dc.manual.get({"wallet": analysis_lab["wallet"]})["selected"]
+    wallet = {
+        **wallet,
+        "strategy": "MULTIAGENT",
+        "positions": [{"ticker": "PETR4", "quantity": "1"}],
+    }
+    monkeypatch.setattr(dc.manual, "get", lambda query: {"wallets": [wallet]})
+    monkeypatch.setattr(dc.market, "published", lambda: "2026-10-14")
+    clock(monkeypatch, DAY + "T09:00:00")
+    run = dc.open_analysis({"links": {}, "steps": []}, DAY)
+    entry = dc.runs.run(run)
+    assert set(entry["universe"]) == set(dc.radar.EXAMPLES)
+    assert "VALE3" in entry["universe"]
+    context = dc.analysis.context(entry)
+    assert context["wallet"]["positions"] == wallet["positions"]
+    assert context["provider_calls"] == 0
+
+
 def test_pending_auction_retries_before_creating_analysis_or_spending(
     tmp_path, monkeypatch
 ):

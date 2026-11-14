@@ -1,5 +1,84 @@
 # Estado atual do Hedge-Fund-Lab
 
+**14/11 — integração autorizada dos ramos, DP-35/36/37:** Lucas aprovou manter
+as melhorias do Matheus em logs/votos/navegação e as decisões já operacionais na
+fork: universo fixo, SMA/Bollinger com guardas e execução intradiária simulada.
+A integração acontece em worktree separada da campanha histórica, preservando os
+fontes, livros e envelopes do replay concluído. DP-37 passa a identificar o replay;
+os rótulos antigos DP35-replay continuam como
+[aliases documentados](DIRECAO_DO_PROJETO.md#correspondência-dos-identificadores-históricos).
+Verificação final integrada: **133 testes aprovados, um ignorado**, em 32 s.
+Preservação lógica dos 69 arquivos existentes do dashboard em relação à fork;
+somente o HTML do replay é adicional. Reconstrução do explorador reproduzindo
+os bytes originais de HTML, chamadas e inicializador, sem nova inferência.
+Nenhum deploy, transferência de dados ou chamada Gemini nesta integração.
+Próximo passo: versionar a integração e preparar publicação/transferência separada.
+
+
+**Registro anterior de 14/11 — commit do replay no original:** código, checks e relatos do replay
+na branch `codex/replay-continuo-2026` do repositório do Matheus, sem dados privados
+ou troca das fontes seladas. [Revisão das 28 diferenças da fork implantada](../reports/revisao_railway_vs_matheus_2026-11-14.md).
+Nessa etapa, incorporar as mudanças da produção ainda dependia dessa revisão;
+a transferência dos resultados e o deploy não foram executados. O Tailscale exige
+autenticação adicional para a cópia SSH, a ser concluída com Lucas nessa etapa.
+
+
+**13/11/2026 — campanha contínua DP-37 (regras DP-36) concluída:** seis carteiras,
+06/04–12/11, 153 pregões completos, sem lacunas nem reset. Cinco referências
+concluídas antes dos agentes; inferência de 17:41 a 22:28 (São Paulo), com processo
+continuando durante a interrupção do Codex. Reconciliação dos 918 estados PASS.
+Multiagentes encerrou em R$ 82.178,71 (-17,8213%), R$ 6.612,40 abaixo do Buy & Hold.
+Bollinger teve o maior patrimônio nesta execução: R$ 104.887,05 (+4,8870%).
+[Seis resultados, método e limites](../reports/replay_continuo_2026-04_2026-11.md).
+
+4703 chamadas lógicas / 4709 tentativas; seis retries recuperados, máximo duas
+por chamada e uma resposta consumida por voto. 40 vetos determinísticos
+suprimiram a chamada de risco sem tornar a análise incompleta. Uso conhecido
+estimado US$ 7,44444225; reserva incerta US$ 0,663552; exposição final
+US$ 8,10799425 e pico reconstruído US$ 8,26302975, abaixo de US$ 34,78.
+São estimativas auditadas pelos envelopes, não fatura nem saldo promocional.
+
+Qualificação pré-paga de retry/cap/crash, identidade por componente JCP e escala
+numérica positiva do SLSQP preservada. Igualdade inicial, causalidade, 252 retornos
+passados, fills RAW na abertura, custos de 0,03%, caixa e recebíveis por componente
+PASS; KKT nas três covariâncias de Mínima Variância também PASS. Conferência de
+preservação: 1069 arquivos anteriores, 157 diagnósticos e 76 fontes seladas intactos.
+`qualified-v2/` contém a execução final; `budget.sqlite` permanece na raiz pai.
+
+Explorador local das seis carteiras entregue depois dos resultados, com recibos,
+decisões, operações, proventos, chamadas e exportações. Navegador: desktop 1280 px
+e celular 390 px, sem erro de execução ou overflow horizontal. A política do
+navegador bloqueou o teste direto file://; o fluxo HTTP local foi verificado.
+[Inicializador e pacote](REPLAY_MULTIATIVOS.md#explorador-local-e-entrega-final).
+Nenhuma escrita em produção ou deploy. A consulta Tailscale confirmou o Railway
+atualizado até 12/11; a cópia local pré-migração terminava em 20/10 e os 16 snapshots
+recentes conferiram com a base preparada. Próximo passo: exploração e relato
+no TCC, com limites retrospectivos explícitos.
+
+**13/11/2026 — seleção exploratória de queda, DP-37 / REPLAY-01:** três candidatos
+investigados somente na base local, sem IA ou lançamentos: 20/04–05/05,
+26/05–09/06 e 04–17/08/2026. Recomendação para avaliação: 20/04–05/05 (cesta
+−7,20%, quatro ativos negativos). Zero lacunas/splits nos candidatos e 150
+snapshots causais verificados. [Relatório completo](../reports/janelas_queda_multiativos_2026-11-13.md).
+Lucas depois escolheu e autorizou 20/04–05/05 com novo teto US$ 34,78. A execução
+real terminou na raiz própria `april-may-2026-flash`: oito análises completas,
+duas lacunas de conexão, nove operações e dez marcações reconciliadas. Agentes
+R$ 92.668,80 versus B&H R$ 92.800,14; diferença −R$ 131,34. Proventos PASS,
+recebíveis R$ 252,54 / R$ 252,49 sem antecipação de caixa. Custo conhecido estimado
+US$ 0,4645395, até US$ 0,5751315 incluindo as duas respostas incertas; teto único
+preservado nas retomadas. Os 528 arquivos do primeiro ensaio ficaram idênticos.
+[Resultado da segunda janela](../reports/replay_multiasset_2026-04-20_2026-05-05.md).
+
+**12/11/2026 — REPLAY-01 / DP-37:** reprodução exploratória de 06–17/04 pronta
+em `scripts/replay_multiasset.py`, com armazenamento isolado e preflight próprio.
+Dez sessões offline exercitam os componentes atuais; não são resultados Gemini.
+Execução real concluída no teto autorizado US$ 34,78: sete análises completas,
+três dias sem parecer final por falha de conexão, uma compra de 1 VALE3 e dez
+marcações reconciliadas (check PASS). Multiagentes R$ 102.503,49 e Buy & Hold
+R$ 102.498,88; uso conhecido estimado US$ 0,4650735, até US$ 0,6309615 incluindo
+as três respostas incertas. [Resultado real](../reports/replay_multiasset_2026-04.md).
+[Componentes, checks, diferenças e execução](REPLAY_MULTIATIVOS.md).
+
 Estado em **16/10/2026**, base V7.6.5 e incrementos datados abaixo, incluindo APP-01/02 e cadastro de análises por carteira.
 Foram lidos código, relatórios e resultados de qualificação existentes.
 Não foram reexecutados experimentos nem auditados os estados financeiros
@@ -45,6 +124,293 @@ rodam aqui; `tests/test_ui_v762.py` apresenta 19 falhas pré-existentes
 reproduzidas idênticas com e sem os arquivos alterados via stash.
 O catálogo de preservação continua divergindo deste clone por falta dos
 dados selados (mesmo achado B de 02/11).
+
+## SMA/Bollinger na comparação — DP-36, PAPER-05, 23/10/2026
+
+Publicada no Railway em 23/10 após autorização específica de Lucas. As duas carteiras usam o
+livro `manual-v1`: mesma cesta, preços, caixa e capital independente de 14/10,
+20% do capital por ativo, quantidades inteiras e proventos sem reinvestimento.
+Custos posteriores fixados na criação pelo percentual da última configuração
+dos agentes (0,03%, também confirmado por GET HTTPS no servidor em 23/10).
+SMA 50/200 e Bollinger 20/2 reaproveitam os sinais causais existentes; histórico
+de 201/21 pregões serve ao cálculo, sem série de patrimônio anterior a 14/10.
+
+`dashboard/rule_portfolios.py` inicializa as duas carteiras atomicamente e
+registra `RULE_DECISION` com dados/versão/sinais congelados e `RULE_EXECUTION`
+com as operações no OPEN RAW B3 da sessão seguinte. Também registra manter,
+compra com posição já aberta e ausência de operação. Repetir ou interromper não
+duplica nem deixa meia cesta. Preço/histórico faltante bloqueia, e a home mostra
+atraso. A atualização de mercado avança carteiras já inicializadas; GETs apenas
+consultam. Controle manual e agentes não podem movimentá-las; a rotina paga
+continua selecionando só a Multiagentes. Home, seletor, operações/sinais e
+comparação usam as mesmas projeções existentes. CDI/Ibovespa seguem externos;
+Equal Weight e Mínima Variância não entram neste incremento.
+
+Limites: reconstrução produzida agora, identificada pelo horário real do
+registro; fator Yahoo da versão disponível, sem afirmar disponibilidade
+histórica desse ajuste. O snapshot e os inputs usados ficam vinculados ao
+recibo; fechamentos futuros não entram no cálculo. Política/fontes das regras
+ficam seladas na criação; alteração exige revisão, sem reescrever o histórico.
+Caixa econômico do livro existente, sem liquidação de corretora D+2; sem
+shorts, alavancagem ou eventos de ações além dos já suportados pelo livro.
+
+Verificação: 126 testes existentes passaram, um optativo ignorado, mais quatro
+testes novos (`tests/test_rule_portfolios.py`) de sinais causais, fonte
+congelada, abertura ausente, isolamento de caixa/dividendos, rollback da cesta,
+retomada, idempotência, direito a proventos após venda e preservação da referência.
+Rodada integrada: **130 aprovados, um ignorado, nove subchecks aprovados**.
+Ruff/sintaxe JS aprovados. O verificador global encontra divergências antigas de
+baselines nesta árvore Windows; nenhum arquivo alterado nesta entrega está na
+lista de divergências de evidências seladas. Não foram recalculados selos.
+Prévia em cópia SQLite isolada em `data/cache/rules-preview`: comparação
+desktop/celular e telas das duas carteiras/operações verificadas sem POSTs,
+sem erros de console, com controles manuais/agentes ocultos e aviso de atraso.
+Nas fontes reais locais, ambas acompanharam Buy & Hold de 14 a 20/10; dados
+necessários desde 21/10 estão ausentes, sem preenchimento fictício. O SQLite
+operacional local e as evidências Legacy não foram alterados.
+
+Publicação e criação no servidor **concluídas**. Acesso recuperado em 23/10: novo fluxo SSH com Google autenticou;
+o servidor confirmou que o TCC é o ambiente `tcc` do projeto Centauro ERP
+(a conexão antes descartada pelo nome é a correta). Identificadores no
+[guia de deploy](DEPLOY_RAILWAY.md). GETs confirmaram taxa de 0,03% e duas
+carteiras originais. Backup consistente, `integrity_check=ok`, em
+`/app/data/backups/before-rule-wallets-20261023T232120Z`; duas revisões e três
+hashes de ordens preservados em `before.json`. Fonte `2baa6c3` enviada ao fork;
+uma única alteração de source ficou staged exclusivamente no `tcc` (patch
+`561360ca-ef0c-4f50-befa-6293626a8fe2`). A revisão automática inicialmente
+recusou o disparo; Lucas respondeu **“Autorizo esse deploy no tcc”**. Deploy
+`38c9ee72-2541-4ade-b28a-613f0b8dee46` concluiu SUCCESS, com fonte `2baa6c3`;
+restauração de bytes selados aprovada no build, Tailscale/Serve e servidor ativos
+às 20:28 de Brasília. Atualização de mercado terminou sem erro; HTTPS 200 e
+JavaScript novo conferidos.
+
+Inicialização executada no servidor com `/opt/venv/bin/python` e taxa 0,03%:
+
+| Carteira | ID | Estado observado |
+|---|---|---|
+| SMA 50/200 | `manual-2c502a1d13774277b647f6e0bc92ec2f` | 5 compras iniciais, 7 decisões e 7 sessões seguintes conferidas; nenhum negócio adicional |
+| Bollinger 20/2 | `manual-e671a60b08d54c52991b93ed7cbff122` | 5 compras iniciais, 7 decisões e 7 sessões seguintes conferidas; nenhum negócio adicional |
+
+Ambas começam em 14/10, caixa R$ 177,44, custos R$ 0,00 até a observação; patrimônio
+R$ 95.036,38 no fechamento disponível de 22/10, igual ao Buy & Hold. Repetição da
+inicialização e do processamento confirmou mesmos IDs e revisões; integridade
+SQLite `ok`. As revisões de Buy & Hold/Multiagentes e os hashes das três ordens
+anteriores continuam idênticos aos do backup. A rotina continua selecionando
+somente Multiagentes; as regras não entram no cadastro de análises dos agentes.
+Dados necessários para calcular o sinal de 23/10 ainda faltam na base oficial:
+`rule_signal_history_missing:PETR4:2026-10-23`, sem preencher com outra fonte.
+
+Verificação publicada: GETs de catálogo/histórico/seleção e Chrome pela entrada
+principal → Comparação mostraram quatro carteiras, seis séries incluindo
+Ibovespa/CDI e tabela consistente. Captura em
+`data/cache/rules-preview/live/comparison.jpg`. Limite de navegação já existente:
+abrir `/comparison` diretamente de uma origem externa pode receber
+`local_origin_required`; entrar pela home e usar o menu funciona. Não foi
+alterado o guard de origem nesta publicação. Próximo passo: acompanhar a chegada
+da base de 23/10 e as próximas sessões. Não copiar o SQLite antigo do PC sobre
+o volume da nuvem.
+
+## Execução simulada durante o pregão — DP-35, APP-05, 22/10/2026
+
+Publicada no `tcc` a escolha de Lucas: novas aprovações a partir de 22/10,
+entre os cortes de abertura e fechamento, registram `PENDING_INTRADAY`. Antes
+do corte inicial continua OPEN oficial B3. O preço usado é o Open da primeira
+barra Yahoo de 1 minuto coerente, com volume, iniciada estritamente depois da
+aprovação e completa no instante da coleta, na mesma sessão. Não é um tick ao
+vivo nem comprovação de execução real. Atraso aproximado de 15 minutos.
+
+O servidor verifica pendências a cada minuto, sem depender da tela ou de
+`HFL_DAILY_CYCLE`. Reutiliza o coletor DP-26, os horários/calendário existentes,
+o ajuste determinístico de compras ao caixa e a cesta atômica de operações.
+Todos os preços precisam estar disponíveis; não lança uma cesta parcial por
+falta de cotação. `execution-prices.json` preserva payload completo, hashes,
+horários e preço escolhido antes de gravar no livro. Recuperação reaproveita
+essa captura e não duplica operações. Sem captura até 30 min após o período
+contínuo, registra `NOT_EXECUTED`, sem fallback de fechamento ou do próximo dia.
+
+Prévia e aprovação vinculam modalidade e sessão; se mudarem, exige nova prévia.
+Painel, recibo, home, resumo do ciclo e aviso da rotina distinguem intradiário
+de leilão. O ciclo automático usa a mesma regra nas tentativas de 12h/16h.
+Nova origem reconhecida no histórico como operação do gestor; marcação diária
+e prompts continuam usando suas bases anteriores. Não há dependência nova.
+
+Verificação offline integrada: **118 aprovados, um teste de navegador optativo
+ignorado** (gestor, intradiário, rotina, universo e histórico). Node confirmou
+estados do ciclo e sintaxe dos JS alterados; Ruff aprovado. Casos incluem
+cotação antiga/futura/sem fuso/NaN/OHLC inválido, cesta incompleta, prazo final,
+falha de escrita e retomada após prazo, idempotência, nova prévia quando muda
+a modalidade e ordem CLOSE histórica sem campo de política. Prévia Chrome
+do painel real, com estado demonstrativo isolado e sem POSTs, confirmou acentos
+e a espera intradiária; evidência privada
+`output/railway-migration-20261020/execucao-intradiaria-previa.png`.
+
+**Publicação autorizada em 22/10.** Lucas confirmou o envio e deploy; commit
+`4fefe40cf82fccbf5126ea4ecd37962e3f47a559` enviado ao seu fork e fonte do
+serviço fixada nessa versão, sem alterar volume ou variáveis. Deploy
+`5b2b7739-d8db-44ce-a990-514db37b54ae` aceito às 11:44:20 de Brasília,
+inicialmente `QUEUED`, sem iniciar build. O Railway informava incidente de builds
+([status oficial](https://status.railway.com/incident/QH8L8B3E)); não foram
+criadas tentativas duplicadas. Durante a fila, a versão anterior atendia HTTPS 200.
+[PR #2 em rascunho](https://github.com/LuquinhasPS/Hedge-Fund-Lab/pull/2)
+registra o novo incremento; PR #1 já estava merged. A ordem WEGE3 aprovada às
+10:35 conserva CLOSE: não foi migrada, executada ou reenviada. Nenhuma
+inferência real foi acionada por esta verificação.
+
+**Ativação confirmada às 13:41 de Brasília.** Deploy `SUCCESS`, versão ativa no
+Chrome após atualizar o painel. Logs: restauração dos bytes selados sem mudar
+hashes, Tailscale Running/Serve, servidor iniciado às 12:01:05 e rotina DP-34
+habilitada às 09h/12h/16h. GETs HTTPS da home, gestor, cadastro de análises,
+mercado e JS retornaram 200. API do gestor oferece `INTRADAY` para novas
+aprovações; o JS publicado contém a modalidade e acentos corretos. Cadastro
+Multiagentes retorna PETR4/VALE3/ITUB4/WEGE3/BBAS3. Ordem antiga tem exatamente
+o mesmo hash da captura anterior ao deploy, ainda CLOSE e sem execução.
+Sem erro de mercado ou de inicialização do processador DP-35 observado. Não se
+provocou uma operação para testar o fill; esse caso permanece coberto offline.
+Evidências privadas: `postdeploy-35-health.json`, `postdeploy-manager-35.json`
+e `deploy-intradiario-ativo.png` em `output/railway-migration-20261020/`.
+
+Lucas esclareceu que usa seu fork para disponibilizar o projeto do amigo no
+Railway. Origem de deploy confirmada: `LuquinhasPS/Hedge-Fund-Lab`, branch
+`fix/railway-daily-cycle-20261021`, fixada no código `4fefe40`. A main do fork
+foi sincronizada por Lucas (`212992a`); isso não troca a versão fixada nem
+incorpora a branch do PR #2. Não foi feito merge nem push ao repositório do
+amigo. Próximo passo operacional: acompanhar a próxima nova aprovação e seu
+recibo intradiário, mantendo a ordem antiga sob sua política original.
+
+## Textos do gestor e leilão-alvo — DP-17/DP-33, 22/10/2026
+
+Lucas reportou acentos corrompidos no painel do gestor e perguntou qual preço
+executaria a ordem. Corrompidos os literais do próprio `wallet-manager.js`
+(UTF-8 interpretado como Windows-1252 e salvo novamente); HTML e texto da
+resposta do gestor estavam corretos. Busca nos JS/HTML/Python do dashboard
+encontrou os padrões desse erro somente nesse arquivo. Restaurados 226
+caracteres, preservando os textos que já estavam corretos. Sem correção em
+tempo de execução, novo codec HTTP ou alteração de dados/propostas seladas.
+
+Regressão de rótulos UTF-8 e caso de leilão 22/10 às 10:35 adicionados aos testes
+do gestor: 57 aprovados, um browser check optativo ignorado. Sintaxe JS e Ruff
+aprovados. Prévia Chrome do painel real, usando somente a resposta capturada,
+mostrou leilão, preço, posições, referência e demais acentos corretos. Evidências
+privadas em `output/railway-migration-20261020/manager-pending-22.json` e
+`gestor-textos-corrigidos.png`. Ainda falta publicar com as correções anteriores.
+
+Registro consultado: proposta `fdf671fcb8cb47fc9970402b8c72a79b`, análise
+`radar-ui-1102ef2bde644f1b8220c695df3ffeb7`, ordem aprovada às
+10:35:22-03:00 em 22/10, `leg=CLOSE`, sessão 22/10, venda de 293 WEGE3,
+sem execução registrada. Usa o fechamento oficial de 22/10 quando publicado e
+coletado pela atualização DP-27. R$ 45,21 na prévia é o fechamento de 21/10,
+não o preço final. O registro pode acontecer posteriormente, com data econômica
+do leilão de 22/10. Nenhuma ordem foi reenviada ou antecipada nesta verificação.
+
+## Etapas do ciclo durante os analistas — DP-17/UX-M4, 22/10/2026
+
+Lucas mostrou Dados aguardando verificação e Orçamento pendente enquanto
+Analistas já executava; ao passar ao Gestor, as etapas se corrigiam. Causa no
+frontend: `invalidate()` limpa corretamente o preflight/consentimento após
+confirmar o lote, mas o resumo do ciclo dependia desse estado temporário e só
+reconhecia as etapas anteriores quando todos os pareceres terminavam.
+
+Correção local em `radar-analysis.js`: Dados usa a contagem de inputs com
+integridade OK do servidor; Orçamento reconhece a reserva registrada. Erros
+atuais por ativo continuam bloqueando; falha antiga de preparo não sobrepõe
+inputs já verificados. Consentimentos e validações do backend preservados.
+Check `node tests/agent_cycle_check.js dashboard/radar-analysis.js` cobre
+execução com preflight limpo, autorização consumida/stale, resultado parcial,
+erros atuais e falta real de autorização. Check e sintaxe aprovados.
+
+Consulta apenas de leitura à análise manual
+`radar-ui-1102ef2bde644f1b8220c695df3ffeb7`: cinco inputs, integridade OK, quatro
+pareceres concluídos, lote RUNNING e reserva US$ 3,31776 naquele instante. Inclui
+VALE3, adicionada por Lucas na nova análise; não é a análise automática anterior
+de quatro ativos. Prévia local com o estado capturado e os arquivos reais da
+interface validada no Chrome: Dados/Orçamento concluídos e resumo em Analistas.
+Evidências privadas: `output/railway-migration-20261020/cycle-state-22.json` e
+`ciclo-corrigido-previa.png`. Nenhuma chamada ou operação foi disparada.
+
+Ainda não publicado no Railway; próximo passo é publicar junto da correção de
+universo após a execução manual, sem reiniciá-la para atualizar a tela.
+
+## Universo após venda total — DP-07/DP-24/DP-34, 22/10/2026
+
+Lucas observou VALE3 ausente após a venda integral. Causa: formulário e rotina
+usavam posições atuais como lista de ativos. Correção local em
+`radar_analysis_api.default_tickers`: estratégia MULTIAGENT usa sempre os cinco
+ativos existentes; a API fornece esse padrão ao formulário e a rotina o reutiliza.
+Campo da Multiagentes somente leitura, com explicação de posição zerada; backend
+recusa novas análises incompletas. Outras carteiras mantêm seleção editável e
+padrão pelas posições. O gestor já considera zero unidades para ativos ausentes
+e permite compra sob seus controles; nenhuma nova regra de alocação foi criada.
+
+Verificação offline: 86 testes de análise/rotina/gestor aprovados, um browser
+check optativo ignorado; sintaxe JavaScript e check dos estados do ciclo aprovados.
+Regressões cobrem VALE3 ausente, carteira inteiramente em caixa, recusa de novo
+universo incompleto, criação automática com cinco ativos e preservação exata do
+contexto de uma análise antiga com quatro ativos. Nenhuma chamada de provedor.
+
+Ainda não publicado no Railway: Lucas estava executando manualmente a análise
+de hoje, cujo universo de quatro ativos permanece imutável. Próximo passo é
+publicar a correção em uma janela que preserve esse teste; só novas análises
+passam a incluir os cinco. A falha de download diagnosticada abaixo não foi
+alterada por esta correção.
+
+## Diagnóstico da tentativa das 09h — DP-27/DP-34, 22/10/2026
+
+Consulta solicitada por Lucas, sem execução manual, novo preparo, inferência ou
+alteração do serviço. Registro da rotina pela API: início 09:00:56, término
+09:06:32, estado RETRY, e-mail enviado e reserva diária US$ 0. Análise
+`radar-ui-0337de26db59410289a78fbc80b0fecd`, alvo 22/10, referência 21/10:
+BBAS3, ITUB4 e WEGE3 com inputs congelados; PETR4 sem input, bloqueado por
+`IncompleteRead(24005935 bytes read, 62697231 more expected)`. Zero chamadas
+de agentes; nova tentativa agendada para 12h. APIs responderam HTTP 200.
+
+Fluxo rastreado: rotina chama `radar_api.post("prepare", ...)`, o mesmo caminho
+do botão, que executa `multiasset_radar.prepare`. O extrator de eventos
+corporativos herda `_cotahist` do Radar: nova instância por ativo, ano corrente
+baixado novamente e inteiro via `urlopen(...).read()`, sem retentativa nesse
+download. Recebidos 24.005.935 de 86.703.166 bytes; fechamento prematuro da
+resposta, não ausência comprovada da sessão. A exceção ocorre antes da escrita
+atômica, e os inputs dos outros ativos são preservados. O agendador disparou;
+a falha está na coleta usada também pelo caminho manual. Retry manual pode
+funcionar se a transferência completar, sem demonstrar defeito do agendamento.
+
+Railway consultado pelo navegador: mesmo deploy ativo e serviço online;
+logs mostram servidor atendendo consultas. O bloqueio de dados é tratado e
+persistido no registro/diagnóstico, sem traceback no log da tentativa. CLI
+recusou autenticação e o conector não retomou após autenticar. O
+[incidente oficial do Railway](https://status.railway.com/incident/QH8L8B3E)
+informa invalidação de tokens/sessões e problemas de builds; não comprova relação
+com o download interrompido. O [comunicado de segurança de 21/10](https://blog.railway.com/p/security-disclosure-wednesday-october-21st)
+recomenda trocar os segredos armazenados na plataforma. Não foi verificada a
+validade atual das chaves Gemini/Resend; não foram lidas ou alteradas.
+
+Evidências privadas em `output/railway-migration-20261020/market-22.json`,
+`analysis-22.json` e `readiness-22.json`; os arquivos de captura do CLI estão
+vazios porque a autenticação foi recusada. Próximo passo autorizado por Lucas:
+ele repetir apenas o preparo na mesma análise antes das etapas pagas; correção
+de robustez do download permanece proposta, não aplicada.
+
+## Recorrência do acesso Chrome — DP-34, 21/10/2026
+
+Às 01h de São Paulo, Lucas voltou a relatar falha de acesso. Deploy
+`5a1c528f-6eac-45dc-a3a9-ec9a99e267b9` concluído, SUCCESS, uma réplica online,
+sem trabalho pendente. Aplicação local HTTP 200, Tailscale Running/Online,
+Serve correto e nenhuma advertência de saúde. Confirmado `TS_DEBUG_MTU=1280`
+no processo do daemon; ainda assim, HTTPS clássico respondia 200 e TLS imitando
+Chrome expirava em 12 segundos. O ajuste anterior não resolveu a recorrência.
+
+Configurado `TS_DEBUG_ALWAYS_USE_DERP=true` só no serviço de `tcc`, sem rebuild,
+e reiniciado apenas o daemon Tailscale com essa variável. Identidade, Serve,
+processo Python, agendador e dados preservados. Dez novas conexões Chrome ao
+longo de 34 segundos responderam HTTP 200 (0,57–0,84 s); cliente confirmou relay
+`iad`, sem endereço UDP direto. A própria aba antes em `ERR_CONNECTION_RESET` carregou patrimônio,
+cotações e gráfico após recarregar. Evidências privadas ignoradas pelo Git:
+`output/railway-migration-20261020/relay-acceptance.json` e `acesso-relay.png`.
+
+O relay contorna o caminho UDP direto; a causa exata da falha nesse caminho não
+foi determinada. Mantidos TLS, validação de certificado e acesso só pela tailnet.
+A variável está salva na configuração para próximos deploys; nesta verificação
+não houve reinício completo da aplicação. Limite: relay pode aumentar a latência.
+Próximo passo continua conferir a primeira rodada automática e seu aviso.
 
 ## Cotações e agentes no Railway — DP-27/DP-34, 21/10/2026
 

@@ -216,7 +216,8 @@ def multiagent_wallet():
     found = [
         w
         for w in manual.get({})["wallets"]
-        if w["nature"] == "SIMULATION" and w.get("strategy") != "BUY_HOLD"
+        if w["nature"] == "SIMULATION"
+        and w.get("strategy") not in ("BUY_HOLD", *manual.RULE_STRATEGIES)
     ]
     if len(found) != 1:
         raise Stop("carteira_multiagentes_ausente_ou_ambigua")
@@ -247,8 +248,7 @@ def open_analysis(rec, day):
             "wallet_revision": w["revision"],
             "target_date": day,
             "reference_session": reference,
-            # Same default as the /radar form: the wallet's tickers, else the examples.
-            "tickers": [p["ticker"] for p in w["positions"]] or list(radar.EXAMPLES),
+            "tickers": analysis.default_tickers(w),
             "confirm": True,
         }
     out = analysis.create(request)  # idempotent; selects the run as the Radar runner
@@ -450,7 +450,11 @@ def manager(rec, entry, day):
     rec["outcome"] = (
         "Ordem aprovada: "
         + ", ".join(f"{t['side']} {t['quantity']} {t['ticker']}" for t in order["basket"])
-        + f" no leilão de {'abertura' if order['leg'] == 'OPEN' else 'fechamento'} de {order['session']}."
+        + (
+            f" na simulação intradiária de {order['session']}, aguardando barra posterior à aprovação."
+            if order["leg"] == "INTRADAY"
+            else f" no leilão de {'abertura' if order['leg'] == 'OPEN' else 'fechamento'} de {order['session']}."
+        )
     )
     step(rec, "aprovada", by=ACTOR, session=order["session"], leg=order["leg"])
 
@@ -466,7 +470,12 @@ def cycle(rec, day):
             and not (root / "execution.json").exists()
         ):
             raise Stop(
-                f"ordem_aguardando_leilao_oficial: {order['session']} {order['leg']}",
+                (
+                    "ordem_aguardando_preco_intradiario"
+                    if order["leg"] == "INTRADAY"
+                    else "ordem_aguardando_leilao_oficial"
+                )
+                + f": {order['session']} {order['leg']}",
                 retry=True,
             )
     run = open_analysis(rec, day)
