@@ -1,13 +1,14 @@
-"""DP-33 A: approved manager baskets wait for the first official B3 auction.
+"""DP-33/35: durable manager orders, official opening or post-approval intraday prices.
 
 Approving no longer books at the reference close: it stores one sealed, idempotent
 PENDING order per proposal (order.json, beside the proposal). `settle_pending` (called by
 the DP-27 market update) books it through `manual.batch` at the official OPEN (PREABE)
 or CLOSE (PREULT) of the target session, with the economic date of that auction.
-Records per proposal folder, all sealed and immutable: order.json, execution.json,
-expired.json (+ opportunity.json). No scheduler; `settle_pending` never touches a quote.
+DP-35 adds INTRADAY orders using the first traded 1m bar after approval, polled by
+the server. Its complete source is frozen in execution-prices.json before booking.
+Old OPEN/CLOSE orders retain their recorded policy. All financial records stay sealed.
 
-DP-33 stage B (preview/approval only, never marks, execution prices or prompts): a
+DP-33 stage B (preview/approval quotes, never marks or prompts): a
 delayed-quote snapshot per ticker (DP-26 Yahoo path), the volatility tolerance band
 between the preview and the approval quote, and the "stale thesis" alert against the
 close the manager saw. The sigma/band parameters live here, outside the manager
@@ -15,6 +16,7 @@ contract hash.
 """
 
 import hashlib
+import logging
 import math
 import statistics
 import threading
@@ -45,6 +47,8 @@ OPEN_CUTOFF, CLOSE_CUTOFF = time(9, 45), time(16, 50)
 # circular - confirm and edit these dates; nothing else depends on them.
 REGIMES = (("2000-01-01", 0), ("2025-11-03", 1), ("2026-03-09", 0), ("2026-11-02", 1))
 FILES = ("order", "execution", "expired", "opportunity")
+INTRADAY_POLICY = "HFL-POST-APPROVAL-1M-V1"
+INTRADAY_SINCE = "2026-10-22"  # DP-35; old recorded orders keep their own leg.
 
 
 def cutoffs(day):
@@ -75,8 +79,15 @@ def expired(target_date, at):
     return first_auction(at)[0] > target_date
 
 
-def schedule(at, target_date):
+def execution_slot(at):
     session, leg = first_auction(at)
+    if session >= INTRADAY_SINCE and leg == "CLOSE":
+        leg = "INTRADAY"
+    return session, leg
+
+
+def schedule(at, target_date):
+    session, leg = execution_slot(at)
     opening, closing = cutoffs(session)
     return {
         "session": session,
@@ -91,9 +102,9 @@ def schedule(at, target_date):
 
 
 def appliable(c):
-    return (
-        c["wallet"]["nature"] == "SIMULATION"
-        and c["wallet"].get("strategy") != "BUY_HOLD"
+    return c["wallet"]["nature"] == "SIMULATION" and c["wallet"].get("strategy") not in (
+        "BUY_HOLD",
+        *manual.RULE_STRATEGIES,
     )
 
 
@@ -147,7 +158,7 @@ def place(root, c, result, at, quotes=None, checks=None):
     with LOCK:
         if (order := read(root / "order.json")) is not None:
             return order, True
-        session, leg = first_auction(at)
+        session, leg = execution_slot(at)
         if session > c["target_date"]:
             raise ValueError("manager_proposal_expired")
         for other in folders():
@@ -162,7 +173,8 @@ def place(root, c, result, at, quotes=None, checks=None):
         order = b.sealed(
             {
                 "identity": IDENTITY,
-                "status": "PENDING_AUCTION",
+                "status": "PENDING_INTRADAY" if leg == "INTRADAY" else "PENDING_AUCTION",
+                "execution_policy": INTRADAY_POLICY if leg == "INTRADAY" else "DP-33",
                 "run": c["run"],
                 "proposal": c["proposal"],
                 "proposal_sha256": result["sha256"],
@@ -485,15 +497,102 @@ def price_of(row, field):
     )
 
 
-def plan(order, wallet, rows):
-    """TRADE requests at the official price + the source that documents them (DP-33 1, 3, 5).
+def intraday_price(record, order):
+    """First coherent traded 1m bar starting strictly after approval; never a last quote."""
+    if (
+        not record
+        or record.get("day") != order["session"]
+        or record.get("interval") != "1m"
+    ):
+        return None
+    approved = datetime.fromisoformat(order["approved_at"])
+    fetched = datetime.fromisoformat(record["fetched_at"])
+    if approved.tzinfo is None or fetched.tzinfo is None:
+        raise ValueError("intraday_timezone_required")
+    if fetched > radar.now():
+        raise ValueError("intraday_fetch_in_future")
+    opening, _ = cutoffs(order["session"])
+    start = opening + timedelta(minutes=15)
+    end = start + timedelta(minutes=SESSION_MIN)
+    previous = None
+    for bar in record["bars"]:
+        hour, minute = map(int, bar[0].split(":"))
+        stamp = datetime.combine(
+            date.fromisoformat(order["session"]), time(hour, minute), SP
+        )
+        if previous is not None and stamp <= previous:
+            raise ValueError("intraday_times_not_increasing")
+        previous = stamp
+        if not (
+            approved < stamp
+            and start <= stamp < end
+            and stamp + timedelta(minutes=1) <= fetched
+        ):
+            continue
+        if len(bar) != 6 or any(v is None or not math.isfinite(v) for v in bar[1:]):
+            continue
+        if not stock.bar_close(bar) or bar[5] <= 0:
+            continue
+        return {
+            "price": manual.number(f"{bar[1]:.2f}", "price", positive=True),
+            "price_time": stamp.isoformat(),
+            "fetched_at": fetched.isoformat(),
+            "source": SOURCE,
+            "basis": "YAHOO_1M_OPEN_AFTER_APPROVAL",
+            "bar": bar,
+            "payload_sha256": digest(record),
+        }
+    return None
+
+
+def intraday_deadline(session):
+    return cutoffs(session)[0] + timedelta(minutes=15 + SESSION_MIN + 30)
+
+
+def intraday_capture(root, order, now):
+    """Freeze all execution prices before the atomic ledger write, including on retries."""
+    path = root / "execution-prices.json"
+    record = read(path)
+    tickers = sorted(t["ticker"] for t in order["basket"])
+    if order.get("execution_policy") != INTRADAY_POLICY:
+        raise ValueError("intraday_policy_mismatch")
+    if record:
+        if (
+            record["identity"] != INTRADAY_POLICY
+            or record["order_sha256"] != order["sha256"]
+        ):
+            raise ValueError("intraday_order_snapshot_mismatch")
+        return record
+    # ponytail: allow the delayed feed 30 minutes after continuous trading ends;
+    # beyond that record a missed execution, never substitute a close/next-day price.
+    if now >= intraday_deadline(order["session"]):
+        return None
+    payloads = delayed_bars(tickers, now, order["session"])
+    prices = {t: intraday_price(payloads.get(t), order) for t in tickers}
+    if not all(prices.values()):
+        return None
+    record = b.sealed(
+        {
+            "identity": INTRADAY_POLICY,
+            "order_sha256": order["sha256"],
+            "recorded_at": radar.now().isoformat(),
+            "prices": prices,
+            "payloads": payloads,
+        }
+    )
+    radar.write(path, record, immutable=True)
+    return record
+
+
+def plan(order, wallet, rows, intraday=None):
+    """TRADE requests at the selected execution price, with its recorded source.
 
     Sells first; if cash after the sells cannot pay the buys, every buy shrinks by the same
     factor in whole shares, then the largest buy loses one share at a time (ties: ticker)
     until it fits. Missing price = that leg is not executed; nothing is invented.
     """
     field, rate = (
-        ("open" if order["leg"] == "OPEN" else "close"),
+        ("open" if order["leg"] in ("OPEN", "INTRADAY") else "close"),
         b.dec(order["cost_rate_pct"]),
     )
     side = {i["ticker"]: i["side"] for i in order["basket"]}
@@ -540,14 +639,15 @@ def plan(order, wallet, rows):
     ]
     quote = lambda k, t: ((order["quotes"] or {}).get(k) or {}).get(t)  # noqa: E731
     source = {
-        "kind": KIND,
+        "kind": "WALLET_MANAGER_INTRADAY_EXECUTION" if intraday else KIND,
         "run": order["run"],
         "proposal": order["proposal"],
         "proposal_sha256": order["proposal_sha256"],
         "context_sha256": order["context_sha256"],
         "reference_session": order["reference_session"],
-        "price_basis": "B3_OFFICIAL_RAW_"
-        + ("OPEN_PREABE" if field == "open" else "CLOSE_PREULT"),
+        "price_basis": "YAHOO_1M_OPEN_AFTER_APPROVAL"
+        if intraday
+        else "B3_OFFICIAL_RAW_" + ("OPEN_PREABE" if field == "open" else "CLOSE_PREULT"),
         "target_date": order["target_date"],
         "cost_rate_pct": order["cost_rate_pct"],
         "economic_date": order["session"],
@@ -559,12 +659,26 @@ def plan(order, wallet, rows):
                 "decision": order["decision_prices"][t],
                 "preview_quote": quote("preview", t),
                 "approval_quote": quote("approval", t),
-                "auction": str(price[t]) if t in price else None,
+                **(
+                    {"intraday": str(price[t]), **intraday["prices"][t]}
+                    if intraday
+                    else {
+                        "auction": str(price[t]) if t in price else None,
+                    }
+                ),
             }
             for t in ordered
         },
         "adjustments": adjustments,
         "not_executed": missing,
+        **(
+            {
+                "execution_snapshot_sha256": intraday["sha256"],
+                "execution_policy": INTRADAY_POLICY,
+            }
+            if intraday
+            else {}
+        ),
     }
     requests = [
         {
@@ -614,9 +728,35 @@ def conclude(root, order, status, now, **fields):
 
 
 def settle_one(root, order, official, now):
-    """Book one order if its auction price is in the base. Returns the new state."""
+    """Book one order once its recorded policy has eligible prices; return the new state."""
     session, sha, wid = order["session"], order["proposal_sha256"], order["wallet"]["id"]
-    if session > now.date().isoformat() or not (rows := official(session)):
+    if session > now.date().isoformat():
+        return "WAITING"
+    captured = None
+    if order["leg"] == "INTRADAY":
+        captured = intraday_capture(root, order, now)
+        if not captured:
+            if now < intraday_deadline(session):
+                return "WAITING"
+            return conclude(
+                root,
+                order,
+                "NOT_EXECUTED",
+                now,
+                reason="NO_POST_APPROVAL_INTRADAY_PRICE",
+                trades=[],
+                prices={},
+                adjustments=[],
+                not_executed=[
+                    {"ticker": t["ticker"], "reason": "NO_POST_APPROVAL_INTRADAY_PRICE"}
+                    for t in order["basket"]
+                ],
+            )
+        rows = {
+            t: {"open": float(q["price"]), "conflict": False}
+            for t, q in captured["prices"].items()
+        }
+    elif not (rows := official(session)):
         return "WAITING"
     try:
         wallet = manual.get({"wallet": wid})["selected"]
@@ -625,7 +765,7 @@ def settle_one(root, order, official, now):
             None,
         )  # booked = a crash after the ledger write
         if not booked:
-            requests, source = plan(order, wallet, rows)
+            requests, source = plan(order, wallet, rows, captured)
             if requests:
                 token = manual.batch(wid, wallet["revision"], requests, source)[
                     "preview_token"
@@ -696,8 +836,8 @@ def opportunity(root, rec, rows, now):
     )
 
 
-def settle_pending(now=None):
-    """Book orders whose official price arrived; expire stale proposals. Never raises.
+def settle_pending(now=None, *, intraday_only=False):
+    """Book eligible orders; expire stale proposals. Isolate each broken proposal.
 
     Safe to repeat: every step is keyed by a record or by the ledger command of the
     proposal. A transient failure leaves the order pending for the next update.
@@ -719,6 +859,8 @@ def settle_pending(now=None):
         for root in roots:
             try:
                 order = read(root / "order.json")
+                if intraday_only and (not order or order["leg"] != "INTRADAY"):
+                    continue
                 if order and not (root / "execution.json").exists():
                     state = settle_one(root, order, official, now)
                     key = {"WAITING": "waiting", "ORDER_REJECTED": "rejected"}.get(
@@ -759,3 +901,22 @@ def settle_pending(now=None):
                     {"proposal": root.name, "error": f"{type(e).__name__}: {e}"}
                 )
     return out
+
+
+def start():
+    """DP-35: pending intraday orders advance even without an open browser/market update."""
+
+    def loop():
+        pause = threading.Event()
+        while True:
+            try:
+                result = settle_pending(intraday_only=True)
+                if result["errors"]:
+                    logging.getLogger(__name__).warning("DP-35: %s", result["errors"])
+            except Exception:
+                logging.getLogger(__name__).exception("DP-35 processamento intradiário")
+            pause.wait(60)
+
+    worker = threading.Thread(target=loop, name="hfl-intraday-execution", daemon=True)
+    worker.start()
+    return worker

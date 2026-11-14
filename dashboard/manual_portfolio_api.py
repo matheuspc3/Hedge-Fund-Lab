@@ -19,6 +19,7 @@ DEFAULT_ROOT = PROJECT / "data/platform/manual-v1"
 ROOT = Path(os.environ.get("HFL_MANUAL_ROOT", DEFAULT_ROOT))
 DIVIDEND_KINDS = ("DIVIDENDO", "JCP", "OUTRO")
 NATURES = {"SIMULATION": "Simulação manual", "EXTERNAL": "Operações reais externas"}
+RULE_STRATEGIES = {"SMA_50_200": "SMA 50/200", "BOLLINGER_20_2": "Bollinger 20/2"}
 SCHEMA = (
     "CREATE TABLE identity (name TEXT NOT NULL)",
     "CREATE TABLE events (sequence INTEGER PRIMARY KEY, wallet TEXT NOT NULL, "
@@ -174,7 +175,7 @@ def request(value):
         if metadata & value.keys():
             require(
                 value["nature"] == "SIMULATION"
-                and value["strategy"] in ("BUY_HOLD", "MULTIAGENT"),
+                and value["strategy"] in ("BUY_HOLD", "MULTIAGENT", *RULE_STRATEGIES),
                 "strategy",
                 "Estratégia simulada inválida.",
             )
@@ -472,7 +473,9 @@ def replay(history):
     return {
         "id": history[0]["wallet"],
         **meta,
-        "nature_label": NATURES[meta["nature"]],
+        "nature_label": "Simulação por regra"
+        if meta.get("strategy") in RULE_STRATEGIES
+        else NATURES[meta["nature"]],
         "created_at": history[0]["recorded_at"],
         "revision": history[-1]["sha256"],
         "cash": state["settled_cash"],
@@ -535,6 +538,11 @@ def candidate(conn, r):
     history = events(conn, r["wallet"])
     before = replay(history)
     require(
+        before.get("strategy") not in RULE_STRATEGIES,
+        "wallet",
+        "Esta carteira segue uma regra automática; lançamentos manuais não são permitidos.",
+    )
+    require(
         not before["archived"],
         "wallet",
         "Carteira excluída; não aceita novos lançamentos.",
@@ -594,7 +602,7 @@ def batch(wallet, revision, requests, source, *, confirm=False, token=None):
             "A cesta automática exige carteira simulada.",
         )
         require(
-            before.get("strategy") != "BUY_HOLD",
+            before.get("strategy") not in ("BUY_HOLD", *RULE_STRATEGIES),
             "wallet",
             "Buy & Hold não aceita rebalanceamento automático.",
         )
@@ -653,6 +661,11 @@ def post(command, payload):
         else ("request", "command_id", "preview_token", "confirm"),
     )
     r = request(payload["request"])
+    require(
+        r["kind"] != "CREATE" or r.get("strategy") not in RULE_STRATEGIES,
+        "wallet",
+        "Carteiras de regra são inicializadas pela rotina com a cesta comum.",
+    )
     if command == "preview":
         require(r["kind"] != "CREATE", "form", "Cadastro não precisa de prévia.")
         require(path().exists(), "wallet", "Crie uma carteira primeiro.")
@@ -729,7 +742,20 @@ def book_dividends(entries):
                     out["refused"].append({"key": cid, "reason": "payload_differs"})
                 continue
             try:
-                history, _, _ = candidate(conn, r)
+                history = events(conn, r["wallet"])
+                # Dividends also belong to rule wallets; manual edits remain blocked.
+                replay(
+                    [
+                        *history,
+                        {
+                            "id": "preview",
+                            "sequence": history[-1]["sequence"] + 1,
+                            "recorded_at": datetime.now(timezone.utc).isoformat(),
+                            "request": r,
+                            "sha256": "preview",
+                        },
+                    ]
+                )
             except Invalid as e:
                 out["refused"].append({"key": cid, "reason": str(e)})
                 continue

@@ -385,6 +385,12 @@ def _run(fetch):
             divs = dividends_api.update(fetch)
         except Exception as e:
             divs = f"{type(e).__name__}: {e}"
+        import rule_portfolios  # decisions/operations use only the freshly stored data
+
+        try:
+            rules = rule_portfolios.advance()
+        except Exception as e:
+            rules = f"{type(e).__name__}: {e}"
         try:  # DP-30 A: received dividends go to the ledger; errors never abort the job
             booked = dividends_api.book_received(radar.now().date().isoformat())
         except Exception as e:
@@ -401,6 +407,7 @@ def _run(fetch):
             "yahoo_volume": volume,
             "cdi": cdi,
             "dividends": divs,
+            "rule_portfolios": rules,
             "dividends_booked": booked,
             "orders": orders,
         }

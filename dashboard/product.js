@@ -53,6 +53,7 @@
       t+=dv?'As carteiras incluem proventos (recebidos e a receber, JCP líquido) desde a data-com; o Ibovespa inclui proventos reinvestidos. ':(ib?'O Ibovespa inclui proventos reinvestidos; ':'')+'as carteiras ainda não contabilizam proventos (APP-04). ';
       t+=cd?'CDI (Banco Central, série 12) acumulado desde '+dm(cd.anchor).slice(0,5)+'. ':'CDI indisponível no momento. ';
       t+='Diferença observada é descritiva, não indica superioridade.';
+      if(ok.some(w=>['SMA_50_200','BOLLINGER_20_2'].includes(w.strategy)))t+=' SMA e Bollinger: mesma cesta inicial de 14/10; histórico reconstruído na inclusão, depois atualizado por regras, sem IA. Consulte as operações para distinguir reconstrução e simulação prospectiva.';
       if(skipped.length)t+=' Fora do gráfico por início diferente de '+dm(ref)+': '+skipped.map(w=>w.name).join(', ')+'.';
       note.textContent=t;
       const color=w=>palette[wallets.indexOf(w)%palette.length];

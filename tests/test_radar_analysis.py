@@ -227,6 +227,40 @@ def test_context_tampering_is_not_silently_ignored(lab):
         a.get({"run": result["run"]})
 
 
+@pytest.mark.parametrize("remaining", [[], ["BBAS3", "ITUB4", "PETR4", "WEGE3"]])
+def test_multiagent_universe_survives_zero_positions_and_preserves_history(
+    lab, monkeypatch, remaining
+):
+    # An old four-asset analysis stays exactly as registered, even after this fix.
+    subset = {**lab, "tickers": [t for t in lab["tickers"] if t != "VALE3"]}
+    old = a.create(subset)
+    path = a.radar_api.ROOT / a.CONTEXT
+    before = path.read_bytes()
+    wallet = a.manual.get({"wallet": lab["wallet"]})["selected"]
+    wallet = {
+        **wallet,
+        "strategy": "MULTIAGENT",
+        "positions": [{"ticker": t, "quantity": "1"} for t in remaining],
+    }
+    monkeypatch.setattr(a.manual, "get", lambda query: {"wallets": [wallet]})
+    offered = a.get({})["wallets"][0]["analysis_tickers"]
+    assert set(offered) == set(a.radar.EXAMPLES) and "VALE3" in offered
+    assert a.create(subset) == old and path.read_bytes() == before
+    registry = a.runs.REGISTRY.read_bytes()
+    with pytest.raises(ValueError, match="multiagent_requires_full_universe"):
+        a.create({**subset, "command_id": "b" * 32})
+    assert a.runs.REGISTRY.read_bytes() == registry
+    new = a.create({**lab, "command_id": "c" * 32, "tickers": offered})
+    assert new["context"]["wallet"]["positions"] == wallet["positions"]
+    assert set(a.runs.run(new["run"])["universe"]) == set(a.radar.EXAMPLES)
+    assert new["provider_calls"] == new["financial_operations"] == 0
+    assert path.read_bytes() == before
+    # Personal wallets keep their existing position-based, editable default.
+    assert a.default_tickers({**wallet, "strategy": None}) == (
+        remaining or list(a.radar.EXAMPLES)
+    )
+
+
 def test_http_creation_requires_origin_csrf_and_preserves_active_dispatch(lab):
     with server.ReusableTCPServer(("127.0.0.1", 0), server.Handler) as web:
         thread = threading.Thread(target=web.serve_forever, daemon=True)

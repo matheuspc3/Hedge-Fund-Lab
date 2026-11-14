@@ -1,6 +1,6 @@
 # Documentação do Hedge-Fund-Lab
 
-Índice único de documentação, referências e evidências. Revisado em **15/10/2026**.
+Índice único de documentação, referências e evidências. Revisado em **14/11/2026**.
 [Início do vault](../INICIO.md).
 
 Registros diários: [14/10 — dados e diagnóstico](daily/2026-10-14.md) ·
@@ -17,6 +17,7 @@ Registros diários: [14/10 — dados e diagnóstico](daily/2026-10-14.md) ·
 | [Plano de implementação com multiagentes](PLANO_IMPLEMENTACAO_MULTIAGENTES.md) | Como as entregas de 17–18/10 foram divididas entre agentes, com regras e roteiro de revisão? |
 | [Pesquisa: munição para os agentes](PESQUISA_MUNICAO_AGENTES.md) | Que dados, recortes e estatísticas poderiam ampliar o contexto dos agentes sem antecipação, e quais decisões isso exige (DP-27/DP-31)? |
 | [Deploy no Railway com Tailscale](DEPLOY_RAILWAY.md) | Como pôr o servidor pessoal e a rotina diária (DP-34) no Railway, acessível só pela rede Tailscale? |
+| [Replay multiativos e explorador](REPLAY_MULTIATIVOS.md) | Como consultar a campanha retrospectiva de seis carteiras, seus dados, resultados, fontes e limites (DP-37)? |
 | [Arquitetura](ARQUITETURA.md) | Onde cada responsabilidade está implementada? |
 | [Contrato do piloto multiativos — DRAFT](PILOTO_MULTIATIVOS_SPEC.md) | Bases DP-09–DP-15 aprovadas; regras técnicas pendentes; DATA-01, PAPER-02, tela inicial e durabilidade PAPER-03 documentados; ativação oficial pendente |
 | [README técnico](../README.md) | Como abrir o projeto e usar os comandos básicos? |

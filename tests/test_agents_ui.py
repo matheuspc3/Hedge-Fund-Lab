@@ -13,6 +13,7 @@ Forma simulada = documentada em scripts/multiasset_radar.py: comitê devolve
 import re
 import shutil
 import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -75,11 +76,12 @@ class Expand(unittest.TestCase):
         source = PAGE.read_text(encoding="utf-8")
         self.assertIn("function expand(items)", source)
         self.assertIn('STATUS', source)  # rótulos de estado na mesma página
-        script = "/tmp/opencode/agents_expand_check.js"
-        Path(script).write_text(NODE_CHECK, encoding="utf-8")
-        result = subprocess.run(
-            ["node", script, str(PAGE)], capture_output=True, text=True
-        )
+        with tempfile.TemporaryDirectory(prefix="hfl-agents-") as tmp_dir:
+            script = Path(tmp_dir) / "agents_expand_check.js"
+            script.write_text(NODE_CHECK, encoding="utf-8")
+            result = subprocess.run(
+                ["node", str(script), str(PAGE)], capture_output=True, text=True
+            )
         self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
         self.assertIn("OK: 3 linhas", result.stdout)
 

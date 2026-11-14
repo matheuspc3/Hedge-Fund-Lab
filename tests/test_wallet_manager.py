@@ -714,12 +714,28 @@ def at(text):
     return pd.Timestamp(text + "-03:00")
 
 
+def test_manager_ui_labels_keep_portuguese_utf8():
+    source = (PROJECT / "dashboard/wallet-manager.js").read_text(encoding="utf-8")
+    for label in (
+        "leilão de ",
+        "Executa ao preço oficial B3.",
+        "Preço de referência",
+        "Caixa e posições só mudam",
+        "Movimentação",
+        "Peso antes → depois",
+        "teto diário US$ 4",
+    ):
+        assert label in source
+    assert not any(bad in source for bad in ("Ã£", "Ã§", "Ãµ", "Â·", "â†", "�"))
+
+
 @pytest.mark.parametrize(
     "when,expected",
     [
         ("2026-10-19T09:44:59", ("2026-10-19", "OPEN")),  # before the pre-auction
         ("2026-10-19T09:45:00", ("2026-10-19", "CLOSE")),
         ("2026-10-19T14:00:00", ("2026-10-19", "CLOSE")),
+        ("2026-10-22T10:35:22", ("2026-10-22", "CLOSE")),  # approved after opening
         ("2026-10-19T16:49:59", ("2026-10-19", "CLOSE")),
         ("2026-10-19T16:50:00", ("2026-10-20", "OPEN")),  # inside the closing margin
         ("2026-10-16T18:30:00", ("2026-10-19", "OPEN")),  # Friday evening -> Monday

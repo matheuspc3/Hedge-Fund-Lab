@@ -1,10 +1,38 @@
 # Replay exploratório da carteira multiativos em abril de 2026
 
-12/11/2026 · **DP-35 / REPLAY-01**, extensão pontual da DP-31 autorizada por voz
+12/11/2026 · **DP-37 / REPLAY-01**, extensão pontual da DP-31 autorizada por voz
 por Lucas. Resultado concreto: executar a estrutura atual em dez pregões
 históricos e rastrear decisões, operações e patrimônio versus Buy & Hold.
 H2 permanece histórico; não houve deploy, push, chamada Railway nem operação
 na carteira iniciada em outubro. Não se trata de avaliação prospectiva.
+
+## Correspondência e revisão histórica
+
+Desde a consolidação de 14/11, **DP-37** identifica este replay e suas extensões.
+O rótulo histórico **DP-35 / REPLAY-01** permanece nos scripts, relatórios,
+manifests e recibos originais. A DP-35 da aplicação identifica a política
+intradiária de 22/10; a DP-36 identifica as regras SMA/Bollinger usadas como fonte.
+[Correspondência completa](DIRECAO_DO_PROJETO.md#correspondência-dos-identificadores-históricos).
+Nenhuma evidência é regravada para renomear essas decisões.
+
+A revisão de preservação das fontes do runner histórico é
+**`d1ada710df797f63ae708bb55bde32ba6d68b358`**. Esse commit foi criado depois da
+execução e inclui relatos e interface produzidos posteriormente; não existia no
+início pago. A fonte autoritativa da execução é o conjunto
+**`runtime_attestation.json`, snapshots `runtime-final/` e manifests da campanha**,
+com os hashes e as versões efetivamente utilizados. A worktree histórica
+`C:/Users/LUCAS/.codex/worktrees/b507/Hedge-Fund-Lab` mantém esse bundle privado. A integração atual muda
+fontes da aplicação; tentar usá-la contra a campanha antiga deve bloquear com
+**`campaign_identity_changed`**. Esse bloqueio protege a associação entre os
+resultados e o código que efetivamente os produziu.
+
+Para verificar ou reconstruir exportações históricas, usar a worktree/revisão
+original com o bundle correspondente, preservando o orçamento e os recibos.
+Os atributos Git `-text` das fontes do replay preservam seus bytes exatos;
+a restauração das demais fontes seladas só é válida quando reproduz o hash
+original. **Não ajustar selos, manifests, hashes ou a verificação de identidade
+para fazer o runtime integrado aceitar a campanha antiga.** O pacote HTML/CSV/JSON
+já exportado continua consultável sem rodar inferência ou reabrir a campanha.
 
 ## Estado e período
 
@@ -240,7 +268,9 @@ proventos, fills/custos e KKT das três decisões de Mínima. Exemplo analítico
 invariância de escala, matriz nula, retry/cap/crash/retomada também PASS.
 Nenhuma fonte selada alterada. [Inventário e diagnóstico](../reports/inventario_replay_continuo_2026-11-13.md).
 
-Comandos na mesma worktree/ambiente Python já qualificado:
+Comandos de referência da execução histórica, somente na worktree/revisão e
+ambiente Python já qualificados. A campanha está concluída: consultar o pacote
+exportado não exige `--live`, retomada ou novas inferências:
 
 ```powershell
 # Se já houver processo vivo no PID de qualified-v2/status.json, acompanhar esse processo.
@@ -269,7 +299,7 @@ O frontend foi construído depois dos resultados; não há campanha em execuçã
 
 ## Explorador local e entrega final
 
-Entrega DP-35/36 / REPLAY-01 concluída: `checks.json`, `budget_audit.json`,
+Entrega DP-37 / REPLAY-01 concluída (regras SMA/Bollinger da DP-36): `checks.json`, `budget_audit.json`,
 `preservation_check.json` e `ui_checks.json` em `qualified-v2/` registram PASS.
 São 918 estados diários, sem lacunas; os pilotos e as evidências diagnósticas
 permanecem separados. [Relatório final](../reports/replay_continuo_2026-04_2026-11.md).

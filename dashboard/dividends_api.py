@@ -223,11 +223,18 @@ def on(items, session):
     )
 
 
-def book_received(today):
+def book_received(today, wallets=None):
     """DP-30 A: book every RECEBIDO event not yet in each wallet's ledger (idempotent)."""
     import manual_portfolio_api as manual  # circular like entitlements
 
-    entries, wallets = [], (manual.get({})["wallets"] if manual.path().exists() else [])
+    entries = []
+    if wallets is None:
+        # Rule histories must catch up before determining historical entitlements.
+        wallets = [
+            w
+            for w in (manual.get({})["wallets"] if manual.path().exists() else [])
+            if w.get("strategy") not in manual.RULE_STRATEGIES
+        ]
     for wallet in wallets:
         done = booked(wallet)
         for e in entitlements(wallet, today):

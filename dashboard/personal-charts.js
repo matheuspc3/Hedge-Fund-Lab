@@ -6,6 +6,7 @@
   const money=v=>v==null?'Indisponível':Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
   const day=v=>v?v.split('-').reverse().join('/'):'Sem referência';
   const pct=v=>v==null?'Indisponível':(Number(v)*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'%';
+  const origin=x=>({MANAGER:'gestor',RULE:'regra automática'}[x.origin]||'manual');
   const colors=['#3358d4','#0f8a68','#8757b4','#b07215','#ca5279']; // dataviz validator: adjacent CVD ΔE ≥ 10, chroma ≥ 0.1
   let revision=0, controller, equityChart, allocChart, period, periodWallet; // period survives reloads of the same wallet (no storage)
   function table(headers,rows){return '<div class="ds-table-wrap" tabindex="0" role="region" aria-label="'+esc(headers.join(', '))+'"><table class="ds-table"><thead><tr>'+headers.map(h=>'<th scope="col">'+esc(h)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';}
@@ -56,7 +57,7 @@
     for(const p of d.daily_history){labels.push(day(p.session));values.push(p.equity==null?null:Number(p.equity));}
     el('personal-equity-wrap').hidden=!values.some(v=>v!=null);
     equityChart?.destroy();
-    const off=d.initial_anchor_available?1:0, ops=d.daily_history.map(p=>{const t=p.trades||[], l=t.slice(0,4).map(x=>({BUY:'Compra',SELL:'Venda'}[x.side]||x.side)+' '+x.quantity+' '+x.ticker+' · '+(x.origin==='MANAGER'?'gestor':'manual'));return t.length>4?[...l,'e mais '+(t.length-4)]:l;});
+    const off=d.initial_anchor_available?1:0, ops=d.daily_history.map(p=>{const t=p.trades||[], l=t.slice(0,4).map(x=>({BUY:'Compra',SELL:'Venda'}[x.side]||x.side)+' '+x.quantity+' '+x.ticker+' · '+origin(x));return t.length>4?[...l,'e mais '+(t.length-4)]:l;});
     const marked=i=>ops[i-off]?.length>0, opts=options();
     opts.plugins.tooltip.callbacks.footer=items=>ops[items[0].dataIndex-off]||[]; // ponytail: ops are text-only; chart marks days, table lists them
     if(values.some(v=>v!=null))equityChart=new Chart(el('personal-equity-chart'),{type:'line',data:{labels,datasets:[{label:d.wallet_name,data:values,borderColor:colors[0],backgroundColor:'#3358d412',borderWidth:2.5,pointRadius:labels.map((_,i)=>marked(i)?8:4),pointStyle:labels.map((_,i)=>marked(i)?'rectRot':'circle'),spanGaps:false,fill:true,tension:0}]},options:opts});
@@ -78,13 +79,17 @@
     el('routine-update')?.addEventListener('click',()=>document.getElementById('hfl-market-open').click());
     const last=d.daily_history.at(-1), t=last?.trades||[];
     el('routine-today').hidden=!t.length;
-    el('routine-today').innerHTML=t.length?'Operações de '+day(last.session)+': '+t.map(x=>esc(({BUY:'compra',SELL:'venda'}[x.side]||x.side)+' '+x.quantity+' '+x.ticker)+' <span class="product-chip">'+(x.origin==='MANAGER'?'gestor':'manual')+'</span>').join(', '):'';
+    el('routine-today').innerHTML=t.length?'Operações de '+day(last.session)+': '+t.map(x=>esc(({BUY:'compra',SELL:'venda'}[x.side]||x.side)+' '+x.quantity+' '+x.ticker)+' <span class="product-chip">'+origin(x)+'</span>').join(', '):'';
   }
-  async function routinePolicy(w,version,signal){
+  async function routinePolicy(w,version,signal,closed){
     const box=el('routine-policy');
     const set=h=>{if(version===revision)box.innerHTML=h;};
     const analyze='<a class="product-wallet-link" href="'+esc(el('personal-analysis')?.getAttribute('href')||'/radar')+'">Analisar carteira →</a>';
     if(w.strategy==='BUY_HOLD')return set('Política: manter as posições, sem rebalanceamento; proventos ficam em caixa.');
+    if(['SMA_50_200','BOLLINGER_20_2'].includes(w.strategy)){
+      const d=w.audit.filter(e=>e.kind==='RULE_DECISION').at(-1),x=w.audit.filter(e=>e.kind==='RULE_EXECUTION').at(-1);
+      return set(esc(w.initialization_note)+(d?'<br>Último sinal processado: '+day(d.source.decision_session)+(x?.source.decision_session===d.source.decision_session?' · sessão seguinte conferida.':' · aguardando a abertura oficial de '+day(d.source.execution_session)+'.'):'<br>Aguardando histórico de preços completo para calcular os sinais.')+(closed&&(!d||d.source.decision_session<closed)?'<br>Processamento atrasado: falta concluir os dados/sessões até '+day(closed)+'. Use Atualizar dados.':'')+'<br><a href="/operations?wallet='+encodeURIComponent(w.id)+'">Ver operações e sinais →</a>');
+    }
     const external=w.nature!=='SIMULATION'?'Carteira pessoal: análises dos agentes são apenas consultivas; nada é registrado automaticamente.<br>':'';
     try{
       const r=await fetch('/api/platform/wallet-manager/latest?'+new URLSearchParams({wallet:w.id}),{cache:'no-store',signal});
@@ -92,7 +97,7 @@
       const l=j.latest;
       if(!l)return set(external+'Nenhuma análise dos agentes para esta carteira.<br>'+analyze);
       const a=l.auction?' de '+short(l.auction.session):'', done=l.status==='APPLIED', t=l.trades.slice(0,5).map(x=>esc(({BUY:'Comprar',SELL:'Vender'}[x.side]||x.side)+' '+x.quantity+' '+x.ticker+' a '+money(x.price)));
-      set(external+'<strong>'+esc(l.status==='PENDING_AUCTION'?'Aprovada, aguardando leilão'+a:l.status==='EXECUTED'?'Executada no leilão'+a:done?'Proposta aplicada'+(l.applied_at?' em '+new Date(l.applied_at).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}):''):STATUS[l.status]||l.status)+'</strong><br>Dia-alvo '+short(l.target_date)+' · preços de referência de '+short(l.reference_session)+(t.length?'<ul>'+t.map(x=>'<li>'+x+'</li>').join('')+(l.trades.length>5?'<li>e mais '+(l.trades.length-5)+'</li>':'')+'</ul>':(l.status==='VALID_PROPOSAL'||done?'<br>Manter posições (sem operações)':''))+'<br><a class="product-wallet-link" href="'+esc(l.results_url)+'">Revisar proposta →</a>');
+      set(external+'<strong>'+esc(l.status==='PENDING_INTRADAY'?'Aprovada, aguardando preço posterior à aprovação'+a:l.status==='PENDING_AUCTION'?'Aprovada, aguardando leilão'+a:l.status==='EXECUTED'?(l.auction?.leg==='INTRADAY'?'Simulação intradiária executada':'Executada no leilão')+a:done?'Proposta aplicada'+(l.applied_at?' em '+new Date(l.applied_at).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}):''):STATUS[l.status]||l.status)+'</strong><br>Dia-alvo '+short(l.target_date)+' · preços de referência de '+short(l.reference_session)+(t.length?'<ul>'+t.map(x=>'<li>'+x+'</li>').join('')+(l.trades.length>5?'<li>e mais '+(l.trades.length-5)+'</li>':'')+'</ul>':(l.status==='VALID_PROPOSAL'||done?'<br>Manter posições (sem operações)':''))+'<br><a class="product-wallet-link" href="'+esc(l.results_url)+'">Revisar proposta →</a>');
     }catch(e){if(e.name!=='AbortError')set(external+'Consulta da proposta indisponível.');}
   }
   // Side-by-side only for wallets of the same comparison group with identical inception dates; never summed.
@@ -121,7 +126,7 @@
       const response=await fetch('/api/portfolio/history?'+new URLSearchParams({wallet:selected.id}),{cache:'no-store',signal:controller.signal});
       const d=await response.json();if(version!==revision)return;
       if(!response.ok||d.wallet!==selected.id||d.wallet_revision!==selected.revision||d.read_only!==true)throw Error('A carteira mudou ou o histórico não pôde ser verificado. Use Atualizar consulta.');
-      render(d);routineMark(d);routinePolicy(selected,version,controller.signal);compare(selected,d,catalog,version,controller.signal);
+      render(d);routineMark(d);routinePolicy(selected,version,controller.signal,d.last_closed);compare(selected,d,catalog,version,controller.signal);
     }catch(e){if(e.name==='AbortError'||version!==revision)return;el('personal-chart-error').textContent=e.message;el('personal-chart-error').hidden=false;el('personal-prices').textContent='Histórico indisponível. Nenhum preço foi estimado para preencher lacunas.';el('routine-mark').textContent='Marcação indisponível.';}
   }
   window.addEventListener('hfl:wallets',e=>load(e.detail));
