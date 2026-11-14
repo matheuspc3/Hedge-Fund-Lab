@@ -1,5 +1,6 @@
 """DP-37 read-only replay boundary; run with Python, no external network or real data."""
 import http.client
+import gzip
 import os
 import sys
 import tempfile
@@ -49,6 +50,17 @@ def check():
                     assert request(route)[1] == (exports / "index.html").read_bytes()
                     assert request(route + "calls-data.js")[2]["Content-Type"].startswith(("application/javascript", "text/javascript"))
                     assert request(route + "daily.csv")[2]["Content-Type"].startswith("text/csv")
+                    raw = (exports / "index.html").read_bytes()
+                    for accept in ("gzip", "br, gzip;q=0.5", "gzip;q=1.0"):
+                        status, packed, headers = request(route, **{"Accept-Encoding": accept})
+                        assert status == 200 and gzip.decompress(packed) == raw
+                        assert headers["Content-Encoding"] == "gzip" and headers["Vary"] == "Accept-Encoding"
+                        status, empty, head = request(route, "HEAD", **{"Accept-Encoding": accept})
+                        assert status == 200 and not empty and head["Content-Encoding"] == "gzip"
+                        assert "Content-Length" not in headers and "Content-Length" not in head
+                    for accept in ("identity", "gzip;q=0", "gzip;q=0.0", "gzip;q=0.0001", "gzip;q=1.1", "xgzip"):
+                        status, body, headers = request(route, **{"Accept-Encoding": accept})
+                        assert status == 200 and body == raw and "Content-Encoding" not in headers
                     for method in ("GET", "HEAD"):
                         status, body, headers = request(route[:-1], method)
                         assert status == 308 and not body and headers["Location"] == route

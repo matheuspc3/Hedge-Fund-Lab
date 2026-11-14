@@ -15,6 +15,10 @@ arquivados. A página não executa agentes ou ordens. O navegador recebe apenas
 os dez exports permitidos: HTML, carregador de chamadas, JSON e CSV; os livros,
 scripts de instalação e arquivos internos não são publicados por essa rota.
 Mantém a proteção de Host/Origin e a rede Tailscale existente, sem acesso público.
+Arquivos grandes são comprimidos por gzip em streaming quando o cliente aceita,
+sem mudar seus bytes arquivados. GET/HEAD anunciam a mesma codificação; clientes
+que recusam gzip recebem a representação original. A compressão não exige
+bufferizar os exports de 40 MB por cliente.
 
 O pacote privado `explorador_replay_2026-04_2026-11.zip` é instalado em
 `data/replays/april-november-2026-flash/` no volume permanente; `exports/` alimenta
