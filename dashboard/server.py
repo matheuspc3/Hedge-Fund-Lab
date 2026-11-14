@@ -828,10 +828,30 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self.send_response(200)
             content_type = {".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".csv": "text/csv"}[source.suffix]
             self.send_header("Content-Type", content_type + "; charset=utf-8")
-            self.send_header("Content-Length", str(os.fstat(stream.fileno()).st_size))
+            compressed = False
+            for item in self.headers.get("Accept-Encoding", "").lower().split(","):
+                coding, _, params = item.strip().partition(";")
+                if coding != "gzip":
+                    continue
+                quality = re.fullmatch(r"\s*q\s*=\s*(0(?:\.[0-9]{0,3})?|1(?:\.0{0,3})?)\s*", params)
+                if not params or (quality and float(quality[1]) > 0):
+                    compressed = True
+                    break
+            self.send_header("Vary", "Accept-Encoding")
+            if compressed:
+                self.send_header("Content-Encoding", "gzip")
+                self.send_header("Connection", "close")
+                self.close_connection = True
+            else:
+                self.send_header("Content-Length", str(os.fstat(stream.fileno()).st_size))
             self.end_headers()
             if self.command != "HEAD":
-                self.copyfile(stream, self.wfile)
+                if compressed:
+                    # ponytail: per-request gzip suits this personal server; cache by package hash if traffic grows.
+                    with gzip.GzipFile(fileobj=self.wfile, mode="wb", compresslevel=6, mtime=0) as encoded:
+                        self.copyfile(stream, encoded)
+                else:
+                    self.copyfile(stream, self.wfile)
 
     def _serve_static(self, filename: str) -> None:
         """Serve um arquivo HTML estático do diretório dashboard."""
