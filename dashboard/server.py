@@ -67,6 +67,12 @@ DIR = Path(__file__).parent
 PROJECT_ROOT = DIR.parent
 ENV_FILE = PROJECT_ROOT / ".env"
 LOG_FILE = PROJECT_ROOT / "data" / "logs" / "hedgefund.log"
+REPLAY_ROUTE = "/laboratory/replay/"
+REPLAY_ROOT = PROJECT_ROOT / "data/replays/april-november-2026-flash/exports"
+REPLAY_FILES = {
+    "index.html", "calls-data.js", "explorer.json", "calls.json", "manifest.json",
+    "daily.csv", "operations.csv", "decisions.csv", "dividends.csv", "calls.csv",
+}
 
 
 #: Active areas plus a separate secondary Legacy entry (DP-16).
@@ -100,6 +106,7 @@ AREAS = (
             ("/portfolio#global-workflow", "Gestor Global: registros"),
             ("/portfolio#evidencias", "Histórico e evidências"),
             ("/portfolio#simulador", "Simulador demonstrativo"),
+            (REPLAY_ROUTE, "Replay abril–novembro"),
         ),
     ),
     (
@@ -235,6 +242,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         if self.path.startswith("/api/h2/"):
             return self._handle_h2()
         path = urlsplit(self.path).path
+        if path == REPLAY_ROUTE[:-1] or path.startswith(REPLAY_ROUTE):
+            return self._serve_replay(path)
         if path in PRODUCT_PAGES:
             return self._serve_static(PRODUCT_PAGES[path])
         if path == "/":
@@ -291,6 +300,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 and urlsplit(self.path).path
                 in (
                     *LEGACY_PAGES,
+                    REPLAY_ROUTE[:-1],
+                    REPLAY_ROUTE,
                     "/",
                     "/h2",
                     "/h2/",
@@ -371,6 +382,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         if not self._local_request():
             return self.send_error(403)
         path = urlsplit(self.path).path
+        if path == REPLAY_ROUTE[:-1] or path.startswith(REPLAY_ROUTE):
+            return self._serve_replay(path)
         pages = {
             "/": "platform.html",
             **PRODUCT_PAGES,
@@ -792,6 +805,33 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
+
+    def _serve_replay(self, path):
+        """DP-37: read only the explicit exports from the independent replay package."""
+        if path == REPLAY_ROUTE[:-1]:
+            self.send_response(308)
+            self.send_header("Location", REPLAY_ROUTE)
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
+        name = path.removeprefix(REPLAY_ROUTE) or "index.html"
+        if name not in REPLAY_FILES:
+            return self.send_error(404)
+        source = REPLAY_ROOT / name
+        if not source.resolve().is_relative_to(REPLAY_ROOT.resolve()):
+            return self.send_error(404)
+        try:
+            stream = source.open("rb")
+        except OSError:
+            return self.send_error(503, "O replay ainda não está disponível neste servidor.")
+        with stream:
+            self.send_response(200)
+            content_type = {".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".csv": "text/csv"}[source.suffix]
+            self.send_header("Content-Type", content_type + "; charset=utf-8")
+            self.send_header("Content-Length", str(os.fstat(stream.fileno()).st_size))
+            self.end_headers()
+            if self.command != "HEAD":
+                self.copyfile(stream, self.wfile)
 
     def _serve_static(self, filename: str) -> None:
         """Serve um arquivo HTML estático do diretório dashboard."""

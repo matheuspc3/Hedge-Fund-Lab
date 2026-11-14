@@ -1,5 +1,23 @@
 # Estado atual do Hedge-Fund-Lab
 
+**14/11 — consulta do replay no servidor, DP-37 / REPLAY-01:** rota de leitura
+`/laboratory/replay/` integrada às seções do Laboratório. Reutiliza o explorador
+arquivado, com seis carteiras e 153 pregões, sem reabrir a campanha ou executar
+Gemini. O pacote original de 14 arquivos foi transferido pelo Tailscale e
+instalado atomicamente em pasta própria do volume persistente; hashes dos
+arquivos relidos no servidor PASS e livro diário com o mesmo hash antes/depois.
+Os dados completos continuam fora do Git e separados das carteiras ativas.
+
+Checks do importador e da rota PASS: pacote selado, membros explícitos,
+idempotência, recusa de sobrescrita/corrupção, GET/HEAD, downloads e proteção de
+origem/caminho. Regressão: **133 aprovados, um skip opcional de navegador**.
+O teste de symlink real não foi permitido neste Windows; a guarda de resolução
+fora da raiz está implementada. Consulta e download CSV também verificados no
+navegador local, sem erros. O fluxo de publicação usa o original, sincroniza a
+fork e mantém o acesso privado do Railway; o aceite final é a consulta pelo
+endereço do deploy com os mesmos arquivos após seu reinício.
+[Instalação e consulta](REPLAY_MULTIATIVOS.md#consulta-no-servidor-pessoal).
+
 **14/11 — integração autorizada dos ramos, DP-35/36/37:** Lucas aprovou manter
 as melhorias do Matheus em logs/votos/navegação e as decisões já operacionais na
 fork: universo fixo, SMA/Bollinger com guardas e execução intradiária simulada.

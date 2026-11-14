@@ -6,6 +6,54 @@ históricos e rastrear decisões, operações e patrimônio versus Buy & Hold.
 H2 permanece histórico; não houve deploy, push, chamada Railway nem operação
 na carteira iniciada em outubro. Não se trata de avaliação prospectiva.
 
+
+## Consulta no servidor pessoal
+
+DP-37 / REPLAY-01, disponibilização autorizada por Lucas em 14/11. O menu
+Laboratório aponta para `/laboratory/replay/`, uma consulta dos resultados já
+arquivados. A página não executa agentes ou ordens. O navegador recebe apenas
+os dez exports permitidos: HTML, carregador de chamadas, JSON e CSV; os livros,
+scripts de instalação e arquivos internos não são publicados por essa rota.
+Mantém a proteção de Host/Origin e a rede Tailscale existente, sem acesso público.
+
+O pacote privado `explorador_replay_2026-04_2026-11.zip` é instalado em
+`data/replays/april-november-2026-flash/` no volume permanente; `exports/` alimenta
+a consulta, `package.zip` conserva o pacote verificado e `import_receipt.json`
+registra os hashes. Essa pasta não é o livro das carteiras diárias nem a raiz da
+campanha paga. Os dados e recibos continuam fora do Git.
+
+Do PC com acesso Tailscale autorizado, usando o ZIP preservado na entrega:
+
+```powershell
+python scripts/publish_replay.py "caminho/do/explorador_replay_2026-04_2026-11.zip" --check-only
+python scripts/publish_replay.py "caminho/do/explorador_replay_2026-04_2026-11.zip"
+```
+
+O primeiro comando só verifica localmente. O segundo usa o SSH já existente no
+mesmo servidor Tailscale, com validação estrita da chave, e transmite bytes sem
+pipe textual do PowerShell. A autenticação adicional é concluída por Lucas;
+não se mudam credenciais, rede, agendador ou regras para facilitar a cópia.
+
+O importador aceita somente o SHA-256 do pacote original e seus 14 membros
+regulares conhecidos. Extrai em staging, confere os arquivos, conserva o ZIP e
+promove a pasta com um rename no mesmo volume. Destino existente só é aceito se
+seus arquivos/recibo já conferirem; dados diferentes nunca são sobrescritos.
+Falha preserva o staging para inspeção. Não exige banco ou dependência nova.
+
+Checks locais, sem rede ou inferências:
+
+```powershell
+python tests/check_publish_replay.py
+python tests/check_replay_server.py
+```
+
+Em 14/11, importação e releitura dos 14 arquivos no servidor passaram, sem mudar
+o hash do livro diário. A regressão teve 133 aprovados e um skip opcional. A
+criação de symlink real não foi permitida no Windows de teste; a rota resolve o
+caminho e recusa destino fora da raiz. O aceite de publicação verifica GET/HEAD,
+seis valores finais, filtros, decisões, operações, proventos, chamadas arquivadas,
+downloads e persistência no volume depois do deploy. Não há nova execução Gemini.
+
 ## Correspondência e revisão histórica
 
 Desde a consolidação de 14/11, **DP-37** identifica este replay e suas extensões.
