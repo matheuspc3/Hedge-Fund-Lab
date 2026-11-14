@@ -1,6 +1,6 @@
 # Direção do projeto e decisões de produto
 
-Versão 22 — **14/11/2026**. Decisões registradas a partir da conversa com Lucas.
+Versão 23 — **14/11/2026**. Decisões registradas a partir da conversa com Lucas.
 Este documento fixa o destino do produto; o [roadmap](ROADMAP.md) organiza o
 caminho e o [estado atual](ESTADO_ATUAL.md) registra o que já existe.
 
@@ -128,6 +128,13 @@ inalterados. Teto **único US$ 34,78** para toda esta campanha, incluindo retrie
 incerteza e chamadas em voo; reserva durável antes de cada HTTP e nenhum reset
 por lote/retomada. Não altera outubro, pilotos/H2, produção ou deploy.
 [Inventário, origem e convenções](../reports/inventario_replay_continuo_2026-11-13.md).
+
+**14/11 — consulta do replay no servidor pessoal:** Lucas autorizou continuar
+o plano de disponibilização da DP-37. Reutilizar o pacote já concluído, copiá-lo
+para pasta própria do volume e oferecer consulta pelo Laboratório, com os mesmos
+controles de origem e Tailscale. Não inclui nova inferência, mudança de estratégia
+ou integração dos livros retrospectivos às carteiras diárias. Código segue pelo
+original e pela fork que alimenta o Railway; dados privados ficam fora do Git.
 
 ### Correspondência dos identificadores históricos
 
@@ -352,6 +359,7 @@ preservam seus rótulos e datas originais; DP-35 nas entradas de replay de
 | 23/10/2026 | Versão 20 da aplicação atual: DP-36, carteiras SMA/Bollinger na comparação | Registro existente no checkout principal, preservado e identificado por fonte; não substitui os snapshots dos pilotos |
 | 13/11/2026 | Versão 21: campanha contínua DP-35 com seis carteiras, referências antes da inferência, frontend depois | Lucas confirmou Equal Weight e Mínima Variância além de SMA/Bollinger/B&H/Multiagentes e autorizou execução/reparo operacional sob teto agregado US$ 34,78 |
 | 14/11/2026 | Versão 22: consolida os ramos e identifica o replay como DP-37, com alias dos rótulos históricos | Lucas autorizou preservar melhorias do Matheus e decisões da fork; correspondência documental sem regravar evidências ou alterar políticas |
+| 14/11/2026 | Versão 23: consulta do replay no servidor sob DP-37 | Lucas pediu continuar o plano de transferência verificada e acesso pelo Laboratório, preservando a operação diária e sem novas inferências |
 
 **Nota histórica das bases DP-09–DP-15:** o parágrafo abaixo preserva os limites
 da aprovação inicial. As autorizações posteriores, inclusive DP-20 e DP-33–DP-37,

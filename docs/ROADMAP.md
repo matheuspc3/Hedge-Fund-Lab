@@ -12,6 +12,17 @@ Ela define o destino do produto; este roadmap define a ordem para chegar lá.
 
 ## Objetivo e ponto de partida
 
+**14/11 — disponibilização da consulta, DP-37 / REPLAY-01:** acesso
+`/laboratory/replay/` pelo Laboratório e importador do pacote selado implementados.
+Dados transferidos pelo Tailscale, com conferência de hashes no volume e sem
+alterar o livro diário. Checks de importação/rotas e regressão de 133 testes
+aprovados (um skip opcional); navegador local e download CSV verificados.
+O aceite da publicação é abrir a mesma consulta no deploy, após sincronizar o
+código, e confirmar persistência dos arquivos e isolamento das carteiras.
+[Procedimento](REPLAY_MULTIATIVOS.md#consulta-no-servidor-pessoal).
+Depois: explorar resultados e registrar análises descritivas no TCC, sem novas
+inferências ou alterações estratégicas nesta entrega.
+
 **14/11 — integração autorizada, DP-35/36/37 / REPLAY-01:** Lucas aprovou
 preservar as melhorias do Matheus já incorporadas à fork, o universo fixo dos
 cinco ativos, SMA/Bollinger com seus controles e a execução intradiária simulada.
