@@ -1,6 +1,6 @@
 # Direção do projeto e decisões de produto
 
-Versão 17 — **20/10/2026**. Decisões registradas a partir da conversa com Lucas.
+Versão 21 — **13/11/2026**. Decisões registradas a partir da conversa com Lucas.
 Este documento fixa o destino do produto; o [roadmap](ROADMAP.md) organiza o
 caminho e o [estado atual](ESTADO_ATUAL.md) registra o que já existe.
 
@@ -61,6 +61,47 @@ autorização financeira ou afirmação de que a funcionalidade já foi entregue
 | DP-31 | Backtest no Laboratório só de regras determinísticas (cesta com ou sem rebalanceamento) sobre a base local; agentes de IA são avaliados apenas de forma prospectiva | Decisão de Lucas em 17/10: backtest de agentes no passado é caro e contaminado (o modelo conhece o desfecho), e um modelo substituto mais fraco tornaria a comparação injusta. O backtest de regras usa preços ajustados (proventos reinvestidos), compara com Ibovespa e CDI no mesmo período e é resultado histórico, não previsão; não altera o piloto nem os ledgers. A visão de "munição" para os agentes (DP-27) entra em fase de pesquisa documental antes de qualquer implementação |
 | DP-33 | Operação aprovada executa no primeiro leilão oficial da B3 após a aprovação; cotação atrasada só na prévia; tolerância proporcional à volatilidade e ao tempo; proposta válida até os leilões do pregão-alvo; sem cotação no prompt do gestor | Lucas aprovou em 19/10 as cinco recomendações do [relatório](../reports/Relógio%20de%20dados%20e%20preço%20de%20execução.md). (1) Aprovação antes da pré-abertura executa na abertura oficial do dia; durante o pregão até o corte antes do call de fechamento, no fechamento oficial do dia; depois, na abertura do pregão seguinte; estado "aguardando leilão" até o preço oficial chegar pela atualização DP-27, lançamento idempotente com data do leilão; horários de corte configuráveis por regime (horário de verão dos EUA). (2) A cotação atrasada do Yahoo entra só no código da prévia, como retrato selado (valor, fonte, atraso, horários de cotação e coleta, estado do pregão, hash), nunca na marcação, no preço da operação ou nos prompts — exceção restrita à DP-26. (3) Nova prévia quando a cotação se move além de clamp(3·σ₆₀·√(h/415); 0,5%; 2%), sem nova chamada paga, e alerta de "tese velha" a 3σ desde o fechamento anterior ajustado por proventos. (4) Proposta válida até os leilões do pregão-alvo; expirada, registra custo de oportunidade. (5) Cotação no prompt só com teste pareado pré-registrado e orçamento próprio. Atualiza a DP-24 no preço de registro (antes: fechamento de referência do pregão anterior); cada operação guarda preço de decisão, da prévia, da aprovação e do leilão para medir o implementation shortfall |
 | DP-34 | Ciclo diário autônomo da carteira Multiagentes: análise, analistas, gestor e aprovação rodam sozinhos todo pregão, com teto diário de reserva Gemini de US$ 4, aprovação automática salvo alerta de tese velha, tentativas às 09:00, 12:00 e 16:00 (America/Sao_Paulo), aviso por e-mail, servidor pessoal no Railway acessível só pela rede Tailscale de Lucas | Lucas pediu em 20/10 o ciclo completo ("nem todo dia eu vou entrar lá", "rodar fielmente todo dia pouco antes da bolsa abrir… caso não tenha ele tenta de novo 12h e depois 16h") e escolheu: teto diário de reserva US$ 4; aprovação automática exceto com alerta de tese velha (aí espera Lucas); download automático da B3 no servidor do Railway para uso pessoal, sem redistribuição (amplia a DP-27 de "uso local"); aviso por e-mail; acesso via Tailscale. Substitui, para essa rotina, a rotina manual e a autorização explícita da DP-13 e os consentimentos por chamada/ordem da DP-16/DP-21/DP-24, que continuam valendo no uso manual pela interface. Toda autorização automática fica registrada como da rotina (não de Lucas), com teto, horário e motivo; a regra de leilão da DP-33 não muda. Três tentativas sem dados consolidados: dia registrado como sem análise, nada inventado |
+
+**DP-35 — extensão exploratória limitada, 12/11/2026:** Lucas autorizou por voz
+implementar e, sob os guardrails financeiros, executar primeiro duas semanas
+históricas da carteira multiativos atual com Gemini 3.8 Flash. Reabre a DP-31
+somente para este replay produzido agora, sem substituir o acompanhamento diário,
+retomar H2 ou afirmar ausência de contaminação. Período escolhido antes de medir
+retorno: 06–17/04/2026, dez pregões após março, com aquecimento anterior apenas
+para indicadores. Reusar comitês, risco, gestor da carteira, validação e livro;
+identidade/SQLite/artefatos próprios, sem alterar piloto ou evidências seladas.
+A DP-34 autoriza US$ 4/dia apenas para a rotina diária: não é um teto agregado
+para dez sessões executadas agora. Reserva do replay US$ 34,77504; inferência
+foi autorizada por Lucas com teto agregado de US$ 34,78 ("autorizo, pode fazer")
+após o preflight. [Contrato, estado e comandos](REPLAY_MULTIATIVOS.md).
+
+**13/11 — segunda janela da DP-35:** depois da investigação de blocos de queda,
+Lucas escolheu e autorizou 20/04–05/05/2026: "gostei da 20 de abril a 5 de maios.
+podemos fazer, pede la pra ele". Novo ensaio independente com o mesmo Gemini,
+fluxo, capital, regras e custos; teto agregado próprio de até US$ 34,78. A seleção
+foi feita pela queda observada, portanto é estresse retrospectivo exploratório.
+Não autoriza calibrar vendas, reparar prompts/gates, comparar modelos ou alterar
+o ensaio anterior. Proventos respeitam direito na data-com e caixa no pagamento.
+
+**13/11 — campanha contínua da DP-35:** Lucas autorizou uma nova trajetória
+06/04–12/11/2026 (153 pregões), sem juntar/resetar os dois pilotos. Conjunto final
+confirmado: Multiagentes, Buy & Hold, SMA 50/200, Bollinger 20/2, Equal Weight e
+Mínima Variância. Primeiro concluir as cinco referências; depois inferência
+Gemini 3.8 Flash contínua; frontend de exploração após dados/resultados. Seis
+capitais independentes R$ 100 mil e mesma cesta DP-20; custos posteriores 0,03%,
+RAW B3, abertura seguinte e proventos no pagamento. Buy & Hold/regras não
+reinvestem os proventos; o gestor mantém o fluxo atual, recebendo todo o caixa
+disponível do livro e podendo realocá-lo somente sob seus sinais/gates.
+Equal/Mínima reutilizam as definições multiativos existentes: 63 pregões entre
+rebalanceamentos, 252 retornos na Mínima, long-only, parâmetros/otimizador sem
+calibração pelo resultado. DP-36 da aplicação atual (23/10) fornece as regras
+SMA/Bollinger, copiadas e verificadas por hash nesta worktree mais antiga.
+Autorizado ajuste exclusivamente operacional: até duas tentativas de transporte
+por chamada lógica, todas preservadas, uma única resposta aceita, schemas/quórum
+inalterados. Teto **único US$ 34,78** para toda esta campanha, incluindo retries,
+incerteza e chamadas em voo; reserva durável antes de cada HTTP e nenhum reset
+por lote/retomada. Não altera outubro, pilotos/H2, produção ou deploy.
+[Inventário, origem e convenções](../reports/inventario_replay_continuo_2026-11-13.md).
 
 DP-01–DP-06 e DP-08 registram a direção apresentada por Lucas e discutida na
 conversa. DP-07 registra sua concordância explícita com os 20% por ativo.
@@ -241,6 +282,10 @@ sem necessidade do fluxo principal. Nenhum desses itens é requisito atual.
 | 17/10/2026 | Versão 15: DP-30 opção A, proventos recebidos lançados no livro | Lucas: “faremos a A” após a explicação de A (lançar no livro) e B (aviso na prévia) |
 | 19/10/2026 | Versão 16: DP-33, execução no próximo leilão oficial, cotação atrasada só na prévia, tolerância por volatilidade, validade por pregão | Lucas: “eu aprovo, acredito que possa ser uma boa sim”, sobre as cinco recomendações do relatório de relógio de dados e preço de execução |
 | 20/10/2026 | Versão 17: DP-34, ciclo diário autônomo (teto US$ 4/dia, aprovação automática salvo alerta, 09:00/12:00/16:00, e-mail, Railway + Tailscale) | Lucas: "eu queria o ciclo completo, pq nem todo dia eu vou entrar la"; respostas às perguntas de teto, aprovação, B3 na nuvem e avisos |
+| 12/11/2026 | Versão 18: DP-35, replay exploratório multiativos de duas semanas | Autorização por voz de Lucas, encaminhada nesta tarefa; menor adaptação do fluxo atual, execução condicionada ao orçamento agregado |
+| 13/11/2026 | Versão 19: segunda janela DP-35, 20/04–05/05, autorizada com teto US$ 34,78 | Lucas escolheu a janela A após a triagem offline e pediu sua execução; mesmos componentes/regras, identidade e capital independentes |
+| 23/10/2026 | Versão 20 da aplicação atual: DP-36, carteiras SMA/Bollinger na comparação | Registro existente no checkout principal, preservado e identificado por fonte; não substitui os snapshots dos pilotos |
+| 13/11/2026 | Versão 21: campanha contínua DP-35 com seis carteiras, referências antes da inferência, frontend depois | Lucas confirmou Equal Weight e Mínima Variância além de SMA/Bollinger/B&H/Multiagentes e autorizou execução/reparo operacional sob teto agregado US$ 34,78 |
 
 Essa aprovação não inclui custo de 0,1%, buffer de 2%, limite de exposição de
 85%, política de veto, prazo de processamento, rendimento de caixa, fonte ou

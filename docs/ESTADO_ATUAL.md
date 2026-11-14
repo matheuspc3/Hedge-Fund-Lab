@@ -1,5 +1,69 @@
 # Estado atual do Hedge-Fund-Lab
 
+**14/11 — commit do replay no original:** código, checks e relatos do replay
+na branch `codex/replay-continuo-2026` do repositório do Matheus, sem dados privados
+ou troca das fontes seladas. [Revisão das 28 diferenças da fork implantada](../reports/revisao_railway_vs_matheus_2026-11-14.md).
+Por orientação de Lucas, incorporar as mudanças da produção depende dessa revisão;
+a transferência dos resultados e o deploy não foram executados. O Tailscale exige
+autenticação adicional para a cópia SSH, a ser concluída com Lucas nessa etapa.
+
+
+**13/11/2026 — campanha contínua DP-35/36 concluída:** seis carteiras,
+06/04–12/11, 153 pregões completos, sem lacunas nem reset. Cinco referências
+concluídas antes dos agentes; inferência de 17:41 a 22:28 (São Paulo), com processo
+continuando durante a interrupção do Codex. Reconciliação dos 918 estados PASS.
+Multiagentes encerrou em R$ 82.178,71 (-17,8213%), R$ 6.612,40 abaixo do Buy & Hold.
+Bollinger teve o maior patrimônio nesta execução: R$ 104.887,05 (+4,8870%).
+[Seis resultados, método e limites](../reports/replay_continuo_2026-04_2026-11.md).
+
+4703 chamadas lógicas / 4709 tentativas; seis retries recuperados, máximo duas
+por chamada e uma resposta consumida por voto. 40 vetos determinísticos
+suprimiram a chamada de risco sem tornar a análise incompleta. Uso conhecido
+estimado US$ 7,44444225; reserva incerta US$ 0,663552; exposição final
+US$ 8,10799425 e pico reconstruído US$ 8,26302975, abaixo de US$ 34,78.
+São estimativas auditadas pelos envelopes, não fatura nem saldo promocional.
+
+Qualificação pré-paga de retry/cap/crash, identidade por componente JCP e escala
+numérica positiva do SLSQP preservada. Igualdade inicial, causalidade, 252 retornos
+passados, fills RAW na abertura, custos de 0,03%, caixa e recebíveis por componente
+PASS; KKT nas três covariâncias de Mínima Variância também PASS. Conferência de
+preservação: 1069 arquivos anteriores, 157 diagnósticos e 76 fontes seladas intactos.
+`qualified-v2/` contém a execução final; `budget.sqlite` permanece na raiz pai.
+
+Explorador local das seis carteiras entregue depois dos resultados, com recibos,
+decisões, operações, proventos, chamadas e exportações. Navegador: desktop 1280 px
+e celular 390 px, sem erro de execução ou overflow horizontal. A política do
+navegador bloqueou o teste direto file://; o fluxo HTTP local foi verificado.
+[Inicializador e pacote](REPLAY_MULTIATIVOS.md#explorador-local-e-entrega-final).
+Nenhuma escrita em produção ou deploy. A consulta Tailscale confirmou o Railway
+atualizado até 12/11; a cópia local pré-migração terminava em 20/10 e os 16 snapshots
+recentes conferiram com a base preparada. Próximo passo: exploração e relato
+no TCC, com limites retrospectivos explícitos.
+
+**13/11/2026 — seleção exploratória de queda, DP-35 / REPLAY-01:** três candidatos
+investigados somente na base local, sem IA ou lançamentos: 20/04–05/05,
+26/05–09/06 e 04–17/08/2026. Recomendação para avaliação: 20/04–05/05 (cesta
+−7,20%, quatro ativos negativos). Zero lacunas/splits nos candidatos e 150
+snapshots causais verificados. [Relatório completo](../reports/janelas_queda_multiativos_2026-11-13.md).
+Lucas depois escolheu e autorizou 20/04–05/05 com novo teto US$ 34,78. A execução
+real terminou na raiz própria `april-may-2026-flash`: oito análises completas,
+duas lacunas de conexão, nove operações e dez marcações reconciliadas. Agentes
+R$ 92.668,80 versus B&H R$ 92.800,14; diferença −R$ 131,34. Proventos PASS,
+recebíveis R$ 252,54 / R$ 252,49 sem antecipação de caixa. Custo conhecido estimado
+US$ 0,4645395, até US$ 0,5751315 incluindo as duas respostas incertas; teto único
+preservado nas retomadas. Os 528 arquivos do primeiro ensaio ficaram idênticos.
+[Resultado da segunda janela](../reports/replay_multiasset_2026-04-20_2026-05-05.md).
+
+**12/11/2026 — REPLAY-01 / DP-35:** reprodução exploratória de 06–17/04 pronta
+em `scripts/replay_multiasset.py`, com armazenamento isolado e preflight próprio.
+Dez sessões offline exercitam os componentes atuais; não são resultados Gemini.
+Execução real concluída no teto autorizado US$ 34,78: sete análises completas,
+três dias sem parecer final por falha de conexão, uma compra de 1 VALE3 e dez
+marcações reconciliadas (check PASS). Multiagentes R$ 102.503,49 e Buy & Hold
+R$ 102.498,88; uso conhecido estimado US$ 0,4650735, até US$ 0,6309615 incluindo
+as três respostas incertas. [Resultado real](../reports/replay_multiasset_2026-04.md).
+[Componentes, checks, diferenças e execução](REPLAY_MULTIATIVOS.md).
+
 Estado em **16/10/2026**, base V7.6.5 e incrementos datados abaixo, incluindo APP-01/02 e cadastro de análises por carteira.
 Foram lidos código, relatórios e resultados de qualificação existentes.
 Não foram reexecutados experimentos nem auditados os estados financeiros

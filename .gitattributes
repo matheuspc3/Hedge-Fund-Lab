@@ -12,3 +12,20 @@ dashboard/vendor/** -text
 # Acervo DATA-01: inclui HTML com finais de linha mistos, selados na aquisição.
 docs/evidence/pilot_market_data_2026/** -text
 docs/evidence/h2_v6_evaluation/system_freeze_candidate.* -text
+
+# Replay exploratório: manter bytes das fontes/HTML vinculados aos recibos SHA-256.
+dashboard/replay_explorer.html -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+scripts/audit_continuous_sources.py -text
+scripts/audit_remote_replay.py -text
+scripts/build_replay_explorer.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+scripts/check_min_variance_numerics.py -text
+scripts/continuous_replay.py -text
+scripts/continuous_replay_data.py -text
+scripts/continuous_replay_dividends.py -text
+scripts/continuous_replay_runtime.py -text
+scripts/export_continuous_replay.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+scripts/replay_multiasset.py -text
+scripts/replay_multiasset_window.py -text
+scripts/report_multiasset_replay.py -text
+tests/check_continuous_replay.py -text
+tests/check_multiasset_replay.py -text

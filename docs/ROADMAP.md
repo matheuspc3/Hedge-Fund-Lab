@@ -1,6 +1,6 @@
 # Roadmap do Hedge-Fund-Lab
 
-Atualizado em **16/10/2026**. Plano de trabalho a partir da V7.6.5.
+Atualizado em **14/11/2026**. Plano de trabalho a partir da V7.6.5.
 Este é o planejamento ativo. Especificações científicas, aprovações e autorizações
 continuam em seus documentos próprios; um checkbox aqui não as substitui.
 
@@ -11,6 +11,68 @@ Ela define o destino do produto; este roadmap define a ordem para chegar lá.
 [Documentação e evidências](README.md)
 
 ## Objetivo e ponto de partida
+
+**14/11 — commit do replay e revisão da divergência Railway/original:** Lucas
+pediu guardar o trabalho no repositório do Matheus e examinar as alterações que
+existem na fork implantada antes de incorporá-las. A transferência/deploy fica
+suspensa nesta etapa. [Comparação das fontes e avaliação por conjunto](../reports/revisao_railway_vs_matheus_2026-11-14.md),
+incluindo colisão documental do ID DP-35; nenhum merge automático da produção.
+
+
+**REPLAY-01 / DP-35/36 — campanha contínua concluída (13/11):** seis carteiras,
+06/04–12/11/2026, 153 pregões sem reset. Referências concluídas antes da inferência;
+Multiagentes terminou às 22:28 (São Paulo), inclusive durante a interrupção do
+Codex, sem nova instância. Os 918 estados diários passaram pela reconciliação.
+Multiagentes: R$ 82.178,71 (-17,8213%); Buy & Hold: R$ 88.791,11 (-11,2089%).
+Bollinger teve o maior patrimônio nesta trajetória: R$ 104.887,05 (+4,8870%).
+Resultado descritivo e retrospectivo, sem evidência de superioridade.
+
+4703 chamadas lógicas, 4709 tentativas físicas, seis retries recuperados e nenhuma
+lacuna diária. Uso conhecido estimado US$ 7,44444225 mais reserva incerta
+US$ 0,663552: exposição US$ 8,10799425, sob o teto único US$ 34,78.
+Preservação PASS: 1069 arquivos anteriores, 157 diagnósticos e 76 fontes seladas.
+Reparos pré-pagos de componentes JCP e escala numérica SLSQP documentados;
+os livros e marcas diagnósticos permanecem imutáveis, sem retuning por retorno.
+Produção Railway consultada apenas em leitura; outubro, H2 e pilotos separados.
+
+Explorador local entregue com comparação das seis curvas, posições, decisões,
+operações, proventos, chamadas e CSV/JSON. Verificado em 1280 e 390 px, sem erros
+de execução; sem deploy. [Resultado e limites](../reports/replay_continuo_2026-04_2026-11.md)
+· [Como abrir e verificar](REPLAY_MULTIATIVOS.md#explorador-local-e-entrega-final)
+· [Inventário](../reports/inventario_replay_continuo_2026-11-13.md).
+Próximo passo: explorar a trajetória e incorporar resultados negativos e limites
+no TCC; uma nova campanha requer escopo próprio.
+
+**REPLAY-01 / DP-35 — seleção de janela de queda (13/11):** investigação offline
+concluída, 130 blocos móveis examinados e três candidatos sem pregões-alvo
+sobrepostos: 20/04–05/05, 26/05–09/06 e 04–17/08/2026. Recomendada a primeira
+para Lucas avaliar; posteriormente ele escolheu e autorizou o bloco 20/04–05/05.
+Retornos da cesta com direitos líquidos: −7,20%, −4,73%, −6,08%; 150 snapshots
+técnicos anteriores às decisões verificados, cobertura completa e nenhum split.
+A segunda execução terminou: dez marcações, oito análises completas, duas lacunas
+de conexão (23 e 30/04), nove operações. Multiagentes R$ 92.668,80 (−7,3312%)
+versus Buy & Hold R$ 92.800,14 (−7,19986%): diferença −R$ 131,34. Houve VENDA
+e realocação sem alterar regras, mas sem benefício neste bloco. Reconciliação
+real/proventos PASS; recebíveis R$ 252,54 / R$ 252,49 fora do caixa. Uso conhecido
+estimado US$ 0,4645395; até US$ 0,5751315 com respostas incertas, dentro do teto
+próprio US$ 34,78 em todas as retomadas. Primeiro replay preservado (528 hashes).
+Raiz `data/cache/historical-replay/april-may-2026-flash/`; adaptador só de datas,
+sem editar o runner congelado. Próximo passo: avaliar a evidência no TCC, sem
+ampliação automática. [Resultado](../reports/replay_multiasset_2026-04-20_2026-05-05.md) ·
+[Triagem das janelas](../reports/janelas_queda_multiativos_2026-11-13.md).
+
+**Extensão pontual REPLAY-01 / DP-35 (12/11):** runner isolado da carteira
+multiativos atual, 06–17/04/2026, dez sessões, implementado e validado offline.
+Entrega esperada: decisões/operações/patrimônio versus Buy & Hold com a mesma
+base, custos e proveniência, mantendo o acompanhamento diário como objetivo.
+Execução Gemini real concluída: dez pregões marcados, sete análises completas,
+três sem parecer final por conexão interrompida e uma compra. Teto autorizado
+US$ 34,78; uso conhecido estimado US$ 0,4650735, até US$ 0,6309615 incluindo
+as respostas incertas. Multiagentes R$ 102.503,49 versus Buy & Hold R$ 102.498,88;
+diferença R$ 4,61 sem alegação de superioridade. Check real PASS.
+[Resultado e evidências](../reports/replay_multiasset_2026-04.md) ·
+[Contrato e verificação](REPLAY_MULTIATIVOS.md).
+Não reabre H2, não altera ledgers nem promove este ensaio a evidência prospectiva.
 
 Acompanhar carteiras simuladas ao longo dos pregões: decisões rastreáveis,
 preços com origem, autorizações válidas, operações paper determinísticas,
