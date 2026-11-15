@@ -1,0 +1,138 @@
+\chapter{Metodologia Experimental}
+\label{cha:metodologia}
+
+Este capítulo descreve o desenho experimental e o protocolo metodológico que orientam a avaliação do Hedge-fund-lab. O protocolo foi congelado antes da execução dos experimentos de avaliação, com o objetivo de conter o viés de superajuste do pesquisador: parâmetros, janelas e critérios de sucesso são definidos a priori, e a calibração do sistema é separada temporalmente da avaliação final.
+
+\section{Natureza da Pesquisa}
+
+A pesquisa é aplicada e de natureza quantitativa, adotando como método a simulação retrospectiva (\textit{backtesting}). A avaliação compara, sobre as mesmas janelas de dados e sob os mesmos custos, o desempenho de estratégias clássicas e do sistema multiagente baseado em LLMs, utilizando métricas de retorno ajustado ao risco definidas a seguir.
+
+\section{Hipóteses}
+
+As hipóteses preservadas do planejamento inicial são:
+
+\begin{itemize}
+    \item \textbf{H1:} estratégias baseadas em momentum e \textit{trend following} apresentam desempenho superior ao \textit{equal weight} em termos de Sharpe Ratio líquido;
+    \item \textbf{H2:} o sistema multiagente baseado em LLMs apresenta desempenho superior ajustado ao risco em relação aos \textit{benchmarks}, com Sharpe Ratio líquido como critério primário e Sortino Ratio, \textit{Maximum Drawdown} e \textit{turnover} como critérios complementares;
+    \item \textbf{H0:} não há diferença estatisticamente significativa entre as abordagens.
+\end{itemize}
+
+\section{Universo e Dados}
+
+O universo de avaliação é composto por cinco ativos do mercado à vista brasileiro, com ponderação igual de 20\% cada: PETR4.SA, VALE3.SA, ITUB4.SA, WEGE3.SA e BBAS3.SA. A fonte de preço é composta pelos registros oficiais de negociação da B3 (COTAHIST), corrigidos por proventos por meio de um fator de ajuste por sessão derivado da razão entre preço ajustado e preço de fechamento. O calendário de negociação reproduz as sessões oficiais da B3.
+
+A série de referência para o desenvolvimento (\texttt{H\_real}) corresponde ao ativo PETR4.SA, com 1519 sessões no intervalo de 2018-01-12 a 2024-02-28.
+
+\section{Configuração Congelada do Motor Multiagente}
+
+A configuração do sistema multiagente foi congelada em documento próprio de metodologia, com o objetivo de evitar ajustes posteriores aos resultados. Os parâmetros congelados são:
+
+\begin{itemize}
+    \item método de decisão: \textit{self-consistency}, com \texttt{analyst\_count}=5, \texttt{consensus\_threshold}=0,6 e \texttt{require\_all\_votes}=verdadeiro;
+    \item modelo de linguagem: Gemini (\texttt{gemini-3.8-flash}), sem fallback, com \texttt{temperature}=1,0 e \texttt{max\_output\_tokens}=8192;
+    \item frequência de decisão diária (\texttt{decision\_frequency}=1) e peso-alvo longo (\texttt{long\_target\_weight}=1,0);
+    \item limites de risco: \texttt{risk\_max\_volatility}=0,5, \texttt{volatility\_window}=21 e \texttt{risk\_max\_drawdown}=0,25;
+    \item política de novas tentativas: \texttt{retry\_attempts}=6 e \texttt{retry\_base\_delay}=2,0;
+    \item escada de esforço de raciocínio (\textit{thinking}) crescente em custo: \texttt{LOW} $\rightarrow$ \texttt{MEDIUM} $\rightarrow$ \texttt{HIGH}, escolhida por custo, nunca por retorno ou Sharpe.
+\end{itemize}
+
+Os papéis do comitê são análise técnica, gestão de risco e gestão de portfólio, executados em grafo linear e acíclico: não há debate cíclico, reavaliação iterativa pelo gestor de risco, memória persistente entre sessões nem dimensionamento dinâmico de posição pelo gestor de portfólio (a exposição é atribuída por peso-alvo determinístico).
+
+A aplicação do quórum congelado é garantida em todos os pontos de execução do protocolo. O participante do comitê é sempre instanciado a partir do dicionário de parâmetros congelados, nunca dos valores padrão da biblioteca (que seriam \texttt{analyst\_count}=30 e \texttt{consensus\_threshold}=5/6 $\approx$ 0,833). A cadeia \textit{hardening} $\rightarrow$ \textit{stress} $\rightarrow$ CAL-B $\rightarrow$ CAL-B2/B3 preserva \texttt{analyst\_count}=5, \texttt{consensus\_threshold}=0,6 e \texttt{require\_all\_votes}=verdadeiro, e as fases de Validação e Teste Final carregam a especificação congelada do participante (\texttt{participant\_spec}), cuja integridade é validada por \textit{hash} fixo (\texttt{PARTICIPANT\_SHA256}) antes da execução, de modo que qualquer desvio dessa configuração seria rejeitado.
+
+\section{Métricas de Avaliação}
+
+A métrica primária é o Sharpe Ratio líquido, cuja definição científica foi congelada no código (\texttt{H2\_SCIENTIFIC\_SHARPE\_DEFINITION\_V1}): a razão entre a média dos retornos (com taxa livre de risco $r_f=0$) e o desvio-padrão amostral dos retornos (com $ddof=1$), anualizada pelo fator $\sqrt{252}$. Para séries degeneradas --- com menos de dois retornos ou volatilidade amostral nula ou não numérica --- o escore é fixado em $0,0$, de modo que falhas de dado sejam tratadas de forma conservadora e não inflada.
+
+As métricas complementares são o Sortino Ratio, o \textit{Maximum Drawdown} e o \textit{turnover}. O \textit{turnover} da carteira no instante $t$ é definido por:
+
+\begin{equation}
+\textit{turnover}_t = \sum_{i=1}^{N} |w_{i,t} - w_{i,t-1}|,
+\end{equation}
+
+onde $w_{i,t}$ é o peso do ativo $i$ na carteira no instante $t$ e $N$ é o número de ativos. Os custos de transação são aplicados a cada alteração de pesos, refletidos no retorno líquido:
+
+\begin{equation}
+R^{\text{liq}}_t = R^{\text{bruto}}_t - c \cdot \textit{turnover}_t,
+\end{equation}
+
+onde $c$ é o custo unitário de transação adotado.
+
+O Sortino Ratio e o \textit{Maximum Drawdown} são reportados como métricas complementares, assim como o \textit{turnover}. Suas definições seguem as implementações padrão do código e não foram congeladas como métrica científica; quando utilizadas, essa condição é explicitada no texto de resultados.
+
+\section{Desenho Experimental}
+
+O desenho experimental é dividido em fases com ordem fixa e autoridades não cumulativas:
+
+\begin{enumerate}
+    \item \textbf{Hardening} (\textit{diagnostic}): ajuste de configuração do sistema sem acesso a métrica financeira (\textit{outcome-blind});
+    \item \textbf{CAL-A}: calibração sobre o primeiro subconjunto de âncoras;
+    \item \textbf{Desenvolvimento Sequencial} (\textit{sequential development}): desenvolvimento sobre janela curta;
+    \item \textbf{Relatório de Estresse} (\textit{stress report}): avaliação sobre âncoras adicionais de estresse;
+    \item \textbf{CAL-B}: calibração sobre o segundo subconjunto de âncoras;
+    \item \textbf{Freeze}: congelamento final da configuração;
+    \item \textbf{Validação} (\textit{validation}): avaliação fora das âncoras de calibração;
+    \item \textbf{Teste Final} (\textit{final test}): avaliação final isolada.
+\end{enumerate}
+
+As janelas de validação e de teste final são temporalmente separadas das janelas de calibração e entre si, de modo a impedir que os ajustes realizados durante a calibração contaminem a avaliação. A calibração do sistema não constitui treinamento: o modelo de linguagem chega pré-treinado, sem \textit{fine-tuning}; o que se ajusta é a configuração de sistema (prompts, papéis, quórum e parâmetros), registrada pela especificação do experimento e seu \textit{hash}.
+
+\subsection{Âncoras}
+
+As âncoras são sessões de referência que particionam os dados em estratos cronológicos contíguos. O conjunto \texttt{CORE} é composto por 30 âncoras, divididas em 20 para a CAL-A e 10 para a CAL-B, disjuntas entre si. Até 8 âncoras adicionais, fora do \texttt{CORE}, podem compor o conjunto de estresse. A âncora de cada estrato corresponde à sua sessão mediana.
+
+A janela curta do Desenvolvimento Sequencial está congelada em 2024-03-01 a 2024-08-30 (última decisão em 2024-08-29). As quatro janelas de estresse também estão congeladas: S1 (2020-02-07 a 2020-04-23), S2 (2018-03-29 a 2018-06-12), S3 (2023-10-02 a 2023-12-13) e S4 (2018-08-24 a 2018-11-07). As janelas de Validação e de Teste Final estão propostas na camada de avaliação v6 --- Validação 2024-09-02 a 2025-08-29; Teste Final 2025-09-01 a 2026-08-31 --- e ainda aguardam aprovação do autor, portanto não são tratadas como congeladas.
+
+\subsection{Execução Pseudo-Live Causal}
+
+A simulação segue o princípio de execução pseudo-\textit{live} causal: a decisão do sistema no instante $t$ utiliza apenas informação disponível até o fechamento de $t$ (\texttt{close(t)}) e é executada na abertura da sessão seguinte (\texttt{open(t+1)}). Informação posterior a $t$ é proibida na decisão, e a última decisão é liquidada na sessão de liquidação (\texttt{settlement\_session}).
+
+O modo histórico adotado é o expansivo (\textit{expanding}), nunca o deslizante (\textit{rolling}). O histórico mínimo de sessões é fixado em 504 (\texttt{minimum\_history\_sessions}), sem valor padrão, e o MACD é computado de forma recursiva (\texttt{ewm(adjust=False)}).
+
+\subsection{Gates de Qualidade}
+
+Gates de qualidade de processo, distintos das métricas financeiras, são aplicados sobre as execuções para detectar degeneração:
+
+\begin{itemize}
+    \item \textbf{G-A}: falhas finais de classe A iguais a zero;
+    \item \textbf{G-T}: truncamentos por limite de tokens iguais a zero;
+    \item \textbf{G-I}: taxa de manutenção (\textit{hold rate}) total $\geq 0,90$ (caso contrário, a execução é marcada como inativa);
+    \item \textbf{G-F}: taxa de alternância de estado ($\textit{flip rate}$) $> 0,10$ (caso contrário, a execução é marcada como instável).
+\end{itemize}
+
+\section{Inferência Estatística}
+
+A significância estatística das comparações é avaliada por \textit{bootstrap} temporal pareado estacionário (Bootstrap A), centrado, com $B=5000$ reamostragens, nível de significância $\alpha=0,05$, semente NumPy PCG64 fixada em \texttt{20261008}, comprimento médio de bloco 10 e posto de referência 4751. Esse procedimento preserva a estrutura de dependência temporal das séries e fornece a base para o teste de $H0$.
+
+\section{Desenho Experimental de H1}
+
+A hipótese H1 contrasta o desempenho das estratégias baseadas em
+\textit{momentum} e \textit{trend following} --- operacionalizadas pelas famílias
+de indicadores clássicos disponíveis no sistema (cruzamento de médias móveis,
+MACD e os controles de regime por Bandas de Bollinger e RSI) --- com a carteira
+igualmente ponderada (\textit{equal weight}), tomada como linha de base. A
+comparação é pareada e conduzida sobre o mesmo universo de cinco ativos, as
+mesmas janelas e os mesmos custos de transação, com o Sharpe Ratio líquido
+multiasset como métrica primária, sob a definição congelada
+\texttt{H2\_SCIENTIFIC\_SHARPE\_DEFINITION\_V1}, e a decisão estatística por
+\textit{Bootstrap A} (Seção de Inferência Estatística). Cada braço é avaliado
+como uma carteira sobre os cinco ativos, com pesos por sessão determinados pela
+regra do indicador, em contraste com a alternância binária ativo--caixa
+característica da forma single-asset dessas mesmas regras.
+
+% TODO(redator): PENDENTE (PENDENCIAS_EXPERIMENTAIS item 6). A instanciação
+% multiasset das estratégias de momentum/trend-following e o snapshot congelado
+% dos cinco ativos ainda não existem em código: o registro de participantes
+% (src/experiments/participants.py) expõe apenas equal_weight e min_variance como
+% carteiras multiasset; sma_cross, bollinger e indicator_family_control são
+% single-asset. A definição exata do conjunto de braços de H1 e a estratégia
+% multiasset constituem decisão metodológica do autor e exigem freeze antes da
+% execução. Não preencher com resultados simulados.
+
+\section{Ameaças à Validade}
+
+As principais ameaças à validade do estudo são: (i) \textit{overfitting} do pesquisador, contido pelo desenho \textit{outcome-blind}, pelo congelamento metodológico e pela separação das âncoras; (ii) validade externa limitada, dado o universo restrito de cinco ativos do mercado brasileiro; (iii) custo computacional e financeiro da inferência paga do modelo de linguagem; e (iv) avaliação em ativo único no caminho de agente. Nenhum resultado de desempenho do agente é prometido a priori; a calibração é explicitamente distinta de treinamento.
+
+\section{Benchmarks}
+
+A avaliação comparativa inclui \textit{benchmarks} clássicos: \textit{Buy and Hold}, carteira igualmente ponderada, e os controles baseados em indicadores (SMA, Bandas de Bollinger, RSI e MACD, combinados em escore discreto). A comparação científica formal entre o sistema multiagente e esses \textit{benchmarks}, bem como os resultados das hipóteses H1 e H2, dependem da execução das fases de validação e teste final e são apresentados no Capítulo~\ref{cha:resultados}.

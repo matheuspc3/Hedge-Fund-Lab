@@ -1,0 +1,29 @@
+\chapter{Introdução}
+\label{cha:introducao}
+
+O mercado financeiro contemporâneo impõe desafios relevantes à construção e à avaliação de estratégias quantitativas, sobretudo em cenários marcados por alta volatilidade, não estacionariedade e grande volume de dados. Nesse contexto, abordagens clássicas de análise técnica continuam úteis como referência metodológica, mas frequentemente apresentam limitações quando aplicadas de forma isolada, seja pela sensibilidade a regimes de mercado distintos, seja pelo risco de superajuste (\textit{overfitting}) em processos de \textit{backtesting}. Essa constatação justifica a proposição de um ambiente experimental capaz de organizar dados, regras de decisão e critérios de avaliação de maneira rigorosa, antes da busca por desempenho superior imediato.
+
+Diante desse cenário, o problema central desta pesquisa consiste em como conceber uma arquitetura de laboratório de \textit{backtesting} que integre engenharia de dados e deliberação multiagente baseada em \textit{Large Language Models} (LLMs), permitindo uma comparação robusta com \textit{benchmarks} clássicos. A pergunta de pesquisa que orienta o trabalho pode ser formulada da seguinte maneira: como projetar um ambiente experimental que permita avaliar, de forma comparável e metodologicamente controlada, se uma arquitetura multiagente baseada em LLMs produz decisões de investimento mais robustas do que abordagens tradicionais quando submetida a critérios explícitos de risco, custo e consistência operacional?
+
+Com esse propósito, este trabalho tem como objetivo geral desenvolver o Hedge-fund-lab, um laboratório quantitativo para \textit{backtesting} de estratégias de investimento baseado em sistemas multiagentes. Como contribuição principal, propõe-se a avaliação comparativa entre metodologias clássicas de alocação e uma arquitetura de inteligência artificial baseada em deliberação multiagente. Para viabilizar essa análise empírica, o trabalho desenvolve um artefato metodológico que integra um pipeline de dados baseado nos registros oficiais de negociação da B3 (COTAHIST), persistidos em banco relacional (SQLite/SQLAlchemy), a um comitê coordenado por LangGraph (composto por agentes especializados em análise técnica, gestão de risco e gestão de portfólio), executado sobre um motor de \textit{backtesting} próprio, permitindo uma mensuração rigorosa de desempenho frente aos \textit{benchmarks} tradicionais.
+
+São objetivos específicos do trabalho:
+
+\begin{enumerate}
+    \item Construir um pipeline de dados reproduzível, a partir da fonte oficial de preços e negociações da B3 (COTAHIST), com correção de proventos e calendário de negociação próprio;
+    \item Implementar um motor de \textit{backtesting} que incorpore custos de transação e as métricas de risco definidas no protocolo experimental;
+    \item Desenvolver um sistema multiagente baseado em LLMs, coordenado por LangGraph, com papéis especializados e processo de consenso;
+    \item Estabelecer um desenho experimental controlado, com calibração e avaliação separadas temporalmente, que permita comparar o sistema multiagente aos \textit{benchmarks} clássicos sem vazamento de informação futura.
+\end{enumerate}
+
+A partir do referencial teórico, formulam-se as seguintes hipóteses de pesquisa, preservadas integralmente da etapa anterior do trabalho:
+
+\begin{itemize}
+    \item \textbf{H1:} Será avaliado se estratégias baseadas em momentum e \textit{trend following} apresentam desempenho superior ao \textit{equal weight} em termos de Sharpe Ratio líquido.
+    \item \textbf{H2:} Será avaliado se o sistema multiagente baseado em LLMs apresenta desempenho superior ajustado ao risco em relação aos \textit{benchmarks} considerados, tomando como critério principal o Sharpe Ratio líquido e, como critérios complementares, Sortino Ratio, \textit{Maximum Drawdown} e \textit{turnover}.
+    \item \textbf{H0:} Não há diferença estatisticamente significativa entre as abordagens.
+\end{itemize}
+
+A contribuição deste trabalho é menos a antecipação de um resultado de desempenho superior e mais o estabelecimento de uma base técnica e metodológica coerente para a etapa empírica: um laboratório quantitativo reproduzível, auditável e extensível, em que dados, estratégias e critérios de avaliação são rastreados de forma explícita, permitindo que a comparação entre deliberação multiagente e \textit{benchmarks} clássicos seja conduzida com rigor e sem o viés de superajuste que caracteriza boa parte da literatura aplicada.
+
+A presente monografia está organizada em sete capítulos. Além desta introdução, o Capítulo~\ref{cha:fundamentacao} apresenta a fundamentação teórica, abordando as hipóteses de eficiência de mercado, as estratégias de análise técnica, a teoria moderna de portfólio e a literatura sobre modelos de linguagem e sistemas multiagentes. O Capítulo~\ref{cha:relacionados} revisa os trabalhos relacionados e situa o Hedge-fund-lab frente às abordagens existentes. O Capítulo~\ref{cha:arquitetura} descreve a arquitetura e a implementação da solução, detalhando o pipeline de dados, a camada de persistência, o motor de \textit{backtesting} e o comitê de agentes. O Capítulo~\ref{cha:metodologia} detalha o desenho experimental e o protocolo metodológico de avaliação. O Capítulo~\ref{cha:resultados} apresenta e discute os resultados experimentais, e o Capítulo~\ref{cha:conclusao} encerra com as considerações finais, limitações e trabalhos futuros.

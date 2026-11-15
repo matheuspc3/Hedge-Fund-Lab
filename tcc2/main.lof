@@ -1,0 +1,11 @@
+\babel@toc {brazil}{}\relax 
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Fluxo do pipeline de dados científico: preço oficial da B3 (COTAHIST) combinado ao fator de ajuste por proventos do \texttt {yfinance}, seguido de transformação, carga e persistência em SQLite.}}{12}{figure.caption.43}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Grafo de decisão do sistema multiagente (LangGraph): sequência linear \texttt {technical\_analyst} $\rightarrow $ \texttt {risk\_manager}, com aresta condicional que encaminha ao \texttt {portfolio\_manager} apenas quando o veredito é \texttt {APROVADO}.}}{14}{figure.caption.48}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsfinish 
