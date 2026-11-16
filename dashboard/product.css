@@ -1,6 +1,6 @@
 /* DP-23: approved light interface. Existing page tokens keep historical views legible. */
 :root{color-scheme:light;--bg:#f5f6fa;--surface:#fff;--surface-2:#f1f4fa;--surface-3:#e9eef8;--panel:#fff;--shell-bg:#fff;--text:#1b2437;--text-2:#43516a;--muted:#657188;--line:#e2e7f0;--border-control:#8b97ad;--accent:#3358d4;--link:#2c50c9;--focus:#3358d4;--amber:#85570c;--state-ok:#207754;--state-warn:#85570c;--state-error:#b34550;--state-danger:#b34550;--state-info:#315bb4;--state-neutral:#58647b;--state-synthetic:#7751a2;--state-paid:#85570c;--surface2:var(--surface-2);--border2:var(--line);--page:var(--bg);--radius-md:16px;--radius-lg:18px}
-body.hfl-platform{background:var(--bg);color:var(--text);padding:0 0 0 190px;font:14px/1.55 'Segoe UI',system-ui,sans-serif}
+body.hfl-platform{background:var(--bg);color:var(--text);padding:0 0 0 212px;font:14px/1.55 'Segoe UI',system-ui,sans-serif}
 body.hfl-platform main{max-width:1500px;width:auto;margin:0 auto;padding:30px 32px 48px;min-width:0}
 body.hfl-platform :is(h1,.ds-title){font-size:28px;letter-spacing:-.8px;font-weight:600;line-height:1.25;margin:0 0 9px}
 body.hfl-platform h2{font-size:17px;line-height:1.35;font-weight:600}
@@ -38,7 +38,7 @@ body.hfl-platform :is(.hfl-primary,.hfl-archive,.hfl-secondary){display:flex;fle
 body.hfl-platform .hfl-primary a{display:flex;align-items:center;gap:12px;padding:11px 13px;min-height:45px;font-size:14px;color:var(--muted);border:0;border-radius:10px;text-decoration:none}
 body.hfl-platform .hfl-primary a[aria-current]{background:#edf1ff;color:var(--accent);font-weight:600}
 .hfl-primary a::before{font-size:19px;width:19px;text-align:center}
-.hfl-primary a[data-area=inicio]::before{content:'⊞' / ''}.hfl-primary a[data-area=operacoes]::before{content:'⇄' / ''}.hfl-primary a[data-area=agentes]::before{content:'✦' / ''}.hfl-primary a[data-area=comparacao]::before{content:'↗' / ''}.hfl-primary a[data-area=mercado]::before{content:'▤' / ''}
+.hfl-primary a[data-area=inicio]::before{content:'⊞' / ''}.hfl-primary a[data-area=operacoes]::before{content:'⇄' / ''}.hfl-primary a[data-area=agentes]::before{content:'✦' / ''}.hfl-primary a[data-area=comparacao]::before{content:'↗' / ''}.hfl-primary a[data-area=mercado]::before{content:'▤' / ''}.hfl-primary a[data-area=replay]::before{content:'◷' / ''}
 body.hfl-platform .hfl-archive{border-top:1px solid var(--line);padding-top:16px}
 body.hfl-platform :is(.hfl-archive,.hfl-secondary) a{padding:7px 13px;color:var(--muted);font-size:12px;border:0;text-decoration:none;border-radius:7px}
 body.hfl-platform :is(.hfl-archive,.hfl-secondary) a[aria-current]{background:var(--surface-2);color:var(--accent)}
@@ -240,23 +240,27 @@ body[data-agent-stage=setup] .cycle-nodes [data-agent-stage=setup],body[data-age
 /* IP-2026-11-03: sidebar v2 — altura cheia, este martouts de seção, rodapé com
    perfil e largura ampliada. Regras acompanham o HTML de shell.html (aside.hfl-links);
    a versão antiga de barra superior ainda existe para ≲1100px. */
-body.hfl-platform .hfl-shell{width:212px;padding:22px 14px 14px;gap:0;overflow-y:auto;display:flex;flex-direction:column}
+body.hfl-platform .hfl-shell{width:212px;padding:22px 14px 14px;gap:0;overflow-y:auto;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;color:var(--text)}
 body.hfl-platform .hfl-links{height:100%;min-height:100%;display:flex;flex-direction:column;gap:0}
 body.hfl-platform .hfl-top{display:none}
 .hfl-brand--side{display:flex}
-.hfl-eyebrow{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);font-weight:650;margin:18px 6px 7px 12px}
-.hfl-eyebrow--area{margin-top:20px}
+body.hfl-platform .hfl-eyebrow{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);font-weight:650;margin:18px 6px 7px 12px}
+body.hfl-platform .hfl-eyebrow--area{margin-top:20px}
 /* Breadcrumb compacto e vertical, agora visível na sidebar */
 .hfl-platform .hfl-crumbs{flex-direction:column;flex-wrap:wrap;gap:2px;margin:10px 4px 0;font-size:11px;line-height:1.35}
 .hfl-platform .hfl-crumbs li+li::before{content:none}
 .hfl-platform .hfl-env{font-size:9.5px;letter-spacing:1px;text-transform:uppercase;font-weight:650;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:4px 8px;display:inline-block;white-space:normal;text-align:center}
-.hfl-side-foot{margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-top:14px;border-top:1px solid var(--line)}
+body.hfl-platform .hfl-side-foot{margin-top:auto;display:flex;flex-direction:column;gap:10px;padding:14px 0 0;border-top:1px solid var(--line);max-width:none}
 .product-profile{border-top:0;margin-top:0;padding:0 2px}
 /* Hovers para acervo e seções */
 body.hfl-platform :is(.hfl-archive,.hfl-secondary) a:hover{background:var(--surface-2);color:var(--text-2)}
 body.hfl-platform .hfl-secondary a{display:flex;align-items:center;gap:8px;font-size:12.5px}
 /* Ícones refinados (WS cohesivo, flat) */
-.hfl-primary a[data-area=inicio]::before{content:'⌂' / ''}.hfl-primary a[data-area=operacoes]::before{content:'⇄' / ''}.hfl-primary a[data-area=agentes]::before{content:'◉' / ''}.hfl-primary a[data-area=comparacao]::before{content:'◫' / ''}.hfl-primary a[data-area=mercado]::before{content:'▦' / ''}
+.hfl-primary a[data-area=inicio]::before{content:'⌂' / ''}.hfl-primary a[data-area=operacoes]::before{content:'⇄' / ''}.hfl-primary a[data-area=agentes]::before{content:'◉' / ''}.hfl-primary a[data-area=comparacao]::before{content:'◫' / ''}.hfl-primary a[data-area=mercado]::before{content:'▦' / ''}.hfl-primary a[data-area=replay]::before{content:'◷' / ''}
+body.hfl-replay .product-topbar{display:none}
+body.hfl-replay>header:not(.hfl-shell) h1{color:#fff;margin:0}
+body.hfl-replay .tabs [role=tab]{padding:9px 11px;border:1px solid #bdcbd7;border-radius:7px;background:#fff;color:var(--ink)}
+body.hfl-replay .tabs [role=tab][aria-selected=true]{background:#17334c;color:#fff;border-color:#17334c}
 @media(max-width:1100px){
   body.hfl-platform{padding-left:0}
   body.hfl-platform .hfl-shell{position:fixed;top:0;left:0;bottom:0;width:min(250px,88vw);transform:translateX(-105%);transition:transform .22s ease;box-shadow:0 18px 54px rgba(15,25,39,.28);z-index:70;background:#fff}

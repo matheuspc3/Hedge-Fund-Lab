@@ -52,7 +52,7 @@
       </section><section class="product-panel product-operation-history"><div class="product-panel-head"><h2>Histórico da carteira</h2><span class="product-chip">Registros persistidos</span></div><div id="personal-trades"></div><details style="margin-top:20px"><summary>Correções e rastreabilidade</summary><div id="personal-audit"></div></details></section>
       </div>
     </div>
-    <div data-personal-view="comparison" hidden><section class="product-panel"><h2>Retorno acumulado</h2><p id="cmp-note" class="product-note" aria-live="polite">Conferindo históricos e fechamentos…</p><div id="cmp-wrap" hidden><div class="home-chart-canvas"><canvas id="cmp-chart" role="img" aria-label="Retorno acumulado em porcentagem desde o início, por carteira e Ibovespa; valores na tabela abaixo"></canvas></div><details><summary>Consultar os valores do gráfico em tabela</summary><div id="cmp-table"></div></details></div></section><section class="product-panel" style="margin-top:20px"><h2>Carteiras cadastradas</h2><p class="product-note">Carteiras pessoais só pertencem à mesma comparação quando seu grupo, base inicial e condições forem compatíveis.</p><div id="product-comparison"></div></section></div>
+    <div data-personal-view="comparison" hidden><section class="product-panel"><div class="product-panel-head"><h2>Retorno acumulado</h2><a href="/laboratory/replay/">Replay abril–novembro (153 pregões) →</a></div><p id="cmp-note" class="product-note" aria-live="polite">Conferindo históricos e fechamentos…</p><div id="cmp-wrap" hidden><div class="home-chart-canvas"><canvas id="cmp-chart" role="img" aria-label="Retorno acumulado em porcentagem desde o início, por carteira e Ibovespa; valores na tabela abaixo"></canvas></div><details><summary>Consultar os valores do gráfico em tabela</summary><div id="cmp-table"></div></details></div></section><section class="product-panel" style="margin-top:20px"><h2>Carteiras cadastradas</h2><p class="product-note">Carteiras pessoais só pertencem à mesma comparação quando seu grupo, base inicial e condições forem compatíveis.</p><div id="product-comparison"></div></section></div>
     <section class="product-panel" data-personal-view="dividends" hidden><h2>Proventos da carteira</h2><p id="div-status" class="product-note" role="status">Conferindo proventos…</p><div id="div-tiles" class="ds-kpis" aria-live="polite"></div><div id="div-table"></div><p id="div-note" class="product-note"></p><a href="/" class="product-wallet-link">Voltar à carteira →</a></section>
     <div class="product-footer"><button type="button" id="personal-refresh">Atualizar consulta</button><p>Registros locais · nenhuma ordem é enviada à corretora. Inferência dos agentes e aplicação de propostas têm confirmações próprias.</p></div>
   </section>
@@ -77,8 +77,7 @@
   </section>
   <details id="home-laboratory" class="home-laboratory"><summary>Explorar o laboratório multiativos e a auditoria</summary>
   <section class="ds-card lab-bt" id="lab-bt" aria-labelledby="lab-bt-title">
-    <p class="ds-eyebrow">Laboratório · somente leitura</p>
-    <h2 class="ds-section-title" id="lab-bt-title">Backtest de regras</h2>
+    <div class="product-panel-head"><div><p class="ds-eyebrow">Laboratório · somente leitura</p><h2 class="ds-section-title" id="lab-bt-title">Backtest de regras</h2></div><a href="/laboratory/replay/">Replay abril–novembro (153 pregões) →</a></div>
     <p class="ds-lead">Cesta de ativos com ou sem rebalanceamento, simulada sobre a base local de preços ajustados por proventos. Histórico, não previsão; não altera carteiras nem o piloto.</p>
     <form id="lab-bt-form" class="personal-form" novalidate>
       <fieldset class="personal-wide lab-bt-assets"><legend>Ativos</legend>
@@ -103,54 +102,12 @@
       <details><summary>Consultar os valores do gráfico em tabela</summary><div id="lab-bt-table"></div></details>
     </div>
   </section>
-  <section class="home-hero" aria-labelledby="home-title">
-    <p class="ds-eyebrow">Laboratório de pesquisa · sistemas multiagentes</p>
-    <h2 id="home-title" class="ds-title">Hedge-Fund-Lab</h2>
-    <p class="ds-subtitle">Laboratório de pesquisa quantitativa com agentes de inteligência artificial para análise de ativos, avaliação de risco e simulação de decisões financeiras.</p>
-    <ul class="home-facts">
-      <li><span class="home-fact-icon" aria-hidden="true">⊘</span><div><strong>Nenhum envio de ordem.</strong> Carteiras pessoais podem registrar negócios reais já feitos externamente; propostas da IA continuam consultivas. <button class="ds-help" data-help="sem-ordens-reais"></button></div></li>
-      <li><span class="home-fact-icon" aria-hidden="true">¤</span><div><strong>Custos sob controle.</strong> Ações que podem consumir orçamento de IA levam o símbolo ¤ e sempre pedem confirmação. <button class="ds-help" data-help="inferencia-paga"></button></div></li>
-      <li><span class="home-fact-icon" aria-hidden="true">✓</span><div><strong>Resultados auditáveis.</strong> Registros selados por hash e conferidos por regras determinísticas. <button class="ds-help" data-help="hash"></button></div></li>
-    </ul>
-  </section>
-
-  <section class="ds-section" aria-labelledby="explore-title">
-    <div class="ds-section-head"><div><h2 id="explore-title" class="ds-section-title">Explorar o laboratório</h2><p class="ds-lead">Escolha o que quer fazer. Nada nestes atalhos executa análises ou gera custo.</p></div></div>
-    <div class="ds-grid home-tasks">
-      <a class="ds-card ds-card--link" href="/market" data-run-link><span class="ds-card-icon" aria-hidden="true">⌁</span><h3>Explorar o mercado</h3><p>Ativos, indicadores técnicos e pareceres da sessão registrada no Radar. Dados históricos; cobertura do universo selecionado.</p><span data-ds-state="READ_ONLY" data-code="false"></span><span class="ds-card-cta">Explorar ativos →</span></a>
-      <a class="ds-card ds-card--link" href="/radar" data-run-link><span class="ds-card-icon" aria-hidden="true">◎</span><h3>Consultar o Radar</h3><p>Pareceres de comitês de 5 analistas de IA por ativo, com consenso e avaliação de risco.</p><span data-ds-state="CONSULTATIVE_SANDBOX" data-code="false"></span><span class="ds-card-cta">Abrir Radar →</span></a>
-      <a class="ds-card ds-card--link" href="/portfolio#global-workflow" data-run-link><span class="ds-card-icon" aria-hidden="true">◫</span><h3>Analisar uma carteira</h3><p>Propostas do Gestor Global para uma carteira hipotética e a validação de cada uma.</p><span data-ds-state="CONSULTATIVE_SANDBOX" data-code="false"></span><span class="ds-card-cta">Abrir Gestor e demonstrações →</span></a>
-      <a class="ds-card ds-card--link" href="/#audit"><span class="ds-card-icon" aria-hidden="true">⧉</span><h3>Auditar resultados</h3><p>Processos registrados, integridade dos registros, custos observados e recuperação sem nova chamada.</p><span data-ds-state="READ_ONLY" data-code="false"></span><span class="ds-card-cta">Abrir Auditoria →</span></a>
-    </div>
-  </section>
 
   <section class="ds-section" id="state" aria-labelledby="state-title">
     <div class="ds-section-head"><div><h2 id="state-title" class="ds-section-title">Estado do laboratório</h2><p class="ds-lead">Lido agora dos registros locais. Consultar não inicia processos, não baixa dados e não chama modelos.</p></div><div class="platform-refresh"><span id="platform-updated" role="status">Lendo registros locais, sem iniciar processos…</span><button type="button" id="platform-refresh" data-action="read">Atualizar</button></div></div>
     <div id="platform-error" role="alert" hidden></div>
     <div class="ds-kpis" id="home-state" aria-live="polite"><p class="ds-loading">Lendo registros locais…</p></div>
   </section>
-
-  <section class="ds-section" aria-labelledby="how-title">
-    <h2 id="how-title" class="ds-section-title">Como funciona</h2>
-    <p class="ds-lead">Cada etapa é registrada e pode ser auditada. A validação é feita por código determinístico, independente da IA.</p>
-    <ol class="ds-flow">
-      <li><strong>Dados de mercado</strong><span>Preços oficiais da B3, congelados por sessão</span></li>
-      <li><strong>Analistas de IA</strong><span>5 votos por ativo <button class="ds-help" data-help="radar"></button></span></li>
-      <li><strong>Consenso</strong><span>Sinal com ≥ 60% dos votos <button class="ds-help" data-help="consenso"></button></span></li>
-      <li><strong>Risk</strong><span>Parecer de risco; pode vetar <button class="ds-help" data-help="veto"></button></span></li>
-      <li><strong>Gestor Global</strong><span>Propõe uma carteira <button class="ds-help" data-help="gestor-global"></button></span></li>
-      <li class="is-gate"><strong>Validação</strong><span>Regras do contrato e da carteira <button class="ds-help" data-help="proposta-validada"></button></span></li>
-      <li><strong>Proposta consultiva</strong><span>Nenhuma ordem é enviada</span></li>
-    </ol>
-    <div class="ds-alert ds-alert--warn"><strong>Decisões dos agentes não viram operações financeiras.</strong><p>Um parecer COMPRA não obriga o Gestor Global a comprar; sem COMPRA, comprar é proibido; uma proposta validada continua consultiva e não autoriza negociação.</p></div>
-    <div class="ds-grid ds-grid--3 home-compare">
-      <article class="ds-card"><h3>Radar</h3><p>Analisa <strong>cada ativo separadamente</strong>: comitê de IA, consenso e risco. Produz pareceres, não carteiras.</p></article>
-      <article class="ds-card"><h3>Gestor Global</h3><p>Olha <strong>todos os pareceres juntos</strong> e propõe uma carteira hipotética. Cada proposta passa pelo validador.</p></article>
-      <article class="ds-card"><h3>Carteiras simuladas</h3><p>Acompanhe patrimônio, posições, decisões e operações multiativos. O piloto oficial ainda não foi iniciado; a demonstração usa dados sintéticos.</p></article>
-    </div>
-  </section>
-
-
 
   <section id="audit" class="ds-section" aria-labelledby="audit-title"><div class="section-head"><div><p class="ds-eyebrow">Auditoria · somente leitura</p><h2 id="audit-title">Registros, integridade e recuperação</h2></div></div><div id="platform-integrity" class="hfl-panel"></div><div id="platform-jobs" aria-live="polite"></div><p class="muted small">Estados vêm dos runners. Custos indisponíveis aparecem como N/D; tentativas e chamadas incertas exigem diagnóstico local. <button class="ds-help" data-help="claim"></button> Diários de chamadas e envelopes privados não são publicados. <button class="ds-help" data-help="journal"></button></p></section>
 

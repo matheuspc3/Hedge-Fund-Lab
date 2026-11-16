@@ -20,7 +20,7 @@ await session(async page=>{
    assert.equal(await page.eval(`document.querySelector('#product-wallet').value`),wallet.id);
    assert.equal(await page.eval(`document.documentElement.scrollWidth<=innerWidth+1`),true,size+' '+route);
    assert.equal(await page.eval(`document.querySelectorAll('.hfl-primary a').length`),5);
-   assert.equal(await page.eval(`Array.from(document.querySelectorAll('.hfl-primary a')).every(a=>new URL(a.href).searchParams.get('wallet')===${JSON.stringify(wallet.id)})`),true);
+   assert.equal(await page.eval(`Array.from(document.querySelectorAll('.hfl-primary a')).every(a=>{const u=new URL(a.href);return u.pathname==='/laboratory/replay/'||u.searchParams.get('wallet')===${JSON.stringify(wallet.id)};})`),true);
    if(name==='agents'){
     assert.equal(await page.eval(`document.body.dataset.agentStage`),'setup');
     assert.equal(await page.eval(`document.querySelector('[data-agent-screen="workflow"]').hidden`),true);

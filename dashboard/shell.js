@@ -8,7 +8,7 @@
   if (!shell) return;
   const menu = shell.querySelector('.hfl-menu'), links = shell.querySelector('.hfl-links');
   const primary = [...shell.querySelectorAll('.hfl-primary a,.hfl-archive a')], secondary = [...shell.querySelectorAll('.hfl-secondary a')];
-  const ALIASES = { '/index.html': '/legacy/backtests', '/paper': '/legacy/paper', '/paper/': '/legacy/paper', '/paper.html': '/legacy/paper', '/h2': '/legacy/h2', '/h2/': '/legacy/h2', '/h2.html': '/legacy/h2', '/platform.html': '/', '/legacy/': '/legacy' };
+  const ALIASES = { '/index.html': '/legacy/backtests', '/paper': '/legacy/paper', '/paper/': '/legacy/paper', '/paper.html': '/legacy/paper', '/h2': '/legacy/h2', '/h2/': '/legacy/h2', '/h2.html': '/legacy/h2', '/platform.html': '/', '/legacy/': '/legacy', '/laboratory/replay/index.html': '/laboratory/replay' };
   const norm = (p) => { p = ALIASES[p] || p.replace(/\.html$/, '').replace(/\/$/, ''); return p || '/'; };
   //: Pages that understand ?run=<radar run id>; the parameter is carried between them.
   const RUN_PAGES = new Set(['/market', '/radar', '/portfolio']);

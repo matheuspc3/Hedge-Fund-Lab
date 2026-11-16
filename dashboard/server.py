@@ -89,25 +89,18 @@ AREAS = (
     ),
     ("comparacao", "Comparação", "/comparison", "CARTEIRAS INDEPENDENTES", ()),
     (
-        "mercado",
-        "Dados",
-        "/data",
-        "CONSULTIVO · PARECERES DE IA, SEM ORDENS",
-        (("/data", "Central de dados"), ("/market", "Explorar ativos")),
+        "replay",
+        "Replay abril–novembro",
+        REPLAY_ROUTE,
+        "CAMPANHA 06/04–12/11 · 153 PREGÕES · SOMENTE CONSULTA",
+        (),
     ),
     (
         "carteira",
         "Laboratório",
         "/laboratory",
         "HIPOTÉTICA · CONSULTIVA · SEM EXECUÇÃO",
-        (
-            ("/portfolio#visao-geral", "Consulta demonstrativa"),
-            ("/portfolio#posicoes", "Posições e acompanhamento"),
-            ("/portfolio#global-workflow", "Gestor Global: registros"),
-            ("/portfolio#evidencias", "Histórico e evidências"),
-            ("/portfolio#simulador", "Simulador demonstrativo"),
-            (REPLAY_ROUTE, "Replay abril–novembro"),
-        ),
+        (),
     ),
     (
         "legacy",
@@ -117,24 +110,19 @@ AREAS = (
         (
             ("/legacy", "Acervo histórico"),
             ("/legacy/paper#visao", "Piloto PETR4"),
-            ("/legacy/paper#acompanhamento", "Patrimônio e pendências"),
-            ("/legacy/paper#sala", "Decisões registradas"),
-            ("/legacy/paper#carteiras", "Carteiras independentes"),
-            ("/legacy/paper#mercado", "Preços registrados"),
-            ("/legacy/paper#agentes", "Agentes H2"),
             ("/legacy/h2", "Pesquisa H2"),
-            ("/legacy/backtests", "Backtests históricos"),
+            ("/legacy/backtests", "Backtests anteriores"),
         ),
     ),
     (
         "auditoria",
         "Auditoria",
-        "/#audit",
+        "/logs",
         "SOMENTE LEITURA · REGISTROS E INTEGRIDADE",
         (
-            ("/#audit", "Registros e processos"),
-            ("/agents", "Voto por agente"),
             ("/logs", "Atividade e registros"),
+            ("/agents", "Voto por agente"),
+            ("/#audit", "Registros e processos"),
         ),
     ),
 )
@@ -157,8 +145,8 @@ PAGE_AREA = {
     "platform.html": "inicio",
     "radar.html": "agentes",
     "agents.html": "auditoria",
-    "data.html": "mercado",
-    "market.html": "mercado",
+    "data.html": "auditoria",
+    "market.html": "agentes",
     "portfolio.html": "carteira",
     "legacy.html": "legacy",
     "paper.html": "legacy",
@@ -806,6 +794,41 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _render_shell(self, current: str) -> str:
+        area = next(a for a in AREAS if a[0] == current)
+        marks = {
+            key: (' aria-current="true"', "") if key == current else ("", " hidden")
+            for key, *_ in AREAS
+        }
+        areas = "".join(
+            f'<a href="{html.escape(href)}" data-area="{key}" data-env="{html.escape(env)}"'
+            f"{marks[key][0]}>{html.escape(label)}</a>"
+            for key, label, href, env, _ in AREAS
+            if key not in {"legacy", "carteira", "auditoria"}
+        )
+        links = "".join(
+            f'<a href="{html.escape(href)}" data-area="{key}"{marks[key][1]}>{html.escape(label)}</a>'
+            for key, _, _, _, entries in AREAS
+            for href, label in entries
+        )
+        return (
+            (DIR / "shell.html")
+            .read_text(encoding="utf-8")
+            .replace("{{areas}}", areas)
+            .replace(
+                "{{legacy}}",
+                "".join(
+                    f'<a href="{href}" data-area="{key}" data-env="{env}"{marks[key][0]}>{label}</a>'
+                    for key, label, href, env, _ in AREAS
+                    if key in {"legacy", "carteira", "auditoria"}
+                ),
+            )
+            .replace("{{links}}", links)
+            .replace("{{area}}", current)
+            .replace("{{area_label}}", html.escape(area[1]))
+            .replace("{{environment}}", html.escape(area[3]))
+        )
+
     def _serve_replay(self, path):
         """DP-37: read only the explicit exports from the independent replay package."""
         if path == REPLAY_ROUTE[:-1]:
@@ -825,6 +848,24 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         except OSError:
             return self.send_error(503, "O replay ainda não está disponível neste servidor.")
         with stream:
+            prefix = b""
+            delta = 0
+            if name == "index.html":
+                prefix = stream.read(8192)
+                if b"</head>" in prefix and b"<body>" in prefix:
+                    injected = (
+                        '<link rel="stylesheet" href="/shell.css?v=762">'
+                        '<script src="/shell.js?v=764" defer></script></head>\n'
+                        '<body class="hfl-platform hfl-replay">'
+                        + self._render_shell("replay")
+                    ).encode("utf-8")
+                    updated = (
+                        prefix.replace(b"</head>\r\n<body>", injected, 1)
+                        if b"</head>\r\n<body>" in prefix
+                        else prefix.replace(b"</head>\n<body>", injected, 1)
+                    ).replace(b"<main>", b'<main id="main">', 1)
+                    delta = len(updated) - len(prefix)
+                    prefix = updated
             self.send_response(200)
             content_type = {".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".csv": "text/csv"}[source.suffix]
             self.send_header("Content-Type", content_type + "; charset=utf-8")
@@ -843,14 +884,18 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 self.send_header("Connection", "close")
                 self.close_connection = True
             else:
-                self.send_header("Content-Length", str(os.fstat(stream.fileno()).st_size))
+                self.send_header("Content-Length", str(os.fstat(stream.fileno()).st_size + delta))
             self.end_headers()
             if self.command != "HEAD":
                 if compressed:
                     # ponytail: per-request gzip suits this personal server; cache by package hash if traffic grows.
                     with gzip.GzipFile(fileobj=self.wfile, mode="wb", compresslevel=6, mtime=0) as encoded:
+                        if prefix:
+                            encoded.write(prefix)
                         self.copyfile(stream, encoded)
                 else:
+                    if prefix:
+                        self.wfile.write(prefix)
                     self.copyfile(stream, self.wfile)
 
     def _serve_static(self, filename: str) -> None:
@@ -865,40 +910,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             current = PRODUCT_AREAS.get(
                 urlsplit(self.path).path, PAGE_AREA.get(filename, "inicio")
             )
-            area = next(a for a in AREAS if a[0] == current)
-            marks = {
-                key: (' aria-current="true"', "") if key == current else ("", " hidden")
-                for key, *_ in AREAS
-            }
-            areas = "".join(
-                f'<a href="{html.escape(href)}" data-area="{key}" data-env="{html.escape(env)}"'
-                f"{marks[key][0]}>{html.escape(label)}</a>"
-                for key, label, href, env, _ in AREAS
-                if key not in {"legacy", "carteira", "auditoria"}
-            )
-            links = "".join(
-                f'<a href="{html.escape(href)}" data-area="{key}"{marks[key][1]}>{html.escape(label)}</a>'
-                for key, _, _, _, entries in AREAS
-                for href, label in entries
-            )
-            shell = (
-                (DIR / "shell.html")
-                .read_text(encoding="utf-8")
-                .replace("{{areas}}", areas)
-                .replace(
-                    "{{legacy}}",
-                    "".join(
-                        f'<a href="{href}" data-area="{key}" data-env="{env}"{marks[key][0]}>{label}</a>'
-                        for key, label, href, env, _ in AREAS
-                        if key in {"legacy", "carteira", "auditoria"}
-                    ),
-                )
-                .replace("{{links}}", links)
-                .replace("{{area}}", current)
-                .replace("{{area_label}}", html.escape(area[1]))
-                .replace("{{environment}}", html.escape(area[3]))
-            )
-            content = content.replace("<!-- platform-shell -->", shell)
+            content = content.replace("<!-- platform-shell -->", self._render_shell(current))
         content = content.encode("utf-8")
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -1024,9 +1036,10 @@ def setup():
 
 def main():
     port = int(sys.argv[1]) if len(sys.argv) > 1 else PORT
+    host = os.environ.get("HFL_HOST", "127.0.0.1")
     setup()
 
-    with ReusableTCPServer(("127.0.0.1", port), Handler) as httpd:
+    with ReusableTCPServer((host, port), Handler) as httpd:
         logger.info("Servidor iniciado em http://localhost:%d", port)
         logger.info("  H2 v6     : http://localhost:%d/h2", port)
         logger.info("  Paper     : http://localhost:%d/paper", port)

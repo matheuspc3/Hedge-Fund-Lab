@@ -61,6 +61,12 @@ def check():
                     for accept in ("identity", "gzip;q=0", "gzip;q=0.0", "gzip;q=0.0001", "gzip;q=1.1", "xgzip"):
                         status, body, headers = request(route, **{"Accept-Encoding": accept})
                         assert status == 200 and body == raw and "Content-Encoding" not in headers
+                    (exports / "index.html").write_bytes(b"<!doctype html><html><head></head>\n<body>\n<main>ok</main></body></html>")
+                    status, body, headers = request(route)
+                    assert status == 200 and b'class="hfl-shell" data-default-area="replay"' in body
+                    assert b'data-area="replay"' in body and b'id="main"' in body
+                    assert headers["Content-Length"] == str(len(body))
+                    (exports / "index.html").write_bytes(raw)
                     for method in ("GET", "HEAD"):
                         status, body, headers = request(route[:-1], method)
                         assert status == 308 and not body and headers["Location"] == route

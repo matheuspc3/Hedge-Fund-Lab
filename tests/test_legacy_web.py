@@ -130,10 +130,17 @@ def test_hub_aliases_head_query_and_cross_site_navigation(web):
     primary = body.split('aria-label="Navegação principal">')[1].split("</nav>")[0]
     assert all(
         label in primary
-        for label in ("Carteira", "Operações", "Agentes", "Comparação", "Dados")
+        for label in (
+            "Carteira",
+            "Operações",
+            "Agentes",
+            "Comparação",
+            "Replay abril–novembro",
+        )
     )
     assert all(
-        label not in primary for label in ("Legacy", "Pesquisa", "Operação diária PETR4")
+        label not in primary
+        for label in ("Dados", "Legacy", "Pesquisa", "Operação diária PETR4")
     )
     assert 'class="hfl-archive"' in body
 
@@ -145,7 +152,7 @@ def test_hub_aliases_head_query_and_cross_site_navigation(web):
         ("/comparison", "comparacao"),
         ("/wallets/new", "inicio"),
         ("/dividends", "inicio"),
-        ("/data", "mercado"),
+        ("/data", "auditoria"),
         ("/laboratory", "carteira"),
     ],
 )

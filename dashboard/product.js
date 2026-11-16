@@ -4,7 +4,7 @@
   const el=id=>document.getElementById(id), picker=el('product-wallet');
   if(!picker)return;
   const params=new URLSearchParams(location.search), route=location.pathname;
-  const historical=params.get('demo')==='1'||(route==='/'&&location.hash==='#audit')||/^\/(legacy(?:\/|$)|paper(?:\.html|\/|$)|h2(?:\.html|\/|$)|index\.html$|portfolio(?:\.html|\/|$)|laboratory$|logs(?:\.html|\/|$))/.test(route);
+  const historical=params.get('demo')==='1'||(route==='/'&&location.hash==='#audit')||/^\/(legacy(?:\/|$)|paper(?:\.html|\/|$)|h2(?:\.html|\/|$)|index\.html$|portfolio(?:\.html|\/|$)|laboratory(?:\/|$)|logs(?:\.html|\/|$))/.test(route);
   const esc=v=>String(v??'Indisponível').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const money=v=>v==null?'Indisponível':Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
   const view={'/operations':'operations','/comparison':'comparison','/dividends':'dividends','/wallets/new':'create','/laboratory':'laboratory'}[route]||'wallet';
@@ -129,11 +129,18 @@
     if(titles[view]){el('personal-title').textContent=titles[view];document.title=titles[view]+' · Hedge Fund Lab';}
     if(subtitles[view])el('personal-subtitle').textContent=subtitles[view];
     const laboratory=el('home-laboratory');
-    laboratory.hidden=view!=='laboratory'&&location.hash!=='#audit';
-    if(view==='laboratory'||location.hash==='#audit'){laboratory.open=true;el('personal-portfolios').hidden=true;}
+    const syncLab=()=>{
+      const isAudit=location.hash==='#audit',active=view==='laboratory'||isAudit;
+      laboratory.hidden=!active;laboratory.open=active;
+      el('personal-portfolios').hidden=active||params.get('demo')==='1';
+      if(el('lab-bt'))el('lab-bt').hidden=isAudit;
+      if(el('state'))el('state').hidden=!isAudit;
+      if(el('audit'))el('audit').hidden=!isAudit;
+    };
+    syncLab();window.addEventListener('hashchange',syncLab);
     document.querySelectorAll('[data-personal-view]').forEach(n=>{n.hidden=n.dataset.personalView!==view;});
     if(view==='create')el('personal-create').hidden=false;
-    if(params.get('demo')!=='1'&&view!=='laboratory')el('home-portfolio').hidden=true;
+    if(params.get('demo')!=='1')el('home-portfolio').hidden=true;
     el('product-buy')?.addEventListener('click',()=>setSide('BUY'));
     el('product-sell')?.addEventListener('click',()=>setSide('SELL'));
     function setSide(side){const input=el('trade-form').elements.namedItem('side');input.value=side;input.dispatchEvent(new Event('change',{bubbles:true}));document.querySelectorAll('[data-side]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.side===side)));}
