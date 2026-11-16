@@ -1,0 +1,1465 @@
+{
+  "status": "PASS",
+  "v1_preserved_hashes": {
+    "explorer.json": "88c3a0e1f45ffa15d9033a74714821a863c14033c182ce54d3915fa087e5f6e4",
+    "calls.json": "b5ef95859304e40d21ef41232ebf2f9187f9c56eede4d91cfff30d85fdaba6fb"
+  },
+  "v2_preserved_hashes": {
+    "explorer.json": "4f517224253e8e34d2b47dc2cf0f0c61f25df5664af0137aa5973aa71233d932",
+    "calls.json": "f5c013450ddb64fedefc7067a19d92ed0f8071dd0d1fcc46a4cb1363f3649561"
+  },
+  "reference_parity_v1_v2": {
+    "BUY_HOLD": true,
+    "SMA_50_200": true,
+    "BOLLINGER_20_2": true,
+    "EQUAL_WEIGHT_63": true,
+    "MIN_VARIANCE_252_63": true
+  },
+  "reference_parity_v1_v3": {
+    "BUY_HOLD": true,
+    "SMA_50_200": true,
+    "BOLLINGER_20_2": true,
+    "EQUAL_WEIGHT_63": true,
+    "MIN_VARIANCE_252_63": true
+  },
+  "v1": {
+    "identity": "HFL-CONTINUOUS-EXPLORATORY-REPLAY-V1",
+    "sessions": 153,
+    "completed_days": 153,
+    "gaps": [],
+    "daily_states_reconciled": 918,
+    "wallets": {
+      "BOLLINGER_20_2": {
+        "equity": "104887.05",
+        "return_pct": "4.8870",
+        "cash": "1507.33",
+        "receivable": "8.24",
+        "costs": "151.26",
+        "trades_after_initial": 24,
+        "buys_after_initial": 12,
+        "sells": 12,
+        "full_exits": 12,
+        "positions": {
+          "BBAS3": "1273",
+          "ITUB4": "533",
+          "PETR4": "357",
+          "VALE3": "314",
+          "WEGE3": "492"
+        }
+      },
+      "BUY_HOLD": {
+        "equity": "88791.11",
+        "return_pct": "-11.2089",
+        "cash": "1418.18",
+        "receivable": "583.45",
+        "costs": "0.00",
+        "trades_after_initial": 0,
+        "buys_after_initial": 0,
+        "sells": 0,
+        "full_exits": 0,
+        "positions": {
+          "BBAS3": "855",
+          "ITUB4": "461",
+          "PETR4": "415",
+          "VALE3": "239",
+          "WEGE3": "397"
+        }
+      },
+      "EQUAL_WEIGHT_63": {
+        "equity": "89869.29",
+        "return_pct": "-10.1307",
+        "cash": "1423.03",
+        "receivable": "623.64",
+        "costs": "5.11",
+        "trades_after_initial": 15,
+        "buys_after_initial": 9,
+        "sells": 6,
+        "full_exits": 0,
+        "positions": {
+          "BBAS3": "813",
+          "ITUB4": "426",
+          "PETR4": "389",
+          "VALE3": "295",
+          "WEGE3": "411"
+        }
+      },
+      "MIN_VARIANCE_252_63": {
+        "equity": "95814.84",
+        "return_pct": "-4.1852",
+        "cash": "1581.00",
+        "receivable": "1058.91",
+        "costs": "27.94",
+        "trades_after_initial": 14,
+        "buys_after_initial": 8,
+        "sells": 6,
+        "full_exits": 1,
+        "positions": {
+          "ITUB4": "321",
+          "PETR4": "678",
+          "VALE3": "408",
+          "WEGE3": "453"
+        }
+      },
+      "MULTIAGENT": {
+        "equity": "82178.71",
+        "return_pct": "-17.8213",
+        "cash": "1346.54",
+        "receivable": "1459.03",
+        "costs": "184.40",
+        "trades_after_initial": 86,
+        "buys_after_initial": 50,
+        "sells": 36,
+        "full_exits": 9,
+        "positions": {
+          "BBAS3": "13",
+          "ITUB4": "380",
+          "PETR4": "920",
+          "WEGE3": "430"
+        }
+      },
+      "SMA_50_200": {
+        "equity": "88866.68",
+        "return_pct": "-11.1333",
+        "cash": "34912.62",
+        "receivable": "579.70",
+        "costs": "32.23",
+        "trades_after_initial": 6,
+        "buys_after_initial": 2,
+        "sells": 4,
+        "full_exits": 4,
+        "positions": {
+          "ITUB4": "377",
+          "PETR4": "415",
+          "WEGE3": "370"
+        }
+      }
+    },
+    "per_asset_multiagent": [
+      {
+        "ticker": "BBAS3",
+        "buys_after_initial": 4,
+        "buy_qty": 713,
+        "avg_buy_price": "20.99",
+        "sells": 6,
+        "sell_qty": 1555,
+        "avg_sell_price": "21.31",
+        "full_exits": 2,
+        "reentries": 2,
+        "sessions_held": 76,
+        "final_qty": 13,
+        "pnl": "-1633.20"
+      },
+      {
+        "ticker": "ITUB4",
+        "buys_after_initial": 10,
+        "buy_qty": 1070,
+        "avg_buy_price": "44.07",
+        "sells": 6,
+        "sell_qty": 1151,
+        "avg_sell_price": "40.61",
+        "full_exits": 2,
+        "reentries": 2,
+        "sessions_held": 74,
+        "final_qty": 380,
+        "pnl": "-4527.86"
+      },
+      {
+        "ticker": "PETR4",
+        "buys_after_initial": 10,
+        "buy_qty": 1620,
+        "avg_buy_price": "44.77",
+        "sells": 6,
+        "sell_qty": 1115,
+        "avg_sell_price": "42.81",
+        "full_exits": 1,
+        "reentries": 1,
+        "sessions_held": 133,
+        "final_qty": 920,
+        "pnl": "-1783.77"
+      },
+      {
+        "ticker": "VALE3",
+        "buys_after_initial": 8,
+        "buy_qty": 710,
+        "avg_buy_price": "83.46",
+        "sells": 7,
+        "sell_qty": 949,
+        "avg_sell_price": "78.85",
+        "full_exits": 1,
+        "reentries": 0,
+        "sessions_held": 59,
+        "final_qty": 0,
+        "pnl": "-4433.08"
+      },
+      {
+        "ticker": "WEGE3",
+        "buys_after_initial": 18,
+        "buy_qty": 2383,
+        "avg_buy_price": "47.41",
+        "sells": 11,
+        "sell_qty": 2350,
+        "avg_sell_price": "44.79",
+        "full_exits": 3,
+        "reentries": 3,
+        "sessions_held": 109,
+        "final_qty": 430,
+        "pnl": "-5443.38"
+      }
+    ],
+    "full_exits_total": 9,
+    "full_exits_non_r7": 9,
+    "episodes": [
+      {
+        "ticker": "BBAS3",
+        "exit": "2026-04-28",
+        "reentry": "2026-07-22",
+        "flat_sessions": 59,
+        "no_return_until": ""
+      },
+      {
+        "ticker": "BBAS3",
+        "exit": "2026-08-13",
+        "reentry": "2026-09-09",
+        "flat_sessions": 18,
+        "no_return_until": ""
+      },
+      {
+        "ticker": "ITUB4",
+        "exit": "2026-05-07",
+        "reentry": "2026-06-26",
+        "flat_sessions": 35,
+        "no_return_until": ""
+      },
+      {
+        "ticker": "ITUB4",
+        "exit": "2026-08-14",
+        "reentry": "2026-10-19",
+        "flat_sessions": 44,
+        "no_return_until": ""
+      },
+      {
+        "ticker": "PETR4",
+        "exit": "2026-06-23",
+        "reentry": "2026-07-21",
+        "flat_sessions": 20,
+        "no_return_until": ""
+      },
+      {
+        "ticker": "VALE3",
+        "exit": "2026-07-01",
+        "reentry": "",
+        "flat_sessions": 94,
+        "no_return_until": "2026-11-12"
+      },
+      {
+        "ticker": "WEGE3",
+        "exit": "2026-05-06",
+        "reentry": "2026-06-19",
+        "flat_sessions": 31,
+        "no_return_until": ""
+      },
+      {
+        "ticker": "WEGE3",
+        "exit": "2026-07-21",
+        "reentry": "2026-07-27",
+        "flat_sessions": 4,
+        "no_return_until": ""
+      },
+      {
+        "ticker": "WEGE3",
+        "exit": "2026-10-22",
+        "reentry": "2026-11-05",
+        "flat_sessions": 9,
+        "no_return_until": ""
+      }
+    ],
+    "concentration": {
+      "days_by_significant_assets_ge_2pct": {
+        "2": 101,
+        "3": 29,
+        "4": 8,
+        "5": 15
+      },
+      "days_with_ge_3_significant_assets": 52,
+      "max_weight_pct_by_ticker": {
+        "BBAS3": 20.7,
+        "ITUB4": 35.57,
+        "PETR4": 71.4,
+        "VALE3": 77.49,
+        "WEGE3": 66.05
+      },
+      "max_single_asset_weight_pct": 77.49,
+      "avg_cash_pct": 12.98,
+      "end_cash_pct": 1.64,
+      "dust_buys_below_2000": [
+        {
+          "date": "2026-04-09",
+          "ticker": "WEGE3",
+          "quantity": 2,
+          "ref_gross": "105.54",
+          "exec_gross": "105.10"
+        },
+        {
+          "date": "2026-07-09",
+          "ticker": "ITUB4",
+          "quantity": 20,
+          "ref_gross": "837.80",
+          "exec_gross": "839.00"
+        },
+        {
+          "date": "2026-07-27",
+          "ticker": "WEGE3",
+          "quantity": 11,
+          "ref_gross": "505.89",
+          "exec_gross": "528.55"
+        },
+        {
+          "date": "2026-09-09",
+          "ticker": "BBAS3",
+          "quantity": 3,
+          "ref_gross": "67.80",
+          "exec_gross": "67.32"
+        },
+        {
+          "date": "2026-09-10",
+          "ticker": "BBAS3",
+          "quantity": 3,
+          "ref_gross": "66.54",
+          "exec_gross": "66.00"
+        },
+        {
+          "date": "2026-09-22",
+          "ticker": "BBAS3",
+          "quantity": 7,
+          "ref_gross": "160.93",
+          "exec_gross": "159.88"
+        },
+        {
+          "date": "2026-10-21",
+          "ticker": "ITUB4",
+          "quantity": 40,
+          "ref_gross": "1952.00",
+          "exec_gross": "1960.80"
+        },
+        {
+          "date": "2026-10-26",
+          "ticker": "ITUB4",
+          "quantity": 40,
+          "ref_gross": "1932.00",
+          "exec_gross": "1680.00"
+        }
+      ]
+    },
+    "trim_to_fund_executed": [],
+    "trim_on_strength_executed": [],
+    "dip_rebalance_buys_executed": [],
+    "r7": {
+      "vetoed_asset_days": 41,
+      "vetoed_venda_technical": 25,
+      "r7_sells_executed_under_veto": []
+    },
+    "committee": {
+      "total_asset_days": 765,
+      "vote_splits": {
+        "5-0": 635,
+        "3-2": 60,
+        "4-1": 70
+      },
+      "unanimity_5_0_pct": 83.01,
+      "lens_disagreements": 130,
+      "committee_guards": {},
+      "committee_guard_events": [],
+      "features_by_winning_signal": {
+        "MANTER": {
+          "count": 269,
+          "avg_rsi": 47.81,
+          "avg_sma50_gap": -0.0113,
+          "avg_sma200_gap": 0.0831,
+          "avg_bb_upper_gap": -0.0637,
+          "avg_bb_lower_gap": 0.0551
+        },
+        "COMPRA": {
+          "count": 273,
+          "avg_rsi": 63.17,
+          "avg_sma50_gap": 0.0782,
+          "avg_sma200_gap": 0.1372,
+          "avg_bb_upper_gap": -0.0251,
+          "avg_bb_lower_gap": 0.145
+        },
+        "VENDA": {
+          "count": 223,
+          "avg_rsi": 35.07,
+          "avg_sma50_gap": -0.0864,
+          "avg_sma200_gap": -0.0593,
+          "avg_bb_upper_gap": -0.1392,
+          "avg_bb_lower_gap": 0.0338
+        }
+      },
+      "features_by_technical_signal": {
+        "MANTER": {
+          "count": 269,
+          "avg_rsi": 47.81,
+          "avg_sma50_gap": -0.0113,
+          "avg_sma200_gap": 0.0831,
+          "avg_bb_upper_gap": -0.0637,
+          "avg_bb_lower_gap": 0.0551
+        },
+        "COMPRA": {
+          "count": 273,
+          "avg_rsi": 63.17,
+          "avg_sma50_gap": 0.0782,
+          "avg_sma200_gap": 0.1372,
+          "avg_bb_upper_gap": -0.0251,
+          "avg_bb_lower_gap": 0.145
+        },
+        "VENDA": {
+          "count": 223,
+          "avg_rsi": 35.07,
+          "avg_sma50_gap": -0.0864,
+          "avg_sma200_gap": -0.0593,
+          "avg_bb_upper_gap": -0.1392,
+          "avg_bb_lower_gap": 0.0338
+        }
+      },
+      "features_by_executed_side": {
+        "BUY": {
+          "count": 50,
+          "avg_rsi": 60.51,
+          "avg_sma50_gap": 0.0528,
+          "avg_sma200_gap": 0.1191,
+          "avg_bb_upper_gap": -0.0287,
+          "avg_bb_lower_gap": 0.1346
+        },
+        "SELL": {
+          "count": 36,
+          "avg_rsi": 36.06,
+          "avg_sma50_gap": -0.0587,
+          "avg_sma200_gap": 0.0243,
+          "avg_bb_upper_gap": -0.1157,
+          "avg_bb_lower_gap": 0.0032
+        }
+      }
+    },
+    "manager_adjustments": {},
+    "auction_cash_adjustments": [],
+    "last_session": "2026-11-12",
+    "budget": {
+      "cap_usd": "34.78",
+      "exposure_usd": "8.10799425",
+      "known_estimated_usd": "7.44444225",
+      "physical_attempts": 4709,
+      "uncertain_and_inflight_reserved_usd": "0.663552",
+      "unknown_attempts": 6
+    },
+    "budget_audit": {
+      "exposure_usd": "8.10799425",
+      "known_estimated_usd": "7.44444225",
+      "known_provider_tokens": {
+        "completion_tokens": 887456,
+        "prompt_tokens": 4904993,
+        "thoughts_tokens": 116730,
+        "total_tokens": 5909179
+      },
+      "logical_calls_with_transport": 4703,
+      "max_attempts_per_logical_call": 2,
+      "max_exposure_before_http_usd": "8.26302975",
+      "peak_basis": "Serial dispatch order; reconciled earlier usage plus full unknown/in-flight reservations",
+      "physical_attempts": 4709,
+      "resolved_models": [
+        "gemini-3.8-flash"
+      ],
+      "retried_logical_calls": 6,
+      "status": "PASS",
+      "uncertain_and_inflight_reserved_usd": "0.663552",
+      "verification_source_sha256": "5755c0520ed55682fb8a3f935a1dbf1ca2d7e68147d6576700ab1dfe56576932"
+    },
+    "manifest": {
+      "budget": {
+        "cap_usd": "34.78",
+        "exposure_usd": "8.10799425",
+        "known_estimated_usd": "7.44444225",
+        "physical_attempts": 4709,
+        "uncertain_and_inflight_reserved_usd": "0.663552",
+        "unknown_attempts": 6
+      },
+      "budget_audit": {
+        "exposure_usd": "8.10799425",
+        "known_estimated_usd": "7.44444225",
+        "known_provider_tokens": {
+          "completion_tokens": 887456,
+          "prompt_tokens": 4904993,
+          "thoughts_tokens": 116730,
+          "total_tokens": 5909179
+        },
+        "logical_calls_with_transport": 4703,
+        "max_attempts_per_logical_call": 2,
+        "max_exposure_before_http_usd": "8.26302975",
+        "peak_basis": "Serial dispatch order; reconciled earlier usage plus full unknown/in-flight reservations",
+        "physical_attempts": 4709,
+        "resolved_models": [
+          "gemini-3.8-flash"
+        ],
+        "retried_logical_calls": 6,
+        "status": "PASS",
+        "uncertain_and_inflight_reserved_usd": "0.663552",
+        "verification_source_sha256": "5755c0520ed55682fb8a3f935a1dbf1ca2d7e68147d6576700ab1dfe56576932"
+      },
+      "calls_with_reconciled_trace_usage": 4703,
+      "daily_sessions": 153,
+      "daily_wallet_states": 918,
+      "dividends": 97,
+      "export_sha256": "88c3a0e1f45ffa15d9033a74714821a863c14033c182ce54d3915fa087e5f6e4",
+      "known_tokens": {
+        "completion_tokens": 887456,
+        "prompt_tokens": 4904993,
+        "thoughts_tokens": 116730,
+        "total_tokens": 5909179
+      },
+      "logical_calls": 4703,
+      "operations_including_initial": 175,
+      "resolved_models": [
+        "gemini-3.8-flash"
+      ],
+      "rule_decisions": 608,
+      "sha256": "cf35a3f63b6ef267ea990bc93095db6ab6712282bb3505bafc8943090c87e3f9"
+    }
+  },
+  "v2": {
+    "identity": "HFL-CONTINUOUS-EXPLORATORY-REPLAY-V2",
+    "sessions": 153,
+    "completed_days": 152,
+    "gaps": [
+      "2026-06-26"
+    ],
+    "daily_states_reconciled": 918,
+    "wallets": {
+      "BOLLINGER_20_2": {
+        "equity": "104887.05",
+        "return_pct": "4.8870",
+        "cash": "1507.33",
+        "receivable": "8.24",
+        "costs": "151.26",
+        "trades_after_initial": 24,
+        "buys_after_initial": 12,
+        "sells": 12,
+        "full_exits": 12,
+        "positions": {
+          "BBAS3": "1273",
+          "ITUB4": "533",
+          "PETR4": "357",
+          "VALE3": "314",
+          "WEGE3": "492"
+        }
+      },
+      "BUY_HOLD": {
+        "equity": "88791.11",
+        "return_pct": "-11.2089",
+        "cash": "1418.18",
+        "receivable": "583.45",
+        "costs": "0.00",
+        "trades_after_initial": 0,
+        "buys_after_initial": 0,
+        "sells": 0,
+        "full_exits": 0,
+        "positions": {
+          "BBAS3": "855",
+          "ITUB4": "461",
+          "PETR4": "415",
+          "VALE3": "239",
+          "WEGE3": "397"
+        }
+      },
+      "EQUAL_WEIGHT_63": {
+        "equity": "89869.29",
+        "return_pct": "-10.1307",
+        "cash": "1423.03",
+        "receivable": "623.64",
+        "costs": "5.11",
+        "trades_after_initial": 15,
+        "buys_after_initial": 9,
+        "sells": 6,
+        "full_exits": 0,
+        "positions": {
+          "BBAS3": "813",
+          "ITUB4": "426",
+          "PETR4": "389",
+          "VALE3": "295",
+          "WEGE3": "411"
+        }
+      },
+      "MIN_VARIANCE_252_63": {
+        "equity": "95814.84",
+        "return_pct": "-4.1852",
+        "cash": "1581.00",
+        "receivable": "1058.91",
+        "costs": "27.94",
+        "trades_after_initial": 14,
+        "buys_after_initial": 8,
+        "sells": 6,
+        "full_exits": 1,
+        "positions": {
+          "ITUB4": "321",
+          "PETR4": "678",
+          "VALE3": "408",
+          "WEGE3": "453"
+        }
+      },
+      "MULTIAGENT": {
+        "equity": "85743.57",
+        "return_pct": "-14.2564",
+        "cash": "39321.44",
+        "receivable": "775.13",
+        "costs": "119.87",
+        "trades_after_initial": 38,
+        "buys_after_initial": 22,
+        "sells": 16,
+        "full_exits": 10,
+        "positions": {
+          "PETR4": "455",
+          "WEGE3": "490"
+        }
+      },
+      "SMA_50_200": {
+        "equity": "88866.68",
+        "return_pct": "-11.1333",
+        "cash": "34912.62",
+        "receivable": "579.70",
+        "costs": "32.23",
+        "trades_after_initial": 6,
+        "buys_after_initial": 2,
+        "sells": 4,
+        "full_exits": 4,
+        "positions": {
+          "ITUB4": "377",
+          "PETR4": "415",
+          "WEGE3": "370"
+        }
+      }
+    },
+    "per_asset_multiagent": [
+      {
+        "ticker": "BBAS3",
+        "buys_after_initial": 3,
+        "buy_qty": 330,
+        "avg_buy_price": "22.24",
+        "sells": 2,
+        "sell_qty": 1185,
+        "avg_sell_price": "20.67",
+        "full_exits": 2,
+        "reentries": 1,
+        "sessions_held": 56,
+        "final_qty": 0,
+        "pnl": "-2850.25"
+      },
+      {
+        "ticker": "ITUB4",
+        "buys_after_initial": 9,
+        "buy_qty": 1260,
+        "avg_buy_price": "42.54",
+        "sells": 4,
+        "sell_qty": 1721,
+        "avg_sell_price": "40.54",
+        "full_exits": 3,
+        "reentries": 2,
+        "sessions_held": 93,
+        "final_qty": 0,
+        "pnl": "-3802.94"
+      },
+      {
+        "ticker": "PETR4",
+        "buys_after_initial": 1,
+        "buy_qty": 180,
+        "avg_buy_price": "41.02",
+        "sells": 2,
+        "sell_qty": 140,
+        "avg_sell_price": "54.55",
+        "full_exits": 0,
+        "reentries": 0,
+        "sessions_held": 153,
+        "final_qty": 455,
+        "pnl": "1812.50"
+      },
+      {
+        "ticker": "VALE3",
+        "buys_after_initial": 2,
+        "buy_qty": 436,
+        "avg_buy_price": "79.00",
+        "sells": 5,
+        "sell_qty": 675,
+        "avg_sell_price": "73.90",
+        "full_exits": 2,
+        "reentries": 1,
+        "sessions_held": 82,
+        "final_qty": 0,
+        "pnl": "-4557.04"
+      },
+      {
+        "ticker": "WEGE3",
+        "buys_after_initial": 7,
+        "buy_qty": 1622,
+        "avg_buy_price": "47.85",
+        "sells": 3,
+        "sell_qty": 1529,
+        "avg_sell_price": "44.09",
+        "full_exits": 3,
+        "reentries": 3,
+        "sessions_held": 107,
+        "final_qty": 490,
+        "pnl": "-4858.70"
+      }
+    ],
+    "full_exits_total": 10,
+    "full_exits_non_r7": 8,
+    "episodes": [
+      {
+        "ticker": "BBAS3",
+        "exit": "2026-05-05",
+        "reentry": "2026-09-15",
+        "flat_sessions": 93,
+        "no_return_until": ""
+      },
+      {
+        "ticker": "BBAS3",
+        "exit": "2026-11-09",
+        "reentry": "",
+        "flat_sessions": 4,
+        "no_return_until": "2026-11-12"
+      },
+      {
+        "ticker": "ITUB4",
+        "exit": "2026-05-25",
+        "reentry": "2026-07-08",
+        "flat_sessions": 31,
+        "no_return_until": ""
+      },
+      {
+        "ticker": "ITUB4",
+        "exit": "2026-08-17",
+        "reentry": "2026-09-10",
+        "flat_sessions": 17,
+        "no_return_until": ""
+      },
+      {
+        "ticker": "ITUB4",
+        "exit": "2026-10-27",
+        "reentry": "",
+        "flat_sessions": 12,
+        "no_return_until": "2026-11-12"
+      },
+      {
+        "ticker": "VALE3",
+        "exit": "2026-07-15",
+        "reentry": "2026-09-01",
+        "flat_sessions": 34,
+        "no_return_until": ""
+      },
+      {
+        "ticker": "VALE3",
+        "exit": "2026-09-21",
+        "reentry": "",
+        "flat_sessions": 37,
+        "no_return_until": "2026-11-12"
+      },
+      {
+        "ticker": "WEGE3",
+        "exit": "2026-05-14",
+        "reentry": "2026-07-02",
+        "flat_sessions": 34,
+        "no_return_until": ""
+      },
+      {
+        "ticker": "WEGE3",
+        "exit": "2026-07-17",
+        "reentry": "2026-07-27",
+        "flat_sessions": 6,
+        "no_return_until": ""
+      },
+      {
+        "ticker": "WEGE3",
+        "exit": "2026-10-27",
+        "reentry": "2026-11-05",
+        "flat_sessions": 6,
+        "no_return_until": ""
+      }
+    ],
+    "concentration": {
+      "days_by_significant_assets_ge_2pct": {
+        "2": 54,
+        "3": 36,
+        "4": 40,
+        "5": 23
+      },
+      "days_with_ge_3_significant_assets": 99,
+      "max_weight_pct_by_ticker": {
+        "BBAS3": 20.7,
+        "ITUB4": 31.9,
+        "PETR4": 31.72,
+        "VALE3": 30.64,
+        "WEGE3": 32.23
+      },
+      "max_single_asset_weight_pct": 32.23,
+      "avg_cash_pct": 24.69,
+      "end_cash_pct": 45.86,
+      "dust_buys_below_2000": []
+    },
+    "trim_to_fund_executed": [],
+    "trim_on_strength_executed": [
+      {
+        "date": "2026-09-15",
+        "ticker": "PETR4",
+        "recommendation": "MANTER",
+        "quantity": 50,
+        "weight_before": "0.3201524902301322190606188261",
+        "weight_after": "0.2932562738258210799491657154",
+        "gross": "2453.00",
+        "rsi": 74.389564,
+        "bb_upper_gap": -0.044302
+      },
+      {
+        "date": "2026-10-15",
+        "ticker": "PETR4",
+        "recommendation": "MANTER",
+        "quantity": 90,
+        "weight_before": "0.3169129091530236461232994298",
+        "weight_after": "0.2645828240240349624926536877",
+        "gross": "5184.00",
+        "rsi": 78.767356,
+        "bb_upper_gap": -0.002454
+      }
+    ],
+    "dip_rebalance_buys_executed": [],
+    "r7": {
+      "vetoed_asset_days": 48,
+      "vetoed_venda_technical": 12,
+      "r7_sells_executed_under_veto": [
+        {
+          "date": "2026-10-27",
+          "ticker": "ITUB4",
+          "risk_source": "HARD_ASSET_VOLATILITY_RULE",
+          "technical_signal": "VENDA",
+          "recommendation": "VENDA",
+          "quantity": 630,
+          "price": "42.05",
+          "gross": "26491.50"
+        },
+        {
+          "date": "2026-11-09",
+          "ticker": "BBAS3",
+          "risk_source": "HARD_ASSET_VOLATILITY_RULE",
+          "technical_signal": "VENDA",
+          "recommendation": "VENDA",
+          "quantity": 330,
+          "price": "17.31",
+          "gross": "5712.30"
+        }
+      ]
+    },
+    "committee": {
+      "total_asset_days": 760,
+      "vote_splits": {
+        "5-0": 115,
+        "4-1": 61,
+        "3-2": 499,
+        "no_consensus": 85
+      },
+      "unanimity_5_0_pct": 15.13,
+      "lens_disagreements": 645,
+      "committee_guards": {},
+      "committee_guard_events": [],
+      "features_by_winning_signal": {
+        "MANTER": {
+          "count": 537,
+          "avg_rsi": 50.4,
+          "avg_sma50_gap": 0.004,
+          "avg_sma200_gap": 0.0815,
+          "avg_bb_upper_gap": -0.0677,
+          "avg_bb_lower_gap": 0.0815
+        },
+        "COMPRA": {
+          "count": 106,
+          "avg_rsi": 57.42,
+          "avg_sma50_gap": 0.0516,
+          "avg_sma200_gap": 0.0978,
+          "avg_bb_upper_gap": -0.0427,
+          "avg_bb_lower_gap": 0.1088
+        },
+        "VENDA": {
+          "count": 117,
+          "avg_rsi": 38.67,
+          "avg_sma50_gap": -0.0723,
+          "avg_sma200_gap": -0.0659,
+          "avg_bb_upper_gap": -0.119,
+          "avg_bb_lower_gap": 0.0537
+        }
+      },
+      "features_by_technical_signal": {
+        "MANTER": {
+          "count": 537,
+          "avg_rsi": 50.4,
+          "avg_sma50_gap": 0.004,
+          "avg_sma200_gap": 0.0815,
+          "avg_bb_upper_gap": -0.0677,
+          "avg_bb_lower_gap": 0.0815
+        },
+        "COMPRA": {
+          "count": 106,
+          "avg_rsi": 57.42,
+          "avg_sma50_gap": 0.0516,
+          "avg_sma200_gap": 0.0978,
+          "avg_bb_upper_gap": -0.0427,
+          "avg_bb_lower_gap": 0.1088
+        },
+        "VENDA": {
+          "count": 117,
+          "avg_rsi": 38.67,
+          "avg_sma50_gap": -0.0723,
+          "avg_sma200_gap": -0.0659,
+          "avg_bb_upper_gap": -0.119,
+          "avg_bb_lower_gap": 0.0537
+        }
+      },
+      "features_by_executed_side": {
+        "SELL": {
+          "count": 16,
+          "avg_rsi": 40.98,
+          "avg_sma50_gap": -0.0369,
+          "avg_sma200_gap": 0.0067,
+          "avg_bb_upper_gap": -0.1317,
+          "avg_bb_lower_gap": 0.0667
+        },
+        "BUY": {
+          "count": 22,
+          "avg_rsi": 58.54,
+          "avg_sma50_gap": 0.041,
+          "avg_sma200_gap": 0.0419,
+          "avg_bb_upper_gap": -0.0445,
+          "avg_bb_lower_gap": 0.1339
+        }
+      }
+    },
+    "manager_adjustments": {
+      "MAX_ASSET_WEIGHT_CAP": 15,
+      "MIN_TRADE_BRL": 11
+    },
+    "auction_cash_adjustments": [],
+    "last_session": "2026-11-12",
+    "budget": {
+      "cap_usd": "34.78",
+      "exposure_usd": "10.03082025",
+      "known_estimated_usd": "8.92490025",
+      "physical_attempts": 4711,
+      "uncertain_and_inflight_reserved_usd": "1.105920",
+      "unknown_attempts": 10
+    },
+    "budget_audit": {
+      "exposure_usd": "10.03082025",
+      "known_estimated_usd": "8.92490025",
+      "known_provider_tokens": {
+        "completion_tokens": 871426,
+        "prompt_tokens": 5416162,
+        "thoughts_tokens": 425315,
+        "total_tokens": 6712903
+      },
+      "logical_calls_with_transport": 4702,
+      "max_attempts_per_logical_call": 2,
+      "max_exposure_before_http_usd": "10.18479150",
+      "peak_basis": "Serial dispatch order; reconciled earlier usage plus full unknown/in-flight reservations",
+      "physical_attempts": 4711,
+      "resolved_models": [
+        "gemini-3.8-flash"
+      ],
+      "retried_logical_calls": 9,
+      "status": "PASS",
+      "uncertain_and_inflight_reserved_usd": "1.105920",
+      "verification_source_sha256": "6eb800ca773991235fe9a6d7fd58727ab0a8764adf24e16737c06694a57b8b76"
+    },
+    "manifest": {
+      "budget": {
+        "cap_usd": "34.78",
+        "exposure_usd": "10.03082025",
+        "known_estimated_usd": "8.92490025",
+        "physical_attempts": 4711,
+        "uncertain_and_inflight_reserved_usd": "1.105920",
+        "unknown_attempts": 10
+      },
+      "budget_audit": {
+        "exposure_usd": "10.03082025",
+        "known_estimated_usd": "8.92490025",
+        "known_provider_tokens": {
+          "completion_tokens": 871426,
+          "prompt_tokens": 5416162,
+          "thoughts_tokens": 425315,
+          "total_tokens": 6712903
+        },
+        "logical_calls_with_transport": 4702,
+        "max_attempts_per_logical_call": 2,
+        "max_exposure_before_http_usd": "10.18479150",
+        "peak_basis": "Serial dispatch order; reconciled earlier usage plus full unknown/in-flight reservations",
+        "physical_attempts": 4711,
+        "resolved_models": [
+          "gemini-3.8-flash"
+        ],
+        "retried_logical_calls": 9,
+        "status": "PASS",
+        "uncertain_and_inflight_reserved_usd": "1.105920",
+        "verification_source_sha256": "6eb800ca773991235fe9a6d7fd58727ab0a8764adf24e16737c06694a57b8b76"
+      },
+      "calls_with_reconciled_trace_usage": 4701,
+      "daily_sessions": 153,
+      "daily_wallet_states": 918,
+      "dividends": 97,
+      "export_sha256": "4f517224253e8e34d2b47dc2cf0f0c61f25df5664af0137aa5973aa71233d932",
+      "exports_dir": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\data\\cache\\continuous-replay\\april-november-2026-flash-v2\\exports",
+      "html_bytes": 16836837,
+      "identity": "HFL-CONTINUOUS-EXPLORATORY-REPLAY-V2",
+      "known_tokens": {
+        "completion_tokens": 871426,
+        "prompt_tokens": 5416162,
+        "thoughts_tokens": 425315,
+        "total_tokens": 6712903
+      },
+      "logical_calls": 4702,
+      "operations_including_initial": 127,
+      "resolved_models": [
+        "gemini-3.8-flash"
+      ],
+      "rule_decisions": 608,
+      "sha256": "4769dd5e63c5d277f8d0515101b47e2cd41ab4897dc54d206d1e6918929ac2a3"
+    }
+  },
+  "v3": {
+    "identity": "HFL-CONTINUOUS-EXPLORATORY-REPLAY-V3",
+    "sessions": 153,
+    "completed_days": 149,
+    "gaps": [
+      "2026-07-01",
+      "2026-09-01",
+      "2026-10-01",
+      "2026-10-02"
+    ],
+    "daily_states_reconciled": 918,
+    "wallets": {
+      "BOLLINGER_20_2": {
+        "equity": "104887.05",
+        "return_pct": "4.8870",
+        "cash": "1507.33",
+        "receivable": "8.24",
+        "costs": "151.26",
+        "trades_after_initial": 24,
+        "buys_after_initial": 12,
+        "sells": 12,
+        "full_exits": 12,
+        "positions": {
+          "BBAS3": "1273",
+          "ITUB4": "533",
+          "PETR4": "357",
+          "VALE3": "314",
+          "WEGE3": "492"
+        }
+      },
+      "BUY_HOLD": {
+        "equity": "88791.11",
+        "return_pct": "-11.2089",
+        "cash": "1418.18",
+        "receivable": "583.45",
+        "costs": "0.00",
+        "trades_after_initial": 0,
+        "buys_after_initial": 0,
+        "sells": 0,
+        "full_exits": 0,
+        "positions": {
+          "BBAS3": "855",
+          "ITUB4": "461",
+          "PETR4": "415",
+          "VALE3": "239",
+          "WEGE3": "397"
+        }
+      },
+      "EQUAL_WEIGHT_63": {
+        "equity": "89869.29",
+        "return_pct": "-10.1307",
+        "cash": "1423.03",
+        "receivable": "623.64",
+        "costs": "5.11",
+        "trades_after_initial": 15,
+        "buys_after_initial": 9,
+        "sells": 6,
+        "full_exits": 0,
+        "positions": {
+          "BBAS3": "813",
+          "ITUB4": "426",
+          "PETR4": "389",
+          "VALE3": "295",
+          "WEGE3": "411"
+        }
+      },
+      "MIN_VARIANCE_252_63": {
+        "equity": "95814.84",
+        "return_pct": "-4.1852",
+        "cash": "1581.00",
+        "receivable": "1058.91",
+        "costs": "27.94",
+        "trades_after_initial": 14,
+        "buys_after_initial": 8,
+        "sells": 6,
+        "full_exits": 1,
+        "positions": {
+          "ITUB4": "321",
+          "PETR4": "678",
+          "VALE3": "408",
+          "WEGE3": "453"
+        }
+      },
+      "MULTIAGENT": {
+        "equity": "100067.36",
+        "return_pct": "0.0674",
+        "cash": "751.17",
+        "receivable": "283.95",
+        "costs": "120.07",
+        "trades_after_initial": 81,
+        "buys_after_initial": 29,
+        "sells": 52,
+        "full_exits": 0,
+        "positions": {
+          "BBAS3": "332",
+          "ITUB4": "166",
+          "PETR4": "486",
+          "VALE3": "459",
+          "WEGE3": "695"
+        }
+      },
+      "SMA_50_200": {
+        "equity": "88866.68",
+        "return_pct": "-11.1333",
+        "cash": "34912.62",
+        "receivable": "579.70",
+        "costs": "32.23",
+        "trades_after_initial": 6,
+        "buys_after_initial": 2,
+        "sells": 4,
+        "full_exits": 4,
+        "positions": {
+          "ITUB4": "377",
+          "PETR4": "415",
+          "WEGE3": "370"
+        }
+      }
+    },
+    "per_asset_multiagent": [
+      {
+        "ticker": "BBAS3",
+        "buys_after_initial": 4,
+        "buy_qty": 1215,
+        "avg_buy_price": "20.37",
+        "sells": 9,
+        "sell_qty": 1738,
+        "avg_sell_price": "21.48",
+        "full_exits": 0,
+        "reentries": 0,
+        "sessions_held": 153,
+        "final_qty": 332,
+        "pnl": "-1997.86"
+      },
+      {
+        "ticker": "ITUB4",
+        "buys_after_initial": 4,
+        "buy_qty": 552,
+        "avg_buy_price": "42.14",
+        "sells": 9,
+        "sell_qty": 847,
+        "avg_sell_price": "44.47",
+        "full_exits": 0,
+        "reentries": 0,
+        "sessions_held": 153,
+        "final_qty": 166,
+        "pnl": "1435.82"
+      },
+      {
+        "ticker": "PETR4",
+        "buys_after_initial": 5,
+        "buy_qty": 1290,
+        "avg_buy_price": "43.18",
+        "sells": 19,
+        "sell_qty": 1219,
+        "avg_sell_price": "46.43",
+        "full_exits": 0,
+        "reentries": 0,
+        "sessions_held": 153,
+        "final_qty": 486,
+        "pnl": "3222.19"
+      },
+      {
+        "ticker": "VALE3",
+        "buys_after_initial": 7,
+        "buy_qty": 612,
+        "avg_buy_price": "75.77",
+        "sells": 8,
+        "sell_qty": 392,
+        "avg_sell_price": "81.13",
+        "full_exits": 0,
+        "reentries": 0,
+        "sessions_held": 153,
+        "final_qty": 459,
+        "pnl": "-4584.68"
+      },
+      {
+        "ticker": "WEGE3",
+        "buys_after_initial": 9,
+        "buy_qty": 1047,
+        "avg_buy_price": "48.13",
+        "sells": 7,
+        "sell_qty": 749,
+        "avg_sell_price": "48.61",
+        "full_exits": 0,
+        "reentries": 0,
+        "sessions_held": 153,
+        "final_qty": 695,
+        "pnl": "1991.89"
+      }
+    ],
+    "full_exits_total": 0,
+    "full_exits_non_r7": 0,
+    "episodes": [],
+    "concentration": {
+      "days_by_significant_assets_ge_2pct": {
+        "5": 153
+      },
+      "days_with_ge_3_significant_assets": 153,
+      "max_weight_pct_by_ticker": {
+        "BBAS3": 29.32,
+        "ITUB4": 29.82,
+        "PETR4": 30.39,
+        "VALE3": 30.25,
+        "WEGE3": 35.87
+      },
+      "max_single_asset_weight_pct": 35.87,
+      "avg_cash_pct": 14.94,
+      "end_cash_pct": 0.75,
+      "dust_buys_below_2000": []
+    },
+    "trim_to_fund_executed": [],
+    "trim_on_strength_executed": [],
+    "dip_rebalance_buys_executed": [
+      {
+        "date": "2026-04-17",
+        "ticker": "WEGE3",
+        "recommendation": "MANTER",
+        "quantity": 50,
+        "weight_before": "0.07396444267165695169233608363",
+        "weight_after": "0.09737159937630024096259687518",
+        "gross": "2455.00",
+        "rsi": 43.340486,
+        "sma50_gap": -0.02588,
+        "bb_lower_gap": 0.070361
+      },
+      {
+        "date": "2026-09-21",
+        "ticker": "VALE3",
+        "recommendation": "MANTER",
+        "quantity": 32,
+        "weight_before": "0.1965083257281397102798758741",
+        "weight_after": "0.2188087014482215354783978671",
+        "gross": "2367.36",
+        "rsi": 40.701752,
+        "sma50_gap": -0.014868,
+        "bb_lower_gap": 0.00549
+      }
+    ],
+    "r7": {
+      "vetoed_asset_days": 46,
+      "vetoed_venda_technical": 0,
+      "r7_sells_executed_under_veto": []
+    },
+    "committee": {
+      "total_asset_days": 745,
+      "vote_splits": {
+        "3-2": 336,
+        "4-1": 273,
+        "no_consensus": 106,
+        "5-0": 30
+      },
+      "unanimity_5_0_pct": 4.03,
+      "lens_disagreements": 715,
+      "committee_guards": {},
+      "committee_guard_events": [],
+      "features_by_winning_signal": {
+        "MANTER": {
+          "count": 412,
+          "avg_rsi": 51.65,
+          "avg_sma50_gap": 0.0046,
+          "avg_sma200_gap": 0.058,
+          "avg_bb_upper_gap": -0.0607,
+          "avg_bb_lower_gap": 0.0853
+        },
+        "VENDA": {
+          "count": 114,
+          "avg_rsi": 68.96,
+          "avg_sma50_gap": 0.1171,
+          "avg_sma200_gap": 0.1846,
+          "avg_bb_upper_gap": -0.0141,
+          "avg_bb_lower_gap": 0.1926
+        },
+        "COMPRA": {
+          "count": 219,
+          "avg_rsi": 35.11,
+          "avg_sma50_gap": -0.0768,
+          "avg_sma200_gap": 0.0033,
+          "avg_bb_upper_gap": -0.1261,
+          "avg_bb_lower_gap": 0.0152
+        }
+      },
+      "features_by_technical_signal": {
+        "MANTER": {
+          "count": 412,
+          "avg_rsi": 51.65,
+          "avg_sma50_gap": 0.0046,
+          "avg_sma200_gap": 0.058,
+          "avg_bb_upper_gap": -0.0607,
+          "avg_bb_lower_gap": 0.0853
+        },
+        "VENDA": {
+          "count": 114,
+          "avg_rsi": 68.96,
+          "avg_sma50_gap": 0.1171,
+          "avg_sma200_gap": 0.1846,
+          "avg_bb_upper_gap": -0.0141,
+          "avg_bb_lower_gap": 0.1926
+        },
+        "COMPRA": {
+          "count": 219,
+          "avg_rsi": 35.11,
+          "avg_sma50_gap": -0.0768,
+          "avg_sma200_gap": 0.0033,
+          "avg_bb_upper_gap": -0.1261,
+          "avg_bb_lower_gap": 0.0152
+        }
+      },
+      "features_by_executed_side": {
+        "SELL": {
+          "count": 52,
+          "avg_rsi": 69.0,
+          "avg_sma50_gap": 0.1109,
+          "avg_sma200_gap": 0.1995,
+          "avg_bb_upper_gap": -0.0052,
+          "avg_bb_lower_gap": 0.1854
+        },
+        "BUY": {
+          "count": 29,
+          "avg_rsi": 39.26,
+          "avg_sma50_gap": -0.0369,
+          "avg_sma200_gap": 0.032,
+          "avg_bb_upper_gap": -0.1035,
+          "avg_bb_lower_gap": 0.0093
+        }
+      }
+    },
+    "manager_adjustments": {
+      "CORE_FLOOR_STEP_SELL": 56,
+      "MAX_ASSET_WEIGHT_CAP": 12,
+      "MIN_TRADE_BRL": 9,
+      "INSUFFICIENT_CASH": 2,
+      "DIP_REBALANCE_WEIGHT_CAP": 1
+    },
+    "auction_cash_adjustments": [],
+    "last_session": "2026-11-12",
+    "budget": {
+      "cap_usd": "34.78",
+      "exposure_usd": "8.62763550",
+      "known_estimated_usd": "8.62763550",
+      "physical_attempts": 4703,
+      "uncertain_and_inflight_reserved_usd": "0",
+      "unknown_attempts": 0
+    },
+    "budget_audit": {
+      "exposure_usd": "8.62763550",
+      "known_estimated_usd": "8.62763550",
+      "known_provider_tokens": {
+        "completion_tokens": 808129,
+        "prompt_tokens": 5559614,
+        "thoughts_tokens": 380651,
+        "total_tokens": 6748394
+      },
+      "logical_calls_with_transport": 4703,
+      "max_attempts_per_logical_call": 1,
+      "max_exposure_before_http_usd": "8.78072850",
+      "peak_basis": "Serial dispatch order; reconciled earlier usage plus full unknown/in-flight reservations",
+      "physical_attempts": 4703,
+      "resolved_models": [
+        "gemini-3.8-flash"
+      ],
+      "retried_logical_calls": 0,
+      "status": "PASS",
+      "uncertain_and_inflight_reserved_usd": "0",
+      "verification_source_sha256": "88fbcce9d988b170f13abd6734fa858e9fd4c259f1ab695d035095c26996e755"
+    },
+    "manifest": {
+      "budget": {
+        "cap_usd": "34.78",
+        "exposure_usd": "8.62763550",
+        "known_estimated_usd": "8.62763550",
+        "physical_attempts": 4703,
+        "uncertain_and_inflight_reserved_usd": "0",
+        "unknown_attempts": 0
+      },
+      "budget_audit": {
+        "exposure_usd": "8.62763550",
+        "known_estimated_usd": "8.62763550",
+        "known_provider_tokens": {
+          "completion_tokens": 808129,
+          "prompt_tokens": 5559614,
+          "thoughts_tokens": 380651,
+          "total_tokens": 6748394
+        },
+        "logical_calls_with_transport": 4703,
+        "max_attempts_per_logical_call": 1,
+        "max_exposure_before_http_usd": "8.78072850",
+        "peak_basis": "Serial dispatch order; reconciled earlier usage plus full unknown/in-flight reservations",
+        "physical_attempts": 4703,
+        "resolved_models": [
+          "gemini-3.8-flash"
+        ],
+        "retried_logical_calls": 0,
+        "status": "PASS",
+        "uncertain_and_inflight_reserved_usd": "0",
+        "verification_source_sha256": "88fbcce9d988b170f13abd6734fa858e9fd4c259f1ab695d035095c26996e755"
+      },
+      "calls_with_reconciled_trace_usage": 4703,
+      "daily_sessions": 153,
+      "daily_wallet_states": 918,
+      "dividends": 108,
+      "export_sha256": "0df082bd696c78c91a63f9064f245128b9546bdbcc77401540426c537741346e",
+      "exports_dir": "C:\\Users\\LUCAS\\Meu Canto\\TCC\\Hedge-Fund-Lab\\data\\cache\\continuous-replay\\april-november-2026-flash-v3\\exports",
+      "html_bytes": 17097462,
+      "identity": "HFL-CONTINUOUS-EXPLORATORY-REPLAY-V3",
+      "known_tokens": {
+        "completion_tokens": 808129,
+        "prompt_tokens": 5559614,
+        "thoughts_tokens": 380651,
+        "total_tokens": 6748394
+      },
+      "logical_calls": 4703,
+      "operations_including_initial": 170,
+      "resolved_models": [
+        "gemini-3.8-flash"
+      ],
+      "rule_decisions": 608,
+      "sha256": "177ed5f64514a9759b525ec4b24052f8b15818757d340d53f7f1b6982bd09809"
+    }
+  },
+  "deltas_multiagent_v3_minus_v1": {
+    "equity_brl": "17888.65",
+    "return_pp": "17.8887",
+    "full_exits_delta": -9,
+    "trades_delta": -5,
+    "unanimity_5_0_pp": -78.98
+  },
+  "deltas_multiagent_v3_minus_v2": {
+    "equity_brl": "14323.79",
+    "return_pp": "14.3238",
+    "vs_buy_hold_v3_brl": "11276.25",
+    "vs_bollinger_v3_brl": "-4819.69",
+    "full_exits_delta": -10,
+    "trades_delta": 43,
+    "unanimity_5_0_pp": -11.1
+  }
+}

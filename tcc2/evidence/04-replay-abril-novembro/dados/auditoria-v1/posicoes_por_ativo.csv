@@ -1,0 +1,6 @@
+﻿ticker,initial_quantity,buys_after_initial,sells,holding_episodes_including_initial,full_exits,reentries,sessions_held_at_close,final_quantity,recommendations
+BBAS3,855,4,6,3,2,2,76,13,"{""MANTER"": 67, ""COMPRA"": 29, ""VENDA"": 57}"
+ITUB4,461,10,6,3,2,2,74,380,"{""MANTER"": 60, ""COMPRA"": 59, ""VENDA"": 34}"
+PETR4,415,10,6,2,1,1,133,920,"{""COMPRA"": 69, ""MANTER"": 76, ""VENDA"": 8}"
+VALE3,239,8,7,1,1,0,59,0,"{""COMPRA"": 35, ""MANTER"": 59, ""VENDA"": 59}"
+WEGE3,397,18,11,4,3,3,109,430,"{""COMPRA"": 71, ""MANTER"": 42, ""VENDA"": 40}"

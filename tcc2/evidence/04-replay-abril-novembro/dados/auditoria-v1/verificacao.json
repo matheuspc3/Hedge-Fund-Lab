@@ -1,0 +1,255 @@
+{
+  "status": "PASS",
+  "source_archive_sha256": "c4d38ab78d4e2835a52fa17bf3debff10308173dda911b6aa1c5c2ae71c98047",
+  "original_files_sha256": {
+    "explorer.json": "88c3a0e1f45ffa15d9033a74714821a863c14033c182ce54d3915fa087e5f6e4",
+    "calls.json": "b5ef95859304e40d21ef41232ebf2f9187f9c56eede4d91cfff30d85fdaba6fb",
+    "manifest.json": "c6e94bb07cd6b42fd61cb36d1fe5aaf8d9ae33b01dd202a8585f55980de8f7a6",
+    "daily.csv": "a3f11eeeefcee60864f1ff1541e99be04f1750b0224a7eef67b1b1a8f346f5ab",
+    "operations.csv": "332a57bbce53b2d96c7e2a6f1ab0d0c6d25e7e0968d290c2b3965180797d6589",
+    "decisions.csv": "2e2b1de744aafd987546201e5fbd64d7545610abcca595f153fdadd120eea197",
+    "dividends.csv": "9bedfe0d89a09d59958ebf8a47de38d9e9c8a27f4022b73b62bba6eb06fc9105",
+    "calls.csv": "4923aee30c77eac819729e1d3f4435886ac20e2ad91c2a46137b73ef84403abe"
+  },
+  "daily_states_reconciled": 918,
+  "asset_days_covered": 765,
+  "calls": 4703,
+  "unanimous_5_0_asset_days": 635,
+  "days_by_significant_assets_ge_2pct": {
+    "2": 101,
+    "3": 29,
+    "4": 8,
+    "5": 15
+  },
+  "signal_features_summary": {
+    "MANTER": {
+      "count": 269,
+      "avg_rsi": 47.81,
+      "avg_sma50_gap": -0.0113,
+      "avg_sma200_gap": 0.0831,
+      "avg_bb_upper_gap": -0.0637,
+      "avg_bb_lower_gap": 0.0551
+    },
+    "COMPRA": {
+      "count": 273,
+      "avg_rsi": 63.17,
+      "avg_sma50_gap": 0.0782,
+      "avg_sma200_gap": 0.1372,
+      "avg_bb_upper_gap": -0.0251,
+      "avg_bb_lower_gap": 0.145
+    },
+    "VENDA": {
+      "count": 223,
+      "avg_rsi": 35.07,
+      "avg_sma50_gap": -0.0864,
+      "avg_sma200_gap": -0.0593,
+      "avg_bb_upper_gap": -0.1392,
+      "avg_bb_lower_gap": 0.0338
+    }
+  },
+  "price_comparison": [
+    {
+      "ticker": "BBAS3",
+      "multiagent_buy_qty": 713,
+      "multiagent_avg_buy": "20.99",
+      "multiagent_sell_qty": 1555,
+      "multiagent_avg_sell": "21.31",
+      "bollinger_buy_qty": 3258,
+      "bollinger_avg_buy": "19.59",
+      "bollinger_sell_qty": 2840,
+      "bollinger_avg_sell": "22.50"
+    },
+    {
+      "ticker": "ITUB4",
+      "multiagent_buy_qty": 1070,
+      "multiagent_avg_buy": "44.07",
+      "multiagent_sell_qty": 1151,
+      "multiagent_avg_sell": "40.61",
+      "bollinger_buy_qty": 1564,
+      "bollinger_avg_buy": "41.04",
+      "bollinger_sell_qty": 1492,
+      "bollinger_avg_sell": "43.04"
+    },
+    {
+      "ticker": "PETR4",
+      "multiagent_buy_qty": 1620,
+      "multiagent_avg_buy": "44.77",
+      "multiagent_sell_qty": 1115,
+      "multiagent_avg_sell": "42.81",
+      "bollinger_buy_qty": 357,
+      "bollinger_avg_buy": "47.90",
+      "bollinger_sell_qty": 415,
+      "bollinger_avg_sell": "41.20"
+    },
+    {
+      "ticker": "VALE3",
+      "multiagent_buy_qty": 710,
+      "multiagent_avg_buy": "83.46",
+      "multiagent_sell_qty": 949,
+      "multiagent_avg_sell": "78.85",
+      "bollinger_buy_qty": 566,
+      "bollinger_avg_buy": "70.28",
+      "bollinger_sell_qty": 491,
+      "bollinger_avg_sell": "81.12"
+    },
+    {
+      "ticker": "WEGE3",
+      "multiagent_buy_qty": 2383,
+      "multiagent_avg_buy": "47.41",
+      "multiagent_sell_qty": 2350,
+      "multiagent_avg_sell": "44.79",
+      "bollinger_buy_qty": 1463,
+      "bollinger_avg_buy": "45.85",
+      "bollinger_sell_qty": 1368,
+      "bollinger_avg_sell": "49.08"
+    }
+  ],
+  "summary": [
+    {
+      "ticker": "BBAS3",
+      "initial_quantity": 855,
+      "buys_after_initial": 4,
+      "sells": 6,
+      "holding_episodes_including_initial": 3,
+      "full_exits": 2,
+      "reentries": 2,
+      "sessions_held_at_close": 76,
+      "final_quantity": 13,
+      "recommendations": {
+        "MANTER": 67,
+        "COMPRA": 29,
+        "VENDA": 57
+      }
+    },
+    {
+      "ticker": "ITUB4",
+      "initial_quantity": 461,
+      "buys_after_initial": 10,
+      "sells": 6,
+      "holding_episodes_including_initial": 3,
+      "full_exits": 2,
+      "reentries": 2,
+      "sessions_held_at_close": 74,
+      "final_quantity": 380,
+      "recommendations": {
+        "MANTER": 60,
+        "COMPRA": 59,
+        "VENDA": 34
+      }
+    },
+    {
+      "ticker": "PETR4",
+      "initial_quantity": 415,
+      "buys_after_initial": 10,
+      "sells": 6,
+      "holding_episodes_including_initial": 2,
+      "full_exits": 1,
+      "reentries": 1,
+      "sessions_held_at_close": 133,
+      "final_quantity": 920,
+      "recommendations": {
+        "COMPRA": 69,
+        "MANTER": 76,
+        "VENDA": 8
+      }
+    },
+    {
+      "ticker": "VALE3",
+      "initial_quantity": 239,
+      "buys_after_initial": 8,
+      "sells": 7,
+      "holding_episodes_including_initial": 1,
+      "full_exits": 1,
+      "reentries": 0,
+      "sessions_held_at_close": 59,
+      "final_quantity": 0,
+      "recommendations": {
+        "COMPRA": 35,
+        "MANTER": 59,
+        "VENDA": 59
+      }
+    },
+    {
+      "ticker": "WEGE3",
+      "initial_quantity": 397,
+      "buys_after_initial": 18,
+      "sells": 11,
+      "holding_episodes_including_initial": 4,
+      "full_exits": 3,
+      "reentries": 3,
+      "sessions_held_at_close": 109,
+      "final_quantity": 430,
+      "recommendations": {
+        "COMPRA": 71,
+        "MANTER": 42,
+        "VENDA": 40
+      }
+    }
+  ],
+  "episodes": [
+    {
+      "ticker": "BBAS3",
+      "exit": "2026-04-28",
+      "reentry": "2026-07-22",
+      "flat_sessions": 59,
+      "no_return_until": ""
+    },
+    {
+      "ticker": "BBAS3",
+      "exit": "2026-08-13",
+      "reentry": "2026-09-09",
+      "flat_sessions": 18,
+      "no_return_until": ""
+    },
+    {
+      "ticker": "ITUB4",
+      "exit": "2026-05-07",
+      "reentry": "2026-06-26",
+      "flat_sessions": 35,
+      "no_return_until": ""
+    },
+    {
+      "ticker": "ITUB4",
+      "exit": "2026-08-14",
+      "reentry": "2026-10-19",
+      "flat_sessions": 44,
+      "no_return_until": ""
+    },
+    {
+      "ticker": "PETR4",
+      "exit": "2026-06-23",
+      "reentry": "2026-07-21",
+      "flat_sessions": 20,
+      "no_return_until": ""
+    },
+    {
+      "ticker": "VALE3",
+      "exit": "2026-07-01",
+      "reentry": "",
+      "flat_sessions": 94,
+      "no_return_until": "2026-11-12"
+    },
+    {
+      "ticker": "WEGE3",
+      "exit": "2026-05-06",
+      "reentry": "2026-06-19",
+      "flat_sessions": 31,
+      "no_return_until": ""
+    },
+    {
+      "ticker": "WEGE3",
+      "exit": "2026-07-21",
+      "reentry": "2026-07-27",
+      "flat_sessions": 4,
+      "no_return_until": ""
+    },
+    {
+      "ticker": "WEGE3",
+      "exit": "2026-10-22",
+      "reentry": "2026-11-05",
+      "flat_sessions": 9,
+      "no_return_until": ""
+    }
+  ],
+  "audit_script_sha256": "fc6efe2d3d68aae6c5c6f3932aa954d20091b777c06d5e6e2970b862fa8841da"
+}

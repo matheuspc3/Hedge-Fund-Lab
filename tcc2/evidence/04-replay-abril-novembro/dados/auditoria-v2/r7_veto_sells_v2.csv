@@ -1,0 +1,3 @@
+﻿date,ticker,risk_source,technical_signal,recommendation,quantity,price,gross
+2026-10-27,ITUB4,HARD_ASSET_VOLATILITY_RULE,VENDA,VENDA,630,42.05,26491.50
+2026-11-09,BBAS3,HARD_ASSET_VOLATILITY_RULE,VENDA,VENDA,330,17.31,5712.30
