@@ -284,15 +284,19 @@ function choose(id) {
   return refresh(true);
 }
 $('radar-run').addEventListener('change',()=>{ ['asset','signal','risk','final'].forEach(k=>{query.delete(k);$('filter-'+k).value='';}); choose(runId()).catch(error); });
+window.addEventListener('hfl:radar-start',()=>{ if(runId()) choose(runId()).catch(error); });
 async function start() {
   const response = await fetch('/api/platform/radar-runs', {signal:aborter.signal});
   const value = await response.json();
   if (!response.ok) { $('radar-run').innerHTML='<option value="">Registro indisponível</option>'; $('radar-run').disabled=true; $('prepare').disabled=$('preflight').disabled=true; $('add-form').querySelectorAll('input,button').forEach(e=>e.disabled=true); $('radar-source').textContent='Nenhuma execução selecionada · operações bloqueadas.'; throw Error(value.error || 'registry_unavailable'); }
   runs = value;
   $('radar-run').innerHTML = runs.runs.map(r => `<option value="${escape(r.id)}">${escape(runOption(r))}</option>`).join('');
-  const wanted = query.get('run') || (query.get('mode')==='SYNTHETIC_DEMO' ? runs.runs.find(r=>r.mode==='SYNTHETIC_DEMO')?.id : runs.selected);
+  const explicit = query.get('run') || (query.get('mode')==='SYNTHETIC_DEMO' ? runs.runs.find(r=>r.mode==='SYNTHETIC_DEMO')?.id : '');
+  const wanted = explicit || runs.selected;
   if (!runs.runs.some(r => r.id === wanted)) throw Error('unknown_radar_run');
   $('radar-run').value = wanted;
-  await choose(wanted);
+  if (explicit || query.get('asset') || location.hash === '#analysis-workflow' || location.hash === '#analysis-results') {
+    await choose(wanted);
+  }
 }
 start().catch(error);

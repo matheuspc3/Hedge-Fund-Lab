@@ -39,7 +39,7 @@
     const version = ++revision, box = el('analysis-context');
     box.hidden = true;
     el('analysis-return').hidden = true;
-    el('radar-to-global').hidden = run.startsWith('radar-ui-');
+    el('radar-to-global').hidden = true;
     cycle(undefined);
     try {
       const d = await api('?'+new URLSearchParams({run}));
@@ -65,24 +65,31 @@
     try {
       const d = await api('',{command_id:command,wallet:w.id,wallet_revision:w.revision,target_date:el('analysis-target').value,reference_session:el('analysis-reference').value,tickers:el('analysis-tickers').value.split(',').map(t=>t.trim().toUpperCase()).filter(Boolean),confirm:true});
       // Full navigation drops all preflight/consent of the previously viewed run.
-      // auto=1: the free data check starts by itself (radar.js); paid steps still wait.
-      location.assign('/radar?'+new URLSearchParams({run:d.run,wallet:w.id,auto:'1'})+'#analysis-workflow');
+      location.assign('/radar?'+new URLSearchParams({run:d.run,wallet:w.id})+'#analysis-workflow');
     } catch(e) { el('analysis-status').textContent='Análise não aberta: '+e.message; }
     finally {busy=false;el('analysis-create').disabled=false;}
   });
   el('radar-run').addEventListener('change',()=>context(el('radar-run').value));
+  el('radar-start')?.addEventListener('click',()=>{
+    if(!options)return;
+    const run=el('radar-run').value||options.selected;
+    if(run)context(run);
+    window.dispatchEvent(new CustomEvent('hfl:radar-start',{detail:{run}}));
+    el('new-analysis')?.scrollIntoView({block:'start',behavior:'smooth'});
+    el('analysis-target')?.focus({preventScroll:true});
+  });
   api().then(d=>{
     options=d;
     el('analysis-wallet').innerHTML=d.wallets.map(w=>`<option value="${esc(w.id)}">${esc(w.name)} · ${esc(w.nature_label)}</option>`).join('') || '<option value="">Nenhuma carteira</option>';
-    const query=new URLSearchParams(location.search), wanted=query.get('wallet');
+    const query=new URLSearchParams(location.search), wanted=query.get('wallet'), initialRun=query.get('run');
     const agents=d.wallets.find(w=>w.nature==='SIMULATION'&&w.strategy==='MULTIAGENT'); // the wallet the agents move
     if(d.wallets.some(w=>w.id===wanted))el('analysis-wallet').value=wanted;else if(agents)el('analysis-wallet').value=agents.id;
     el('analysis-target').min=d.sessions[1];el('analysis-target').max=d.sessions.at(-1);el('analysis-target').value=d.target_date;
     el('analysis-reference').min=d.sessions[0];reference();wallet();
     el('analysis-create').disabled=!d.wallets.length;
-    el('analysis-status').textContent='Criar registra a análise e já verifica os dados, sem custo. Chamadas pagas sempre esperam sua autorização.';
-    context(query.get('run') || d.selected);
-    if(wanted || location.hash==='#new-analysis'){el('new-analysis').open=true;el('analysis-target').focus();}
+    el('analysis-status').textContent='Criar registra a análise. Chamadas pagas sempre esperam sua autorização.';
+    if(initialRun)context(initialRun);
+    if(location.hash==='#new-analysis'){el('new-analysis').open=true;el('analysis-target').focus();}
   }).catch(e=>{el('analysis-status').textContent='Não foi possível abrir o cadastro: '+e.message;});
 })();
 // Cycle view (DP-17): the whole analysis cycle as connected steps, like a CI run graph.
@@ -178,6 +185,20 @@
   const go={created:['#analysis-target','#new-analysis'],data:['#guided-check','#analysis-workflow'],budget:['#aggregate-budget','#analysis-workflow'],agents:['#paid','#analysis-workflow'],manager:['#manager-paid','#manager-cost','#wallet-manager'],preview:['#manager-preview','#manager-result'],approval:['#manager-financial','#manager-receipt'],auction:['#manager-receipt']};
   const set=(id,v)=>{const e=document.getElementById(id);if(e.textContent!==v)e.textContent=v;}; // unchanged text is not re-announced
   function render(){
+    if(!snap.analysis&&!snap.radar&&!snap.manager){
+      set('cycle-wallet','—');set('cycle-target','—');set('cycle-reference','—');set('cycle-start','—');
+      set('cycle-next','Execução automática ativa. Clique em "Iniciar" para carregar o ciclo atual ou abrir uma análise manual.');
+      box.dataset.state='idle';
+      for(const li of box.querySelectorAll('[data-node]')){
+        li.dataset.state='pending';li.removeAttribute('data-active');
+        li.querySelector('button').removeAttribute('aria-current');
+        li.querySelector('.cycle-state').textContent='aguardando início';
+        li.querySelector('.cycle-detail').textContent='';
+        li.querySelector('.cycle-time').textContent='';
+        const diag=li.querySelector('.cycle-diag');if(diag)diag.hidden=true;
+      }
+      return;
+    }
     const list=nodes(snap), s=summary(list), a=snap.analysis, run=snap.radar?.run;
     for(const n of list){
       const li=box.querySelector(`[data-node="${n.id}"]`), b=li.querySelector('button'), diag=li.querySelector('.cycle-diag');

@@ -148,6 +148,7 @@
   el('manager-history').addEventListener('change',()=>{version++;selected=el('manager-history').value;dismiss();draw();});
   el('manager-refresh').addEventListener('click',()=>action(async()=>{dismiss();await load();}));
   el('radar-run').addEventListener('change',()=>{version++;selected='';clearTimeout(poll);dismiss();panel.hidden=true;load(true).catch(failure);});
+  window.addEventListener('hfl:radar-start',()=>{version++;selected='';clearTimeout(poll);dismiss();panel.hidden=true;load(true).catch(failure);});
   window.addEventListener('hfl:analysis-stage',event=>{if(event.detail!=='results'){version++;dismiss();}else{autoPrepared='';load().catch(failure);}});
-  load().catch(failure);
+  if(new URLSearchParams(location.search).has('run')||location.hash==='#analysis-results')load().catch(failure);
 })();

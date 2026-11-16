@@ -3,13 +3,13 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Agentes · Hedge Fund Lab</title>
 <link rel="stylesheet" href="/radar.css?v=763"><link rel="stylesheet" href="/shell.css?v=7"><link rel="stylesheet" href="/market.css?v=763">
-<script src="/shell.js?v=764" defer></script><script src="/market-ui.js?v=763" defer></script><script src="/radar-analysis.js?v=3" defer></script><script src="/radar.js?v=765" defer></script>
-<script src="/wallet-manager.js?v=6" defer></script>
+<script src="/shell.js?v=764" defer></script><script src="/market-ui.js?v=763" defer></script><script src="/radar-analysis.js?v=4" defer></script><script src="/radar.js?v=766" defer></script>
+<script src="/wallet-manager.js?v=7" defer></script>
 </head><body class="hfl-platform">
 <!-- platform-shell -->
 <main id="main" class="market-main">
-<div class="product-heading"><div><h1 class="ds-title">Agentes da carteira</h1><p>Acompanhe o ciclo: cada etapa mostra o estado e o que falta. Toque numa etapa para ver seus controles.</p></div><div class="product-actions"><a href="#new-analysis">+ Nova análise</a></div></div>
-<section id="agent-cycle" class="product-cycle" aria-labelledby="cycle-title"><div class="cycle-summary"><h2 id="cycle-title">Ciclo da análise</h2><dl><div><dt>Carteira</dt><dd id="cycle-wallet">—</dd></div><div><dt>Dia-alvo</dt><dd id="cycle-target">—</dd></div><div><dt>Dados até</dt><dd id="cycle-reference">—</dd></div><div><dt>Início</dt><dd id="cycle-start">—</dd></div></dl><p id="cycle-next" role="status" aria-live="polite">Consultando o estado do ciclo…</p></div>
+<div class="product-heading"><div><h1 class="ds-title">Agentes da carteira</h1><p>A rotina diária roda automaticamente nos horários programados. Use o botão ao lado quando quiser iniciar ou consultar uma análise manual.</p></div><div class="product-actions"><button type="button" id="radar-start" class="product-primary">Iniciar</button></div></div>
+<section id="agent-cycle" class="product-cycle" aria-labelledby="cycle-title"><div class="cycle-summary"><h2 id="cycle-title">Ciclo da análise</h2><dl><div><dt>Carteira</dt><dd id="cycle-wallet">—</dd></div><div><dt>Dia-alvo</dt><dd id="cycle-target">—</dd></div><div><dt>Dados até</dt><dd id="cycle-reference">—</dd></div><div><dt>Início</dt><dd id="cycle-start">—</dd></div></dl><p id="cycle-next" role="status" aria-live="polite">Execução automática ativa. Clique em "Iniciar" para carregar o ciclo atual ou abrir uma análise manual.</p></div>
 <ol class="cycle-nodes" aria-label="Etapas do ciclo">
 <li data-node="created" data-state="pending"><button type="button" data-agent-stage="setup"><span class="cycle-name">Análise criada</span><span class="cycle-state">pendente</span><span class="cycle-detail"></span><span class="cycle-time"></span></button></li>
 <li data-node="data" data-state="pending"><button type="button" data-agent-stage="workflow"><span class="cycle-name">Dados</span><span class="cycle-state">pendente</span><span class="cycle-detail"></span><span class="cycle-time"></span></button><a class="cycle-diag" href="#analysis-workflow" hidden>Ver diagnóstico</a></li>
@@ -31,7 +31,7 @@
 <p>O comitê avalia ativos individualmente. O gestor final recebe posições, caixa e dia-alvo para propor quantidades na etapa Resultados. Criar este registro não chama agentes nem movimenta a carteira.</p>
 <button id="analysis-create" type="submit" disabled>Criar análise e continuar →</button>
 <p id="analysis-status" role="status" aria-live="polite"></p></form>
-</section><aside class="product-panel product-history-panel"><h2>Seu histórico</h2><div id="analysis-history"></div><h3>Outras execuções registradas</h3><div class="market-filters"><label>Execução Radar consultada<select id="radar-run"><option value="">Consultando registro…</option></select></label><button id="refresh" data-action="read">Atualizar consulta</button><a id="radar-to-market" class="ds-btn" href="/market">Explorar ativos →</a></div>
+</section><aside class="product-panel product-history-panel"><h2>Seu histórico</h2><div id="analysis-history"></div><h3>Outras execuções registradas</h3><div class="market-filters"><label>Execução Radar consultada<select id="radar-run"><option value="">Consultando registro…</option></select></label><button id="refresh" data-action="read">Atualizar consulta</button><a id="radar-to-agents" class="ds-btn" href="/agents">Voto por agente →</a><a id="radar-to-market" class="ds-btn" href="/market" hidden>Explorar ativos →</a></div>
 </aside></div>
 <div data-agent-screen="workflow" hidden><p id="analysis-context" class="product-compact-context" hidden></p>
 <p><a id="analysis-return" class="ds-btn" href="/" hidden>Voltar à carteira desta análise →</a></p>
@@ -91,6 +91,6 @@
       <div id="comparison" aria-live="polite"></div>
 </details>
 <section class="ds-card" id="room" aria-labelledby="room-title" hidden><div class="ds-section-head"><h2 id="room-title" tabindex="-1">Detalhe do ativo e comitê</h2><button id="close-room" class="ds-btn">Voltar à comparação</button></div><div id="room-content"></div></section>
-<p><a id="radar-to-global" class="ds-btn" href="/portfolio#global-workflow">Levar seleção à Carteira →</a></p>
+<p><a id="radar-to-global" class="ds-btn" href="/portfolio#global-workflow" hidden>Levar seleção à Carteira →</a></p>
 <details id="radar-audit"><summary>Histórico da execução, custos e proveniência</summary><p>Selecione outra execução no controle acima para consultar incidentes e demonstrações, preservando suas identidades.</p><section id="run-card" class="run-card" aria-label="Execução selecionada"></section></details>
 </div><footer>HEDGE-FUND-LAB · Consulta histórica · Sem ordens reais</footer></main></body></html>
