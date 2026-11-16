@@ -1,6 +1,6 @@
 # Direção do projeto e decisões de produto
 
-Versão 23 — **14/11/2026**. Decisões registradas a partir da conversa com Lucas.
+Versão 25 — **15/11/2026**. Decisões registradas a partir da conversa com Lucas.
 Este documento fixa o destino do produto; o [roadmap](ROADMAP.md) organiza o
 caminho e o [estado atual](ESTADO_ATUAL.md) registra o que já existe.
 
@@ -135,6 +135,22 @@ para pasta própria do volume e oferecer consulta pelo Laboratório, com os mesm
 controles de origem e Tailscale. Não inclui nova inferência, mudança de estratégia
 ou integração dos livros retrospectivos às carteiras diárias. Código segue pelo
 original e pela fork que alimenta o Railway; dados privados ficam fora do Git.
+
+**15/11 — diagnóstico dos 5 achados do replay v1 e plano Abril–Novembro v2 (`DP-37` / `REPLAY-01` → `REPLAY-02`):** após a auditoria do replay `06/04–12/11/2026`, Lucas pediu documentar os 5 achados empíricos do `v1` (trava de caixa/rebalanceamento em `MANTER`, compra de topo/venda de fundo com RSI médio `63,17` vs `35,07`, veto de volatilidade bloqueando `VENDA` em 25 casos, concentração até `77,49%` / compras residuais de 3 ações e homogeneidade `83,01%` `5x0` do comitê) e estruturar o plano do **Replay Abril–Novembro v2 (`REPLAY-02`)** focado nos 4 gargalos, **mantendo o `v1` preservado lado a lado** para mostrar a evolução arquitetural no TCC. A execução paga do `v2` permanece condicionada à qualificação offline do adaptador v2 e autorização específica do orçamento. [Diagnóstico e plano v2](../reports/auditoria_posicoes_replay_2026-04_2026-11.md).
+
+**15/11 — reorganização da navegação para o TCC (atualiza DP-23 / DP-37):** Lucas
+esclareceu que a campanha contínua de abril a novembro (`DP-37` / `REPLAY-01`,
+153 pregões e seis carteiras) é o foco empírico principal do TCC e aprovou:
+(1) promover **Replay abril–novembro** (`/laboratory/replay/`) a item próprio na
+barra principal (`Carteira`, `Operações`, `Agentes`, `Comparação`,
+`Replay abril–novembro`), além de atalhos diretos em `/comparison` e `/laboratory`;
+(2) limpar atalhos intermediários obsoletos ou sintéticos da navegação ativa
+(`/portfolio` e seus cinco sub-links sintéticos no Laboratório, `/data`, `/market`,
+`/legacy/backtests` e o banner demonstrativo `/?demo=1` no Laboratório), mantendo
+as rotas HTTP e arquivos existentes preservados para compatibilidade e auditoria;
+(3) priorizar `/logs` (`Atividade e registros`) e `/agents` (`Voto por agente`) em
+Auditoria e manter em Legacy apenas o acervo histórico (`/legacy`, `/legacy/paper`,
+`/legacy/h2`).
 
 ### Correspondência dos identificadores históricos
 
@@ -360,6 +376,8 @@ preservam seus rótulos e datas originais; DP-35 nas entradas de replay de
 | 13/11/2026 | Versão 21: campanha contínua DP-35 com seis carteiras, referências antes da inferência, frontend depois | Lucas confirmou Equal Weight e Mínima Variância além de SMA/Bollinger/B&H/Multiagentes e autorizou execução/reparo operacional sob teto agregado US$ 34,78 |
 | 14/11/2026 | Versão 22: consolida os ramos e identifica o replay como DP-37, com alias dos rótulos históricos | Lucas autorizou preservar melhorias do Matheus e decisões da fork; correspondência documental sem regravar evidências ou alterar políticas |
 | 14/11/2026 | Versão 23: consulta do replay no servidor sob DP-37 | Lucas pediu continuar o plano de transferência verificada e acesso pelo Laboratório, preservando a operação diária e sem novas inferências |
+| 15/11/2026 | Versão 24: reorganização da navegação para o TCC (DP-23 / DP-37) | Lucas indicou o replay abril–novembro como ponto central do TCC e aprovou item próprio na barra principal e limpeza de páginas sintéticas/redundantes da navegação ativa |
+| 15/11/2026 | Versão 25: campanha exploratória v2 (`REPLAY-02`, DP-37 / regras DP-36) concluída e comparada ao `v1` | Lucas autorizou execução paga sob teto US$ 34,78 após qualificação offline das 4 correções estruturais (`Trim-to-Fund`, cap 30% + mínimo R$ 2.000, R7 assimétrico e comitê 2+2+1); `v1` preservado integralmente |
 
 **Nota histórica das bases DP-09–DP-15:** o parágrafo abaixo preserva os limites
 da aprovação inicial. As autorizações posteriores, inclusive DP-20 e DP-33–DP-37,

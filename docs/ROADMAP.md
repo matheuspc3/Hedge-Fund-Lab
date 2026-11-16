@@ -1,6 +1,6 @@
 # Roadmap do Hedge-Fund-Lab
 
-Atualizado em **14/11/2026**. Plano de trabalho a partir da V7.6.5.
+Atualizado em **15/11/2026**. Plano de trabalho a partir da V7.6.5.
 Este é o planejamento ativo. Especificações científicas, aprovações e autorizações
 continuam em seus documentos próprios; um checkbox aqui não as substitui.
 
@@ -11,6 +11,22 @@ Ela define o destino do produto; este roadmap define a ordem para chegar lá.
 [Documentação e evidências](README.md)
 
 ## Objetivo e ponto de partida
+
+**REPLAY-02 / DP-37 (regras DP-36) — campanha contínua v2 concluída (15/11):** execução real autorizada por Lucas em `scripts/continuous_replay_v2.py` (`HFL-CONTINUOUS-EXPLORATORY-REPLAY-V2`), 06/04–12/11/2026, 153 pregões com 5 referências pré-calculadas (paridade exata com o `v1`, `sha256` `f3225f02...`) e inferência contínua das 18:33 às 23:39 (São Paulo). **918/918 estados diários reconciliados** (`152` pregões `COMPLETED` + `1` lacuna *fail-closed* em `2026-06-26` por `WinError 10054` na chamada de risco de `BBAS3` após `4/5` votos técnicos `VENDA`, preservando a posição). **Multiagentes v2** encerrou em **R$ 85.743,57 (-14,2564%)**, avanço de **+R$ 3.564,86 (+3,5649 p.p.)** sobre o `v1` (R$ 82.178,71), com corte de 55,8% no giro (`38` vs `86` operações) e custos (`R$ 119,87` vs `R$ 184,40`), ainda abaixo do `Buy & Hold` (`-R$ 3.047,54`) e da `Bollinger 20/2` (`R$ 104.887,05`, `+4,8870%`). Os 4 gargalos operaram conforme projetado: `2` `Trim-to-Fund` em `PETR4` (`+R$ 1.812,50` PnL vs `-R$ 1.783,77` no `v1`), `0` compras `< R$ 2.000`, `29,98%` teto máximo em proposta `BUY` (`32,23%` por deriva), `2` saídas sob veto `R7` (`ITUB4` `26.491,50` e `BBAS3` `5.712,30`), e queda da unanimidade `5-0` de `83,01%` para `15,13%`; permanece o *cash drag* estrutural (`24,69%` média, `45,86%` no fim) sob teto de 30% em universo de 5 ativos. Orçamento PASS: `4.702` chamadas lógicas (`4.701` com trace + `1` erro de transporte em `2026-06-26`), `4.711` tentativas físicas (`9` retries), exposição **US$ 10,03082025** (`US$ 8,92490025` conhecido + `US$ 1,105920` reservado) abaixo do teto `US$ 34,78`. `v1` preservado (`explorer.json` `88c3a0e1...`, `calls.json` `b5ef9585...`). [Relatório v2](../reports/replay_continuo_v2_2026-04_2026-11.md) · [Pacote selado v2](../output/replay-continuo-v2-20261115/manifest.json) · [Comparativo JSON](../output/auditoria-replay-v2/comparacao_v1_v2.json). Próximo passo: incorporar o comparativo `v1` vs `v2` à monografia (`TCC-02/03`).
+
+**15/11 — exploração dos resultados e plano Abril–Novembro v2, DP-37 / REPLAY-01 → REPLAY-02:** auditoria de posições, cobertura e atribuição concluída com os **5 achados empíricos do replay v1** documentados e verificados por script: (1) trava de caixa/rebalanceamento em `MANTER` (`VALE3` 94 pregões zerada com 14 `COMPRA` ignoradas; `ITUB4` 27 `COMPRA` seguidas ignoradas); (2) compra no topo e venda no fundo em 4/5 ativos (`RSI` médio `63,17` em `COMPRA` vs `35,07` em `VENDA`); (3) veto de volatilidade `HARD_ASSET_VOLATILITY_RULE` bloqueando `VENDA` em 25 pares ativo/pregão; (4) concentração extrema (101/153 pregões com apenas 2 ativos $\ge 2\%$, pico de `77,49%` em `VALE3`) e compras de "poeira" (`3` ações em `BBAS3`); (5) homogeneidade do comitê (`83,01%` de unanimidade `5x0`). Estruturado o **Plano de Melhoria para o Replay Abril–Novembro v2 (`REPLAY-02`)** focado nos 4 gargalos (`Trim-to-Fund`, teto de concentração `30%` + lote mínimo `R$ 2.000`, assimetria de risco `R7` liberando `SELL` sob veto e diversidade Tendência vs Reversão no comitê), mantendo o `v1` 100% preservado para comparação direta no TCC. [Relatório dos 5 achados e plano v2](../reports/auditoria_posicoes_replay_2026-04_2026-11.md). Próximo passo: implementar e qualificar offline o adaptador `v2` antes de preflight/execução paga.
+
+**15/11 — reorganização da navegação para o TCC, DP-23 / DP-37:** **Replay abril–novembro**
+(`/laboratory/replay/`) promovido a item próprio na barra principal de navegação
+(`Carteira`, `Operações`, `Agentes`, `Comparação`, `Replay abril–novembro`), com
+atalhos diretos também em `/comparison` e `/laboratory`. Removidos da navegação
+ativa os sub-links sintéticos de `/portfolio`, o bloco demonstrativo `/?demo=1`
+ao abrir `/laboratory`, e os atalhos redundantes `/data`, `/market` e
+`/legacy/backtests`, mantendo as rotas HTTP e arquivos intactos para
+compatibilidade e testes de preservação. Auditoria passa a destacar `/logs` e
+`/agents`; Legacy concentra `/legacy`, `/legacy/paper` e `/legacy/h2`. Checkout
+local alinhado à `main` (`b673e55`). Verificação: `check_replay_server.py` PASS,
+`node --check` PASS e **141 testes aprovados** (1 skip).
 
 **14/11 — disponibilização da consulta, DP-37 / REPLAY-01:** acesso
 `/laboratory/replay/` pelo Laboratório e importador do pacote selado implementados.
