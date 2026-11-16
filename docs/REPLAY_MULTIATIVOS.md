@@ -9,6 +9,16 @@ na carteira iniciada em outubro. Não se trata de avaliação prospectiva.
 
 ## Consulta no servidor pessoal
 
+**16/11 — preparação v3, DP-37 / REPLAY-03:** código oferece a rota
+`/laboratory/replay/v3/` e o atalho Replay v3, mantendo v1/v2 independentes.
+Importador aceita `--version v3` para o pacote
+`explorador_replay_v3_2026-04_2026-11.zip`, hash SHA-256
+`da0016fe22095027e3f9ec0f314bc96e0d7f792d2099fe0276dead511e9b75d4`, com
+12 membros regulares, em `data/replays/april-november-2026-flash-v3/`.
+Validação local PASS; nenhum dado v3 foi transferido nesta etapa. Lucas
+sincronizará a fork e solicitará a transferência depois. Até a instalação do
+pacote, a consulta v3 informa indisponibilidade, sem substituir por outra versão.
+
 **16/11 — v2:** pacote `explorador_replay_v2_2026-04_2026-11.zip` instalado
 no mesmo volume, em `data/replays/april-november-2026-flash-v2/`, sem substituir
 a v1. SHA-256 `62998e60b09d24a49668a56cbbdcd9076db1d65ef34bb8af7a2e8d4652da5749`;

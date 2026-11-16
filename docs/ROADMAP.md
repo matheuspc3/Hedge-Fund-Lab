@@ -12,6 +12,16 @@ Ela define o destino do produto; este roadmap define a ordem para chegar lá.
 
 ## Objetivo e ponto de partida
 
+**16/11 — preparação da consulta v3, DP-37 / REPLAY-03:** runner, exportador,
+auditoria, check offline e relatório da campanha preparados para versionamento.
+Consulta `/laboratory/replay/v3/` e atalho Replay v3 implementados junto das
+versões anteriores; importador aceita `--version v3` com hash fixo do pacote.
+Checks offline da campanha, das três rotas e do importador PASS. Fontes e
+relatório v3 preservam bytes exatos no Git. Lucas fará a sincronização da fork;
+a transferência dos dados v3 ao Railway aguarda seu próximo pedido.
+
+**REPLAY-03 / DP-37 (regras DP-36) — campanha contínua v3 concluída (16/11):** execução real autorizada por Lucas em `scripts/continuous_replay_v3.py` (`HFL-CONTINUOUS-EXPLORATORY-REPLAY-V3`), 06/04–12/11/2026, 153 pregões com 5 referências pré-calculadas (paridade exata com `v1` e `v2`, `sha256` `f3225f02...`) e inferência contínua das 02:59 às 08:34 (São Paulo). **918/918 estados diários reconciliados** (`149` pregões `COMPLETED` + `4` lacunas *fail-closed* pós-LLM em `compile_proposal_v3`: `2026-07-01`, `2026-09-01`, `2026-10-02` por `SELL` com `quantity="0"` em posição abaixo do Core Floor e `2026-10-01` por ticker `PETR4` duplicado / `WEGE3` omitido, preservando posições sem fabricar ordens). **Multiagentes v3** encerrou em **R$ 100.067,36 (+0,0674%)**, avanço de **+R$ 17.888,65 (+17,8887 p.p.)** sobre `v1` (`R$ 82.178,71`) e **+R$ 14.323,79 (+14,3238 p.p.)** sobre `v2` (`R$ 85.743,57`), superando `Buy & Hold` (`R$ 88.791,11`, `+R$ 11.276,25`), `SMA 50/200` (`R$ 88.866,68`), `Equal Weight` (`R$ 89.869,29`) e `Mínima Variância` (`R$ 95.814,84`), atrás apenas de `Bollinger 20/2` (`R$ 104.887,05`, `-R$ 4.819,69`). **Preço médio de venda superou o de compra nos 5/5 ativos**, **`0` saídas totais** (`153/153` pregões com todos os 5 ativos $\ge 2\%$, capturando **20/20 proventos líquidos = R$ 1.425,30** vs `9/20` no `v1`/`v2`), `81` operações pós-entrada (`29 C / 52 V`, custos `R$ 120,07`) com inversão completa do perfil de execução (`BUY` a `RSI` médio `39,26` vs `SELL` a `RSI` médio `69,00`, unanimidade `5-0` reduzida a `4,03%`, `56` ajustes `CORE_FLOOR_STEP_SELL`, `2` compras `Dip-Rebalance` e caixa médio `14,94%` / final `0,75%`). Orçamento PASS: `4.703` chamadas lógicas = `4.703` tentativas físicas (`0` retries, `0` erros de transporte, `4.703` com trace reconciliado, `6.748.394` tokens em `gemini-3.8-flash`), exposição **US$ 8,62763550** (`0` incerto) abaixo do teto `US$ 34,78` e inferior ao `v2` (`US$ 10,03082025`). `v1` e `v2` preservados intactos (`explorer.json` `88c3a0e1...` e `4f517224...`). [Relatório v3](../reports/replay_continuo_v3_2026-04_2026-11.md) · [Pacote selado v3](../output/replay-continuo-v3-20261116/manifest.json) · [Comparativo v1/v2/v3 JSON](../output/auditoria-replay-v3/comparacao_v1_v2_v3.json). Próximo passo: incorporar a evolução `v1 → v2 → v3` ao TCC (`TCC-02/03`) e publicar `v3` no servidor de consulta se solicitado por Lucas.
+
 **16/11 — dados v2 no Railway, DP-37 / REPLAY-02:** deploy `b29aecf`
 confirmado em SUCCESS. Pacote v2 instalado atomicamente no volume em
 `data/replays/april-november-2026-flash-v2/`, com 12 arquivos conferidos pelo

@@ -71,6 +71,8 @@ REPLAY_ROUTE = "/laboratory/replay/"
 REPLAY_ROOT = PROJECT_ROOT / "data/replays/april-november-2026-flash/exports"
 REPLAY_V2_ROUTE = REPLAY_ROUTE + "v2/"
 REPLAY_V2_ROOT = PROJECT_ROOT / "data/replays/april-november-2026-flash-v2/exports"
+REPLAY_V3_ROUTE = REPLAY_ROUTE + "v3/"
+REPLAY_V3_ROOT = PROJECT_ROOT / "data/replays/april-november-2026-flash-v3/exports"
 REPLAY_FILES = {
     "index.html", "calls-data.js", "explorer.json", "calls.json", "manifest.json",
     "daily.csv", "operations.csv", "decisions.csv", "dividends.csv", "calls.csv",
@@ -95,7 +97,7 @@ AREAS = (
         "Replay abril–novembro",
         REPLAY_ROUTE,
         "CAMPANHA 06/04–12/11 · 153 PREGÕES · SOMENTE CONSULTA",
-        ((REPLAY_ROUTE, "Replay v1"), (REPLAY_V2_ROUTE, "Replay v2")),
+        ((REPLAY_ROUTE, "Replay v1"), (REPLAY_V2_ROUTE, "Replay v2"), (REPLAY_V3_ROUTE, "Replay v3")),
     ),
     (
         "carteira",
@@ -294,6 +296,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                     REPLAY_ROUTE,
                     REPLAY_V2_ROUTE[:-1],
                     REPLAY_V2_ROUTE,
+                    REPLAY_V3_ROUTE[:-1],
+                    REPLAY_V3_ROUTE,
                     "/",
                     "/h2",
                     "/h2/",
@@ -838,6 +842,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         route, root = REPLAY_ROUTE, REPLAY_ROOT
         if path == REPLAY_V2_ROUTE[:-1] or path.startswith(REPLAY_V2_ROUTE):
             route, root = REPLAY_V2_ROUTE, REPLAY_V2_ROOT
+        elif path == REPLAY_V3_ROUTE[:-1] or path.startswith(REPLAY_V3_ROUTE):
+            route, root = REPLAY_V3_ROUTE, REPLAY_V3_ROOT
         if path == route[:-1]:
             self.send_response(308)
             self.send_header("Location", route)

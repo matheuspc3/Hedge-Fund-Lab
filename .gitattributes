@@ -29,3 +29,8 @@ scripts/replay_multiasset_window.py -text
 scripts/report_multiasset_replay.py -text
 tests/check_continuous_replay.py -text
 tests/check_multiasset_replay.py -text
+# V3: preservar as fontes e o relatório vinculados aos hashes da campanha concluída.
+scripts/continuous_replay_v3.py -text
+scripts/export_continuous_replay_v3.py -text
+scripts/audit_replay_v3_comparison.py -text
+reports/replay_continuo_v3_2026-04_2026-11.md -text
