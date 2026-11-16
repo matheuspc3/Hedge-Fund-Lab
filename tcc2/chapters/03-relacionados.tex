@@ -1,0 +1,17 @@
+\chapter{Trabalhos Relacionados}
+\label{cha:relacionados}
+
+\section{REVISÃO CRÍTICA DA LITERATURA}
+
+A literatura recente sobre decisão financeira computacional pode ser organizada, de forma sintética, em três frentes. A primeira reúne abordagens baseadas em aprendizado por reforço e otimização sequencial de decisões, nas quais o agente aprende políticas de alocação a partir da interação com séries históricas \citep{Moody2001, SuttonBarto2018, Schulman2017, Jiang2017}. Embora essas técnicas sejam promissoras para adaptação dinâmica, elas também impõem desafios de estabilidade, sensibilidade ao regime de mercado e baixa interpretabilidade quando avaliadas em ambientes não estacionários \citep{Jiang2017}.
+
+A segunda frente concentra-se em modelos de \textit{machine learning} voltados à previsão de retornos e à precificação de ativos. Nesse eixo, o foco recai menos sobre a deliberação passo a passo e mais sobre a capacidade de capturar relações não lineares entre fatores, características dos ativos e retornos esperados \citep{Gu2020}. Em comparação com abordagens de aprendizado por reforço, essa literatura tende a oferecer maior clareza sobre variáveis explicativas e desenho estatístico, mas não necessariamente resolve problemas de governança decisória, verificação de raciocínio ou coordenação entre múltiplos critérios de investimento.
+
+A terceira frente, mais próxima do presente trabalho, investiga o uso de LLMs como agentes de decisão e, em particular, a combinação de múltiplos agentes especializados. Nessa direção, \citet{Xia2026}, \citet{Li2023}, \citet{Xing2024} e \citet{FinCoT2025} convergem ao indicar que o desempenho desses sistemas depende não apenas do modelo subjacente, mas também da forma como especialização, discussão e estrutura de raciocínio são combinadas.
+
+À luz dessas três frentes, o Hedge-fund-lab posiciona-se como um artefato metodológico voltado a aproximar duas exigências complementares: comparação rigorosa com \textit{benchmarks}, controle de risco e atenção ao \textit{backtest overfitting} \citep{Bailey2017, LopezDePrado2018}, e exploração de uma arquitetura multiagente com deliberação estruturada. Nesse sentido, sua contribuição está em propor um ambiente de \textit{backtesting} que permita avaliar essas abordagens de forma comparável, auditável e metodologicamente controlada.
+
+\subsection{Síntese e Posicionamento}
+
+A revisão evidencia que, embora a literatura ofereça resultados promissores para o uso de LLMs em decisão financeira, a maioria dos trabalhos avalia o desempenho em ambientes pouco transparentes quanto à separação entre calibração e avaliação, ao controle de custos e à rastreabilidade das decisões. O Hedge-fund-lab preenche essa lacuna ao tratar a calibração como ajuste de configuração (distinta de treinamento), ao adotar execução pseudo-\textit{live} causal com custos explícitos e ao registrar a proveniência de cada execução. As hipóteses de pesquisa decorrentes desse referencial --- H1, H2 e H0 --- são formalizadas no Capítulo~\ref{cha:introducao} e retomadas na metodologia (Capítulo~\ref{cha:metodologia}).
+

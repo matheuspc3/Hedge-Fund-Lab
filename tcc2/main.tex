@@ -1,0 +1,67 @@
+\documentclass{eic-bcc-tcc}
+
+\title{Hedge-fund-lab: Laboratório Quantitativo de Backtesting baseado em Sistemas Multiagentes}
+\titleen{Hedge-fund-lab: Quantitative Backtesting Laboratory based on Multi-agent Systems}
+
+\addstudent[Lucas Pereira da Silva]{Lucas Pereira da Silva}
+\addstudent[Matheus Pereira de Carvalho]{Matheus Pereira de Carvalho}
+
+\newcommand{\warn}[1]{{\color{red} {#1}}}
+\newcommand{\verify}[1]{{\color{blue} {#1}}}
+\newcommand{\remarks}[2]{{\color{red} #1\ (\textit{#2})}}
+
+\advisor[m]{Eduardo Soares Ogasawara, D.Sc.}
+\addboardmember{Membro Interno}{Renato Campos Mauro, D.Sc.}
+\addboardmember{Membro Externo}{Gilberto Gil Fidelis Gomes Passos, M.Sc.}
+
+\date{2026}
+
+\newacronym{tcc}{TCC}{Trabalho de Conclusão de Curso}
+\newacronym{llm}{LLM}{Large Language Model}
+\newacronym{etl}{ETL}{Extract, Transform, Load}
+\newacronym{emh}{EMH}{Efficient Market Hypothesis}
+\newacronym{amh}{AMH}{Adaptive Markets Hypothesis}
+\newacronym{mas}{MAS}{Multi-Agent Systems}
+\newacronym{rsi}{RSI}{Relative Strength Index}
+\newacronym{sma}{SMA}{Simple Moving Average}
+\newacronym{macd}{MACD}{Moving Average Convergence Divergence}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning}
+
+\begin{document}
+
+\maketitle
+
+\makeapproval
+
+\begin{resumo}
+O mercado financeiro contemporâneo caracteriza-se por sua elevada complexidade e natureza não estacionária, em que o volume massivo de dados gerados diariamente desafia as capacidades de análise humana e de algoritmos estáticos tradicionais. Este trabalho apresenta o desenvolvimento do Hedge-fund-lab, um laboratório quantitativo para \textit{backtesting} de estratégias de investimento baseado em sistemas multiagentes. O objetivo é mitigar as limitações de estratégias clássicas e o risco de superajuste por meio da introdução de processos de consenso e deliberação na tomada de decisão financeira baseada em \textit{Large Language Models}. A solução integra um pipeline de dados construído a partir dos registros oficiais de negociação da B3 (COTAHIST), persistidos em banco relacional (SQLite/SQLAlchemy), e um comitê de agentes especializados coordenado pelo framework LangGraph, executado sobre um motor de \textit{backtesting} próprio. O laboratório permite avaliar, de forma metodologicamente controlada, se a deliberação adaptativa de modelos de linguagem produz decisões de investimento mais robustas que \textit{benchmarks} clássicos em ativos de alta volatilidade do mercado brasileiro, considerando risco, custo e consistência operacional.
+\palavraschave{Análise Quantitativa. Sistemas Multiagentes. Large Language Models. LangGraph. Backtesting.}
+\end{resumo}
+
+\begin{abstract}
+The contemporary financial market is characterized by extreme complexity and a non-stationary nature, where the massive volume of data generated daily challenges human analysis and traditional static algorithms. This work presents the development of the Hedge-fund-lab, a quantitative laboratory for backtesting investment strategies based on multi-agent systems. The goal is to mitigate the limitations of classic trading strategies and the risk of overfitting by introducing consensus and deliberation processes into financial decision-making driven by Large Language Models. The proposed solution integrates a data pipeline built on official B3 trading records (COTAHIST), persisted in a relational database (SQLite/SQLAlchemy), and a committee of specialized agents coordinated through the LangGraph framework, executed over a custom backtesting engine. The laboratory allows evaluating, in a methodologically controlled manner, whether the adaptive deliberation of language models produces more robust investment decisions than classical benchmarks in highly volatile assets of the Brazilian market, considering risk, cost, and operational consistency.
+\keywords{Quantitative Analysis. Multi-Agent Systems. Large Language Models. LangGraph. Backtesting.}
+\end{abstract}
+
+\listoffigurespage
+\listoftablespage
+\listofacronymspage
+\tableofcontentspage
+
+\mainmatter
+
+\input{chapters/01-introducao}
+\input{chapters/02-fundamentacao}
+\input{chapters/03-relacionados}
+\input{chapters/04-arquitetura}
+\input{chapters/05-metodologia}
+\input{chapters/06-resultados}
+\input{chapters/07-conclusao}
+
+\backmatter
+
+\referencepage % Comando do molde para renderizar o arquivo "references.bib"
+
+\end{document}

@@ -1,0 +1,107 @@
+\chapter{Resultados e Discussão}
+\label{cha:resultados}
+
+Este capítulo está organizado em duas partes, de naturezas metodológicas
+distintas e que não devem ser confundidas. A primeira (Seção~\ref{sec:obs-operacional})
+apresenta uma \textbf{observação operacional preliminar} do sistema implantado em
+ciclo diário autônomo, em regime de \textit{paper trading}, sem capital real
+alocado. A segunda (Seção~\ref{sec:resultados-experimentais}) destina-se aos
+\textbf{resultados experimentais} de H1 e H2, obtidos sob o protocolo congelado
+descrito no Capítulo~\ref{cha:metodologia}. A separação é deliberada: a
+observação operacional documenta o funcionamento do sistema em produção, ao
+passo que a avaliação experimental é a única base legítima para decidir as
+hipóteses de pesquisa.
+
+\section{Observação Operacional Preliminar}
+\label{sec:obs-operacional}
+
+O sistema foi implantado em ciclo diário autônomo (DP-34) a partir de
+14/10/2026, com capital inicial de R\$ 100.000,00 por carteira, em regime de
+\textit{paper trading} --- isto é, decisões e marcações a mercado reais, mas sem
+capital financeiro efetivamente alocado. Foram criadas duas carteiras com
+alocação inicial idêntica, \textit{Buy \& Hold} e \textit{Multiagentes}, cada uma
+composta pelos cinco ativos do universo ponderados igualmente (20\% cada) e com
+R\$ 177,44 remanescentes em caixa. Os dados a seguir correspondem à série
+patrimonial de \textbf{uma única carteira}, capturada do painel de comparação do
+sistema até 06/11/2026 (17 sessões), e não constituem a comparação completa
+entre os dois tratamentos.
+
+A Tabela~\ref{tab:obs-operacional} resume a evolução do patrimônio (equity) e do
+retorno acumulado em relação ao capital inicial de R\$ 100.000,00. A sessão de
+06/11/2026 encontrava-se em estado \texttt{PENDING\_CLOSE} no momento da captura
+e, por isso, não apresentava fechamento patrimonial.
+
+\begin{table}[htbp]
+\centering
+\caption{Evolução patrimonial observada no ciclo diário autônomo (uma carteira), 14/10/2026 a 06/11/2026.}
+\label{tab:obs-operacional}
+\begin{tabular}{lrr}
+\toprule
+Data & Patrimônio (R\$) & Retorno acumulado (\%) \\
+\midrule
+14/10 & 99.835{,}33 & $-0{,}16$ \\
+15/10 & 98.344{,}85 & $-1{,}66$ \\
+16/10 & 98.452{,}86 & $-1{,}55$ \\
+19/10 & 97.969{,}27 & $-2{,}03$ \\
+20/10 & 98.777{,}70 & $-1{,}22$ \\
+21/10 & 96.748{,}33 & $-3{,}25$ \\
+22/10 & 95.036{,}38 & $-4{,}96$ \\
+23/10 & 95.737{,}19 & $-4{,}26$ \\
+26/10 & 86.869{,}15 & $-13{,}13$ \\
+27/10 & 86.438{,}11 & $-13{,}56$ \\
+28/10 & 85.214{,}43 & $-14{,}79$ \\
+29/10 & 85.159{,}65 & $-14{,}84$ \\
+30/10 & 85.234{,}94 & $-14{,}77$ \\
+03/11 & 84.014{,}46 & $-15{,}99$ \\
+04/11 & 84.461{,}55 & $-15{,}54$ \\
+05/11 & 83.562{,}69 & $-16{,}44$ \\
+06/11 & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A leitura da série revela dois fatos descritivos, sem qualquer inferência
+causal. Primeiro, o patrimônio não registrou operações após a alocação inicial
+de 14/10: a coluna de negociações permanece vazia nas sessões seguintes e o
+caixa permaneceu inalterado em R\$ 177,44 --- comportamento consistente com uma
+carteira \textit{Buy \& Hold} mantida sem rebalanceamento. Segundo, o período
+foi marcado por uma queda expressiva concentrada em 26/10 (retorno acumulado de
+$-4{,}26\%$ para $-13{,}13\%$ em uma sessão), seguida de estabilização próxima a
+$-16\%$. O \textit{maximum drawdown} do período equivale, portanto, à própria
+variação total observada (aproximadamente $-16{,}4\%$). Foi registrado ainda um
+dividendo a receber de R\$ 6,21 a partir de 30/10, sem impacto material sobre o
+patrimônio.
+
+Essa observação deve ser lida com as seguintes ressalvas. (i) Trata-se de dado
+operacional em \textit{paper trading}, não do resultado da avaliação
+experimental; portanto, não fundamenta decisão sobre H1 ou H2. (ii) A janela de
+17 sessões é curta e não estacionária, atravessando uma queda de mercado, de
+modo que nenhuma métrica ajustada ao risco (Sharpe, Sortino, \textit{drawdown}
+anualizado) tem significado estatístico nesse horizonte. (iii) A captura
+abrangeu uma única carteira; a comparação completa exige a série da segunda
+carteira, os demais \textit{benchmarks}, as métricas da definição congelada
+(\texttt{H2\_SCIENTIFIC\_SHARPE\_DEFINITION\_V1}) e a inferência por
+\textit{Bootstrap A}. Por fim, (iv) não se deve atribuir a queda observada a
+qualquer característica do processo de decisão dos agentes: a carteira capturada
+não realizou negociações no período, de modo que sua trajetória reflete
+exclusivamente a variação de preços dos cinco ativos do universo.
+
+\section{Resultados Experimentais (H1 e H2)}
+\label{sec:resultados-experimentais}
+
+% TODO(redator): esta seção está BLOQUEADA até que os resultados reais de
+% H1 e H2 existam (fases de VALIDATION e FINAL TEST, janelas ainda TBD).
+% NÃO preencher com dados simulados ou com o desempenho do MockLLMClient.
+
+A avaliação experimental de H1 e H2 --- incluindo a tabela de métricas por
+estratégia (Sharpe líquido, Sortino, \textit{Maximum Drawdown} e \textit{turnover}),
+a evolução patrimonial líquida do sistema multiagente frente aos
+\textit{benchmarks}, o gráfico de \textit{drawdown} e a decisão estatística por
+\textit{Bootstrap A} ($B=5000$, $\alpha=0{,}05$) --- permanece pendente das fases
+de VALIDAÇÃO e TESTE FINAL, cujas janelas ainda não estão definidas. Quando
+disponíveis, os resultados serão reportados aqui, respeitando as seguintes
+restrições: não declarar superioridade do agente LLM sem resultado auditado;
+distinguir resultados sintéticos (Hardening/CAL) de resultados reais de
+avaliação; e indicar explicitamente quais métricas usaram a definição congelada
+(\texttt{H2\_SCIENTIFIC\_SHARPE\_DEFINITION\_V1}) e quais permanecem valores
+técnicos padrão.
