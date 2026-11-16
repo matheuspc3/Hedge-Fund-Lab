@@ -227,12 +227,12 @@ function renderPriceChart(asset) {
             responsive: true, maintainAspectRatio: false,
             interaction: { intersect: false, mode: "index" },
             plugins: {
-                legend: { position: "top", labels: { color: "#94a3b8", font: { size: 10, family: "'JetBrains Mono', monospace" }, boxWidth: 14, padding: 12 } },
-                tooltip: { backgroundColor: "#1a2332", titleColor: "#e2e8f0", bodyColor: "#94a3b8", borderColor: "#1e293b", borderWidth: 1, padding: 10, cornerRadius: 8 },
+                legend: { position: "top", labels: { color: "#43516a", font: { size: 10, family: "'JetBrains Mono', monospace" }, boxWidth: 14, padding: 12 } },
+                tooltip: { backgroundColor: "#ffffff", titleColor: "#1b2437", bodyColor: "#43516a", borderColor: "#e2e7f0", borderWidth: 1, padding: 10, cornerRadius: 8 },
             },
             scales: {
-                x: { ticks: { color: "#64748b", maxTicksLimit: 10, font: { size: 10 } }, grid: { color: "rgba(255,255,255,0.03)" } },
-                y: { ticks: { color: "#64748b", font: { size: 10 } }, grid: { color: "rgba(255,255,255,0.03)" } },
+                x: { ticks: { color: "#657188", maxTicksLimit: 10, font: { size: 10 } }, grid: { color: "#eef2f8" } },
+                y: { ticks: { color: "#657188", font: { size: 10 } }, grid: { color: "#eef2f8" } },
             },
         },
     });
@@ -262,11 +262,11 @@ function renderRSIChart(asset) {
             interaction: { intersect: false, mode: "index" },
             plugins: {
                 legend: { display: false },
-                tooltip: { backgroundColor: "#1a2332", titleColor: "#e2e8f0", bodyColor: "#94a3b8", borderColor: "#1e293b", borderWidth: 1, padding: 10, cornerRadius: 8 },
+                tooltip: { backgroundColor: "#ffffff", titleColor: "#1b2437", bodyColor: "#43516a", borderColor: "#e2e7f0", borderWidth: 1, padding: 10, cornerRadius: 8 },
             },
             scales: {
-                y: { min: 0, max: 100, ticks: { color: "#64748b", font: { size: 10 } }, grid: { color: "rgba(255,255,255,0.03)" } },
-                x: { ticks: { color: "#64748b", maxTicksLimit: 8, font: { size: 10 } }, grid: { color: "rgba(255,255,255,0.03)" } },
+                y: { min: 0, max: 100, ticks: { color: "#657188", font: { size: 10 } }, grid: { color: "#eef2f8" } },
+                x: { ticks: { color: "#657188", maxTicksLimit: 8, font: { size: 10 } }, grid: { color: "#eef2f8" } },
             },
         },
     };
@@ -302,12 +302,12 @@ function renderMACDChart(asset) {
             responsive: true, maintainAspectRatio: false,
             interaction: { intersect: false, mode: "index" },
             plugins: {
-                legend: { position: "top", labels: { color: "#94a3b8", font: { size: 10, family: "'JetBrains Mono', monospace" }, boxWidth: 14, padding: 12 } },
-                tooltip: { backgroundColor: "#1a2332", titleColor: "#e2e8f0", bodyColor: "#94a3b8", borderColor: "#1e293b", borderWidth: 1, padding: 10, cornerRadius: 8 },
+                legend: { position: "top", labels: { color: "#43516a", font: { size: 10, family: "'JetBrains Mono', monospace" }, boxWidth: 14, padding: 12 } },
+                tooltip: { backgroundColor: "#ffffff", titleColor: "#1b2437", bodyColor: "#43516a", borderColor: "#e2e7f0", borderWidth: 1, padding: 10, cornerRadius: 8 },
             },
             scales: {
-                x: { ticks: { color: "#64748b", maxTicksLimit: 8, font: { size: 10 } }, grid: { color: "rgba(255,255,255,0.03)" } },
-                y: { ticks: { color: "#64748b", font: { size: 10 } }, grid: { color: "rgba(255,255,255,0.03)" } },
+                x: { ticks: { color: "#657188", maxTicksLimit: 8, font: { size: 10 } }, grid: { color: "#eef2f8" } },
+                y: { ticks: { color: "#657188", font: { size: 10 } }, grid: { color: "#eef2f8" } },
             },
         },
     });
@@ -422,12 +422,12 @@ function renderEquityComparisonChart() {
             responsive: true, maintainAspectRatio: false,
             interaction: { intersect: false, mode: "index" },
             plugins: {
-                legend: { position: "top", labels: { color: "#94a3b8", font: { size: 10, family: "'JetBrains Mono', monospace" }, boxWidth: 14, padding: 12 } },
-                tooltip: { backgroundColor: "#1a2332", titleColor: "#e2e8f0", bodyColor: "#94a3b8", borderColor: "#1e293b", borderWidth: 1, padding: 10, cornerRadius: 8, callbacks: { label: (ctx) => ctx.dataset.label + ": R$ " + ctx.parsed.y.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) } },
+                legend: { position: "top", labels: { color: "#43516a", font: { size: 10, family: "'JetBrains Mono', monospace" }, boxWidth: 14, padding: 12 } },
+                tooltip: { backgroundColor: "#ffffff", titleColor: "#1b2437", bodyColor: "#43516a", borderColor: "#e2e7f0", borderWidth: 1, padding: 10, cornerRadius: 8, callbacks: { label: (ctx) => ctx.dataset.label + ": R$ " + ctx.parsed.y.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) } },
             },
             scales: {
-                x: { ticks: { color: "#64748b", maxTicksLimit: 8, font: { size: 10 } }, grid: { color: "rgba(255,255,255,0.03)" } },
-                y: { ticks: { color: "#64748b", font: { size: 10 }, callback: (v) => "R$ " + v.toLocaleString("pt-BR") }, grid: { color: "rgba(255,255,255,0.03)" } },
+                x: { ticks: { color: "#657188", maxTicksLimit: 8, font: { size: 10 } }, grid: { color: "#eef2f8" } },
+                y: { ticks: { color: "#657188", font: { size: 10 }, callback: (v) => "R$ " + v.toLocaleString("pt-BR") }, grid: { color: "#eef2f8" } },
             },
         },
     });
@@ -454,17 +454,17 @@ function renderAllocationChart(canvasId, weights, title) {
             datasets: [{
                 data: values,
                 backgroundColor: colors,
-                borderColor: "#111827",
+                borderColor: "#ffffff",
                 borderWidth: 2,
             }],
         },
         options: {
             responsive: true, maintainAspectRatio: false,
             plugins: {
-                legend: { position: "right", labels: { color: "#94a3b8", font: { size: 10, family: "'JetBrains Mono', monospace" }, padding: 8 } },
+                legend: { position: "right", labels: { color: "#43516a", font: { size: 10, family: "'JetBrains Mono', monospace" }, padding: 8 } },
                 tooltip: {
-                    backgroundColor: "#1a2332", titleColor: "#e2e8f0", bodyColor: "#94a3b8",
-                    borderColor: "#1e293b", borderWidth: 1, padding: 10, cornerRadius: 8,
+                    backgroundColor: "#ffffff", titleColor: "#1b2437", bodyColor: "#43516a",
+                    borderColor: "#e2e7f0", borderWidth: 1, padding: 10, cornerRadius: 8,
                     callbacks: {
                         label: (ctx) => {
                             const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
@@ -566,20 +566,20 @@ function renderDrawdownChart() {
             responsive: true, maintainAspectRatio: false,
             interaction: { intersect: false, mode: "index" },
             plugins: {
-                legend: { position: "top", labels: { color: "#94a3b8", font: { size: 10, family: "'JetBrains Mono', monospace" }, boxWidth: 14, padding: 12 } },
+                legend: { position: "top", labels: { color: "#43516a", font: { size: 10, family: "'JetBrains Mono', monospace" }, boxWidth: 14, padding: 12 } },
                 tooltip: {
-                    backgroundColor: "#1a2332", titleColor: "#e2e8f0", bodyColor: "#94a3b8",
-                    borderColor: "#1e293b", borderWidth: 1, padding: 10, cornerRadius: 8,
+                    backgroundColor: "#ffffff", titleColor: "#1b2437", bodyColor: "#43516a",
+                    borderColor: "#e2e7f0", borderWidth: 1, padding: 10, cornerRadius: 8,
                     callbacks: {
                         label: (ctx) => ctx.dataset.label + ": " + (ctx.parsed.y * 100).toFixed(2) + "%",
                     },
                 },
             },
             scales: {
-                x: { ticks: { color: "#64748b", maxTicksLimit: 8, font: { size: 10 } }, grid: { color: "rgba(255,255,255,0.03)" } },
+                x: { ticks: { color: "#657188", maxTicksLimit: 8, font: { size: 10 } }, grid: { color: "#eef2f8" } },
                 y: {
-                    ticks: { color: "#64748b", font: { size: 10 }, callback: (v) => (v * 100).toFixed(0) + "%" },
-                    grid: { color: "rgba(255,255,255,0.03)" },
+                    ticks: { color: "#657188", font: { size: 10 }, callback: (v) => (v * 100).toFixed(0) + "%" },
+                    grid: { color: "#eef2f8" },
                 },
             },
         },
@@ -636,8 +636,8 @@ function renderScatterChart() {
             plugins: {
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: "#1a2332", titleColor: "#e2e8f0", bodyColor: "#94a3b8",
-                    borderColor: "#1e293b", borderWidth: 1, padding: 10, cornerRadius: 8,
+                    backgroundColor: "#ffffff", titleColor: "#1b2437", bodyColor: "#43516a",
+                    borderColor: "#e2e7f0", borderWidth: 1, padding: 10, cornerRadius: 8,
                     callbacks: {
                         title: () => "",
                         beforeBody: (items) => items[0].raw.estrategia,
@@ -655,14 +655,14 @@ function renderScatterChart() {
             },
             scales: {
                 x: {
-                    title: { display: true, text: "Volatilidade (%)", color: "#94a3b8", font: { size: 11, family: "'JetBrains Mono', monospace" } },
-                    ticks: { color: "#64748b", font: { size: 10 } },
-                    grid: { color: "rgba(255,255,255,0.03)" },
+                    title: { display: true, text: "Volatilidade (%)", color: "#43516a", font: { size: 11, family: "'JetBrains Mono', monospace" } },
+                    ticks: { color: "#657188", font: { size: 10 } },
+                    grid: { color: "#eef2f8" },
                 },
                 y: {
-                    title: { display: true, text: "Retorno Acumulado (%)", color: "#94a3b8", font: { size: 11, family: "'JetBrains Mono', monospace" } },
-                    ticks: { color: "#64748b", font: { size: 10 } },
-                    grid: { color: "rgba(255,255,255,0.03)" },
+                    title: { display: true, text: "Retorno Acumulado (%)", color: "#43516a", font: { size: 11, family: "'JetBrains Mono', monospace" } },
+                    ticks: { color: "#657188", font: { size: 10 } },
+                    grid: { color: "#eef2f8" },
                 },
             },
         },

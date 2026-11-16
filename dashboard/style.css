@@ -1,29 +1,29 @@
 /* ═══════════════════════════════════════════════
-   Hedge-fund-lab · Design System (Dark Theme)
+   Hedge-fund-lab · Design System (Light Mineral Theme — DP-23)
    ═══════════════════════════════════════════════ */
 
 /* ─── Variables ─── */
 :root {
-    --bg-primary: #0a0e17;
-    --bg-secondary: #0f1724;
-    --bg-card: #111827;
-    --bg-card-hover: #1a2332;
-    --text-primary: #e2e8f0;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
-    --accent-green: #22c55e;
-    --accent-red: #ef4444;
-    --accent-blue: #3b82f6;
-    --accent-yellow: #eab308;
-    --accent-purple: #a855f7;
-    --accent-cyan: #06b6d4;
-    --border-color: #1e293b;
-    --border-light: rgba(255, 255, 255, 0.05);
+    --bg-primary: #f5f6fa;
+    --bg-secondary: #ffffff;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f8faff;
+    --text-primary: #1b2437;
+    --text-secondary: #43516a;
+    --text-muted: #657188;
+    --accent-green: #168056;
+    --accent-red: #c23b48;
+    --accent-blue: #3358d4;
+    --accent-yellow: #b47409;
+    --accent-purple: #7751a2;
+    --accent-cyan: #0e7490;
+    --border-color: #e2e7f0;
+    --border-light: #eef2f8;
     --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
-    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --radius: 0.75rem;
-    --radius-sm: 0.5rem;
-    --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --font-sans: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --radius: 16px;
+    --radius-sm: 9px;
+    --shadow: 0 1px 3px rgba(22, 36, 64, 0.05);
 }
 
 /* ─── Reset ─── */
@@ -189,6 +189,22 @@ body {
     grid-template-columns: 300px 1fr;
     gap: 1rem;
     padding: 1rem 2rem;
+    align-items: start;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+body.hfl-platform .dashboard-grid > .main-content {
+    padding: 0;
+    margin: 0;
+    max-width: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 /* ─── Card (universal) ─── */
@@ -197,16 +213,17 @@ body {
     border: 1px solid var(--border-color);
     border-radius: var(--radius);
     padding: 1.25rem;
+    box-shadow: var(--shadow);
     transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .card:hover {
     background: var(--bg-card-hover);
-    border-color: rgba(255, 255, 255, 0.08);
+    border-color: #cbd5e1;
 }
 
 .card-title {
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--text-secondary);
@@ -222,23 +239,25 @@ body {
 }
 
 .metric-card {
-    background: rgba(255, 255, 255, 0.02);
+    background: #f8faff;
+    border: 1px solid var(--border-light);
     border-radius: var(--radius-sm);
     padding: 0.65rem 0.5rem;
     text-align: center;
-    transition: background 0.2s;
+    transition: background 0.2s, border-color 0.2s;
 }
 
 .metric-card:hover {
-    background: rgba(255, 255, 255, 0.04);
+    background: #eef3fc;
+    border-color: var(--border-color);
 }
 
 .metric-card .label {
-    font-size: 0.6rem;
+    font-size: 0.62rem;
     text-transform: uppercase;
     color: var(--text-muted);
     letter-spacing: 0.06em;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .metric-card .value {
@@ -246,16 +265,23 @@ body {
     font-weight: 700;
     font-family: var(--font-mono);
     margin-top: 0.2rem;
+    color: var(--text-primary);
     transition: color 0.3s;
 }
 
-.value.positive {
+.value.positive,
+td.positive,
+.portfolio-metric-value.positive {
     color: var(--accent-green);
 }
-.value.negative {
+.value.negative,
+td.negative,
+.portfolio-metric-value.negative {
     color: var(--accent-red);
 }
-.value.neutral {
+.value.neutral,
+td.neutral,
+.portfolio-metric-value.neutral {
     color: var(--text-primary);
 }
 .value.overbought {
@@ -268,31 +294,34 @@ body {
 /* ─── Tab Navigation ─── */
 .tab-bar {
     display: flex;
+    gap: 0.5rem;
     border-bottom: 1px solid var(--border-color);
     background: var(--bg-secondary);
-    padding: 0 2rem;
+    padding: 0.6rem 2rem;
 }
 
-.tab {
-    padding: 0.75rem 1.5rem;
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    font-weight: 500;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: color 0.2s, border-color 0.2s;
-}
-
-.tab:hover {
+body.hfl-platform .tab {
+    padding: 0.55rem 1.25rem;
+    background: #f5f6fa;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
     color: var(--text-secondary);
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
 }
 
-.tab.active {
+body.hfl-platform .tab:hover {
+    background: #eef2f8;
+    color: var(--text-primary);
+}
+
+body.hfl-platform .tab.active {
+    background: #edf1ff;
     color: var(--accent-blue);
-    border-bottom-color: var(--accent-blue);
+    border-color: #c7d4f8;
 }
 
 .tab-content {
@@ -309,14 +338,15 @@ body {
 }
 
 .portfolio-header h2 {
-    font-family: var(--font-mono);
-    font-size: 1.1rem;
-    color: var(--accent-blue);
+    font-family: var(--font-sans);
+    font-size: 1.15rem;
+    font-weight: 650;
+    color: var(--text-primary);
 }
 
 .portfolio-subtitle {
     color: var(--text-muted);
-    font-size: 0.75rem;
+    font-size: 0.8rem;
 }
 
 .portfolio-metrics-grid {
@@ -330,47 +360,51 @@ body {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius);
-    padding: 1rem;
+    padding: 1.1rem 1rem;
     text-align: center;
-    transition: border-color 0.2s;
+    box-shadow: var(--shadow);
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .portfolio-metric-card:hover {
-    border-color: rgba(255, 255, 255, 0.1);
+    border-color: #cbd5e1;
 }
 
 .portfolio-metric-card.highlight {
     border-color: var(--accent-green);
-    box-shadow: 0 0 12px rgba(34, 197, 94, 0.1);
+    background: #f6fcf9;
+    box-shadow: 0 2px 10px rgba(22, 128, 86, 0.08);
 }
 
 .portfolio-metric-name {
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--text-secondary);
     margin-bottom: 0.35rem;
-    font-weight: 600;
+    font-weight: 650;
 }
 
 .portfolio-metric-value {
-    font-size: 1.4rem;
+    font-size: 1.45rem;
     font-weight: 700;
     font-family: var(--font-mono);
+    color: var(--text-primary);
 }
 
 .portfolio-metric-label {
-    font-size: 0.6rem;
+    font-size: 0.62rem;
     text-transform: uppercase;
     color: var(--text-muted);
     letter-spacing: 0.06em;
-    margin-top: 0.1rem;
+    margin-top: 0.15rem;
+    font-weight: 600;
 }
 
 .portfolio-metric-sub {
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    margin-top: 0.4rem;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-top: 0.45rem;
     font-family: var(--font-mono);
 }
 
@@ -390,24 +424,24 @@ body {
 /* ─── Badges (tabela comparativa) ─── */
 .badge {
     display: inline-block;
-    padding: 0.15rem 0.5rem;
+    padding: 0.2rem 0.55rem;
     border-radius: 9999px;
-    font-size: 0.6rem;
+    font-size: 0.65rem;
     font-weight: 600;
     letter-spacing: 0.03em;
     text-transform: uppercase;
 }
 
 .badge-single {
-    background: rgba(59, 130, 246, 0.1);
+    background: #edf1ff;
     color: var(--accent-blue);
-    border: 1px solid rgba(59, 130, 246, 0.2);
+    border: 1px solid #c7d4f8;
 }
 
 .badge-portfolio {
-    background: rgba(34, 197, 94, 0.1);
+    background: #eaf7f1;
     color: var(--accent-green);
-    border: 1px solid rgba(34, 197, 94, 0.2);
+    border: 1px solid #b7e4ce;
 }
 
 /* ─── Charts ─── */
@@ -424,14 +458,19 @@ body {
 /* ─── Table ─── */
 .table-container {
     overflow-x: auto;
-    padding: 1rem 2rem;
+    margin: 0.5rem 2rem 1.25rem;
+    padding: 1.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: 0.78rem;
 }
 
 thead {
@@ -441,41 +480,44 @@ thead {
 
 th {
     text-align: left;
-    padding: 0.7rem 0.5rem;
+    padding: 0.75rem 0.65rem;
     color: var(--text-secondary);
-    border-bottom: 1px solid var(--border-color);
-    font-weight: 600;
+    border-bottom: 2px solid var(--border-color);
+    font-weight: 650;
     white-space: nowrap;
-    background: var(--bg-primary);
-    font-size: 0.65rem;
+    background: #f8faff;
+    font-size: 0.68rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
 }
 
 td {
-    padding: 0.5rem;
-    border-bottom: 1px solid rgba(30, 41, 59, 0.4);
+    padding: 0.65rem;
+    border-bottom: 1px solid var(--border-light);
     white-space: nowrap;
     color: var(--text-primary);
 }
 
 tr:hover td {
-    background: rgba(255, 255, 255, 0.02);
+    background: #f8faff;
 }
 
 /* ─── Philosophy Section ─── */
 .philosophy {
-    padding: 2.5rem 2rem;
-    border-top: 1px solid var(--border-color);
-    max-width: 820px;
-    margin: 0 auto;
+    padding: 2rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin: 1rem 2rem 2.5rem;
 }
 
 .philosophy h2 {
     color: var(--accent-blue);
-    font-family: var(--font-mono);
-    font-size: 1rem;
-    margin-bottom: 1.25rem;
+    font-family: var(--font-sans);
+    font-size: 1.1rem;
+    font-weight: 650;
+    margin-bottom: 1rem;
     letter-spacing: -0.01em;
 }
 
