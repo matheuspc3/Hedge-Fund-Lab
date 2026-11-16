@@ -12,6 +12,21 @@ Ela define o destino do produto; este roadmap define a ordem para chegar lá.
 
 ## Objetivo e ponto de partida
 
+**16/11 — documento mestre v1/v2/v3 para o TCC, DP-37 / REPLAY-01–03 →
+TCC-02/03:** [evolução experimental consolidada](../reports/evolucao_replay_v1_v2_v3_tcc.md)
+com metodologia controlada, diagnóstico da v1, ajustes da v2, pilares da v3,
+tabelas comparativas com as cinco referências, discussão e limitações formais.
+Usa apenas relatórios, auditorias e runners existentes; campanhas preservadas.
+Próximo passo: revisão de Lucas e transposição para a monografia (TCC-02).
+
+**16/11 — consulta v3 disponível no Railway, DP-37 / REPLAY-03:** commit
+`25577de` implantado em SUCCESS após sincronização da fork por Lucas; pacote
+v3 transferido sob seu pedido e instalado no volume permanente. Rota
+`/laboratory/replay/v3/` com 153 sessões/918 estados, 12 arquivos e hashes
+verificados, idempotência, GET/HEAD e gzip PASS; v1/v2 intactas. Entrega da
+consulta das três versões concluída, sem novas inferências. Próximo passo:
+explorar os resultados e incorporar a evolução v1/v2/v3 à monografia.
+
 **16/11 — preparação da consulta v3, DP-37 / REPLAY-03:** runner, exportador,
 auditoria, check offline e relatório da campanha preparados para versionamento.
 Consulta `/laboratory/replay/v3/` e atalho Replay v3 implementados junto das

@@ -9,6 +9,19 @@ na carteira iniciada em outubro. Não se trata de avaliação prospectiva.
 
 ## Consulta no servidor pessoal
 
+**16/11 — publicação v3 concluída, DP-37 / REPLAY-03:** deploy `25577de`
+confirmado em SUCCESS (`e46df0c3-cbe0-4568-8355-1dbf237f21c6`). Sob pedido de
+Lucas, ZIP v3 transferido com `railway volume files upload` para o volume
+`hfl-data` do serviço TCC e instalado pelo importador existente com
+`--version v3 --install`. O SSH inicial foi interrompido por lentidão; os
+temporários das duas tentativas foram removidos após validar a cópia instalada.
+Os 12 arquivos e o ZIP conferem com o manifesto selado, segunda instalação
+idempotente PASS, GET/HEAD dos dez exports e gzip PASS. V1/v2 preservadas
+integralmente por hash. Consulta `/laboratory/replay/v3/` disponível, com
+atalhos entre as três versões; 153 sessões/918 estados e patrimônio final
+Multiagentes R$ 100.067,36 conferidos. Recibos locais privados em
+`output/replay-publicacao-v3-20261116/`. Não houve novas inferências.
+
 **16/11 — preparação v3, DP-37 / REPLAY-03:** código oferece a rota
 `/laboratory/replay/v3/` e o atalho Replay v3, mantendo v1/v2 independentes.
 Importador aceita `--version v3` para o pacote

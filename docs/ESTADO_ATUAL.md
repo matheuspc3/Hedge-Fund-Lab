@@ -1,5 +1,30 @@
 # Estado atual do Hedge-Fund-Lab
 
+**16/11 — documento mestre da evolução v1/v2/v3 para o TCC, DP-37 /
+REPLAY-01–03 → TCC-02/03:** redigido o
+[documento mestre](../reports/evolucao_replay_v1_v2_v3_tcc.md) que consolida
+desenho experimental, linha de base v1 e seus 5 achados, os 4 ajustes da v2 e
+seus limites remanescentes, os 4 pilares da v3, tabelas comparativas das oito
+carteiras e as limitações formais. Fontes: relatórios e JSONs de auditoria já
+selados e os três runners; nenhum arquivo das campanhas alterado, sem novas
+inferências. O texto distingue mecanismos acionados e dormentes na v3 e
+registra o ganho como resultado dentro da amostra, sem alegar superioridade.
+`check_docs.py` PASS. Próximo passo: revisar com Lucas e portar as seções para
+`tcc2/chapters/*.tex`, a monografia do TCC 2 (TCC-02).
+
+**16/11 — consulta v3 publicada, DP-37 / REPLAY-03:** deploy Railway
+`e46df0c3-cbe0-4568-8355-1dbf237f21c6` (`25577de`) SUCCESS no ambiente `tcc`.
+Após Lucas sincronizar a fork e autorizar a transferência, pacote v3 instalado
+atomicamente em `/app/data/replays/april-november-2026-flash-v3/`; ZIP
+`da0016fe...`, 12 arquivos conferidos e segunda instalação idempotente PASS.
+GET/HEAD dos dez exports, gzip e links v1/v2/v3 PASS. Consulta v3 confirma
+153 sessões, 918 estados e Multiagentes em R$ 100.067,36. Todos os arquivos
+da v1/v2, incluindo pacotes e recibos, preservados por hash. Transporte pelo
+comando nativo `railway volume files upload`, após interromper SSH lento;
+temporários removidos depois da validação. Recibos privados em
+`output/replay-publicacao-v3-20261116/`. Sem novas inferências. Próximo passo:
+explorar as três versões na consulta e incorporar o comparativo ao TCC.
+
 **16/11 — código da consulta v3 preparado, DP-37 / REPLAY-03:** rota isolada
 `/laboratory/replay/v3/`, atalho Replay v3 e importador `--version v3` incluídos
 com runner, exportador, auditoria e relatório. Checks offline da campanha e
