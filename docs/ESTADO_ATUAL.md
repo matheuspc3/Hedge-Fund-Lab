@@ -1,5 +1,16 @@
 # Estado atual do Hedge-Fund-Lab
 
+**16/11 — monografia integrada à `main` e material de escrita reunido, DP-37 /
+TCC-02/03:** branch `tcc2` (monografia do TCC 2 em LaTeX, autoria de Matheus)
+integrada à `main` sem conflito no commit `e5b835e`; pasta `tcc2/` excluída da
+imagem do servidor pelo `.dockerignore`. Em [tcc2/evidence](../tcc2/evidence/LEIA-ME.md)
+ficaram cópias byte a byte de 71 arquivos-fonte (direção, arquitetura, método
+H2, relatórios e dados do replay abril–novembro, pilotos, operação diária), com
+índice e manifesto de hashes; os originais não foram movidos. Achados: a
+monografia ainda não cita o replay abril–novembro e há três versões distintas do
+texto do TCC 1. Próximo passo: alinhar o foco dos capítulos 5 a 7 com Matheus e
+o orientador (TCC-01) e produzir métricas de risco e figuras do replay.
+
 **16/11 — documento mestre da evolução v1/v2/v3 para o TCC, DP-37 /
 REPLAY-01–03 → TCC-02/03:** redigido o
 [documento mestre](../reports/evolucao_replay_v1_v2_v3_tcc.md) que consolida

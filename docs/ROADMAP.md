@@ -12,6 +12,12 @@ Ela define o destino do produto; este roadmap define a ordem para chegar lá.
 
 ## Objetivo e ponto de partida
 
+**16/11 — monografia na `main` e material de escrita, TCC-02/03:** `tcc2/`
+integrada (`e5b835e`) e [material-fonte reunido](../tcc2/evidence/LEIA-ME.md)
+por cópia, com manifesto de hashes. A monografia ainda não cita o replay
+abril–novembro. Próximo passo: alinhar os capítulos 5 a 7 (TCC-01), calcular
+métricas de risco e gerar figuras.
+
 **16/11 — documento mestre v1/v2/v3 para o TCC, DP-37 / REPLAY-01–03 →
 TCC-02/03:** [evolução experimental consolidada](../reports/evolucao_replay_v1_v2_v3_tcc.md)
 com metodologia controlada, diagnóstico da v1, ajustes da v2, pilares da v3,
