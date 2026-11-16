@@ -112,6 +112,8 @@ def publish(package):
     code = base64.b64encode(Path(__file__).read_bytes()).decode("ascii")
     command = "python -c " + shlex.quote("exec(__import__('base64').b64decode('" + code + "'))")
     command += " --install " + shlex.quote(str(upload))
+    if DESTINATION.name.endswith("-v2"):
+        command += " --version v2"
     result = subprocess.run(["ssh", *options, HOST, command], check=True, capture_output=True,
                             encoding="utf-8", timeout=180)
     receipt = json.loads(result.stdout)
@@ -123,9 +125,14 @@ def publish(package):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("package", type=Path)
+    parser.add_argument("--version", choices=("v1", "v2"), default="v1")
     parser.add_argument("--check-only", action="store_true")
     parser.add_argument("--install", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args.version == "v2":
+        PACKAGE_SHA256 = "62998e60b09d24a49668a56cbbdcd9076db1d65ef34bb8af7a2e8d4652da5749"
+        DESTINATION = DESTINATION.with_name(DESTINATION.name + "-v2")
+        FILES = FILES - {"preview-desktop.jpg", "preview-mobile.jpg"}
     if args.check_only:
         result = {"status": "PASS", "package_sha256": PACKAGE_SHA256,
                   "files": inspect_package(args.package)}

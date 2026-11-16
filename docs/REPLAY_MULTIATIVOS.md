@@ -9,6 +9,18 @@ na carteira iniciada em outubro. Não se trata de avaliação prospectiva.
 
 ## Consulta no servidor pessoal
 
+**16/11 — v2:** pacote `explorador_replay_v2_2026-04_2026-11.zip` instalado
+no mesmo volume, em `data/replays/april-november-2026-flash-v2/`, sem substituir
+a v1. SHA-256 `62998e60b09d24a49668a56cbbdcd9076db1d65ef34bb8af7a2e8d4652da5749`;
+12 membros regulares, todos conferidos com o manifesto selado. A cópia usou
+o SSH autenticado do Railway, porque o SSH Tailscale pediu reautenticação.
+Importação atômica, idempotência e preservação integral da v1 PASS.
+O importador local aceita `--version v2` nos comandos abaixo para selecionar
+esse pacote/destino; sem a opção mantém a v1. A rota `/laboratory/replay/v2/`
+e os atalhos entre versões estão implementados e testados localmente,
+**pendentes de publicação do código**. O deploy `b29aecf` ainda serve somente
+a v1. Subir dados e publicar código são etapas independentes.
+
 DP-37 / REPLAY-01, disponibilização autorizada por Lucas em 14/11. O menu
 Laboratório aponta para `/laboratory/replay/`, uma consulta dos resultados já
 arquivados. A página não executa agentes ou ordens. O navegador recebe apenas

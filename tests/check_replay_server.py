@@ -15,12 +15,13 @@ os.environ["HFL_RATES_OFFLINE"] = "1"
 import server
 
 
-def check():
+def check(version="v1"):
     with tempfile.TemporaryDirectory(prefix="hfl-replay-http-") as folder:
         exports = Path(folder) / "exports"
         exports.mkdir()
-        previous_root = server.REPLAY_ROOT
-        server.REPLAY_ROOT = exports
+        root_name = "REPLAY_V2_ROOT" if version == "v2" else "REPLAY_ROOT"
+        previous_root = getattr(server, root_name)
+        setattr(server, root_name, exports)
         try:
             with server.ReusableTCPServer(("127.0.0.1", 0), server.Handler) as httpd:
                 thread = threading.Thread(target=httpd.serve_forever, daemon=True)
@@ -36,7 +37,9 @@ def check():
                     return result
 
                 try:
-                    route = server.REPLAY_ROUTE
+                    route = server.REPLAY_V2_ROUTE if version == "v2" else server.REPLAY_ROUTE
+                    other = server.REPLAY_ROUTE if version == "v2" else server.REPLAY_V2_ROUTE
+                    assert request(other)[0] == 503, "must not fall back to another version"
                     for name in sorted(server.REPLAY_FILES):
                         data = ("fake archived export " + name).encode()
                         (exports / name).write_bytes(data)
@@ -71,7 +74,7 @@ def check():
                         status, body, headers = request(route[:-1], method)
                         assert status == 308 and not body and headers["Location"] == route
                     status, body, _ = request("/laboratory")
-                    assert status == 200 and route.encode() in body
+                    assert status == 200 and server.REPLAY_ROUTE.encode() in body
                     assert "Replay abril–novembro".encode() in body
                     (exports / "manual.sqlite3").write_bytes(b"private book")
                     for name in ("manual.sqlite3", "abrir_explorador.py", "../index.html", "%2e%2e/index.html", "%69ndex.html", "//index.html", "folder/index.html", "index.html/", "..\\calls.json"):
@@ -95,6 +98,7 @@ def check():
                     assert request(route, **{"Sec-Fetch-Site": "cross-site"})[0] == 403
                     post = {"Origin": f"http://127.0.0.1:{port}", "X-CSRF-Token": server.forward_jobs.JOBS.csrf}
                     assert request(route, "POST", **post)[0] == 404
+                    assert request(route + "calls.json", "POST", **post)[0] == 404
                     (exports / "index.html").unlink()
                     status, body, headers = request(route)
                     assert status == 503 and "O replay ainda não está disponível".encode() in body
@@ -114,9 +118,14 @@ def check():
                     httpd.shutdown()
                     thread.join()
         finally:
-            server.REPLAY_ROOT = previous_root
+            setattr(server, root_name, previous_root)
     print("PASS replay GET/HEAD, downloads, canonical route, Lab link, private-file/traversal/origin/POST guards and unavailable-data state")
 
 
 if __name__ == "__main__":
-    check()
+    # Both versions use the same boundary; empty roots keep these checks data-free.
+    with tempfile.TemporaryDirectory(prefix="hfl-replay-absent-") as absent:
+        server.REPLAY_ROOT = Path(absent) / "v1"
+        server.REPLAY_V2_ROOT = Path(absent) / "v2"
+        check()
+        check("v2")

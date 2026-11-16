@@ -1,6 +1,6 @@
 # Roadmap do Hedge-Fund-Lab
 
-Atualizado em **15/11/2026**. Plano de trabalho a partir da V7.6.5.
+Atualizado em **16/11/2026**. Plano de trabalho a partir da V7.6.5.
 Este é o planejamento ativo. Especificações científicas, aprovações e autorizações
 continuam em seus documentos próprios; um checkbox aqui não as substitui.
 
@@ -11,6 +11,15 @@ Ela define o destino do produto; este roadmap define a ordem para chegar lá.
 [Documentação e evidências](README.md)
 
 ## Objetivo e ponto de partida
+
+**16/11 — dados v2 no Railway, DP-37 / REPLAY-02:** deploy `b29aecf`
+confirmado em SUCCESS. Pacote v2 instalado atomicamente no volume em
+`data/replays/april-november-2026-flash-v2/`, com 12 arquivos conferidos pelo
+manifesto e idempotência PASS; todos os 14 arquivos da v1 preservados.
+O código implantado ainda atende somente a v1. Ajuste local do importador
+(`--version v2`) e das rotas/atalhos v1/v2 qualificado pelos checks existentes.
+Próximo passo: publicar esse ajuste de código e conferir a consulta v2 no deploy;
+a transferência dos dados já está concluída, sem novas inferências.
 
 **REPLAY-02 / DP-37 (regras DP-36) — campanha contínua v2 concluída (15/11):** execução real autorizada por Lucas em `scripts/continuous_replay_v2.py` (`HFL-CONTINUOUS-EXPLORATORY-REPLAY-V2`), 06/04–12/11/2026, 153 pregões com 5 referências pré-calculadas (paridade exata com o `v1`, `sha256` `f3225f02...`) e inferência contínua das 18:33 às 23:39 (São Paulo). **918/918 estados diários reconciliados** (`152` pregões `COMPLETED` + `1` lacuna *fail-closed* em `2026-06-26` por `WinError 10054` na chamada de risco de `BBAS3` após `4/5` votos técnicos `VENDA`, preservando a posição). **Multiagentes v2** encerrou em **R$ 85.743,57 (-14,2564%)**, avanço de **+R$ 3.564,86 (+3,5649 p.p.)** sobre o `v1` (R$ 82.178,71), com corte de 55,8% no giro (`38` vs `86` operações) e custos (`R$ 119,87` vs `R$ 184,40`), ainda abaixo do `Buy & Hold` (`-R$ 3.047,54`) e da `Bollinger 20/2` (`R$ 104.887,05`, `+4,8870%`). Os 4 gargalos operaram conforme projetado: `2` `Trim-to-Fund` em `PETR4` (`+R$ 1.812,50` PnL vs `-R$ 1.783,77` no `v1`), `0` compras `< R$ 2.000`, `29,98%` teto máximo em proposta `BUY` (`32,23%` por deriva), `2` saídas sob veto `R7` (`ITUB4` `26.491,50` e `BBAS3` `5.712,30`), e queda da unanimidade `5-0` de `83,01%` para `15,13%`; permanece o *cash drag* estrutural (`24,69%` média, `45,86%` no fim) sob teto de 30% em universo de 5 ativos. Orçamento PASS: `4.702` chamadas lógicas (`4.701` com trace + `1` erro de transporte em `2026-06-26`), `4.711` tentativas físicas (`9` retries), exposição **US$ 10,03082025** (`US$ 8,92490025` conhecido + `US$ 1,105920` reservado) abaixo do teto `US$ 34,78`. `v1` preservado (`explorer.json` `88c3a0e1...`, `calls.json` `b5ef9585...`). [Relatório v2](../reports/replay_continuo_v2_2026-04_2026-11.md) · [Pacote selado v2](../output/replay-continuo-v2-20261115/manifest.json) · [Comparativo JSON](../output/auditoria-replay-v2/comparacao_v1_v2.json). Próximo passo: incorporar o comparativo `v1` vs `v2` à monografia (`TCC-02/03`).
 

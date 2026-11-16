@@ -69,6 +69,8 @@ ENV_FILE = PROJECT_ROOT / ".env"
 LOG_FILE = PROJECT_ROOT / "data" / "logs" / "hedgefund.log"
 REPLAY_ROUTE = "/laboratory/replay/"
 REPLAY_ROOT = PROJECT_ROOT / "data/replays/april-november-2026-flash/exports"
+REPLAY_V2_ROUTE = REPLAY_ROUTE + "v2/"
+REPLAY_V2_ROOT = PROJECT_ROOT / "data/replays/april-november-2026-flash-v2/exports"
 REPLAY_FILES = {
     "index.html", "calls-data.js", "explorer.json", "calls.json", "manifest.json",
     "daily.csv", "operations.csv", "decisions.csv", "dividends.csv", "calls.csv",
@@ -93,7 +95,7 @@ AREAS = (
         "Replay abril–novembro",
         REPLAY_ROUTE,
         "CAMPANHA 06/04–12/11 · 153 PREGÕES · SOMENTE CONSULTA",
-        (),
+        ((REPLAY_ROUTE, "Replay v1"), (REPLAY_V2_ROUTE, "Replay v2")),
     ),
     (
         "carteira",
@@ -290,6 +292,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                     *LEGACY_PAGES,
                     REPLAY_ROUTE[:-1],
                     REPLAY_ROUTE,
+                    REPLAY_V2_ROUTE[:-1],
+                    REPLAY_V2_ROUTE,
                     "/",
                     "/h2",
                     "/h2/",
@@ -831,17 +835,20 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     def _serve_replay(self, path):
         """DP-37: read only the explicit exports from the independent replay package."""
-        if path == REPLAY_ROUTE[:-1]:
+        route, root = REPLAY_ROUTE, REPLAY_ROOT
+        if path == REPLAY_V2_ROUTE[:-1] or path.startswith(REPLAY_V2_ROUTE):
+            route, root = REPLAY_V2_ROUTE, REPLAY_V2_ROOT
+        if path == route[:-1]:
             self.send_response(308)
-            self.send_header("Location", REPLAY_ROUTE)
+            self.send_header("Location", route)
             self.send_header("Content-Length", "0")
             self.end_headers()
             return
-        name = path.removeprefix(REPLAY_ROUTE) or "index.html"
+        name = path.removeprefix(route) or "index.html"
         if name not in REPLAY_FILES:
             return self.send_error(404)
-        source = REPLAY_ROOT / name
-        if not source.resolve().is_relative_to(REPLAY_ROOT.resolve()):
+        source = root / name
+        if not source.resolve().is_relative_to(root.resolve()):
             return self.send_error(404)
         try:
             stream = source.open("rb")
