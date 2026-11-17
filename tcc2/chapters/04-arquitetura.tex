@@ -123,11 +123,11 @@ A Figura~\ref{fig:grafo-langgraph} representa o grafo de decisão implementado e
 \node[term] (start) {início};
 \node[box, below=of start] (ta) {\texttt{technical\_analyst}\\análise técnica};
 \node[box, below=of ta] (rm) {\texttt{risk\_manager}\\gestão de risco};
-\node[box, below left=5mm and 14mm of rm] (pm) {\texttt{portfolio\_manager}\\gestão de portfólio};
+\node[box, below left=10mm and 28mm of rm] (pm) {\texttt{portfolio\_manager}\\gestão de portfólio};
 \node[term, below=of rm] (end) {fim};
 \draw[arr] (start) -- (ta);
 \draw[arr] (ta) -- (rm);
-\draw[arr] (rm) -- node[above, sloped, font=\footnotesize] {veredito = \texttt{APROVADO}} (pm);
+\draw[arr] (rm) -- node[above, sloped, pos=0.55, font=\footnotesize] {veredito = \texttt{APROVADO}} (pm);
 \draw[arr] (pm) -- (end);
 \draw[arr] (rm) -- node[right, font=\footnotesize] {caso contrário} (end);
 \end{tikzpicture}
