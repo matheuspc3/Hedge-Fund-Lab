@@ -38,6 +38,7 @@ data/radar/
 data/portfolio/
 data/global_pm/
 data/platform/
+data/replays/
 hedgefundlab.db
 
 # Dashboard data (generated)
@@ -49,5 +50,8 @@ dashboard/data.json
 .coverage
 data/logs/
 
-# Cópias locais e evidências da migração; contêm os dados pessoais do volume.
-output/railway-migration-*/
+# Resultados locais e evidências, incluindo dados pessoais do volume.
+output/
+
+# Log do BibTeX da monografia (gerado; contém caminhos locais)
+tcc2/main.blg
