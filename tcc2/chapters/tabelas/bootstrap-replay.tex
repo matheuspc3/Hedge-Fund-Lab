@@ -1,0 +1,34 @@
+% Gerado por tcc2/scripts/bootstrap_replay.py; não editar à mão.
+\begin{table}[htbp]
+\centering
+\caption{Comparações pareadas de Sharpe no Replay Contínuo (153 pregões) pelo \textit{bootstrap} A: estacionário, \textit{basic} centrado, $B=5000$, semente 20261008, bloco médio 10. $\Delta$ = Sharpe(A) $-$ Sharpe(B), $r_f = 0$. $p_+$ e $L_{95}$: teste unilateral de superioridade (regra congelada); $U_{95}$ e $p_-$: direção inversa, exploratória. Holm dentro de cada família de cinco referências.}
+\label{tab:replay-bootstrap}
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llrrrrrrc}
+\toprule
+Hipótese & A vs B & $\Delta$ & $L_{95}$ & $U_{95}$ & $p_+$ & $p_+$ Holm & $p_-$ & Critério? \\
+\midrule
+H1 & SMA 50/200 vs Equal Weight 63d & $-0{,}71$ & $-1{,}75$ & 0{,}31 & 0{,}881 & 0{,}881 & 0{,}119 & não \\
+\midrule
+H2 (v1) & MA v1 vs Buy \& Hold & $-0{,}50$ & $-1{,}76$ & 0{,}93 & 0{,}728 & 1{,}000 & 0{,}272 & não \\
+H2 (v1) & MA v1 vs SMA 50/200 & 0{,}14 & $-1{,}32$ & 1{,}76 & 0{,}432 & 1{,}000 & 0{,}568 & não \\
+H2 (v1) & MA v1 vs Bollinger 20/2 & $-2{,}00$ & $-4{,}47$ & 0{,}41 & 0{,}917 & 1{,}000 & 0{,}084 & não \\
+H2 (v1) & MA v1 vs Equal Weight 63d & $-0{,}57$ & $-1{,}88$ & 0{,}88 & 0{,}753 & 1{,}000 & 0{,}248 & não \\
+H2 (v1) & MA v1 vs Mínima Variância 252/63 & $-0{,}96$ & $-2{,}27$ & 0{,}29 & 0{,}899 & 1{,}000 & 0{,}102 & não \\
+\midrule
+H2 (v2) & MA v2 vs Buy \& Hold & $-0{,}44$ & $-1{,}34$ & 0{,}83 & 0{,}714 & 1{,}000 & 0{,}286 & não \\
+H2 (v2) & MA v2 vs SMA 50/200 & 0{,}20 & $-1{,}02$ & 1{,}69 & 0{,}347 & 1{,}000 & 0{,}653 & não \\
+H2 (v2) & MA v2 vs Bollinger 20/2 & $-1{,}94$ & $-4{,}27$ & 0{,}31 & 0{,}917 & 1{,}000 & 0{,}083 & não \\
+H2 (v2) & MA v2 vs Equal Weight 63d & $-0{,}51$ & $-1{,}46$ & 0{,}77 & 0{,}747 & 1{,}000 & 0{,}253 & não \\
+H2 (v2) & MA v2 vs Mínima Variância 252/63 & $-0{,}90$ & $-1{,}96$ & 0{,}22 & 0{,}912 & 1{,}000 & 0{,}088 & não \\
+\midrule
+H2 (v3) & MA v3 vs Buy \& Hold & 0{,}86 & $-0{,}30$ & 2{,}13 & 0{,}108 & 0{,}432 & 0{,}892 & não \\
+H2 (v3) & MA v3 vs SMA 50/200 & 1{,}50 & 0{,}25 & 3{,}02 & 0{,}024 & 0{,}121 & 0{,}976 & sim$^{*}$ \\
+H2 (v3) & MA v3 vs Bollinger 20/2 & $-0{,}64$ & $-1{,}79$ & 0{,}59 & 0{,}812 & 0{,}812 & 0{,}188 & não \\
+H2 (v3) & MA v3 vs Equal Weight 63d & 0{,}79 & $-0{,}34$ & 2{,}00 & 0{,}122 & 0{,}432 & 0{,}878 & não \\
+H2 (v3) & MA v3 vs Mínima Variância 252/63 & 0{,}40 & $-1{,}09$ & 1{,}77 & 0{,}334 & 0{,}668 & 0{,}666 & não \\
+\bottomrule
+\end{tabular}}
+\par\smallskip\footnotesize v1: execução pré-especificada; v2 e v3: iterações exploratórias desenhadas após observar o mesmo período (p-valores otimistas). Critério: $\hat{\Delta} > 0$, $p_+ < 0{,}05$ e $L_{95} > 0$; só rejeita $H_0$ em H1 e H2 (v1). $^{*}$Apenas descritivo: v2 e v3 não recebem decisão inferencial (Seção~\ref{sec:met-inferencia}); não se mantém após Holm. Fonte: \texttt{daily.csv} das campanhas \texttt{REPLAY-01} a \texttt{REPLAY-03}; \texttt{src/experiments/h2\_evaluation.py}.
+\end{table}

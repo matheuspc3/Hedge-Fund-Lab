@@ -1,6 +1,6 @@
 # Roadmap do Hedge-Fund-Lab
 
-Atualizado em **16/11/2026**. Plano de trabalho a partir da V7.6.5.
+Atualizado em **17/11/2026**. Plano de trabalho a partir da V7.6.5.
 Este é o planejamento ativo. Especificações científicas, aprovações e autorizações
 continuam em seus documentos próprios; um checkbox aqui não as substitui.
 
@@ -11,6 +11,22 @@ Ela define o destino do produto; este roadmap define a ordem para chegar lá.
 [Documentação e evidências](README.md)
 
 ## Objetivo e ponto de partida
+
+**16–17/11 — monografia reescrita em torno do replay v1/v2/v3, DP-37 /
+REPLAY-01–03 → TCC-01/02:** enquadramento escolhido por Lucas: H1, H2 e H0 do
+TCC1 mantidas e respondidas pelo replay abril–novembro; v1 é a execução
+pré-especificada (única com decisão inferencial sobre H2), v2/v3 são iterações
+exploratórias dentro da amostra. Capítulos 1, 3–7, resumo e abstract
+reescritos; métricas de risco (`tcc2/scripts/metricas_replay.py`) e Bootstrap A
+reaplicado ao replay (`tcc2/scripts/bootstrap_replay.py`, reutiliza
+`src/experiments/h2_evaluation.py`), ambos com asserts que passam. Resultado:
+H0 não rejeitada para H1 (SMA 50/200 vs Equal Weight, Δ Sharpe −0,71) nem para
+H2 na v1; v3 vs SMA p₊ = 0,024 é só descritivo. 26 referências novas
+verificadas. Série diária do acompanhamento prospectivo exportada do servidor
+(`tcc2/evidence/06-operacao-diaria/serie-diaria-20261117/`): em 16/11,
+Multiagentes R$ 76.059,11 (−23,94%) contra Buy & Hold R$ 82.391,17 (−17,61%);
+SMA e Bollinger sem sinal, iguais ao Buy & Hold. MiKTeX instalado em 17/11 para
+compilar. Pendente: revisão de Lucas e Matheus e commit.
 
 **16/11 — monografia na `main` e material de escrita, TCC-02/03:** `tcc2/`
 integrada (`e5b835e`) e [material-fonte reunido](../tcc2/evidence/LEIA-ME.md)

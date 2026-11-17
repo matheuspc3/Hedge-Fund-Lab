@@ -84,6 +84,7 @@ originais e não funcionam a partir daqui.
 |---|---|---|
 | `Relógio de dados e preço de execução.md` | `reports/` | Regras de preço e horário de execução (DP-33) |
 | `2026-10-14.md`, `2026-10-15.md` | `docs/daily/` | Registros dos primeiros dias do acompanhamento |
+| `serie-diaria-20261117/` | servidor de operação, `GET /api/portfolio/history?wallet=<id>`, lido em 17/11/2026 | JSON bruto das quatro carteiras (Buy & Hold, Multiagentes, SMA 50/200, Bollinger 20/2) e `equity_diario.csv` com o patrimônio de 14/10 a 16/11; base da seção de acompanhamento prospectivo do cap. 6 |
 
 O arquivo `Resultados-comparados.md`, na raiz desta pasta, já existia e não foi alterado.
 

@@ -3,9 +3,13 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces Fluxo do pipeline de dados científico: preço oficial da B3 (COTAHIST) combinado ao fator de ajuste por proventos do \texttt {yfinance}, seguido de transformação, carga e persistência em SQLite.}}{12}{figure.caption.43}%
-\contentsline {figure}{\numberline {4.2}{\ignorespaces Grafo de decisão do sistema multiagente (LangGraph): sequência linear \texttt {technical\_analyst} $\rightarrow $ \texttt {risk\_manager}, com aresta condicional que encaminha ao \texttt {portfolio\_manager} apenas quando o veredito é \texttt {APROVADO}.}}{14}{figure.caption.48}%
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Fluxo do pipeline de dados científico: preço oficial da B3 (COTAHIST) combinado ao fator de ajuste por proventos do \texttt {yfinance}, seguido de transformação, carga e persistência em SQLite.}}{21}{figure.caption.52}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Grafo de decisão do sistema multiagente de ativo único (LangGraph): sequência linear \texttt {technical\_analyst} $\rightarrow $ \texttt {risk\_manager}, com aresta condicional que encaminha ao \texttt {portfolio\_manager} apenas quando o veredito é \texttt {APROVADO}.}}{23}{figure.caption.57}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Fluxo de um pregão $t$ na carteira multiagente multiativos. Caixas sombreadas são etapas determinísticas; caixas brancas envolvem chamadas ao modelo de linguagem (a etapa de risco apenas quando a regra dura não se aplica). O retângulo tracejado indica as etapas executadas por ativo.}}{26}{figure.caption.64}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Patrimônio de fechamento das carteiras no Replay Contínuo, de 02/04/2026 (R\$ 100 mil) a 12/11/2026. As referências são idênticas nas três campanhas.}}{51}{figure.caption.134}%
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Drawdown (queda em relação ao pico anterior) das carteiras no Replay Contínuo.}}{51}{figure.caption.135}%
+\contentsline {figure}{\numberline {6.3}{\ignorespaces Caixa em percentual do patrimônio das três versões da carteira Multiagentes no Replay Contínuo.}}{59}{figure.caption.156}%
 \addvspace {10\p@ }
 \contentsfinish 

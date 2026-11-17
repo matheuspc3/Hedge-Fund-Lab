@@ -1,20 +1,71 @@
 \chapter{Conclusão}
 \label{cha:conclusao}
 
-% TODO(redator): este capítulo está BLOQUEADO até que o Capítulo de
-% Resultados seja concluído com dados reais.
+% Fontes: Capítulos 4 e 5; tcc2/agent-reports/METRICAS_REPLAY.md; tcc2/agent-reports/BOOTSTRAP_REPLAY.md;
+% tcc2/evidence/04-replay-abril-novembro/relatorios/evolucao_replay_v1_v2_v3_tcc.md (seções 4.7, 5.9, 5.10 e 6).
+Este capítulo sintetiza o que foi construído, responde à pergunta de pesquisa, às hipóteses H1, H2 e H0 e à pergunta arquitetural formuladas no Capítulo~\ref{cha:introducao}, e registra as limitações do estudo e os trabalhos futuros que delas decorrem.
 
-% Estrutura mínima planejada:
-% 1. Síntese dos objetivos e do que foi efetivamente construído (pipeline de
-%    dados B3, motor de backtesting, sistema multiagente LangGraph, desenho
-%    experimental com calibração e avaliação separadas).
-% 2. Resposta à pergunta de pesquisa e às hipóteses, com base nos resultados
-%    reais do Capítulo de Resultados.
-% 3. Limitações e ameaças à validade (overfitting do pesquisador, validade
-%    externa com 5 ativos do mercado brasileiro, custo da inferência paga,
-%    avaliação em ativo único no caminho de agente).
-% 4. Trabalhos futuros.
-%
-% Restrições:
-% - Não prometer resultado de desempenho que não tenha sido demonstrado.
-% - Reafirmar que calibração ≠ treinamento.
+\section{Síntese do Trabalho}
+
+O trabalho desenvolveu o Hedge-fund-lab, um laboratório quantitativo para a avaliação de estratégias de investimento baseadas em sistemas multiagentes. O laboratório compreende um pipeline de dados construído sobre o arquivo oficial de cotações da B3 (COTAHIST), com fator de ajuste por proventos, calendário de negociação próprio e persistência relacional; um motor de \textit{backtesting} com a definição congelada do Sharpe Ratio líquido; um livro contábil de eventos imutáveis, encadeados por \textit{hash}, no qual posições e caixa são recalculados a cada leitura; e dois caminhos de decisão multiagente --- o grafo LangGraph de ativo único e a carteira multiativos, composta por comitês de analistas técnicos por ativo, analista de risco por ativo, gestor global da carteira e compilador determinístico da proposta do modelo (Capítulo~\ref{cha:arquitetura}).
+
+Sobre essa base foram construídos o Replay Contínuo Abril--Novembro de 2026, com relógio causal por pregão, orçamento de inferência com reserva anterior a cada requisição, tratamento \textit{fail-closed} de pregões sem decisão válida, pacotes selados e auditorias de paridade das carteiras de referência; e o ciclo diário autônomo que opera a carteira multiativos de forma prospectiva desde 14/10/2026. O desenho experimental do replay é pareado: as seis carteiras partem da mesma cesta, nas mesmas sessões, com os mesmos preços e custos, e as hipóteses são decididas pelo Sharpe líquido com o Bootstrap A (Capítulo~\ref{cha:metodologia}).
+
+Em nenhuma etapa o modelo de linguagem foi treinado. O \texttt{gemini-3.8-flash} foi utilizado pré-treinado, sem ajuste fino; o que se calibrou --- no protocolo planejado de ativo único e, de modo exploratório, nas versões v2 e v3 do replay --- foi a configuração do sistema: \textit{prompts}, composição do comitê, regras de agregação e de veto, contexto do gestor e regras determinísticas do compilador. Calibração, neste trabalho, designa o ajuste dessa configuração, e não o treinamento do modelo.
+
+\section{Resposta à Pergunta de Pesquisa e às Hipóteses}
+
+A pergunta de pesquisa tem duas partes. Quanto ao ambiente experimental, o trabalho apresenta uma forma de realizá-lo: carteiras pareadas com estado inicial comum, separação entre os dados entregues à decisão e os preços de execução e marcação, referências determinísticas reproduzidas com paridade exata entre campanhas, métrica primária e regra de decisão fixadas antes do replay e registro auditável de cada voto, parecer, intervenção do compilador, operação e patrimônio diário. Esse ambiente permitiu identificar, por auditoria, os gargalos que explicam o desempenho da versão inicial e comparar versões sucessivas da arquitetura sob condições constantes. Quanto à robustez das decisões, a resposta obtida nesta trajetória é que não há evidência de que a arquitetura multiagente produza decisões superiores às das abordagens tradicionais.
+
+\paragraph{H1.} A SMA 50/200 obteve Sharpe líquido de $-1{,}42$, contra $-0{,}71$ da Equal Weight 63d ($\hat{\Delta} = -0{,}71$; $p_{+} = 0{,}881$; intervalo bilateral de 90\% $[-1{,}75;\ 0{,}31]$). H0 não é rejeitada: o contraste tem o sinal oposto ao previsto por H1, e o intervalo, que contém zero, também não indica inferioridade. Por envolver apenas carteiras determinísticas, esse resultado não é afetado pela possível contaminação do modelo, mas seu alcance restringe-se a uma única regra de tendência com uma parametrização, e não à família de estratégias de \textit{momentum} e \textit{trend following}.
+
+\paragraph{H2.} A versão pré-especificada (v1) terminou com patrimônio de R\$ 82.178,71 ($-17{,}82\%$), abaixo das cinco referências, e Sharpe líquido de $-1{,}28$, inferior ao de quatro delas --- Buy \& Hold ($-0{,}78$), Bollinger 20/2 ($0{,}73$), Equal Weight 63d ($-0{,}71$) e Mínima Variância 252/63 ($-0{,}32$) --- e superior apenas ao da SMA 50/200 ($\hat{\Delta} = 0{,}14$; $p_{+} = 0{,}432$). Nenhuma das cinco comparações atende à regra de superioridade, com ou sem a correção de Holm, e o enunciado de superioridade em relação ao conjunto dos \textit{benchmarks} não é sustentado. Os critérios complementares apontam na mesma direção: a v1 teve o maior \textit{drawdown} máximo entre as seis carteiras ($-22{,}90\%$) e o maior giro (6,78 vezes o patrimônio médio).
+
+\paragraph{H0.} H0 não é rejeitada em nenhuma das duas famílias. A não rejeição, contudo, não demonstra igualdade de desempenho. Com 153 pregões, o erro-padrão aproximado do Sharpe anualizado é de cerca de 1,3 \citep{Lo2002}, e os intervalos de 90\% dos contrastes têm amplitude entre 2,1 e 4,9 pontos de Sharpe; diferenças economicamente relevantes, em qualquer direção, não se distinguem do ruído amostral nesta janela.
+
+\paragraph{Versões exploratórias.} A v2 terminou em R\$ 85.743,57 ($-14{,}26\%$) e não atingiu a regra de superioridade em nenhuma comparação. A v3 terminou em R\$ 100.067,36 ($+0{,}07\%$), com Sharpe de $0{,}09$, acima de quatro referências e abaixo da Bollinger 20/2 (R\$ 104.887,05; $+4{,}89\%$). O único contraste com valor-$p$ bruto inferior a 0,05 --- v3 contra a SMA 50/200, referência de pior Sharpe no período ($\hat{\Delta} = 1{,}50$; $p_{+} = 0{,}024$) --- é descritivo: não resiste ao ajuste de Holm na família da v3 ($p_{+}$ ajustado de 0,121) e, sobretudo, provém de uma versão cujas regras foram escolhidas com conhecimento do mesmo período, o que retira desse valor-$p$ a interpretação de teste \citep{White2000, Bailey2017}. Os resultados de v2 e v3 não rejeitam H0 e não constituem evidência de superioridade.
+
+\section{Resposta à Pergunta Arquitetural}
+
+Mantidos o modelo, a topologia de agentes, os dados, a execução e as referências, a diferença de patrimônio final entre a v1 e a v3 foi de R\$ 17.888,65 (17,89 pontos percentuais). Nesta trajetória, portanto, o comportamento da carteira multiagente dependeu fortemente da composição do comitê e das regras determinísticas aplicadas à proposta do gestor. Quatro observações descritivas detalham e qualificam essa leitura.
+
+Primeiro, a diversidade do comitê exigiu especialização. Na v1, cinco instâncias do mesmo modelo, com o mesmo \textit{prompt} e sementes diferentes, foram unânimes em 83,01\% dos pareceres, mesmo com temperatura 1,0; a variação estocástica não produziu diversidade de critério. Com três lentes analíticas (v2), a unanimidade caiu para 15,13\% e, com cinco lentes distintas (v3), para 4,03\%.
+
+Segundo, quebrar a unanimidade não bastou. Na v2, com lentes duplicadas formando blocos de voto, o perfil de execução permaneceu pró-cíclico (RSI médio de 58,54 nas compras e 40,98 nas vendas). Apenas na v3 o perfil se inverteu (39,26 nas compras e 69,00 nas vendas), com preço médio de venda superior ao de compra nos cinco ativos, nenhuma posição zerada e recebimento dos 20 eventos de proventos do período.
+
+Terceiro, a governança determinística moldou o resultado tanto quanto os sinais. O modelo propõe e o compilador limita, ajusta e registra: a melhora da v1 para a v2 foi associada, na auditoria, principalmente às regras de carteira impostas sobre a proposta, e na v3 o compilador realizou 80 ajustes, dos quais 56 limitaram vendas ao piso de posição-núcleo e à venda escalonada. A separação entre o julgamento do modelo e a execução das regras é, nesse sentido, um componente da arquitetura, e não um detalhe de implementação.
+
+Quarto, uma regra simples permaneceu à frente. A Bollinger 20/2, determinística e sem custo de inferência, terminou R\$ 4.819,69 acima da v3. As lentes da v3 codificam, em boa medida, a lógica de reversão à média dessa referência, que já era conhecida como a de melhor resultado quando a v3 foi desenhada. A leitura cautelosa é que a arquitetura se mostrou capaz de expressar uma política de reversão à média com governança de carteira, e não que tenha descoberto uma política superior; em um regime de tendência persistente, vender força e comprar fraqueza poderia inverter a ordenação das versões.
+
+Essas observações valem para esta trajetória e para o conjunto de intervenções de cada versão. Elas não identificam o efeito de cada mecanismo isoladamente: parte dos mecanismos da v3 não foi acionada no período (as travas sobre consensos em extremos, as vendas parciais fora de recomendação de venda e a saída sob veto), as versões diferem no número de pregões sem análise (nenhum na v1, um na v2 e quatro na v3) e não há garantia de que o modelo servido sob o mesmo identificador tenha sido idêntico nas três datas de execução.
+
+\section{Limitações}
+
+As principais limitações, discutidas na Seção~\ref{sec:met-ameacas}, são:
+
+\begin{itemize}
+    \item \textbf{Contaminação do modelo pelo período.} O replay foi produzido depois do fim do período, e o corte de conhecimento declarado do modelo (março de 2026) não é verificável. A contaminação, se existir, favorece a carteira Multiagentes; por isso, mesmo um resultado favorável do replay não seria evidência prospectiva. As referências determinísticas e o contraste de H1 não são afetados.
+    \item \textbf{Ajuste dentro da amostra.} As versões v2 e v3 foram desenhadas após a observação das anteriores nos mesmos 153 pregões, sem amostra de validação; seus resultados são otimistas por construção e podem refletir sobreajuste a esta trajetória.
+    \item \textbf{Amostra única e baixo poder.} Uma única trajetória de 153 pregões, um único regime de mercado e uma única execução por versão, com modelo estocástico, sem estimativa da variância entre execuções.
+    \item \textbf{Escopo reduzido.} Cinco ações do mercado brasileiro, cesta inicial imposta e comum a todas as carteiras, e H1 respondida por uma única regra de tendência.
+    \item \textbf{Execução simplificada.} Abertura oficial diária como aproximação do leilão, sem \textit{spread}, impacto de mercado ou liquidação em D+2; custo proporcional sem custo fixo nem lote mínimo; caixa não remunerado; custo de inferência (cerca de US\$ 8,63 na v3) não deduzido do patrimônio.
+    \item \textbf{Intervenções em bloco.} Cada versão alterou vários fatores simultaneamente, sem ablação, o que impede atribuir efeito a mecanismos isolados.
+    \item \textbf{Protocolo confirmatório não executado.} O desenho original, com calibração e avaliação separadas temporalmente, três execuções do modelo e um Teste Final isolado, não foi concluído; o replay herdou dele a métrica e o procedimento inferencial, mas não a separação temporal nem as repetições.
+\end{itemize}
+
+\section{Trabalhos Futuros}
+
+As limitações indicam os próximos passos:
+
+\begin{itemize}
+    \item \textbf{Avaliação prospectiva com regras congeladas.} Congelar as regras da v3, sem novos ajustes de parâmetro, e avaliá-las no acompanhamento diário prospectivo, com hipótese, métrica e regra de decisão registradas antes da coleta. É o passo que poderia converter os achados exploratórios do replay em evidência fora da amostra.
+    \item \textbf{Múltiplas execuções do modelo.} Repetir as campanhas, como previa o protocolo original, para estimar a variância entre execuções e incorporá-la à inferência.
+    \item \textbf{Universo e períodos ampliados.} Avaliar mais ativos, outros mercados e outros regimes, inclusive de tendência persistente, e outras parametrizações das regras de \textit{momentum}.
+    \item \textbf{Ablação dos pilares.} Isolar a contribuição de cada mecanismo da v3 (lentes especialistas, piso de posição-núcleo e venda escalonada, vendas parciais e recomposição de caixa) sobre a v2.
+    \item \textbf{Controle da contaminação.} Empregar modelos com corte de conhecimento verificável e versões imutáveis, anonimizar os ativos apresentados ao gestor e aplicar testes de detecção de contaminação.
+    \item \textbf{Refinamentos de execução e contabilidade.} Normalizar ações de quantidade zero para manutenção antes da validação da proposta, remunerar o caixa por uma taxa de referência, introduzir custos fixos e lotes mínimos e deduzir o custo de inferência do resultado da carteira.
+\end{itemize}
+
+\section{Considerações Finais}
+
+O Hedge-fund-lab cumpriu o papel de laboratório: permitiu comparar, sob condições controladas e auditáveis, uma carteira decidida por agentes baseados em LLMs com carteiras de referência clássicas e examinar como a especialização dos agentes e a governança determinística alteram o comportamento da carteira. Na execução pré-especificada, a carteira multiagente não superou as referências; na iteração exploratória v3, terminou acima de quatro referências e abaixo da regra determinística de melhor resultado, em resultado otimista por construção. Os resultados não autorizam nenhuma expectativa de desempenho futuro: o benefício financeiro de agentes baseados em LLMs permanece uma hipótese a investigar, cuja avaliação compatível com as limitações aqui registradas é o acompanhamento prospectivo, com regras congeladas antes de o desfecho existir.

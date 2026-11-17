@@ -1,107 +1,208 @@
 \chapter{Resultados e Discussão}
 \label{cha:resultados}
 
-Este capítulo está organizado em duas partes, de naturezas metodológicas
-distintas e que não devem ser confundidas. A primeira (Seção~\ref{sec:obs-operacional})
-apresenta uma \textbf{observação operacional preliminar} do sistema implantado em
-ciclo diário autônomo, em regime de \textit{paper trading}, sem capital real
-alocado. A segunda (Seção~\ref{sec:resultados-experimentais}) destina-se aos
-\textbf{resultados experimentais} de H1 e H2, obtidos sob o protocolo congelado
-descrito no Capítulo~\ref{cha:metodologia}. A separação é deliberada: a
-observação operacional documenta o funcionamento do sistema em produção, ao
-passo que a avaliação experimental é a única base legítima para decidir as
-hipóteses de pesquisa.
+% Fontes: tcc2/agent-reports/METRICAS_REPLAY.md e chapters/tabelas/metricas-replay.tex
+% (scripts/metricas_replay.py); tcc2/agent-reports/BOOTSTRAP_REPLAY.md e
+% chapters/tabelas/bootstrap-replay.tex (scripts/bootstrap_replay.py);
+% tcc2/evidence/04-replay-abril-novembro/relatorios/evolucao_replay_v1_v2_v3_tcc.md
+% (documento mestre, seções 1.2, 2 a 6); auditoria_posicoes_replay_2026-04_2026-11.md;
+% replay_continuo_v2_2026-04_2026-11.md; replay_continuo_v3_2026-04_2026-11.md;
+% tcc2/evidence/Resultados-comparados.md; tcc2/evidence/01-direcao-e-estado/ESTADO_ATUAL.md.
+Este capítulo apresenta os resultados do Replay Contínuo Abril--Novembro de 2026, obtidos sob o desenho descrito no Capítulo~\ref{cha:metodologia}: seis carteiras --- a carteira Multiagentes e cinco referências determinísticas --- percorrem os mesmos 153 pregões, a partir da mesma cesta inicial, em três campanhas sucessivas da carteira Multiagentes (v1, v2 e v3). A leitura dos resultados obedece à distinção estabelecida na Seção~\ref{sec:met-hipoteses}. Recebem decisão inferencial apenas o contraste de H1, entre duas referências determinísticas, e a família de contrastes de H2 na versão v1, cujas regras foram fixadas antes do replay. As versões v2 e v3 foram desenhadas após a observação do mesmo período e são exploratórias: seus contrastes são calculados pelo mesmo procedimento, mas reportados apenas como descrição, e nenhum valor-$p$ obtido nelas rejeita H0. Todos os números referem-se a uma única trajetória de mercado e são, portanto, resultados dentro da amostra.
 
-\section{Observação Operacional Preliminar}
-\label{sec:obs-operacional}
+O capítulo está organizado em seis partes: o contexto de mercado do período (Seção~\ref{sec:res-mercado}); os resultados agregados das seis carteiras nas três versões (Seção~\ref{sec:res-agregados}); a decisão sobre as hipóteses (Seção~\ref{sec:res-hipoteses}); a evolução arquitetural entre as versões, que responde à pergunta secundária do estudo (Seção~\ref{sec:res-evolucao}); a discussão do alcance dos resultados (Seção~\ref{sec:res-discussao}); e, separadamente, uma observação preliminar do acompanhamento prospectivo, que não integra o replay (Seção~\ref{sec:obs-operacional}).
 
-O sistema foi implantado em ciclo diário autônomo (DP-34) a partir de
-14/10/2026, com capital inicial de R\$ 100.000,00 por carteira, em regime de
-\textit{paper trading} --- isto é, decisões e marcações a mercado reais, mas sem
-capital financeiro efetivamente alocado. Foram criadas duas carteiras com
-alocação inicial idêntica, \textit{Buy \& Hold} e \textit{Multiagentes}, cada uma
-composta pelos cinco ativos do universo ponderados igualmente (20\% cada) e com
-R\$ 177,44 remanescentes em caixa. Os dados a seguir correspondem à série
-patrimonial de \textbf{uma única carteira}, capturada do painel de comparação do
-sistema até 06/11/2026 (17 sessões), e não constituem a comparação completa
-entre os dois tratamentos.
+\section{Contexto de Mercado do Período}
+\label{sec:res-mercado}
 
-A Tabela~\ref{tab:obs-operacional} resume a evolução do patrimônio (equity) e do
-retorno acumulado em relação ao capital inicial de R\$ 100.000,00. A sessão de
-06/11/2026 encontrava-se em estado \texttt{PENDING\_CLOSE} no momento da captura
-e, por isso, não apresentava fechamento patrimonial.
+A Tabela~\ref{tab:res-mercado} compara, para cada ativo do universo, o preço de referência da cesta inicial (fechamento de 02/04/2026) com o fechamento do último pregão do replay (12/11/2026). Quatro dos cinco ativos caíram no período, com perdas expressivas em BBAS3 e VALE3; apenas WEGE3 encerrou acima do preço de entrada. As variações são somente de preço e não incluem proventos.
 
 \begin{table}[htbp]
 \centering
-\caption{Evolução patrimonial observada no ciclo diário autônomo (uma carteira), 14/10/2026 a 06/11/2026.}
-\label{tab:obs-operacional}
-\begin{tabular}{lrr}
+\caption{Variação de preço dos ativos do universo no período do Replay Contínuo.}
+\label{tab:res-mercado}
+\small
+\begin{tabular}{lrrr}
 \toprule
-Data & Patrimônio (R\$) & Retorno acumulado (\%) \\
+\textbf{Ativo} & \textbf{Referência de entrada, 02/04 (R\$)} & \textbf{Fechamento, 12/11 (R\$)} & \textbf{Variação (\%)} \\
 \midrule
-14/10 & 99.835{,}33 & $-0{,}16$ \\
-15/10 & 98.344{,}85 & $-1{,}66$ \\
-16/10 & 98.452{,}86 & $-1{,}55$ \\
-19/10 & 97.969{,}27 & $-2{,}03$ \\
-20/10 & 98.777{,}70 & $-1{,}22$ \\
-21/10 & 96.748{,}33 & $-3{,}25$ \\
-22/10 & 95.036{,}38 & $-4{,}96$ \\
-23/10 & 95.737{,}19 & $-4{,}26$ \\
-26/10 & 86.869{,}15 & $-13{,}13$ \\
-27/10 & 86.438{,}11 & $-13{,}56$ \\
-28/10 & 85.214{,}43 & $-14{,}79$ \\
-29/10 & 85.159{,}65 & $-14{,}84$ \\
-30/10 & 85.234{,}94 & $-14{,}77$ \\
-03/11 & 84.014{,}46 & $-15{,}99$ \\
-04/11 & 84.461{,}55 & $-15{,}54$ \\
-05/11 & 83.562{,}69 & $-16{,}44$ \\
-06/11 & --- & --- \\
+BBAS3 & 23{,}39 & 15{,}48 & $-33{,}82$ \\
+VALE3 & 83{,}55 & 63{,}95 & $-23{,}46$ \\
+PETR4 & 48{,}15 & 44{,}70 & $-7{,}17$ \\
+ITUB4 & 43{,}30 & 41{,}68 & $-3{,}74$ \\
+WEGE3 & 50{,}31 & 51{,}65 & $+2{,}66$ \\
 \bottomrule
 \end{tabular}
+\par\smallskip\footnotesize Fonte: documento mestre do replay (\texttt{evolucao\_replay\_v1\_v2\_v3\_tcc.md}, Seção 1.2), a partir de \texttt{operacoes\_v3.csv} e dos relatórios de auditoria.
 \end{table}
 
-A leitura da série revela dois fatos descritivos, sem qualquer inferência
-causal. Primeiro, o patrimônio não registrou operações após a alocação inicial
-de 14/10: a coluna de negociações permanece vazia nas sessões seguintes e o
-caixa permaneceu inalterado em R\$ 177,44 --- comportamento consistente com uma
-carteira \textit{Buy \& Hold} mantida sem rebalanceamento. Segundo, o período
-foi marcado por uma queda expressiva concentrada em 26/10 (retorno acumulado de
-$-4{,}26\%$ para $-13{,}13\%$ em uma sessão), seguida de estabilização próxima a
-$-16\%$. O \textit{maximum drawdown} do período equivale, portanto, à própria
-variação total observada (aproximadamente $-16{,}4\%$). Foi registrado ainda um
-dividendo a receber de R\$ 6,21 a partir de 30/10, sem impacto material sobre o
-patrimônio.
+Como a cesta inicial imposta tem pesos próximos de 20\% por ativo (Seção~\ref{sec:met-desenho}), esse movimento define o ponto de partida comum: a carteira Buy \& Hold, que apenas mantém a cesta, perdeu 11,21\% no período. Além da tendência de queda, a trajetória inclui um recuo concentrado no fim de outubro, visível nas curvas de \textit{drawdown} das carteiras que permaneceram investidas (Figura~\ref{fig:replay-drawdown}). Esse regime de queda condiciona a comparação entre as carteiras, ponto retomado na Seção~\ref{sec:res-discussao}.
 
-Essa observação deve ser lida com as seguintes ressalvas. (i) Trata-se de dado
-operacional em \textit{paper trading}, não do resultado da avaliação
-experimental; portanto, não fundamenta decisão sobre H1 ou H2. (ii) A janela de
-17 sessões é curta e não estacionária, atravessando uma queda de mercado, de
-modo que nenhuma métrica ajustada ao risco (Sharpe, Sortino, \textit{drawdown}
-anualizado) tem significado estatístico nesse horizonte. (iii) A captura
-abrangeu uma única carteira; a comparação completa exige a série da segunda
-carteira, os demais \textit{benchmarks}, as métricas da definição congelada
-(\texttt{H2\_SCIENTIFIC\_SHARPE\_DEFINITION\_V1}) e a inferência por
-\textit{Bootstrap A}. Por fim, (iv) não se deve atribuir a queda observada a
-qualquer característica do processo de decisão dos agentes: a carteira capturada
-não realizou negociações no período, de modo que sua trajetória reflete
-exclusivamente a variação de preços dos cinco ativos do universo.
+\section{Resultados Agregados das Carteiras}
+\label{sec:res-agregados}
 
-\section{Resultados Experimentais (H1 e H2)}
-\label{sec:resultados-experimentais}
+As Tabelas~\ref{tab:replay-risco} e~\ref{tab:replay-operacoes} reúnem as métricas da Seção~\ref{sec:met-metricas} para as três versões da carteira Multiagentes e para as cinco referências, que são idênticas nas três campanhas, conforme a auditoria de paridade (Seção~\ref{sec:arq-replay}). As Figuras~\ref{fig:replay-patrimonio} e~\ref{fig:replay-drawdown} mostram as curvas de patrimônio e de \textit{drawdown}.
 
-% TODO(redator): esta seção está BLOQUEADA até que os resultados reais de
-% H1 e H2 existam (fases de VALIDATION e FINAL TEST, janelas ainda TBD).
-% NÃO preencher com dados simulados ou com o desempenho do MockLLMClient.
+\input{chapters/tabelas/metricas-replay}
 
-A avaliação experimental de H1 e H2 --- incluindo a tabela de métricas por
-estratégia (Sharpe líquido, Sortino, \textit{Maximum Drawdown} e \textit{turnover}),
-a evolução patrimonial líquida do sistema multiagente frente aos
-\textit{benchmarks}, o gráfico de \textit{drawdown} e a decisão estatística por
-\textit{Bootstrap A} ($B=5000$, $\alpha=0{,}05$) --- permanece pendente das fases
-de VALIDAÇÃO e TESTE FINAL, cujas janelas ainda não estão definidas. Quando
-disponíveis, os resultados serão reportados aqui, respeitando as seguintes
-restrições: não declarar superioridade do agente LLM sem resultado auditado;
-distinguir resultados sintéticos (Hardening/CAL) de resultados reais de
-avaliação; e indicar explicitamente quais métricas usaram a definição congelada
-(\texttt{H2\_SCIENTIFIC\_SHARPE\_DEFINITION\_V1}) e quais permanecem valores
-técnicos padrão.
+\input{figures/replay-patrimonio}
+
+\input{figures/replay-drawdown}
+
+\paragraph{Patrimônio e retorno.} Ordenadas pelo patrimônio final, as carteiras ficaram assim: Bollinger 20/2 (R\$ 104.887,05; +4,89\%), Multiagentes v3 (R\$ 100.067,36; +0,07\%), Mínima Variância 252/63 (R\$ 95.814,84; $-4{,}19\%$), Equal Weight 63d (R\$ 89.869,29; $-10{,}13\%$), SMA 50/200 (R\$ 88.866,68; $-11{,}13\%$), Buy \& Hold (R\$ 88.791,11; $-11{,}21\%$), Multiagentes v2 (R\$ 85.743,57; $-14{,}26\%$) e Multiagentes v1 (R\$ 82.178,71; $-17{,}82\%$). As versões v1 e v2 terminaram abaixo das cinco referências; a v3 terminou acima de quatro delas e R\$ 4.819,69 abaixo da Bollinger 20/2. Apenas duas carteiras tiveram retorno positivo, ambas com perfil de compra em fraqueza e venda em força (Seção~\ref{sec:res-v3}).
+
+\paragraph{Sharpe e Sortino.} Somente a Bollinger 20/2 (0,73) e a v3 (0,09) tiveram Sharpe positivo. O erro-padrão aproximado de um Sharpe anualizado estimado com 153 retornos diários fica em torno de 1,3 para todas as carteiras \citep{Lo2002}, de modo que diferenças dessa ordem não se distinguem de ruído amostral nesta janela. Há ainda uma propriedade do índice que afeta a ordenação quando o retorno médio é negativo: como a média negativa é dividida pela volatilidade, uma carteira menos volátil recebe um Sharpe mais negativo para o mesmo retorno. É o caso da SMA 50/200, cujo retorno ($-11{,}13\%$) praticamente coincide com o do Buy \& Hold ($-11{,}21\%$), com volatilidade (13,11\% contra 22,08\%) e \textit{drawdown} máximo ($-16{,}61\%$ contra $-18{,}53\%$) menores, mas cujo Sharpe ($-1{,}42$) é o mais baixo entre as oito carteiras. O Sortino reproduz a mesma ordenação. Essa propriedade é retomada na decisão sobre H1 e H2 (Seção~\ref{sec:res-hipoteses}).
+
+\paragraph{\textit{Drawdown}.} A v1 teve o maior \textit{drawdown} máximo ($-22{,}90\%$, de 14/04 a 12/08), seguida da v2 ($-19{,}37\%$); a v3 ($-12{,}80\%$) ficou atrás apenas da Bollinger 20/2 ($-8{,}52\%$). Para Buy \& Hold e Equal Weight 63d, o máximo ocorreu entre 05/10 e 05/11, no recuo do fim do período. A v1, a v2 e a SMA 50/200 permaneceram 146 pregões consecutivos abaixo do pico anterior, isto é, praticamente todo o período a partir de meados de abril.
+
+\paragraph{Operações, custos e caixa.} A v1 foi a carteira mais ativa: 86 operações posteriores à entrada, R\$ 184,40 de custos e giro de 6,78 vezes o patrimônio médio. A v2 reduziu as operações para 38 e a v3 realizou 81, com predominância de vendas (52 contra 29 compras). Entre as referências, a Bollinger 20/2 operou 24 vezes, com giro de 4,92, e a SMA 50/200 apenas 6, com quatro saídas totais. Os custos acumulados, no máximo R\$ 184,40, são pequenos diante das diferenças de patrimônio entre as carteiras, da ordem de milhares de reais; as diferenças decorrem, portanto, das decisões, e não do custo proporcional de 0,03\%, que não inclui custo fixo nem lote mínimo (Seção~\ref{sec:met-ameacas}). O caixa distingue as estratégias: a Bollinger 20/2 manteve em média 49,06\% do patrimônio em caixa, a SMA 50/200 terminou com 39,29\% e a v2, com 45,86\%, enquanto Buy \& Hold, Equal Weight e Mínima Variância permaneceram investidas.
+
+\paragraph{Pregões sem análise.} A v1 concluiu os 153 pregões com análise completa. A v2 teve um pregão \texttt{NO\_ANALYSIS} (26/06), por falha de transporte em uma chamada de risco, e a v3 teve quatro (01/07, 01/09, 01/10 e 02/10), por respostas do gestor recusadas na validação determinística. Nesses pregões as posições foram preservadas e marcadas normalmente, sem decisão fabricada (Seção~\ref{sec:arq-replay}).
+
+\section{Decisão sobre as Hipóteses}
+\label{sec:res-hipoteses}
+
+A Tabela~\ref{tab:replay-bootstrap} apresenta os 16 contrastes de Sharpe calculados pelo Bootstrap A (Seção~\ref{sec:met-inferencia}): o contraste de H1, os cinco contrastes da família principal de H2 (v1) e os dez contrastes descritivos das versões v2 e v3. Todos foram estimáveis, nenhum teve reamostra degenerada e todos usaram a mesma sequência de índices. A coluna ``Critério?'' indica se a regra numérica de superioridade foi atendida em cada linha; ela equivale a rejeitar H0 apenas nas linhas de H1 e de H2 (v1), enquanto nas linhas de v2 e v3 é descritiva, sem interpretação de teste (Seção~\ref{sec:met-inferencia}).
+\input{chapters/tabelas/bootstrap-replay}
+
+\subsection{H1: tendência contra pesos iguais}
+\label{sec:res-h1}
+
+O contraste entre SMA 50/200 e Equal Weight 63d resultou em $\hat{\Delta} = -0{,}71$, com $p_{+} = 0{,}881$ e $L_{95} = -1{,}75$. Como a estimativa é negativa, o critério de superioridade não é atendido e \textbf{H0 não é rejeitada para H1}: nesta trajetória, a regra de tendência não apresentou Sharpe líquido superior ao da carteira de pesos iguais. O intervalo bilateral de 90\%, $[-1{,}75;\ 0{,}31]$, contém o zero, e o valor-$p$ exploratório de inferioridade ($p_{-} = 0{,}119$) também não indica desempenho inferior.
+
+O sinal negativo da estimativa deve ser lido com a propriedade descrita na Seção~\ref{sec:res-agregados}. A SMA 50/200 realizou seis operações, zerou quatro posições e terminou com 39,29\% do patrimônio em caixa; seu retorno ($-11{,}13\%$) ficou 1,00 ponto percentual abaixo do da Equal Weight 63d ($-10{,}13\%$), mas com volatilidade e \textit{drawdown} máximo menores. Com retornos médios negativos nas duas carteiras, a menor volatilidade da SMA aprofundou seu Sharpe negativo, de modo que a diferença de $-0{,}71$ reflete mais essa propriedade do índice do que uma diferença de retorno. Por envolver duas carteiras determinísticas, calculadas antes de qualquer inferência paga, o resultado de H1 não é afetado pela possível contaminação do modelo nem pelo ajuste das versões v2 e v3. Seu alcance é restrito a uma regra de tendência com uma única parametrização, em um período de queda generalizada (Seção~\ref{sec:met-ameacas}).
+
+\subsection{H2 na versão pré-especificada}
+\label{sec:res-h2}
+
+Os cinco contrastes da v1 foram negativos em quatro casos --- Buy \& Hold ($\hat{\Delta} = -0{,}50$; $p_{+} = 0{,}728$), Bollinger 20/2 ($-2{,}00$; $0{,}917$), Equal Weight 63d ($-0{,}57$; $0{,}753$) e Mínima Variância 252/63 ($-0{,}96$; $0{,}899$) --- e positivo apenas contra a SMA 50/200 ($+0{,}14$; $p_{+} = 0{,}432$). O enunciado de H2, de superioridade em relação ao conjunto das referências, exige que os cinco contrastes atendam ao critério (teste de interseção--união); nenhum o atende. Com o ajuste de Holm, todos os valores $p_{+}$ da família passam a 1,000, o que também afasta a superioridade em relação a referências individuais. Assim, \textbf{H0 não é rejeitada para H2 na versão v1}, e a hipótese de que o sistema multiagente apresente desempenho ajustado ao risco superior aos \textit{benchmarks} não é sustentada no replay.
+
+O único contraste positivo não corresponde a desempenho melhor: a v1 terminou 6,69 pontos percentuais abaixo da SMA 50/200 em retorno, e a estimativa positiva decorre do Sharpe particularmente baixo da referência. Os critérios complementares, reportados de forma descritiva, apontam na mesma direção: a v1 teve o maior \textit{drawdown} máximo ($-22{,}90\%$) e o maior giro (6,78) entre as oito carteiras, e Sortino ($-1{,}60$) superior apenas ao da SMA 50/200. Na direção inversa, exploratória, nenhum contraste indica inferioridade a 5\%; o menor valor, $p_{-} = 0{,}084$, ocorre contra a Bollinger 20/2, com $\hat{\Delta} = -2{,}00$ e intervalo de 90\% de $[-4{,}47;\ 0{,}41]$. Uma diferença de dois pontos de Sharpe e de R\$ 22.708,34 em patrimônio final não é, portanto, distinguível de ruído amostral ao nível de 5\% nesta janela, o que ilustra o baixo poder discutido na Seção~\ref{sec:met-inferencia}.
+
+\subsection{Contrastes descritivos das versões exploratórias}
+\label{sec:res-h2-exploratorio}
+
+A v2 repete o padrão da v1: contrastes negativos contra Buy \& Hold, Bollinger 20/2, Equal Weight 63d e Mínima Variância 252/63, positivo apenas contra a SMA 50/200 ($+0{,}20$; $p_{+} = 0{,}347$), sem nenhum $p_{+}$ inferior a 0,05. A v3 apresenta contrastes positivos contra Buy \& Hold ($+0{,}86$; $p_{+} = 0{,}108$), SMA 50/200 ($+1{,}50$; $p_{+} = 0{,}024$), Equal Weight 63d ($+0{,}79$; $p_{+} = 0{,}122$) e Mínima Variância 252/63 ($+0{,}40$; $p_{+} = 0{,}334$), e negativo contra a Bollinger 20/2 ($-0{,}64$; $p_{+} = 0{,}812$).
+
+No contraste entre v3 e SMA 50/200, o valor $p_{+} = 0{,}024$ e o limite $L_{95} = 0{,}25$ atendem numericamente ao critério de superioridade. Conforme a Seção~\ref{sec:met-inferencia}, esse resultado é descritivo: as regras da v3 foram escolhidas com conhecimento dos mesmos 153 pregões e do desempenho das referências, e nenhum ajuste de multiplicidade corrige a busca implícita que produziu a versão \citep{White2000, Bailey2017}. Um valor-$p$ inferior a 0,05 nessa condição não tem interpretação de teste e não rejeita H0. Três observações reforçam essa leitura: mesmo dentro da família da v3, o valor ajustado por Holm é 0,121; a referência envolvida é a de menor Sharpe do período, rebaixado pela propriedade discutida na Seção~\ref{sec:res-h1}; e, contra a melhor referência, a Bollinger 20/2, o contraste da v3 é negativo.
+
+\subsection{Síntese sobre H0}
+\label{sec:res-h0}
+
+Nas duas famílias que recebem decisão inferencial, H0 não é rejeitada: nem a regra de tendência superou a carteira de pesos iguais (H1), nem a carteira Multiagentes pré-especificada superou as referências (H2, v1). A não rejeição de H0 não demonstra igualdade de desempenho. Os intervalos de 90\% da Tabela~\ref{tab:replay-bootstrap} têm amplitude de 2,1 a 4,9 pontos de Sharpe, e o erro-padrão aproximado do Sharpe de cada carteira é da ordem de 1,3; nesse cenário, os dados são compatíveis tanto com a ausência de diferença quanto com diferenças economicamente relevantes em qualquer direção. Além disso, a inferência é condicional à única trajetória observada do modelo: com uma execução por versão e temperatura 1,0, a variabilidade entre execuções não está representada nos intervalos (Seção~\ref{sec:met-inferencia}). Sortino, \textit{drawdown} e giro permanecem critérios descritivos, sem contraste inferencial.
+
+\section{Evolução Arquitetural entre as Versões}
+\label{sec:res-evolucao}
+
+A pergunta secundária do estudo (Seção~\ref{sec:met-caracterizacao}) é arquitetural: mantidos o modelo, a quantidade de agentes, os dados e a execução, quanto do comportamento da carteira Multiagentes depende da especialização dos analistas e das regras determinísticas aplicadas sobre a proposta do gestor. As intervenções de cada versão estão descritas na Seção~\ref{sec:arq-evolucao} (Tabelas~\ref{tab:evolucao-versoes} e~\ref{tab:constantes-v3}); esta seção apresenta seus efeitos observados. Como as cinco referências são idênticas nas três campanhas, as diferenças entre versões pertencem à carteira Multiagentes, mas são atribuíveis ao conjunto de intervenções de cada versão, e não a mecanismos isolados. A Tabela~\ref{tab:res-evolucao} resume os indicadores comparados.
+
+\begin{table}[htbp]
+\centering
+\caption{Indicadores de comportamento da carteira Multiagentes nas três versões do Replay Contínuo.}
+\label{tab:res-evolucao}
+\small
+\begin{tabular}{>{\raggedright\arraybackslash}p{6.6cm} rrr}
+\toprule
+\textbf{Indicador} & \textbf{v1} & \textbf{v2} & \textbf{v3} \\
+\midrule
+Patrimônio final (R\$) & 82.178{,}71 & 85.743{,}57 & 100.067{,}36 \\
+Posição entre as seis carteiras & 6.ª & 6.ª & 2.ª \\
+Operações pós-entrada (compras/vendas) & 86 (50/36) & 38 (22/16) & 81 (29/52) \\
+Saídas totais (posição zerada) & 9 & 10 & 0 \\
+Pareceres unânimes 5--0 (\%) & 83{,}01 & 15{,}13 & 4{,}03 \\
+Pareceres com consenso mínimo 3--2 (\%) & 7{,}84 & 65{,}66 & 45{,}10 \\
+RSI médio do sinal COMPRA / VENDA & 63{,}17 / 35{,}07 & 57{,}42 / 38{,}67 & 35{,}11 / 68{,}96 \\
+RSI médio das compras / vendas executadas & 60{,}51 / 36{,}06 & 58{,}54 / 40{,}98 & 39{,}26 / 69{,}00 \\
+Ativos com preço médio de venda $>$ compra & 1 de 5 & 1 de 5 & 5 de 5 \\
+Pregões com 3 ou mais ativos de peso $\geq$ 2\% & 52 & 99 & 153 \\
+Peso máximo de um ativo no fechamento (\%) & 77{,}49 & 32{,}23 & 35{,}87 \\
+Caixa médio / final (\% do patrimônio) & 12{,}98 / 1{,}64 & 24{,}69 / 45{,}86 & 14{,}94 / 0{,}75 \\
+Eventos de proventos recebidos (de 20) & 9 & 9 & 20 \\
+Ajustes registrados pelo compilador & 0 & 26 & 80 \\
+Pregões sem análise (\texttt{NO\_ANALYSIS}) & 0 & 1 & 4 \\
+Custo conhecido estimado de inferência (US\$) & 7{,}44 & 8{,}92 & 8{,}63 \\
+\bottomrule
+\end{tabular}
+\par\smallskip\footnotesize Fonte: documento mestre do replay (\texttt{evolucao\_replay\_v1\_v2\_v3\_tcc.md}, Resumo e Seções 5.1 a 5.9); pareceres com análise completa: 765 (v1), 760 (v2) e 745 (v3).
+\end{table}
+
+\subsection{Diagnóstico da versão v1}
+\label{sec:res-v1}
+
+A auditoria da campanha v1 descartou a hipótese de ativo esquecido --- os cinco ativos foram analisados em todos os pregões, em 765 pareceres ativo-pregão --- e isolou cinco achados empíricos.
+
+\begin{enumerate}
+    \item \textbf{Trava de caixa.} O caixa livre ficou abaixo de R\$ 200 em 69 dos 153 pregões, e o compilador estrito proibia reduzir uma posição cuja recomendação não fosse VENDA. A VALE3, zerada em 01/07, permaneceu fora da carteira por 94 pregões, até o fim da campanha, apesar de 14 recomendações de COMPRA aprovadas pelo risco entre 25/08 e 14/09, todas respondidas com HOLD; a ITUB4 recebeu 27 recomendações consecutivas de COMPRA (03/09 a 16/10) sem caixa para executá-las.
+    \item \textbf{Compra no topo e venda no fundo.} O preço médio das compras superou o das vendas em quatro dos cinco ativos: WEGE3 (R\$ 47,41 contra R\$ 44,79), ITUB4 (R\$ 44,07 contra R\$ 40,61), VALE3 (R\$ 83,46 contra R\$ 78,85) e PETR4 (R\$ 44,77 contra R\$ 42,81). O sinal de COMPRA surgia com RSI médio de 63,17 e preço 7,82\% acima da média de 50 pregões; o de VENDA, com RSI médio de 35,07 e preço 8,64\% abaixo dela. Em WEGE3, único ativo em alta no período, o Buy \& Hold ganhou R\$ 603,40 e a Bollinger 20/2, R\$ 5.454,99, enquanto a v1 perdeu R\$ 5.443,38 em três ciclos de saída e reentrada.
+    \item \textbf{Veto de volatilidade bloqueando saídas.} Dos 41 vetos de risco, 40 decorreram da regra dura de volatilidade. Em 25 pares ativo-pregão havia consenso técnico de VENDA com posição aberta, concentrados em BBAS3 e ITUB4 entre 27/10 e 12/11, mas a conversão de VETADO em MANTER impediu a redução, justamente quando a volatilidade aumentava.
+    \item \textbf{Concentração extrema e compras residuais.} Em 101 dos 153 pregões (66,01\%), a carteira teve apenas dois ativos com peso de pelo menos 2\%, com picos de 77,49\% em VALE3, 71,40\% em PETR4 e 66,05\% em WEGE3; no extremo oposto, houve oito compras com valor inferior a R\$ 2.000.
+    \item \textbf{Ausência de diversidade no comitê.} Das 765 votações, 635 (83,01\%) foram unânimes e nenhuma ficou sem consenso. Com o mesmo modelo, o mesmo \textit{prompt} e as mesmas evidências, a variação da semente, mesmo com temperatura 1,0, não produziu diversidade de critério: na prática, os cinco analistas atuaram como um único classificador de tendência.
+\end{enumerate}
+
+Os achados foram agrupados em quatro gargalos: trava de caixa (achado 1), concentração e ordens residuais (achado 4), veto simétrico (achado 3) e comitê homogêneo e pró-cíclico (achados 2 e 5). O quinto achado é coerente com a literatura discutida no Capítulo~\ref{cha:relacionados}, segundo a qual o benefício da agregação de respostas de modelos depende da diversidade efetiva entre os membros, e não apenas de seu número \citep{Wang2023, Smit2024}.
+
+\subsection{Versão v2: correções mecânicas e arrasto de caixa}
+\label{sec:res-v2}
+
+A v2 atacou os quatro gargalos com o \textit{Trim-to-Fund}, o teto de 30\% e a ordem mínima de R\$ 2.000, o veto assimétrico (R7) e três lentes no comitê (Seção~\ref{sec:arq-evolucao}). O patrimônio final subiu R\$ 3.564,86 (+3,56 pontos percentuais), para R\$ 85.743,57, mas a carteira permaneceu em último lugar. Os efeitos sobre cada gargalo foram os seguintes:
+
+\begin{itemize}
+    \item \textbf{Trava de caixa:} duas reduções \textit{Trim-to-Fund} em PETR4 (15/09 e 15/10) e reentrada de VALE3 em 01/09;
+    \item \textbf{Concentração:} nenhuma compra abaixo de R\$ 2.000, 99 pregões com três ou mais ativos relevantes e 26 ajustes do compilador (15 de teto e 11 de ordem mínima);
+    \item \textbf{Veto:} 12 casos de VENDA sob veto e duas saídas executadas sob R7 (ITUB4 em 27/10 e BBAS3 em 09/11), que evitaram cerca de R\$ 827,34 de perda adicional até 12/11;
+    \item \textbf{Comitê:} a unanimidade caiu de 83,01\% para 15,13\%, com 499 placares de consenso mínimo (65,66\%) e 85 pareceres sem consenso.
+\end{itemize}
+
+A melhora concentrou-se em um único ativo: o ganho de R\$ 3.596,27 em PETR4 supera o ganho total da versão, e os outros quatro ativos, somados, pioraram R\$ 31,41. Três limitações persistiram. Primeiro, a quebra da unanimidade não alterou o momento das decisões na mesma proporção: o perfil de execução continuou pró-cíclico, com RSI médio de 58,54 nas compras e 40,98 nas vendas. O diagnóstico atribui esse viés ao desempate pelo analista de regime nos placares 3--2, interpretação que os dados confirmam quanto à contagem dos placares e ao perfil resultante, mas não quanto ao voto de cada cadeira. Segundo, dez das 16 vendas zeraram a posição, e o preço médio de compra superou o de venda em quatro ativos (WEGE3, VALE3, ITUB4 e BBAS3); PETR4 foi o único ativo sem saída total e o único com resultado positivo.
+
+Terceiro, surgiu um arrasto de caixa (\textit{cash drag}). As recomendações de COMPRA caíram de 273 na v1 para 106 na v2, contra 537 de MANTER, e o teto de 30\% por ativo limitou a reaplicação do caixa: o caixa médio foi de 24,69\% do patrimônio, superou 30\% em 65 pregões, atingiu 67,74\% e terminou em 45,86\%, com a carteira posicionada em apenas dois ativos (455 PETR4 e 490 WEGE3) e R\$ 39.321,44 em caixa não remunerado. Com dois ativos e teto de 30\% cada, ao menos 40\% do capital fica estruturalmente parado. A Figura~\ref{fig:replay-caixa} mostra a trajetória do caixa nas três versões.
+
+\input{figures/replay-caixa}
+
+\subsection{Versão v3: especialização do comitê e governança do gestor}
+\label{sec:res-v3}
+
+A v3 manteve a topologia 5 + 1 + 1 e alterou a composição do comitê e as regras do gestor: cinco lentes especialistas distintas, travas sobre consensos mínimos em extremos, memória contábil de posição, piso de posição-núcleo de 8\%, venda escalonada limitada a 45\% da posição, regra contra recompra mais cara e recomposição contra o arrasto de caixa (Seção~\ref{sec:arq-evolucao}). O patrimônio final foi de R\$ 100.067,36 (+0,07\%), R\$ 14.323,79 acima da v2 e R\$ 17.888,65 acima da v1. A carteira ficou acima do Buy \& Hold (+R\$ 11.276,25), da SMA 50/200 (+R\$ 11.200,68), da Equal Weight 63d (+R\$ 10.198,07) e da Mínima Variância 252/63 (+R\$ 4.252,52), e abaixo da Bollinger 20/2 ($-$R\$ 4.819,69). Os efeitos observados foram os seguintes.
+
+\paragraph{Diversidade do comitê.} A unanimidade caiu para 4,03\% dos pareceres, com 36,64\% de placares 4--1, 45,10\% de 3--2 e 14,23\% sem consenso.
+
+\paragraph{Inversão do perfil de execução.} A relação entre sinal e estado técnico do ativo, pró-cíclica nas duas primeiras versões, inverteu-se. O RSI médio do sinal de COMPRA passou a 35,11 e o do sinal de VENDA, a 68,96; nas operações executadas, a 39,26 nas compras e 69,00 nas vendas. A diferença entre o RSI médio das compras e o das vendas executadas passou de +24,45 (v1) e +17,56 (v2) para $-29{,}74$. As compras ocorreram, em média, com preço 3,69\% abaixo da média de 50 pregões e a 0,93\% da banda inferior; as vendas, com preço 11,09\% acima dessa média e a 0,52\% da banda superior.
+
+\paragraph{Saídas totais e preço médio.} A v3 não zerou nenhuma posição, contra nove saídas na v1 e dez na v2, e manteve os cinco ativos com peso de pelo menos 2\% em todos os 153 pregões. O preço médio de venda superou o de compra nos cinco ativos: PETR4 (R\$ 43,18 para R\$ 46,43), WEGE3 (R\$ 48,13 para R\$ 48,61), ITUB4 (R\$ 42,14 para R\$ 44,47), BBAS3 (R\$ 20,37 para R\$ 21,48) e VALE3 (R\$ 75,77 para R\$ 81,13).
+
+\paragraph{Proventos e caixa.} Por nunca zerar posições antes das datas-com, a carteira recebeu os 20 eventos de proventos do período (R\$ 1.425,30 líquidos), contra nove eventos na v1 (R\$ 567,02) e nove na v2 (R\$ 509,28). O caixa médio caiu de 24,69\% para 14,94\% do patrimônio e o caixa final, de 45,86\% para 0,75\% (Figura~\ref{fig:replay-caixa}).
+
+\paragraph{Resultado por ativo.} PETR4 (+R\$ 3.222,19), WEGE3 (+R\$ 1.991,89) e ITUB4 (+R\$ 1.435,82) passaram a resultado positivo; WEGE3 e ITUB4 respondem por R\$ 12.089,35 (84,4\%) do ganho sobre a v2. BBAS3 ($-$R\$ 1.997,86) e VALE3 ($-$R\$ 4.584,68), os dois ativos que mais caíram, permaneceram negativos. Em VALE3, a v3 teve o pior resultado das três versões e ficou abaixo do Buy \& Hold ($-$R\$ 4.255,30): o piso de posição-núcleo, que evita saídas totais, também impõe exposição a ativos em queda persistente.
+
+\paragraph{Mecanismos efetivamente acionados.} Dos 80 ajustes registrados pelo compilador, 56 foram de piso núcleo e venda escalonada (\texttt{CORE\_FLOOR\_STEP\_SELL}), 12 de teto de peso, 9 de ordem mínima, 2 de caixa insuficiente e 1 de teto da recomposição; houve duas compras de recomposição. Não foram acionados, no período, as travas de extremo do comitê, o \textit{Trim-on-Strength}, o \textit{Trim-to-Fund}, o corte por recompra mais cara nem a saída sob R7. As 52 vendas ocorreram todas sob consenso técnico de VENDA com risco aprovado, dosadas pelo piso núcleo. O efeito observado deve-se, portanto, à combinação de lentes, piso núcleo, venda escalonada, teto, ordem mínima e recomposição, e não aos mecanismos que permaneceram inativos. Os 80 ajustes indicam ainda que a proposta bruta do gestor violava as regras com frequência, sobretudo ao pedir vendas maiores que as permitidas: a governança determinística moldou o resultado tanto quanto os sinais.
+
+\paragraph{Efeitos colaterais.} Das 52 vendas, 27 tiveram valor inferior a R\$ 2.000 (22 abaixo de R\$ 500), somando R\$ 7.970,68: são vendas residuais produzidas pelo piso núcleo, que, com a posição próxima de 8\% do patrimônio, libera apenas as poucas ações excedentes a cada novo sinal de VENDA. Esse padrão é favorecido pelo custo puramente proporcional do replay e seria inviável com custo fixo ou lote mínimo. Os quatro pregões sem análise da v3 ocorreram após chamadas bem-sucedidas, na validação da resposta do gestor: em três deles (01/07, 01/09 e 02/10), o gestor expressou ``não vender'' como venda de quantidade zero para ativos junto ao piso, e no quarto (01/10) a resposta não cobria o universo completo.
+
+\section{Discussão}
+\label{sec:res-discussao}
+
+\paragraph{O que os resultados permitem afirmar.} Primeiro, no replay, H1 e H2 não são sustentadas: H0 não é rejeitada para o contraste de tendência contra pesos iguais nem para a família de contrastes da carteira Multiagentes pré-especificada. Segundo, a versão pré-especificada teve, descritivamente, o menor patrimônio final, o maior \textit{drawdown} máximo e o maior giro entre as oito carteiras, e a auditoria identificou os mecanismos que produziram esse resultado; trata-se de um resultado negativo, registrado como tal. Terceiro, dentro desta trajetória e sob estas regras, a especialização das lentes e a governança determinística mudaram de forma mensurável o comportamento da carteira: menos unanimidade, inversão do momento de compra e venda, fim das saídas totais, menor concentração, captura integral de proventos e patrimônio final R\$ 17.888,65 acima da linha de base. Quarto, a comparação entre v1, v2 e v3 indica que, em um comitê de instâncias do mesmo modelo, o número de agentes importa menos que a diferença entre as funções atribuídas a eles: sementes distintas não produziram diversidade, e lentes duplicadas formaram blocos de voto que reproduziram o viés do bloco majoritário.
+
+\paragraph{O que os resultados não permitem afirmar.} Os resultados não permitem afirmar que a v3 seja superior às referências fora deste período, que a ordenação se repita em outro regime, que algum mecanismo isolado seja responsável pelo ganho ou que o resultado represente benefício financeiro esperado. As razões são as ameaças da Seção~\ref{sec:met-ameacas}, que se manifestam concretamente nos resultados:
+
+\begin{itemize}
+    \item \textbf{Ajuste dentro da amostra.} A v2 e a v3 foram desenhadas após a observação das campanhas anteriores nos mesmos 153 pregões, com limiares escolhidos com conhecimento do período, e a v3 foi desenhada quando já se sabia que a Bollinger 20/2 era a referência de melhor resultado. Não há amostra de validação. A melhora de 17,89 pontos percentuais da v1 para a v3 mede a capacidade da arquitetura de incorporar correções dentro da amostra, e não desempenho esperado fora dela \citep{White2000, Bailey2017}.
+    \item \textbf{Intervenções em bloco.} Cada versão alterou vários fatores simultaneamente, sem ablação, e parte dos mecanismos da v3 não foi acionada. A contribuição de cada pilar não é identificável.
+    \item \textbf{Possível contaminação.} As campanhas foram executadas em 13, 15 e 16/11/2026, depois do período, com um modelo cujo corte de conhecimento declarado não é verificável e cujo identificador não garante versão imutável. O gestor recebe \textit{tickers}, datas e preços. A contaminação, se existir, favorece a carteira Multiagentes, não afeta as referências e, portanto, não afeta o contraste de H1 \citep{Glasserman2023, Golchin2024}.
+    \item \textbf{Uma execução por versão.} Com temperatura 1,0, cada campanha é uma realização de um processo estocástico; sem repetições, a variância entre execuções não é estimada, e as diferenças entre versões incluem esse componente aleatório, além das diferenças no número de pregões sem análise (0, 1 e 4) e na data de execução sob o mesmo \textit{alias} do modelo.
+    \item \textbf{A melhor referência é uma regra simples.} A Bollinger 20/2, determinística e sem custo de inferência, terminou R\$ 4.819,69 acima da v3, com Sharpe maior (0,73 contra 0,09) e \textit{drawdown} máximo menor ($-8{,}52\%$ contra $-12{,}80\%$). As lentes da v3 codificam, em boa medida, a lógica de reversão à média que caracteriza essa referência. A leitura cautelosa é que a arquitetura multiagente se mostrou capaz de expressar uma política de reversão à média com governança de carteira, e não que tenha descoberto uma política superior.
+    \item \textbf{Dependência de regime.} Quatro dos cinco ativos caíram e a referência de tendência ficou próxima do Buy \& Hold. Em um período de tendência persistente, vender força e comprar fraqueza poderia inverter a ordenação das versões e das referências; o replay não permite avaliar essa possibilidade.
+    \item \textbf{Custo de inferência.} Cada campanha realizou cerca de 4.703 chamadas lógicas ao modelo, com custo conhecido estimado de US\$ 7,44 (v1), US\$ 8,92 (v2) e US\$ 8,63 (v3), não deduzido do patrimônio. As referências não têm esse custo. A v3 consumiu, assim, cerca de US\$ 8,63 em inferência para terminar abaixo de uma regra determinística.
+    \item \textbf{Propriedades das métricas.} Com retornos médios negativos, o Sharpe penaliza as carteiras menos voláteis, o que afeta os contrastes que envolvem a SMA 50/200; com taxa livre de risco nula, todos os índices ficam acima do que seriam sob uma taxa de juros positiva. A execução simplificada, sem custo fixo, \textit{spread} ou impacto, favorece estratégias com muitas operações pequenas, como a v3.
+\end{itemize}
+
+Em síntese, o replay oferece evidência descritiva sobre como mudanças de arquitetura alteram o comportamento de uma carteira multiagente em uma trajetória conhecida, mas não oferece evidência de superioridade dos agentes sobre as referências. O passo que poderia converter os achados exploratórios em evidência fora da amostra é a avaliação prospectiva de uma versão congelada da carteira, sem novos ajustes, no regime descrito na Seção~\ref{sec:met-protocolo}.
+
+\section{Acompanhamento Prospectivo Preliminar}
+\label{sec:obs-operacional}
+
+Independentemente do replay, o acompanhamento diário prospectivo da carteira multiativos (Seção~\ref{sec:met-protocolo}) teve início em 14/10/2026, com as carteiras Multiagentes e Buy \& Hold montadas com a mesma cesta inicial (DP-20) e capital de R\$ 100.000,00 cada, em regime de simulação, sem capital real nem envio de ordens. O ciclo diário autônomo (DP-34), descrito na Seção~\ref{sec:arq-operacao-diaria}, foi adotado a partir de 20/10/2026. Esse acompanhamento não integra os resultados anteriores: suas carteiras, sua cesta e sua data de início são distintas das do replay, e suas decisões são registradas antes de o desfecho existir.
+
+A série diária das quatro carteiras do acompanhamento foi exportada do servidor de operação em 17/11/2026 (\texttt{tcc2/evidence/06-operacao-diaria/serie-diaria-20261117/}) e cobre 23 pregões fechados, de 14/10 a 16/11/2026. Além de Multiagentes e Buy \& Hold, a série inclui as carteiras SMA 50/200 e Bollinger 20/2 (DP-36), criadas sobre a mesma cesta de 14/10. Nenhuma das duas regras emitiu sinal no período, e suas curvas coincidem com a do Buy \& Hold. O Buy \& Hold não negociou após a montagem da cesta; sua trajetória, de R\$ 99.835,33 em 14/10 para R\$ 82.391,17 em 16/11 ($-17{,}61\%$), reflete apenas a variação de preços dos cinco ativos. A Multiagentes realizou 19 operações após a entrada e terminou em R\$ 76.059,11 ($-23{,}94\%$). Ela esteve à frente do Buy \& Hold até 23/10, com vantagem máxima de R\$ 2.265,83 nessa data, mas caiu mais na queda de 26/10 (R\$ 84.601,02 contra R\$ 86.869,15) e ampliou a desvantagem nas semanas seguintes, até R\$ 6.332,06 em 16/11. Nas duas carteiras, o \textit{drawdown} máximo do período coincide com a perda acumulada, pois o último fechamento é também o vale.
+
+Essas observações cobrem poucas semanas e uma queda concentrada de mercado, e não sustentam métricas de risco nem inferência sobre as hipóteses. Seu papel no trabalho é registrar o início do regime de avaliação compatível com a DP-31, no qual a contaminação do modelo pelo resultado é excluída por construção.

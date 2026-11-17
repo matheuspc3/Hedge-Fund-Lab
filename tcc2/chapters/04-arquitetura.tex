@@ -1,7 +1,9 @@
 \chapter{Arquitetura e Implementação}
 \label{cha:arquitetura}
 
-Este capítulo descreve a arquitetura e a implementação do Hedge-fund-lab tal como observadas no repositório. O conteúdo foi produzido a partir de auditoria do código-fonte (\texttt{src/}, \texttt{dashboard/}, \texttt{tests/}, \texttt{scripts/}) e dos documentos científicos do projeto, sem reexecução de experimentos. A descrição limita-se ao que está efetivamente implementado; funcionalidades planejadas mas não construídas não são apresentadas como existentes.
+Este capítulo descreve a arquitetura e a implementação do Hedge-fund-lab tal como observadas no repositório. O conteúdo foi produzido a partir de auditoria do código-fonte (\texttt{src/}, \texttt{dashboard/}, \texttt{tests/}, \texttt{scripts/}) e dos documentos técnicos do projeto, sem reexecução de experimentos. A descrição limita-se ao que está efetivamente implementado; funcionalidades planejadas mas não construídas não são apresentadas como existentes. As escolhas de projeto citadas com o identificador DP-$n$ correspondem às decisões registradas no documento de direção do repositório (\texttt{docs/DIRECAO\_DO\_PROJETO.md}).
+
+O sistema contém dois caminhos de decisão multiagente. O primeiro, de ativo único, é o grafo LangGraph de \texttt{src/agents}, utilizado na avaliação H1/H2 sobre PETR4 (Seções~\ref{sec:arq-ativo-unico} e~\ref{sec:arq-experimentos}). O segundo é a carteira multiagente multiativos, com cinco ações e capital compartilhado, que sustenta o acompanhamento diário e o Replay Contínuo de abril a novembro de 2026 (Seções~\ref{sec:arq-multiativos} a~\ref{sec:arq-operacao-diaria}). O segundo caminho reutiliza componentes do primeiro, mas não executa o grafo de ativo único.
 
 \section{Visão Geral da Arquitetura}
 
@@ -11,25 +13,31 @@ O Hedge-fund-lab é organizado em camadas com responsabilidades bem definidas, c
 \centering
 \caption{Stack implementado do Hedge-fund-lab.}
 \label{tab:stack}
-\begin{tabular}{l l}
+\small
+\begin{tabular}{>{\raggedright\arraybackslash}p{3.8cm} >{\raggedright\arraybackslash}p{11.4cm}}
 \toprule
 \textbf{Camada} & \textbf{Tecnologia observada} \\
 \midrule
-Servidor HTTP & \texttt{http.server} (biblioteca padrão) + \texttt{BaseHTTPRequestHandler} \\
+Servidor HTTP & \texttt{http.server}/\texttt{socketserver} (biblioteca padrão), \texttt{dashboard/server.py} \\
 Frontend & HTML/CSS/JS + Chart.js (\texttt{dashboard/}) \\
-Persistência & SQLite + SQLAlchemy (\texttt{src/db}) \\
-Orquestração/agentes & LangGraph (\texttt{src/agents}) \\
+Persistência de séries & SQLAlchemy, URL configurável, padrão SQLite (\texttt{src/db}) \\
+Livro das carteiras & SQLite direto, eventos encadeados (\texttt{dashboard/manual\_portfolio\_api.py}) \\
+Orquestração (ativo único) & LangGraph (\texttt{src/agents}) \\
+Carteira multiativos & \texttt{scripts/multiasset\_radar.py}, \texttt{dashboard/wallet\_manager\_api.py} \\
+Replay contínuo & \texttt{scripts/continuous\_replay*.py}, \texttt{scripts/export\_continuous\_replay*.py} \\
+Contratos de resposta & Pydantic (esquemas estruturados das saídas dos modelos) \\
+Modelo de linguagem & \texttt{gemini-3.8-flash} (Google), via transporte HTTP próprio \\
 \textit{Backtesting} & motor próprio (\texttt{src/backtesting}) \\
-Estratégias & \texttt{src/strategies} \\
+Estratégias & \texttt{src/strategies}, \texttt{dashboard/rule\_portfolios.py} \\
 Indicadores & \texttt{src/indicators} \\
 Pipeline de dados & \texttt{src/pipeline} (incl. \texttt{b3\_official.py}) \\
 Experimentos & \texttt{src/experiments} \\
-Testes & pytest (Poetry) \\
+Testes & pytest (Poetry) e verificações por \texttt{assert} em \texttt{tests/} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-A arquitetura adota Python como linguagem base e não depende de framework web: a exposição dos recursos é feita por um servidor HTTP da biblioteca padrão. A persistência é relacional sobre SQLite, acessada por meio do mapeador objeto-relacional SQLAlchemy. A deliberação de decisão é modelada como um grafo de estados no LangGraph, e a simulação histórica é executada por um motor de \textit{backtesting} próprio, independente de bibliotecas externas de \textit{backtest}.
+A arquitetura adota Python como linguagem base e não depende de framework web: a exposição dos recursos é feita por um servidor HTTP da biblioteca padrão, com tratamento concorrente de requisições (\texttt{socketserver.ThreadingMixIn}). A persistência das séries do pipeline é relacional, acessada por meio do mapeador objeto-relacional SQLAlchemy; o livro contábil das carteiras utiliza SQLite diretamente, sem mapeador. A deliberação de ativo único é modelada como um grafo de estados no LangGraph, e a simulação histórica clássica é executada por um motor de \textit{backtesting} próprio, independente de bibliotecas externas de \textit{backtest}. O caminho multiativos é implementado em \texttt{scripts/} e \texttt{dashboard/}, sem alterar os módulos de \texttt{src/} que integram a proveniência dos experimentos H2.
 
 \section{Pipeline de Dados}
 
@@ -65,27 +73,38 @@ A série de preço científica de referência (\texttt{H\_real}) corresponde ao 
 
 O calendário de negociação é modelado pela classe \texttt{B3Calendar} (\texttt{src/backtesting/b3\_calendar.py}), que aplica as regras históricas de feriados da B3 e reproduz as 2649 sessões oficiais. A versão anterior do calendário apresentava divergências em datas específicas (feriados do estado de São Paulo, fim de ano e o feriado de 20 de novembro), corrigidas na versão atual.
 
+% Fonte: dashboard/market_base_api.py; scripts/continuous_replay_data.py; scripts/replay_multiasset.py; DP-27.
+O caminho multiativos utiliza uma base de mercado local dos cinco ativos (DP-27), mantida por \texttt{dashboard/market\_base\_api.py}, que separa duas representações por sessão: o OHLCV bruto (RAW) do COTAHIST, empregado na marcação a mercado e na execução simulada, e o fator de ajuste do Yahoo Finance, empregado apenas no cálculo dos indicadores e dos sinais. Para o Replay Contínuo, \texttt{scripts/continuous\_replay\_data.py} congela essa base em um \textit{bundle} próprio da campanha (\texttt{inputs/market.json} e \texttt{inputs/manifest.json}), com o \textit{hash} SHA-256 dos arquivos e o instante de aquisição; os fatores de ajuste foram adquiridos depois do período e, portanto, não constituem uma representação \textit{point-in-time}.
+
 \section{Camada de Persistência}
 
-A persistência é implementada no módulo \texttt{src/db}, composto pela configuração de conexão (\texttt{connection.py}) e pela definição do esquema relacional (\texttt{models.py}). O armazenamento é relacional sobre SQLite, com acesso por SQLAlchemy, garantindo a integridade do histórico de preços e dos demais artefatos gerados pelo pipeline e pelos experimentos.
+A persistência das séries é implementada no módulo \texttt{src/db}, composto pela configuração de conexão (\texttt{connection.py}) e pela definição do esquema relacional (\texttt{models.py}). O acesso é feito por SQLAlchemy; o endereço do banco é configurável (\texttt{src/config.py}), com SQLite como valor padrão.
+
+% Fonte: dashboard/manual_portfolio_api.py (SCHEMA, connect, append, replay, batch).
+As carteiras simuladas utilizam um livro contábil distinto, implementado em \texttt{dashboard/manual\_portfolio\_api.py} (identidade \texttt{HFL-MANUAL-PORTFOLIO-V1}). Cada criação de carteira, operação, provento recebido ou recibo de decisão é gravado como um evento imutável em uma tabela SQLite com gatilhos que recusam \texttt{UPDATE} e \texttt{DELETE}. Cada evento armazena o \textit{hash} do evento anterior da mesma carteira, formando uma cadeia verificada a cada leitura; cada comando possui identificador único, o que torna a repetição de uma gravação idempotente. As escritas usam \texttt{BEGIN IMMEDIATE} e \texttt{synchronous=FULL}. Posições, caixa e base de custo não são armazenados como saldos: são recalculados a cada leitura pela reprodução ordenada dos eventos (\textit{replay}). Valores monetários e quantidades são tratados com \texttt{Decimal} e arredondados a centavos pelo núcleo contábil reutilizado de \texttt{scripts/multiasset\_portfolio.py}.
 
 \section{Indicadores e Estratégias}
 
 Os indicadores técnicos são implementados no módulo \texttt{src/indicators}: médias móveis simples (\texttt{sma.py}), Bandas de Bollinger (\texttt{bollinger.py}), Índice de Força Relativa (\texttt{rsi.py}) e MACD (\texttt{macd.py}). O RSI segue a formulação canônica de Wilder.
 
-As estratégias residem em \texttt{src/strategies}, com uma interface comum em \texttt{base.py}. O conjunto inclui \textit{Buy and Hold} (\texttt{buy\_and\_hold.py}), carteira igualmente ponderada (\texttt{equal\_weight.py}), cruzamento de médias móveis (\texttt{sma\_cross.py}), Bandas de Bollinger (\texttt{bollinger\_bands.py}), mínima variância (\texttt{min\_variance.py}) e o controle clássico da família de indicadores (\texttt{indicator\_family\_control.py}). Esse último combina SMA, Bandas de Bollinger, RSI e MACD em um escore discreto no conjunto $\{-1, 0, +1\}$, servindo de \textit{benchmark} clássico para a comparação com o sistema multiagente.
+As estratégias residem em \texttt{src/strategies}, com uma interface comum em \texttt{base.py}. O conjunto inclui \textit{Buy and Hold} (\texttt{buy\_and\_hold.py}), carteira igualmente ponderada (\texttt{equal\_weight.py}), cruzamento de médias móveis (\texttt{sma\_cross.py}), Bandas de Bollinger (\texttt{bollinger\_bands.py}), mínima variância (\texttt{min\_variance.py}) e o controle clássico da família de indicadores (\texttt{indicator\_family\_control.py}). Esse último combina SMA, Bandas de Bollinger, RSI e MACD em um escore discreto no conjunto $\{-1, 0, +1\}$, servindo de \textit{benchmark} clássico para a comparação com o sistema multiagente de ativo único.
+
+No caminho multiativos, as carteiras de referência reutilizam esses componentes por adaptadores: \texttt{dashboard/rule\_portfolios.py} aplica \texttt{sma\_cross.py} (50/200) e \texttt{bollinger\_bands.py} (20 períodos, 2 desvios) a parcelas independentes de 20\% do capital por ativo, e as carteiras de pesos iguais e de mínima variância utilizam as classes \texttt{EqualWeightPortfolio} e \texttt{MinVariancePortfolio} de \texttt{src/backtesting/portfolio.py} (Seção~\ref{sec:arq-replay}).
 
 \section{Motor de Backtesting}
 
-O motor de \textit{backtesting} é implementado em \texttt{src/backtesting} e centraliza a simulação de carteiras, o cálculo de métricas de desempenho e a incorporação de custos. O módulo \texttt{engine.py} conduz a simulação, \texttt{portfolio.py} modela a carteira, \texttt{costs.py} aplica custos de transação e \texttt{metrics.py} concentra as métricas de risco e retorno. O calendário de negociação (\texttt{b3\_calendar.py}) é utilizado pelo motor para alinhar as decisões às sessões oficiais. A integração com o sistema multiagente é realizada por meio de \texttt{agent\_engine.py} e \texttt{daily\_agent.py}, que conectam as decisões produzidas pelos agentes à execução simulada, e por \texttt{arena.py}, que organiza a comparação entre estratégias.
+O motor de \textit{backtesting} é implementado em \texttt{src/backtesting} e centraliza a simulação de carteiras, o cálculo de métricas de desempenho e a incorporação de custos. O módulo \texttt{engine.py} conduz a simulação, \texttt{portfolio.py} modela a carteira, \texttt{costs.py} aplica custos de transação e \texttt{metrics.py} concentra as métricas de risco e retorno. O calendário de negociação (\texttt{b3\_calendar.py}) é utilizado pelo motor para alinhar as decisões às sessões oficiais. A integração com o sistema multiagente de ativo único é realizada por meio de \texttt{agent\_engine.py} e \texttt{daily\_agent.py}, que conectam as decisões produzidas pelos agentes à execução simulada, e por \texttt{arena.py}, que organiza a comparação entre estratégias.
 
 A métrica primária de avaliação do sistema multiagente (Sharpe Ratio) é definida de forma congelada em \texttt{src/backtesting/metrics.py}, sob o identificador \texttt{H2\_SCIENTIFIC\_SHARPE\_DEFINITION\_V1}, cuja especificação é detalhada no Capítulo~\ref{cha:metodologia}.
 
-\section{Sistema Multiagente}
+O Replay Contínuo multiativos não utiliza \texttt{engine.py}: suas seis carteiras evoluem no livro de eventos descrito na seção anterior, com execução, custos e proventos aplicados pelos módulos da aplicação (Seção~\ref{sec:arq-relogio}). Do motor de \textit{backtesting}, reutilizam-se o calendário B3 e as classes de alocação de \texttt{portfolio.py}.
 
-A lógica de decisão do Hedge-fund-lab é modelada como um sistema multiagente coordenado pelo LangGraph, no módulo \texttt{src/agents}. O grafo de decisão é linear e acíclico: os agentes são executados em sequência, sem debate cíclico nem reavaliação iterativa. Cada nó do grafo corresponde a um papel especializado, e as arestas definem a ordem de execução entre eles.
+\section{Sistema Multiagente de Ativo Único}
+\label{sec:arq-ativo-unico}
 
-Os papéis especializados são três. O agente de análise técnica (\texttt{technical\_analyst.py}) interpreta os indicadores quantitativos e emite uma recomendação inicial. O agente de gestão de risco (\texttt{risk\_manager.py}), amparado por um contrato de risco (\texttt{risk\_contract.py}), avalia a exposição e pode restringir a decisão. O agente de gestão de portfólio (\texttt{portfolio\_manager.py}) consolida as análises e define a decisão final. A direção da decisão é determinada pelo comitê; a exposição é atribuída por peso-alvo determinístico, sem dimensionamento dinâmico de posição pelo gestor de portfólio.
+A lógica de decisão de ativo único do Hedge-fund-lab é modelada como um sistema multiagente coordenado pelo LangGraph, no módulo \texttt{src/agents}. O grafo de decisão é linear e acíclico: os agentes são executados em sequência, sem debate cíclico nem reavaliação iterativa. Cada nó do grafo corresponde a um papel especializado, e as arestas definem a ordem de execução entre eles.
+
+Os papéis especializados são três. O agente de análise técnica (\texttt{technical\_analyst.py}) interpreta os indicadores quantitativos e emite uma recomendação inicial. O agente de gestão de risco (\texttt{risk\_manager.py}), amparado por um contrato de risco (\texttt{risk\_contract.py}), avalia a exposição e pode restringir a decisão. O agente de gestão de portfólio (\texttt{portfolio\_manager.py}) consolida as análises e define a decisão final. Na configuração científica, a direção da decisão é determinada pelo comitê e a exposição é atribuída por peso-alvo determinístico, sem dimensionamento dinâmico de posição pelo gestor de portfólio; o modo legado de dimensionamento por confiança permanece no código apenas como alternativa experimental.
 
 O estado compartilhado do grafo é definido em \texttt{state.py}; as features e sua semântica, em \texttt{features.py} e \texttt{feature\_semantics.py}; a evidência técnica apresentada aos agentes, em \texttt{technical\_evidence.py}; e os \textit{prompts} de análise técnica, em \texttt{technical\_prompt\_v4.py} e \texttt{technical\_prompt\_v5.py}. A comunicação com o modelo de linguagem é encapsulada em \texttt{llm\_client.py}, com rastreamento das chamadas em \texttt{llm\_trace.py}. Cada participante do comitê é representado em \texttt{participant.py}.
 
@@ -112,16 +131,238 @@ A Figura~\ref{fig:grafo-langgraph} representa o grafo de decisão implementado e
 \draw[arr] (pm) -- (end);
 \draw[arr] (rm) -- node[right, font=\footnotesize] {caso contrário} (end);
 \end{tikzpicture}
-\caption{Grafo de decisão do sistema multiagente (LangGraph): sequência linear \texttt{technical\_analyst} $\rightarrow$ \texttt{risk\_manager}, com aresta condicional que encaminha ao \texttt{portfolio\_manager} apenas quando o veredito é \texttt{APROVADO}.}
+\caption{Grafo de decisão do sistema multiagente de ativo único (LangGraph): sequência linear \texttt{technical\_analyst} $\rightarrow$ \texttt{risk\_manager}, com aresta condicional que encaminha ao \texttt{portfolio\_manager} apenas quando o veredito é \texttt{APROVADO}.}
 \label{fig:grafo-langgraph}
 \end{figure}
 
-\section{Camada de Experimentos e Proveniência}
+O grafo (\texttt{build\_graph}) é utilizado pelos participantes da arena experimental (\texttt{src/agents/participant.py}) e pelos executores de ativo único (\texttt{scripts/run\_agent\_backtest.py}, \texttt{scripts/run\_agent\_daily.py}). O participante recusa universos com mais de um ativo, e seu estado mantém posição escalar, caixa e patrimônio de um único papel. Por essa razão, a carteira multiativos não instancia o grafo: reutiliza o nó do comitê técnico e os esquemas de resposta de \texttt{src/agents}, mas substitui o gestor de risco e o gestor de portfólio por papéis próprios, descritos a seguir.
 
-A execução e o controle dos experimentos concentram-se em \texttt{src/experiments}. O módulo \texttt{spec.py} define a especificação do experimento; \texttt{runner.py} conduz a execução; \texttt{hardening.py}, \texttt{cal\_b.py}, \texttt{stress.py} e \texttt{phases.py} implementam as fases do desenho experimental; \texttt{anchors.py} define as âncoras temporais; \texttt{treatment.py} e \texttt{context.py} organizam o tratamento e o contexto de cada execução; e os módulos \texttt{h2\_evaluation.py}, \texttt{h2\_evaluation\_offline.py}, \texttt{h2\_evaluation\_production.py} e \texttt{h2\_evaluation\_manifest.py} tratam da avaliação do sistema multiagente e da geração do manifesto de proveniência.
+\section{Carteira Multiagente Multiativos}
+\label{sec:arq-multiativos}
+
+% Fonte: scripts/multiasset_radar.py (technical_input, committee, RISK_PROMPT);
+% dashboard/wallet_manager_api.py (PROMPT, Proposal, compile_proposal);
+% dashboard/auction_orders.py (plan); scripts/continuous_replay.py (execute).
+A carteira multiativos opera um universo fixo de cinco ações da B3 (BBAS3, ITUB4, PETR4, VALE3 e WEGE3) com caixa compartilhado. A decisão de cada pregão é organizada em quatro etapas: um comitê de analistas por ativo, um analista de risco por ativo, um gestor global da carteira e um compilador determinístico da proposta. Na configuração utilizada no Replay Contínuo, todos os papéis baseados em modelo de linguagem empregam \texttt{gemini-3.8-flash}, com temperatura 1,0, nível de raciocínio baixo e até 8.192 \textit{tokens} de saída. A Figura~\ref{fig:fluxo-multiativos} resume o fluxo de um pregão.
+
+\subsection{Comitê de analistas por ativo}
+
+O comitê por ativo é implementado no Radar multiativos (\texttt{scripts/multiasset\_radar.py}, identidade \texttt{HFL-MULTIASSET-RADAR-V1}). A preparação da entrada (\texttt{technical\_input}) valida o OHLCV, exige histórico mínimo de 200 sessões, verifica a igualdade entre as datas das barras e a grade do \texttt{B3Calendar}, recusa sessões sem negociação e calcula, por meio do \texttt{DataTransformer} do pipeline, oito features adimensionais (\texttt{rsi}, \texttt{sma50\_gap}, \texttt{sma200\_gap}, \texttt{bb\_upper\_gap}, \texttt{bb\_lower\_gap}, \texttt{bb\_width}, \texttt{macd\_ratio} e \texttt{macd\_signal\_ratio}), além da volatilidade anualizada dos últimos 21 retornos diários.
+
+A função \texttt{committee} reutiliza o nó de comitê técnico de \texttt{src/agents/technical\_analyst.py} com cinco analistas, \textit{prompt} técnico versão 5, sementes 10001 a 10005, limiar de consenso 0,6 e exigência de voto válido de todos os analistas. Cada voto é uma resposta estruturada com sinal (COMPRA, VENDA ou MANTER), confiança autodeclarada e códigos de evidência restritos ao vocabulário permitido para as features recebidas (\texttt{src/agents/technical\_evidence.py}). Com limiar 0,6, o consenso exige ao menos três votos no mesmo sinal; na ausência de consenso, o sinal encaminhado é MANTER com confiança nula. Os analistas recebem apenas as features do ativo: posições da carteira e dia-alvo não entram em seus \textit{prompts}.
+
+\subsection{Analista de risco por ativo}
+
+O risco é avaliado por ativo, sem conhecimento da carteira. Quando a volatilidade anualizada de 21 dias supera 50\%, uma regra determinística (\texttt{HARD\_ASSET\_VOLATILITY\_RULE}) emite o veredito \texttt{VETADO} sem chamada ao modelo. Caso contrário, uma chamada consultiva (\texttt{ADVISORY\_LLM}) recebe o sinal consolidado, as features e a volatilidade, e devolve \texttt{APROVADO} ou \texttt{VETADO} no esquema \texttt{RiskVerdict} de \texttt{src/agents/state.py}. O \textit{prompt} de risco proíbe inventar concentração, caixa, posições ou \textit{drawdown} da carteira; o risco agregado da carteira é registrado explicitamente como não avaliado (\texttt{NOT\_EVALUATED}). Na versão original, a recomendação encaminhada ao gestor é o sinal técnico quando o risco aprova e MANTER quando veta.
+
+\subsection{Gestor global da carteira}
+
+O gestor da carteira é implementado em \texttt{dashboard/wallet\_manager\_api.py} (identidade \texttt{HFL-WALLET-MANAGER-V1}). Ele recebe um contexto canônico com a carteira (posições e caixa), a sessão de referência, o dia-alvo, os preços de fechamento RAW da sessão de referência, os pareceres dos cinco ativos e a taxa de custo declarada, e devolve uma única resposta coordenada para o capital compartilhado. O esquema Pydantic \texttt{Proposal} exige um resumo, uma lista de ações e uma lista de riscos; cada ação contém \textit{ticker}, lado (\texttt{BUY}, \texttt{SELL} ou \texttt{HOLD}), quantidade inteira a movimentar e justificativa. O \textit{prompt} exige exatamente uma ação por ativo, trata os pareceres como dados e não como instruções, proíbe crédito, venda a descoberto e frações, e permite manter caixa. O transporte durável, o diário de chamadas e a validação de esquema são reutilizados do gestor global consultivo (\texttt{scripts/run\_global\_pm\_v2.py}) por vinculação de módulo (\texttt{pilot\_paper.bind}), sem alteração das fontes seladas desse gestor.
+
+\subsection{Compilador determinístico da proposta}
+
+A resposta do gestor não é aplicada diretamente. A função \texttt{compile\_proposal} valida a resposta contra o esquema e aplica, em ordem (vendas, manutenções, compras), as regras: universo completo e sem \textit{tickers} repetidos; \texttt{HOLD} com quantidade zero; compra apenas com recomendação COMPRA e risco \texttt{APROVADO}; venda apenas com recomendação VENDA e risco \texttt{APROVADO}; venda limitada à posição; caixa nunca negativo após custos. O resultado é uma tabela antes/depois por ativo (quantidade, valor e peso), a lista de operações e o patrimônio projetado. Na versão original, qualquer violação interrompe a compilação, e o pregão é registrado sem operações (Seção~\ref{sec:arq-replay}); as versões posteriores alteram esse comportamento (Seção~\ref{sec:arq-evolucao}).
+
+\subsection{Planejamento da execução e livro}
+
+A cesta compilada é convertida em operações por \texttt{dashboard/auction\_orders.py::plan}. As vendas são processadas primeiro; se o caixa resultante não cobrir as compras, todas as compras são reduzidas pelo mesmo fator em ações inteiras e, persistindo a insuficiência, a maior compra perde uma ação por vez até caber. Um ativo sem preço oficial não é executado, sem substituição por outro preço. A origem de cada operação registra quatro preços (decisão, prévia, aprovação e leilão), o que permite medir o custo de implementação. As operações são gravadas no livro de eventos em uma única transação, mediante prévia e confirmação por \textit{token} (\texttt{manual\_portfolio\_api.batch}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  node distance=4mm,
+  box/.style={draw, rounded corners=2pt, minimum height=7mm, text width=7.2cm, align=center, inner sep=3pt, font=\small},
+  det/.style={box, fill=black!6},
+  note/.style={font=\footnotesize, align=right, text width=2.4cm},
+  arr/.style={-Stealth, thick},
+]
+\node[det] (dados) {Dados RAW B3 e fator de ajuste até a sessão $t-1$};
+\node[det, below=6mm of dados] (feat) {8 features adimensionais + volatilidade de 21 dias};
+\node[box, below=of feat] (comite) {Comitê técnico: 5 analistas, consenso $\geq$ 3 de 5};
+\node[box, below=of comite] (risco) {Risco do ativo: regra dura ($>$50\% a.a.) ou modelo consultivo};
+\node[box, below=7mm of risco] (gestor) {Gestor da carteira: uma ação \texttt{BUY}/\texttt{SELL}/\texttt{HOLD} por ativo};
+\node[det, below=of gestor] (comp) {Compilador determinístico da proposta};
+\node[det, below=of comp] (exec) {Execução no OPEN RAW B3 de $t$, custo de 0,03\%};
+\node[det, below=of exec] (livro) {Livro de eventos (SQLite): operações};
+\node[det, below=of livro] (marca) {Marcação no fechamento de $t$ e crédito de proventos};
+\draw[arr] (dados) -- (feat);
+\draw[arr] (feat) -- (comite);
+\draw[arr] (comite) -- (risco);
+\draw[arr] (risco) -- (gestor);
+\draw[arr] (gestor) -- (comp);
+\draw[arr] (comp) -- (exec);
+\draw[arr] (exec) -- (livro);
+\draw[arr] (livro) -- (marca);
+\draw[dashed] ([xshift=-3mm, yshift=3mm]feat.north west) rectangle ([xshift=3mm, yshift=-3mm]risco.south east);
+\node[font=\footnotesize, align=left, anchor=west] at ([xshift=6mm]comite.east) {repetido para\\cada um dos\\5 ativos};
+\node[note, anchor=east] at ([xshift=-6mm]dados.west) {fechamento\\de $t-1$};
+\node[note, anchor=east] at ([xshift=-6mm]exec.west) {abertura de $t$};
+\node[note, anchor=east] at ([xshift=-6mm]marca.west) {fechamento de $t$};
+\end{tikzpicture}
+\caption{Fluxo de um pregão $t$ na carteira multiagente multiativos. Caixas sombreadas são etapas determinísticas; caixas brancas envolvem chamadas ao modelo de linguagem (a etapa de risco apenas quando a regra dura não se aplica). O retângulo tracejado indica as etapas executadas por ativo.}
+\label{fig:fluxo-multiativos}
+\end{figure}
+
+\section{Relógio Causal do Pregão}
+\label{sec:arq-relogio}
+
+% Fonte: scripts/replay_multiasset.py (prepare, LIMITATIONS); scripts/continuous_replay*.py
+% (execute, preflight); dashboard/auction_orders.py (plan); dashboard/dividends_api.py (JCP_NET).
+O tratamento temporal de cada pregão-alvo $t$ separa a informação disponível para a decisão da informação usada para executar e avaliar:
+
+\begin{enumerate}
+  \item \textbf{Decisão com dados até $t-1$.} A entrada de cada ativo é construída por \texttt{scripts/replay\_multiasset.py} a partir das barras compreendidas entre 450 dias corridos antes da sessão de referência e a própria sessão de referência, que é o pregão imediatamente anterior a $t$. O aquecimento dos indicadores não cria patrimônio anterior ao início da campanha.
+  \item \textbf{Aprovação hipotética às 09:00 de $t$.} No replay, a cesta compilada é considerada aprovada antes da abertura, sem a prévia com cotação atrasada, o alerta de tese velha e as tentativas das 12:00 e 16:00 do ciclo diário (Seção~\ref{sec:arq-operacao-diaria}).
+  \item \textbf{Execução no OPEN RAW B3 de $t$.} O preço de execução é a abertura oficial bruta do COTAHIST (campo PREABE), usada como aproximação diária do leilão de abertura, sem \textit{spread}, impacto, livro de ofertas ou liquidação em D+2. Cada operação posterior à entrada paga custo de 0,03\% sobre o valor bruto; não há custo fixo nem lote mínimo de bolsa.
+  \item \textbf{Marcação no fechamento de $t$.} As carteiras são marcadas ao fechamento RAW B3 de $t$. Os proventos seguem a DP-30: o direito é determinado pela posição na data-com, o JCP é creditado líquido de 15\% de imposto (\texttt{JCP\_NET} em \texttt{dashboard/dividends\_api.py}) e o valor só entra no caixa na data de pagamento; entre as duas datas, aparece como recebível, que compõe o patrimônio mas não o caixa disponível para compras. O caixa não é remunerado.
+\end{enumerate}
+
+Os sinais das carteiras de referência utilizam o fechamento B3 multiplicado pelo fator de ajuste; operações e patrimônio de todas as carteiras utilizam preços RAW. Essa separação impede que um preço ajustado retroativamente altere a contabilidade.
+
+A proteção contra antecipação de informação (\textit{look-ahead}) atua em três pontos. Primeiro, a entrada é truncada na sessão de referência; o verificador do primeiro ensaio (\texttt{tests/check\_multiasset\_replay.py}) adultera barras futuras e confere que as entradas permanecem idênticas. Segundo, o \textit{preflight} das versões v2 e v3, executado sob bloqueio de rede (\texttt{no\_network()}), percorre todas as entradas da campanha e interrompe a execução com \texttt{decision\_input\_lookahead} se alguma sessão de entrada for igual ou posterior ao dia-alvo. Terceiro, imediatamente antes de cada requisição HTTP, a entrada é relida e comparada com a versão registrada; qualquer diferença interrompe a campanha (\texttt{input\_changed\_before\_transport}), e o mesmo ocorre com o contexto do gestor (\texttt{manager\_context\_changed\_before\_transport}). Esses controles garantem a causalidade dos dados entregues aos agentes, mas não eliminam a possibilidade de o modelo conhecer o período por seu treinamento; essa limitação é tratada no Capítulo~\ref{cha:metodologia}.
+
+\section{Arquitetura do Replay Contínuo}
+\label{sec:arq-replay}
+
+% Fonte: scripts/continuous_replay.py, continuous_replay_v2.py, continuous_replay_v3.py,
+% continuous_replay_runtime.py, continuous_replay_dividends.py, export_continuous_replay*.py,
+% build_replay_explorer.py, publish_replay.py, dashboard/server.py (_serve_replay).
+O Replay Contínuo Abril--Novembro de 2026 reconstitui, em uma única trajetória sem reinício, 153 pregões da B3 (06/04/2026 a 12/11/2026) para seis carteiras independentes de R\$ 100.000,00: a carteira Multiagentes e cinco carteiras de referência determinísticas. É uma reconstrução retrospectiva, produzida após o fim do período, autorizada como extensão exploratória (DP-37). O desenho experimental é apresentado no Capítulo~\ref{cha:metodologia} e os resultados, no Capítulo~\ref{cha:resultados}; esta seção descreve o mecanismo que os produz.
+
+\subsection{Runners, identidades e isolamento}
+
+Cada geração possui um executor próprio: \texttt{scripts/continuous\_replay.py} (identidade \texttt{HFL-CONTINUOUS-EXPLORATORY-REPLAY-V1}), \texttt{scripts/continuous\_replay\_v2.py} (\texttt{-V2}) e \texttt{scripts/continuous\_replay\_v3.py} (\texttt{-V3}), cada um com raiz de armazenamento, livro, orçamento e pacote exportado próprios. As versões v2 e v3 consomem as mesmas entradas congeladas da v1, conferindo o \textit{hash} do \textit{bundle} de mercado antes do uso, e reutilizam contabilidade, livro, planejador de execução, transporte e orçamento por vinculação de módulo (\texttt{pilot\_paper.bind}), sem editar as fontes das versões anteriores.
+
+No início de cada execução, o executor monta um manifesto da campanha com a identidade, o modo (inferência real ou teste \textit{offline}), as sessões, as estratégias, as políticas de referência, o teto de orçamento e os \textit{hashes} SHA-256 de todas as fontes utilizadas. Se já existir um manifesto diferente na raiz, a execução é recusada (\texttt{campaign\_identity\_changed}), o que impede retomar uma campanha com código ou dados distintos dos que a iniciaram. A v1 copia ainda os módulos de livro, proventos e regras para uma pasta imutável da campanha (\texttt{engine/}) e confere, por \textit{hash}, que as estratégias SMA/Bollinger e de portfólio efetivamente importadas coincidem com essas cópias. Um \textit{lock} exclusivo impede dois executores simultâneos sobre a mesma raiz.
+
+\subsection{Carteiras iniciais e referências pré-calculadas}
+
+A função \texttt{initialize} cria as seis carteiras no livro em uma única transação, cada uma com a mesma cesta inicial (DP-20): 20\% do capital por ativo em ações inteiras, ao fechamento da sessão anterior ao primeiro pregão, com custo zero e sem alegação de execução a mercado. Uma falha durante a criação não deixa carteiras parciais.
+
+As cinco referências são calculadas integralmente pela função \texttt{references} antes do laço de inferência, e podem ser produzidas isoladamente (\texttt{--references-only}), sem chamadas ao modelo; nas versões v2 e v3, esse modo executa sob bloqueio de rede (\texttt{no\_network()}). O \textit{Buy \& Hold} mantém a cesta inicial sem rebalanceamento. SMA 50/200 e Bollinger 20/2 avançam por \texttt{rule\_portfolios.advance\_wallet}, decidindo no fechamento de $t-1$ e executando na abertura de $t$. Pesos iguais e mínima variância (janela de 252 retornos, somente posições compradas) são recalculados a cada 63 pregões; os pesos são convertidos em quantidades inteiras à abertura e executados pelo mesmo planejador da carteira Multiagentes. No otimizador SLSQP da mínima variância, a função-objetivo é dividida por um escalar positivo (a maior variância da diagonal), o que preserva o minimizador e as restrições; os pesos, a janela, o resultado do otimizador e eventual recurso aos pesos iguais ficam registrados no recibo de decisão. Em todas as referências, os proventos permanecem em caixa, sem reinvestimento. A igualdade das referências entre as três campanhas é conferida por auditoria posterior (\texttt{scripts/audit\_replay\_v2\_comparison.py} e \texttt{scripts/audit\_replay\_v3\_comparison.py}).
+
+\subsection{Laço diário e semântica \textit{fail-closed}}
+
+Para cada pregão, o executor grava artefatos intermediários selados na pasta da sessão, nesta ordem: o estado das carteiras antes do pregão (\texttt{before.json}), após o crédito dos proventos pagos até a referência; o resultado do comitê de cada ativo (\texttt{result.json} ou \texttt{failure.json}), com a entrada e o diário de chamadas; o contexto e a proposta compilada do gestor (\texttt{context.json}, \texttt{proposal.json}); o plano de execução (\texttt{execution.json}); e o fechamento do dia (\texttt{day.json}), que contém a marcação das seis carteiras. A existência de cada artefato faz com que a etapa correspondente seja reaproveitada em vez de reexecutada, de modo que uma interrupção é retomada no mesmo ponto, sem nova chamada ao modelo para etapas já concluídas.
+
+Quando o comitê de algum ativo não se completa ou a proposta do gestor não pode ser compilada, o pregão é registrado como \texttt{NO\_ANALYSIS}: nenhuma operação é gravada, as posições vigentes são preservadas, as seis carteiras são marcadas normalmente e a campanha prossegue. Votos parciais recebidos permanecem registrados, e nenhuma decisão é fabricada para preencher a lacuna. Erros de integridade do diário ou do orçamento, ao contrário, interrompem a campanha.
+
+\subsection{Orçamento e rastreamento das chamadas}
+
+O controle de custo é implementado em \texttt{scripts/continuous\_replay\_runtime.py} e é independente da estratégia. Cada campanha possui um teto agregado único de US\$ 34,78, que inclui tentativas repetidas, chamadas em andamento e respostas sem uso conhecido. Antes de cada tentativa HTTP, uma reserva é gravada em SQLite com \texttt{synchronous=FULL}: US\$ 0,110592 por chamada de analista ou de risco e US\$ 0,159744 por chamada do gestor, valores calculados pelos limites de \textit{bytes} de entrada e \textit{tokens} de saída às tarifas mais altas anunciadas. Se a reserva ultrapassar o teto, a campanha é interrompida. Ao receber a resposta, o custo é estimado a partir dos \textit{tokens} informados pelo provedor (US\$ 0,75 por milhão de \textit{tokens} de entrada e US\$ 3,75 por milhão de \textit{tokens} de saída e de raciocínio); sem uso válido, a reserva integral permanece contabilizada. A estimativa não substitui a fatura do provedor.
+
+Cada chamada lógica admite no máximo duas tentativas físicas, apenas para falhas de transporte. Uma resposta já recebida e persistida é sempre reutilizada, inclusive após interrupção, e nunca solicitada novamente; esgotadas as duas tentativas, não há substituição automática. Esperas de reenvio superiores a 30 segundos e respostas que ecoem a credencial de acesso interrompem a execução. Cada comitê e cada gestor possuem um diário de chamadas (\texttt{CallBank}) com requisições, envelopes brutos e respostas validadas, exportado ao final como \texttt{provider\_journal.jsonl}. A auditoria do orçamento (\texttt{audit\_budget}, nos exportadores) reconstrói todas as tentativas, confere o \textit{hash} de cada envelope, recalcula o custo a partir dos \textit{tokens} e verifica que nenhuma chamada lógica teve mais de duas tentativas ou mais de uma resposta consumida.
+
+\subsection{Exportação, pacotes selados e explorador de consulta}
+
+Os exportadores (\texttt{scripts/export\_continuous\_replay.py}, \texttt{\_v2.py} e \texttt{\_v3.py}) leem os recibos já gravados, sem inferência nem alteração do livro, e produzem: \texttt{explorer.json} com as sessões, carteiras, pareceres e operações; \texttt{calls.json} com as chamadas arquivadas; tabelas CSV de patrimônio diário, operações, decisões, proventos e chamadas; uma página HTML autônoma com Chart.js embutido e um carregador das chamadas sob demanda (\texttt{calls-data.js}), gerados pelo próprio exportador nas versões v2 e v3 e por \texttt{scripts/build\_replay\_explorer.py} na v1; e um \texttt{manifest.json} selado com o \textit{hash} da exportação e o resultado da auditoria de orçamento. O conjunto é distribuído como um pacote ZIP.
+
+A instalação no servidor é feita por \texttt{scripts/publish\_replay.py}, que aceita apenas o pacote cujo SHA-256 está fixado no código para cada versão (v1, v2 ou v3) e com a lista exata de membros esperada. Os arquivos são extraídos em área temporária, conferidos e promovidos por renomeação no mesmo volume; um destino existente só é aceito se seus arquivos coincidirem com o pacote, e dados diferentes nunca são sobrescritos. Cada versão ocupa um diretório próprio, preservando as anteriores.
+
+A consulta é servida pelas rotas \texttt{/laboratory/replay/}, \texttt{/laboratory/replay/v2/} e \texttt{/laboratory/replay/v3/} de \texttt{dashboard/server.py}, somente com leitura: o servidor entrega apenas uma lista fechada de dez arquivos exportados, confina o caminho ao diretório da versão, comprime as respostas grandes sob demanda e não executa agentes nem operações. O explorador compara as curvas das seis carteiras e permite inspecionar, por carteira e pregão, posições, votos, pareceres de risco, decisões, operações, proventos e as chamadas arquivadas ao modelo. Os textos produzidos pelos modelos são apresentados como evidência preservada, não como fatos verificados.
+
+\section{Evolução da Arquitetura entre Versões}
+\label{sec:arq-evolucao}
+
+% Fonte: scripts/continuous_replay_v2.py (constantes, LENTE_*, committee_v2, PROMPT_V2,
+% compile_proposal_v2); scripts/continuous_replay_v3.py (constantes, _LENS_SUFFIX,
+% committee_v3, PROMPT_V3, compute_position_memory, compile_proposal_v3).
+As três gerações mantêm a mesma topologia de agentes por pregão --- cinco analistas por ativo, até um analista de risco por ativo e um gestor, no máximo 31 chamadas ---, o mesmo modelo e configuração de geração, as mesmas features, a mesma regra dura de volatilidade, o mesmo \textit{prompt} de risco e o mesmo esquema de resposta do gestor. Também são comuns a execução, os custos, os proventos, o orçamento e as cinco referências. Variam a composição do comitê, a regra de agregação e de veto, o contexto e as regras do gestor e o comportamento do compilador, conforme a Tabela~\ref{tab:evolucao-versoes}. Os resultados de cada versão são apresentados no Capítulo~\ref{cha:resultados}.
+
+\begin{table}[htbp]
+\centering
+\caption{Diferenças arquiteturais entre as três gerações da carteira Multiagentes no Replay Contínuo.}
+\label{tab:evolucao-versoes}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{>{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{3.8cm} >{\raggedright\arraybackslash}p{3.8cm} >{\raggedright\arraybackslash}p{4.0cm}}
+\toprule
+\textbf{Dimensão} & \textbf{v1} & \textbf{v2} & \textbf{v3} \\
+\midrule
+\textit{Prompt} dos analistas & Um único \textit{prompt} (v5) para os cinco & \textit{Prompt} base + 3 lentes (2 + 2 + 1) & \textit{Prompt} base + 5 lentes distintas \\
+Travas sobre o consenso & Não & Não & Reversão de consensos 3--2 em extremos \\
+Efeito do veto de risco & \texttt{VETADO} $\rightarrow$ MANTER & \texttt{VETADO} bloqueia só compras (R7) & Igual à v2 \\
+Contexto do gestor & Carteira, preços e pareceres & Igual à v1 & Acrescenta memória de posição \\
+\textit{Prompt} do gestor & Original & \texttt{PROMPT\_V2} (4 regras) & \texttt{PROMPT\_V3} (7 regras) \\
+Compilador & Estrito: violação invalida o pregão & Ajusta e registra (\texttt{strict=False}) & Ajusta e registra (\texttt{strict=False}) \\
+Limites de compra & Caixa disponível & Teto de 30\% e mínimo de R\$ 2.000 & Teto de 30\% (22\% em recomposição) e mínimo de R\$ 2.000 \\
+Vendas parciais fora de VENDA & Não & \textit{Trim-to-Fund} & \textit{Trim-to-Fund} e \textit{Trim-on-Strength} \\
+Limites de venda em VENDA & Posição & Posição & 45\% da posição por pregão e piso de 8\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Versão v2}
+
+A v2 acrescenta quatro intervenções, todas impostas tanto no \textit{prompt} do gestor (\texttt{PROMPT\_V2}) quanto no compilador (\texttt{compile\_proposal\_v2}):
+
+\begin{itemize}
+  \item \textbf{\textit{Trim-to-Fund}:} venda parcial de ativo com recomendação MANTER ou COMPRA, admitida quando o peso antes da operação supera 25\% do patrimônio, o peso projetado permanece em ao menos 15\% e a cesta contém uma compra válida ou o ativo já excede 30\%.
+  \item \textbf{Teto de concentração e ordem mínima:} nenhuma compra pode levar o peso projetado do ativo acima de 30\% do patrimônio anterior à operação (\texttt{MAX\_ASSET\_WEIGHT}), nem ter valor bruto inferior a R\$ 2.000,00 (\texttt{MIN\_TRADE\_BRL}); vendas não têm valor mínimo.
+  \item \textbf{Veto assimétrico (R7):} o veredito \texttt{VETADO} passa a bloquear apenas compras; se o consenso técnico for VENDA, a recomendação permanece VENDA sob veto (\texttt{committee\_v2}), permitindo reduzir ou zerar a posição.
+  \item \textbf{Lentes analíticas:} cada analista recebe o \textit{prompt} técnico v5 acrescido de uma lente --- tendência estrutural (analistas 1 e 2), reversão por Bollinger e RSI (3 e 4) e regime de volatilidade como árbitro (5).
+\end{itemize}
+
+Além disso, o compilador deixa de invalidar o pregão diante de uma violação de regra: em modo não estrito, reduz a quantidade ou converte a ação em \texttt{HOLD} e registra cada ajuste com \textit{ticker}, lado e quantidade de origem e destino e o motivo (por exemplo, \texttt{MAX\_ASSET\_WEIGHT\_CAP}, \texttt{MIN\_TRADE\_BRL}, \texttt{TRIM\_WEIGHT\_AFTER\_FLOOR}). Violações estruturais --- universo incompleto ou com \textit{tickers} repetidos e quantidades inválidas --- continuam invalidando o pregão.
+
+\subsection{Versão v3}
+
+A v3 mantém as regras da v2 e acrescenta quatro grupos de mecanismos, parametrizados por constantes de \texttt{scripts/continuous\_replay\_v3.py} (Tabela~\ref{tab:constantes-v3}).
+
+\begin{table}[htbp]
+\centering
+\caption{Constantes determinísticas da versão v3.}
+\label{tab:constantes-v3}
+\small
+\begin{tabular}{l r p{6.4cm}}
+\toprule
+\textbf{Constante} & \textbf{Valor} & \textbf{Função} \\
+\midrule
+\texttt{MAX\_ASSET\_WEIGHT} & 0,30 & Teto de peso projetado em compra por COMPRA \\
+\texttt{DIP\_REBALANCE\_MAX\_WEIGHT} & 0,22 & Teto de peso em compra de recomposição em MANTER \\
+\texttt{MIN\_TRADE\_BRL} & 2.000,00 & Valor bruto mínimo de compra (R\$) \\
+\texttt{CORE\_FLOOR\_WEIGHT} & 0,08 & Peso mínimo remanescente após venda técnica normal \\
+\texttt{MAX\_NORMAL\_SELL\_FRACTION} & 0,45 & Fração máxima da posição vendida por pregão \\
+\texttt{ANTI\_WHIPSAW\_COOLDOWN\_SESSIONS} & 8 & Janela contra recompra mais cara (pregões) \\
+\texttt{CASH\_DRAG\_THRESHOLD} & 0,25 & Caixa/patrimônio que habilita a recomposição \\
+\texttt{STRENGTH\_TRIM\_MAX\_FRACTION} & 0,35 & Fração máxima de uma realização em força \\
+\texttt{STRENGTH\_TRIM\_MIN\_WEIGHT\_AFTER} & 0,12 & Peso mínimo após realização em força \\
+\texttt{TRIM\_MIN\_WEIGHT\_BEFORE}/\texttt{\_AFTER} & 0,25/0,15 & Limites do \textit{Trim-to-Fund}, herdados da v2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+  \item \textbf{Cinco lentes especialistas e travas de extremo.} Cada analista recebe uma lente única: Bandas de Bollinger, exaustão por RSI e MACD, valor relativo à média de 50 pregões, estrutura de longo prazo pela média de 200 pregões e assimetria entre o espaço até as bandas superior e inferior. Cada lente explicita faixas em que determinado sinal é proibido. Em \texttt{committee\_v3}, duas travas atuam apenas sobre consensos de exatamente três votos: \texttt{ANTI\_BOTTOM\_SELL\_GUARD} reverte VENDA para MANTER quando o RSI é inferior a 40 ou \texttt{bb\_lower\_gap} é inferior a 0,035, desde que \texttt{sma200\_gap} seja superior a $-0{,}08$; \texttt{ANTI\_TOP\_CHASE\_GUARD} reverte COMPRA para MANTER quando o RSI é superior a 62 ou \texttt{bb\_upper\_gap} é superior a $-0{,}02$.
+  \item \textbf{Memória de posição, piso núcleo, venda escalonada e \textit{anti-whipsaw}.} A função \texttt{compute\_position\_memory} reconstrói do livro, por ativo, a quantidade, o preço médio de compra, o retorno não realizado, a sessão e o preço da última venda e os pregões decorridos desde ela, e inclui esses campos no contexto do gestor. Em venda técnica normal (VENDA com risco aprovado), o compilador limita a quantidade a 45\% da posição, arredondada para cima, e preserva peso remanescente de ao menos 8\% (ajuste \texttt{CORE\_FLOOR\_STEP\_SELL}); a saída integral fica restrita à venda sob veto (R7). É recusada a compra de ativo vendido nos últimos oito pregões a preço superior ao da última venda (\texttt{ANTI\_WHIPSAW\_HIGHER\_REBUY}).
+  \item \textbf{\textit{Trim-on-Strength} e \textit{Trim-to-Fund}.} Além do \textit{Trim-to-Fund} da v2, admite-se a realização parcial em força de ativo em MANTER ou COMPRA quando ele está esticado (RSI $\geq$ 63 ou \texttt{bb\_upper\_gap} $\geq -0{,}02$), em lucro de ao menos 2\% sobre o preço médio e com peso acima de 14\%, limitada a 35\% da posição e a peso remanescente de 12\%, sem exigir compra na cesta.
+  \item \textbf{Recomposição contra o arrasto de caixa (\textit{Dip-Rebalance}).} Quando o caixa do início do pregão supera 25\% do patrimônio, admite-se compra de ativo em MANTER com risco aprovado e em desconto (\texttt{sma50\_gap} negativo com RSI de até 46, ou \texttt{bb\_lower\_gap} de até 0,04), sujeita ao teto de 22\%, à ordem mínima e à regra \textit{anti-whipsaw}.
+\end{itemize}
+
+As regras de ambas as versões foram formuladas após a observação das campanhas anteriores sobre o mesmo período. Por isso, a evolução descrita nesta seção é tratada como iteração de engenharia dentro da amostra, e não como validação independente das regras; essa restrição é discutida nos Capítulos~\ref{cha:metodologia} e~\ref{cha:resultados}. A qualificação de cada versão antes da execução paga foi feita com respostas simuladas do modelo e rede bloqueada (\texttt{tests/check\_continuous\_replay\_v2.py} e \texttt{tests/check\_continuous\_replay\_v3.py}); essas verificações atestam o funcionamento do mecanismo e não constituem desempenho dos agentes.
+
+\section{Operação Diária}
+\label{sec:arq-operacao-diaria}
+
+% Fonte: dashboard/daily_cycle.py (docstring, SLOTS, CAP_USD, windows, manager, close_day);
+% dashboard/auction_orders.py (first_auction, execution_slot); Dockerfile; railway.json; DP-33/34/35.
+Fora do replay, a mesma carteira multiativos é operada diariamente sobre dados correntes, em regime de simulação sem capital real e sem envio de ordens a corretoras. O ciclo autônomo (DP-34) é implementado em \texttt{dashboard/daily\_cycle.py} (identidade \texttt{HFL-DAILY-CYCLE-V1}) e executa dentro do processo do servidor quando habilitado por variável de ambiente. Em cada pregão da B3 há tentativas às 09:00, 12:00 e 16:00 (horário de São Paulo); uma tentativa posterior só ocorre se a anterior não tiver encerrado o dia.
+
+Cada tentativa percorre, chamando as mesmas funções usadas pela interface, as etapas: atualização da base de mercado; abertura de uma análise com dia-alvo no pregão corrente e dados até o último pregão encerrado e publicado; preparação dos dados; comitês por ativo; contexto, \textit{preflight} e chamada do gestor; prévia com cotação atrasada; e aprovação automática, exceto quando o \textit{backend} emite alerta de tese velha, caso em que a cesta aguarda revisão humana. As reservas de custo do dia são limitadas a US\$ 4,00, somando analistas, gestor e todas as tentativas. Cada tentativa gera um registro selado e imutável, e o dia é encerrado em um de três estados: concluído, aguardando revisão humana ou sem análise; um dia encerrado não é executado novamente. As autorizações automáticas são registradas como da rotina, não do usuário, e o resultado é comunicado por notificação.
+
+A execução segue as regras de leilão das DP-33 e DP-35 (\texttt{dashboard/auction\_orders.py}): uma aprovação anterior ao corte de abertura executa no OPEN oficial B3 do dia; uma aprovação durante o pregão executa ao preço de abertura da primeira barra de um minuto do Yahoo Finance posterior à aprovação (perna \texttt{INTRADAY}). A cotação atrasada é usada somente na prévia, nunca na marcação nem no \textit{prompt} do gestor. O Replay Contínuo reutiliza os módulos desse ciclo (comitê do Radar, gestor, compilador, planejador, livro e proventos), mas simplifica o relógio para uma aprovação hipotética às 09:00 com execução no OPEN, conforme a Seção~\ref{sec:arq-relogio}.
+
+A aplicação é empacotada em contêiner (\texttt{Dockerfile}) e executada em um servidor pessoal em plataforma de nuvem, com volume persistente para a base de mercado, os livros, os registros do ciclo e os pacotes do replay. O processo HTTP escuta apenas na interface local do contêiner e é acessível somente por uma rede privada, sem exposição pública. Na construção da imagem, os bytes das fontes e evidências seladas são conferidos contra os \textit{hashes} originais, e a divergência interrompe a construção.
+
+\section{Camada de Experimentos e Proveniência}
+\label{sec:arq-experimentos}
+
+A execução e o controle dos experimentos de ativo único concentram-se em \texttt{src/experiments}. O módulo \texttt{spec.py} define a especificação do experimento; \texttt{runner.py} conduz a execução; \texttt{hardening.py}, \texttt{cal\_b.py}, \texttt{stress.py} e \texttt{phases.py} implementam as fases do desenho experimental; \texttt{anchors.py} define as âncoras temporais; \texttt{treatment.py} e \texttt{context.py} organizam o tratamento e o contexto de cada execução; e os módulos \texttt{h2\_evaluation.py}, \texttt{h2\_evaluation\_offline.py}, \texttt{h2\_evaluation\_production.py} e \texttt{h2\_evaluation\_manifest.py} tratam da avaliação do sistema multiagente e da geração do manifesto de proveniência.
 
 A reprodutibilidade é garantida por um conjunto de identificadores registrados a cada execução: o \textit{commit} do código, o \textit{hash} da especificação (\texttt{spec\_hash}), o identificador do \textit{snapshot} de dados, o manifesto de execução e o rastreio das chamadas ao modelo de linguagem. As fases e os identificadores de caso não fazem parte do \texttt{spec\_hash}, de modo a não vincular a especificação a uma janela temporal específica.
 
+O caminho multiativos reutiliza dessa camada o diário durável de chamadas (\texttt{CallBank} e \texttt{DurableGeminiClient}, de \texttt{h2\_evaluation\_production.py}) e o bloqueio de rede (\texttt{no\_network}, de \texttt{h2\_evaluation\_offline.py}), com identidades próprias, sem alterar os gates da avaliação H2. Sua proveniência é registrada nos manifestos de campanha e nos pacotes descritos na Seção~\ref{sec:arq-replay}.
+
 \section{Frontend e Operação}
 
-A interface do laboratório é implementada em \texttt{dashboard/}, com HTML, CSS e JavaScript, e visualização por Chart.js. O servidor é provido pela biblioteca padrão (\texttt{http.server}), sem framework web. Essa camada expõe o acompanhamento operacional do laboratório --- por exemplo, o voto individual de cada agente e os registros de atividade --- e constitui o contexto de produto do trabalho, fora do escopo científico direto da avaliação comparativa descrita no Capítulo~\ref{cha:metodologia}.
+A interface do laboratório é implementada em \texttt{dashboard/}, com HTML, CSS e JavaScript, e visualização por Chart.js. O servidor (\texttt{dashboard/server.py}) é provido pela biblioteca padrão, sem framework web, e aplica validação de \texttt{Host} e \texttt{Origin}, \textit{token} CSRF e JSON estrito às requisições que alteram estado. A navegação principal tem a carteira como tela inicial e reúne as áreas Carteira, Operações, Agentes, Comparação, Replay abril--novembro (com acesso às versões v1, v2 e v3), Laboratório, Legacy e Auditoria. Essa camada expõe o acompanhamento operacional --- patrimônio, posições, operações, votos individuais dos agentes, pareceres e registros de atividade --- e constitui o contexto de produto do trabalho. A interface apenas apresenta valores calculados no \textit{backend} e não é, por si, objeto da avaliação comparativa descrita no Capítulo~\ref{cha:metodologia}.

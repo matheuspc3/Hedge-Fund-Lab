@@ -28,6 +28,23 @@
 
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta, positioning}
+\usepackage{pgfplots} % figuras do replay (figures/replay-*.tex)
+\pgfplotsset{compat=1.18}
+
+% Nomes longos em \texttt{} (caminhos de código) não hifenizam; folga extra evita
+% que estourem a margem.
+\setlength{\emergencystretch}{3em}
+\usepackage[htt]{hyphenat} % hifeniza \texttt e permite quebra após \_
+% ponytail: a classe usa \MakeUppercase sem argumento nos títulos do tocloft, o que
+% quebra ("Missing \endcsname") com o LaTeX/tocloft do MiKTeX de 2026. Aqui os nomes
+% já vêm em maiúsculas e a fonte não converte. Se a classe for corrigida, remova.
+\renewcommand{\cftloftitlefont}{\hfill\large\bfseries}
+\renewcommand{\cftlottitlefont}{\hfill\bfseries\large}
+\renewcommand{\cfttoctitlefont}{\hspace{0.4\textwidth}\large\bfseries}
+\addto\captionsbrazil{%
+  \renewcommand{\listfigurename}{LISTA DE FIGURAS}%
+  \renewcommand{\listtablename}{LISTA DE TABELAS}%
+  \renewcommand{\contentsname}{SUMÁRIO}}
 
 \begin{document}
 
@@ -36,13 +53,13 @@
 \makeapproval
 
 \begin{resumo}
-O mercado financeiro contemporâneo caracteriza-se por sua elevada complexidade e natureza não estacionária, em que o volume massivo de dados gerados diariamente desafia as capacidades de análise humana e de algoritmos estáticos tradicionais. Este trabalho apresenta o desenvolvimento do Hedge-fund-lab, um laboratório quantitativo para \textit{backtesting} de estratégias de investimento baseado em sistemas multiagentes. O objetivo é mitigar as limitações de estratégias clássicas e o risco de superajuste por meio da introdução de processos de consenso e deliberação na tomada de decisão financeira baseada em \textit{Large Language Models}. A solução integra um pipeline de dados construído a partir dos registros oficiais de negociação da B3 (COTAHIST), persistidos em banco relacional (SQLite/SQLAlchemy), e um comitê de agentes especializados coordenado pelo framework LangGraph, executado sobre um motor de \textit{backtesting} próprio. O laboratório permite avaliar, de forma metodologicamente controlada, se a deliberação adaptativa de modelos de linguagem produz decisões de investimento mais robustas que \textit{benchmarks} clássicos em ativos de alta volatilidade do mercado brasileiro, considerando risco, custo e consistência operacional.
-\palavraschave{Análise Quantitativa. Sistemas Multiagentes. Large Language Models. LangGraph. Backtesting.}
+A avaliação de estratégias quantitativas em mercados não estacionários é sujeita a custos, dependência de regime e superajuste. Este trabalho apresenta o Hedge-fund-lab, laboratório quantitativo de \textit{backtesting} baseado em sistemas multiagentes, e o emprega para verificar se uma carteira decidida por agentes baseados em \textit{Large Language Models} (LLMs) apresenta desempenho ajustado ao risco superior ao de carteiras de referência clássicas. O laboratório integra dados oficiais da B3 (COTAHIST), um livro contábil de eventos auditável e comitês de analistas técnicos, analistas de risco e um gestor de carteira, cuja proposta é submetida a um compilador determinístico de regras. O estudo empírico é um replay retrospectivo de 153 pregões, de abril a novembro de 2026, com cinco ações e R\$ 100 mil por carteira, no qual a carteira multiagente é comparada a cinco referências determinísticas (Buy \& Hold, SMA 50/200, Bollinger 20/2, Equal Weight e Mínima Variância) em três versões: a v1, pré-especificada, e as v2 e v3, iterações exploratórias desenhadas após a observação do mesmo período. As hipóteses são decididas pelo Sharpe líquido com \textit{bootstrap} estacionário pareado (Bootstrap A). A v1 terminou em $-17{,}82\%$, abaixo das cinco referências, e nenhum de seus contrastes rejeitou a hipótese nula; a SMA 50/200 tampouco superou a Equal Weight. A v3 terminou em $+0{,}07\%$, acima de quatro referências e abaixo da Bollinger 20/2 ($+4{,}89\%$), resultado otimista por construção. Conclui-se que não há evidência de superioridade dos agentes e que, nesta trajetória, a especialização do comitê e a governança determinística alteraram de forma mensurável o comportamento da carteira. A avaliação livre de contaminação do modelo depende do acompanhamento prospectivo, já em curso.
+\palavraschave{Análise Quantitativa. Sistemas Multiagentes. Large Language Models. Backtesting. Mercado Acionário Brasileiro.}
 \end{resumo}
 
 \begin{abstract}
-The contemporary financial market is characterized by extreme complexity and a non-stationary nature, where the massive volume of data generated daily challenges human analysis and traditional static algorithms. This work presents the development of the Hedge-fund-lab, a quantitative laboratory for backtesting investment strategies based on multi-agent systems. The goal is to mitigate the limitations of classic trading strategies and the risk of overfitting by introducing consensus and deliberation processes into financial decision-making driven by Large Language Models. The proposed solution integrates a data pipeline built on official B3 trading records (COTAHIST), persisted in a relational database (SQLite/SQLAlchemy), and a committee of specialized agents coordinated through the LangGraph framework, executed over a custom backtesting engine. The laboratory allows evaluating, in a methodologically controlled manner, whether the adaptive deliberation of language models produces more robust investment decisions than classical benchmarks in highly volatile assets of the Brazilian market, considering risk, cost, and operational consistency.
-\keywords{Quantitative Analysis. Multi-Agent Systems. Large Language Models. LangGraph. Backtesting.}
+The evaluation of quantitative strategies in non-stationary markets is subject to costs, regime dependence, and overfitting. This work presents the Hedge-fund-lab, a quantitative backtesting laboratory based on multi-agent systems, and uses it to test whether a portfolio managed by agents based on Large Language Models (LLMs) achieves higher risk-adjusted performance than classical benchmark portfolios. The laboratory integrates official B3 trading records (COTAHIST), an auditable event ledger, and committees of technical analysts, risk analysts, and a portfolio manager whose proposal is submitted to a deterministic rule compiler. The empirical study is a retrospective replay of 153 trading sessions, from April to November 2026, with five stocks and BRL 100,000 per portfolio, in which the multi-agent portfolio is compared with five deterministic benchmarks (Buy \& Hold, SMA 50/200, Bollinger 20/2, Equal Weight, and Minimum Variance) in three versions: v1, pre-specified, and v2 and v3, exploratory iterations designed after observing the same period. The hypotheses are decided on the net Sharpe ratio with a paired stationary bootstrap (Bootstrap A). Version v1 ended at $-17.82\%$, below all five benchmarks, and none of its contrasts rejected the null hypothesis; SMA 50/200 did not outperform Equal Weight either. Version v3 ended at $+0.07\%$, above four benchmarks and below Bollinger 20/2 ($+4.89\%$), a result optimistic by construction. The study concludes that there is no evidence of agent superiority and that, along this trajectory, committee specialization and deterministic governance measurably changed the portfolio's behavior. An evaluation free from model contamination depends on the prospective daily tracking already under way.
+\keywords{Quantitative Analysis. Multi-Agent Systems. Large Language Models. Backtesting. Brazilian Stock Market.}
 \end{abstract}
 
 \listoffigurespage
