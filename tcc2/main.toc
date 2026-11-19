@@ -40,7 +40,7 @@
 \contentsline {section}{\numberline {4.6}Sistema Multiagente de Ativo Único}{22}{section.56}%
 \contentsline {section}{\numberline {4.7}Carteira Multiagente Multiativos}{24}{section.58}%
 \contentsline {subsection}{\numberline {4.7.1}Comitê de analistas por ativo}{24}{subsection.59}%
-\contentsline {subsection}{\numberline {4.7.2}Analista de risco por ativo}{24}{subsection.60}%
+\contentsline {subsection}{\numberline {4.7.2}Analista de risco por ativo}{25}{subsection.60}%
 \contentsline {subsection}{\numberline {4.7.3}Gestor global da carteira}{25}{subsection.61}%
 \contentsline {subsection}{\numberline {4.7.4}Compilador determinístico da proposta}{25}{subsection.62}%
 \contentsline {subsection}{\numberline {4.7.5}Planejamento da execução e livro}{25}{subsection.63}%
@@ -52,7 +52,7 @@
 \contentsline {subsection}{\numberline {4.9.4}Orçamento e rastreamento das chamadas}{29}{subsection.74}%
 \contentsline {subsection}{\numberline {4.9.5}Exportação, pacotes selados e explorador de consulta}{30}{subsection.75}%
 \contentsline {section}{\numberline {4.10}Evolução da Arquitetura entre Versões}{30}{section.76}%
-\contentsline {subsection}{\numberline {4.10.1}Versão v2}{30}{subsection.78}%
+\contentsline {subsection}{\numberline {4.10.1}Versão v2}{31}{subsection.78}%
 \contentsline {subsection}{\numberline {4.10.2}Versão v3}{32}{subsection.79}%
 \contentsline {section}{\numberline {4.11}Operação Diária}{33}{section.81}%
 \contentsline {section}{\numberline {4.12}Camada de Experimentos e Proveniência}{34}{section.82}%
