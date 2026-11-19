@@ -78,11 +78,68 @@ O caminho multiativos utiliza uma base de mercado local dos cinco ativos (DP-27)
 
 \section{Camada de Persistência}
 
-A persistência das séries é implementada no módulo \texttt{src/db}, composto pela configuração de conexão (\texttt{connection.py}) e pela definição do esquema relacional (\texttt{models.py}). O acesso é feito por SQLAlchemy; o endereço do banco é configurável (\texttt{src/config.py}), com SQLite como valor padrão.
+A persistência das séries é implementada no módulo \texttt{src/db}, composto pela configuração de conexão (\texttt{connection.py}) e pela definição do esquema relacional (\texttt{models.py}). O acesso é feito por SQLAlchemy; o endereço do banco é configurável (\texttt{src/config.py}), com SQLite como valor padrão. A Figura~\ref{fig:hfl-der} apresenta o diagrama entidade-relacionamento das três tabelas do esquema.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  box/.style={draw, rounded corners=2pt, align=center, inner sep=3pt, font=\small},
+  rel/.style={thick},
+]
+\node[box] (ativos) at (0,0) {
+  \begin{tabular}{@{}lll@{}}
+    \multicolumn{3}{c}{\textbf{\texttt{ativos}}}\\ \hline
+    PK & \texttt{id}          & INTEGER\\
+    UQ & \texttt{ticker}      & VARCHAR(20)\\
+       & \texttt{setor}       & VARCHAR(100)\\
+       & \texttt{created\_at} & DATETIME\\
+  \end{tabular}
+};
+\node[box, anchor=north] (cotacoes) at (-3.2,-2.2) {
+  \begin{tabular}{@{}lll@{}}
+    \multicolumn{3}{c}{\textbf{\texttt{cotacoes\_diarias}}}\\ \hline
+    PK & \texttt{id}          & INTEGER\\
+    FK & \texttt{ativo\_id}   & INTEGER\\
+       & \texttt{data}        & DATE\\
+       & \texttt{abertura}    & FLOAT\\
+       & \texttt{maxima}      & FLOAT\\
+       & \texttt{minima}      & FLOAT\\
+       & \texttt{fechamento}  & FLOAT\\
+       & \texttt{volume}      & FLOAT\\
+  \end{tabular}
+};
+\node[box, anchor=north] (indicadores) at (3.2,-2.2) {
+  \begin{tabular}{@{}lll@{}}
+    \multicolumn{3}{c}{\textbf{\texttt{indicadores\_tecnicos}}}\\ \hline
+    PK & \texttt{id}          & INTEGER\\
+    FK & \texttt{ativo\_id}   & INTEGER\\
+       & \texttt{data}        & DATE\\
+       & \texttt{sma\_50}     & FLOAT\\
+       & \texttt{sma\_200}    & FLOAT\\
+       & \texttt{bb\_upper}   & FLOAT\\
+       & \texttt{bb\_middle}  & FLOAT\\
+       & \texttt{bb\_lower}   & FLOAT\\
+       & \texttt{rsi}         & FLOAT\\
+       & \texttt{macd}        & FLOAT\\
+       & \texttt{macd\_sinal} & FLOAT\\
+  \end{tabular}
+};
+
+\coordinate (juncao) at (0,-1.5);
+\draw[rel] (ativos.south) -- node[right, font=\footnotesize] {\(1\)} (juncao);
+\draw[rel] (juncao) -| (cotacoes.north);
+\draw[rel] (juncao) -| (indicadores.north);
+\node[font=\footnotesize, fill=white, inner sep=1pt, above right] at (cotacoes.north) {\(0..N\)};
+\node[font=\footnotesize, fill=white, inner sep=1pt, above right] at (indicadores.north) {\(0..N\)};
+\end{tikzpicture}
+\caption{Diagrama entidade-relacionamento do banco de dados de mercado do Hedge-fund-lab. PK indica chave primária, FK indica chave estrangeira e UQ indica restrição de unicidade. O par \texttt{(ativo\_id, data)} é único em cada tabela dependente.}
+\label{fig:hfl-der}
+\end{figure}
 
 % Fonte: dashboard/manual_portfolio_api.py (SCHEMA, connect, append, replay, batch).
 As carteiras simuladas utilizam um livro contábil distinto, implementado em \texttt{dashboard/manual\_portfolio\_api.py} (identidade \texttt{HFL-MANUAL-PORTFOLIO-V1}). Cada criação de carteira, operação, provento recebido ou recibo de decisão é gravado como um evento imutável em uma tabela SQLite com gatilhos que recusam \texttt{UPDATE} e \texttt{DELETE}. Cada evento armazena o \textit{hash} do evento anterior da mesma carteira, formando uma cadeia verificada a cada leitura; cada comando possui identificador único, o que torna a repetição de uma gravação idempotente. As escritas usam \texttt{BEGIN IMMEDIATE} e \texttt{synchronous=FULL}. Posições, caixa e base de custo não são armazenados como saldos: são recalculados a cada leitura pela reprodução ordenada dos eventos (\textit{replay}). Valores monetários e quantidades são tratados com \texttt{Decimal} e arredondados a centavos pelo núcleo contábil reutilizado de \texttt{scripts/multiasset\_portfolio.py}.
 
+\FloatBarrier
 \section{Indicadores e Estratégias}
 
 Os indicadores técnicos são implementados no módulo \texttt{src/indicators}: médias móveis simples (\texttt{sma.py}), Bandas de Bollinger (\texttt{bollinger.py}), Índice de Força Relativa (\texttt{rsi.py}) e MACD (\texttt{macd.py}). O RSI segue a formulação canônica de Wilder.
@@ -203,6 +260,7 @@ A cesta compilada é convertida em operações por \texttt{dashboard/auction\_or
 \label{fig:fluxo-multiativos}
 \end{figure}
 
+\FloatBarrier
 \section{Relógio Causal do Pregão}
 \label{sec:arq-relogio}
 

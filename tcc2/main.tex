@@ -11,22 +11,27 @@
 \newcommand{\remarks}[2]{{\color{red} #1\ (\textit{#2})}}
 
 \advisor[m]{Eduardo Soares Ogasawara, D.Sc.}
-\addboardmember{Membro Interno}{Renato Campos Mauro, D.Sc.}
-\addboardmember{Membro Externo}{Gilberto Gil Fidelis Gomes Passos, M.Sc.}
+\addboardmember{Membro Interno}{}
+\addboardmember{Membro Externo}{}
 
 \date{2026}
 
 \newacronym{tcc}{TCC}{Trabalho de Conclusão de Curso}
-\newacronym{llm}{LLM}{Large Language Model}
-\newacronym{etl}{ETL}{Extract, Transform, Load}
-\newacronym{emh}{EMH}{Efficient Market Hypothesis}
-\newacronym{amh}{AMH}{Adaptive Markets Hypothesis}
-\newacronym{mas}{MAS}{Multi-Agent Systems}
 \newacronym{rsi}{RSI}{Relative Strength Index}
 \newacronym{sma}{SMA}{Simple Moving Average}
 \newacronym{macd}{MACD}{Moving Average Convergence Divergence}
+\newacronym{dp}{DP}{Decisão de Projeto}
+\newacronym{jcp}{JCP}{Juros sobre Capital Próprio}
+\newacronym{ohlcv}{OHLCV}{Open, High, Low, Close, Volume}
+\newacronym{mar}{MAR}{Minimum Acceptable Return}
+\newacronym{http}{HTTP}{Hypertext Transfer Protocol}
+\newacronym{json}{JSON}{JavaScript Object Notation}
+\newacronym{sql}{SQL}{Structured Query Language}
+\newacronym{csv}{CSV}{Comma-Separated Values}
+\newacronym{sha}{SHA}{Secure Hash Algorithm}
 
 \usepackage{tikz}
+\usepackage{placeins}
 \usetikzlibrary{arrows.meta, positioning}
 \usepackage{pgfplots} % figuras do replay (figures/replay-*.tex)
 \pgfplotsset{compat=1.18}
@@ -63,8 +68,13 @@ The evaluation of quantitative strategies in non-stationary markets is subject t
 \end{abstract}
 
 \listoffigurespage
-\listoftablespage
-\listofacronymspage
+
+\begingroup
+  \let\cleardoublepage\clearpage
+  \listoftablespage
+  \listofacronymspage
+\endgroup
+
 \tableofcontentspage
 
 \mainmatter
