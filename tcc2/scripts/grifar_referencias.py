@@ -13,8 +13,9 @@ sustenta.
 Os originais ficam em output/referencias-originais/ (ignorado pelo Git) e o PDF grifado
 é sempre regerado a partir deles, então rodar de novo não duplica grifos.
 Sai com código 1 se algum trecho não for encontrado.
+Com --teste, só procura os trechos e não grava nada.
 """
-import json, re, shutil, sys
+import json, re, shutil, sys, unicodedata
 from pathlib import Path
 
 import pymupdf
@@ -25,7 +26,8 @@ ORIG = REPO / "output" / "referencias-originais"
 
 
 def norm(palavra):
-    return re.sub(r"[^\w]", "", palavra.lower())
+    # NFKC desfaz ligaturas tipográficas ("ﬁ" -> "fi") comuns em PDFs de editoras.
+    return re.sub(r"[^\w]", "", unicodedata.normalize("NFKC", palavra).lower())
 
 
 def tokens(pg):
@@ -56,6 +58,7 @@ def grifar(doc, pagina, trecho, nota):
     # ponytail: casamento exato de palavras normalizadas, na ordem de leitura do PDF.
     # Trecho que cruza colunas ou páginas, ou PDF digitalizado sem texto, não casa;
     # nesses casos o grifo é feito à mão.
+    trecho = re.sub(r"(\w)- (\w)", r"\1\2", trecho)  # hífen de fim de linha copiado do PDF
     alvo = [norm(w) for w in trecho.split() if norm(w)]
     paginas = [doc[pagina - 1]] if pagina else list(doc)
     for pg in paginas:
@@ -68,6 +71,8 @@ def grifar(doc, pagina, trecho, nota):
     return "NÃO ENCONTRADO"
 
 
+sys.stdout.reconfigure(encoding="utf-8")  # console do Windows não é UTF-8 por padrão
+teste = "--teste" in sys.argv
 entradas = [json.loads(l) for l in Path(sys.argv[1]).read_text(encoding="utf-8").splitlines() if l.strip()]
 ORIG.mkdir(parents=True, exist_ok=True)
 falhas, docs = 0, {}
@@ -75,13 +80,14 @@ for e in entradas:
     chave = e["chave"]
     if chave not in docs:
         destino, original = REFS / f"{chave}.pdf", ORIG / f"{chave}.pdf"
-        if not original.exists():
+        if not original.exists() and not teste:
             shutil.copy2(destino, original)
-        docs[chave] = pymupdf.open(original)
+        docs[chave] = pymupdf.open(original if original.exists() else destino)
     status = grifar(docs[chave], e.get("pagina"), re.sub(r"\s+", " ", e["trecho"]).strip(), e["nota"])
     falhas += status == "NÃO ENCONTRADO"
     print(f"{chave:20s} p.{e.get('pagina', '-')!s:>4} {status:24s} {e['trecho'][:60]}")
 for chave, doc in docs.items():
-    doc.save(REFS / f"{chave}.pdf", garbage=3, deflate=True)
+    if not teste:
+        doc.save(REFS / f"{chave}.pdf", garbage=3, deflate=True)
 print(f"{len(entradas)} grifos em {len(docs)} PDFs; {falhas} não encontrados")
 sys.exit(1 if falhas else 0)
