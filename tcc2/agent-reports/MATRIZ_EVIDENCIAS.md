@@ -30,7 +30,7 @@
 
 | Afirmação | Evidência | Status |
 |---|---|---|
-| H_real PETR4.SA, 1519 sessões | freeze §7 / amendment 1 (sha256) | VERIFICADO (registro) |
+| Conjunto elegível E PETR4.SA: 1519 sessões (12/01/2018 a 28/02/2024); H_real = 4 sessões de diagnóstico (H = 8 H_syn + 4 H_real) | freeze §7 / amendment 1 (sha256) | VERIFICADO (registro) |
 | Calendário B3 v2 = 2649 sessões | `docs/evidence/calendar/` | VERIFICADO (registro) |
 | `minimum_history_sessions = 504` | EXPERIMENT_PROTOCOL §5.11 | VERIFICADO (texto) |
 | `spec_hash`/`snapshot_id`/`manifest`/`LLM trace` | EXPERIMENT_PROTOCOL §5.7 | VERIFICADO (texto) |
