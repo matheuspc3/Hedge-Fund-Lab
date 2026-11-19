@@ -16,8 +16,8 @@
 \contentsline {figure}{\numberline {6.4}{\ignorespaces Caixa em percentual do patrimônio das três versões da carteira Multiagentes no Replay Contínuo.}}{58}{figure.caption.128}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {A.1}{\ignorespaces Diagrama entidade-relacionamento do banco de dados de mercado do Hedge-fund-lab. PK indica chave primária, FK indica chave estrangeira e UQ indica restrição de unicidade. O par \texttt {(ativo\_id, data)} é único em cada tabela dependente.}}{81}{figure.caption.145}%
+\contentsline {figure}{\numberline {A.1}{\ignorespaces Diagrama entidade-relacionamento do banco de dados de mercado do Hedge-fund-lab. PK indica chave primária, FK indica chave estrangeira e UQ indica restrição de unicidade. O par \texttt {(ativo\_id, data)} é único em cada tabela dependente.}}{82}{figure.caption.145}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {B.1}{\ignorespaces Grafo de decisão do caminho de ativo único (LangGraph): sequência linear \texttt {technical\_analyst} $\rightarrow $ \texttt {risk\_manager}, com aresta condicional ao \texttt {portfolio\_manager} apenas quando o veredito é \texttt {APROVADO}.}}{87}{figure.caption.157}%
+\contentsline {figure}{\numberline {B.1}{\ignorespaces Grafo de decisão do caminho de ativo único (LangGraph): sequência linear \texttt {technical\_analyst} $\rightarrow $ \texttt {risk\_manager}, com aresta condicional ao \texttt {portfolio\_manager} apenas quando o veredito é \texttt {APROVADO}.}}{88}{figure.caption.157}%
 \addvspace {10\p@ }
 \contentsfinish 

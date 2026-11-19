@@ -6,16 +6,16 @@
 \contentsline {subsection}{\numberline {2.2.1}Estratégias de Tendência (Trend Following)}{6}{subsection.11}%
 \contentsline {subsection}{\numberline {2.2.2}Estratégias de Reversão à Média (Mean Reversion)}{6}{subsection.14}%
 \contentsline {section}{\numberline {2.3}TEORIA DE PORTFÓLIO E CARTEIRAS DE REFERÊNCIA}{7}{section.19}%
-\contentsline {subsection}{\numberline {2.3.1}Carteira de Mínima Variância}{7}{subsection.21}%
+\contentsline {subsection}{\numberline {2.3.1}Carteira de Mínima Variância}{8}{subsection.21}%
 \contentsline {subsection}{\numberline {2.3.2}Buy and Hold e Equal Weight}{8}{subsection.23}%
 \contentsline {section}{\numberline {2.4}MODELOS DE FATORES}{8}{section.24}%
 \contentsline {section}{\numberline {2.5}BACKTESTING, SOBREAJUSTE E CONTAMINAÇÃO TEMPORAL}{9}{section.26}%
 \contentsline {section}{\numberline {2.6}MÉTRICAS DE DESEMPENHO E RISCO}{9}{section.27}%
 \contentsline {subsection}{\numberline {2.6.1}Retorno Acumulado e Sharpe Ratio}{9}{subsection.28}%
-\contentsline {subsection}{\numberline {2.6.2}Sortino Ratio e Maximum Drawdown}{9}{subsection.30}%
+\contentsline {subsection}{\numberline {2.6.2}Sortino Ratio e Maximum Drawdown}{10}{subsection.30}%
 \contentsline {subsection}{\numberline {2.6.3}Turnover e Custos de Transação}{10}{subsection.31}%
 \contentsline {section}{\numberline {2.7}INFERÊNCIA ESTATÍSTICA NA COMPARAÇÃO DE ESTRATÉGIAS}{10}{section.32}%
-\contentsline {section}{\numberline {2.8}MODELOS DE LINGUAGEM E SISTEMAS MULTIAGENTES EM FINANÇAS}{10}{section.33}%
+\contentsline {section}{\numberline {2.8}MODELOS DE LINGUAGEM E SISTEMAS MULTIAGENTES EM FINANÇAS}{11}{section.33}%
 \contentsline {chapter}{\numberline {3}Trabalhos Relacionados}{12}{chapter.34}%
 \contentsline {section}{\numberline {3.1}APRENDIZADO POR REFORÇO APLICADO À DECISÃO FINANCEIRA}{12}{section.35}%
 \contentsline {section}{\numberline {3.2}APRENDIZADO DE MÁQUINA PARA PREVISÃO DE RETORNOS}{13}{section.36}%
@@ -24,7 +24,7 @@
 \contentsline {section}{\numberline {3.5}AVALIAÇÃO DE LLMS EM FINANÇAS E CONTAMINAÇÃO TEMPORAL}{16}{section.39}%
 \contentsline {section}{\numberline {3.6}DELIBERAÇÃO, DIVERSIDADE E AUTOCONSISTÊNCIA ENTRE AGENTES LLM}{17}{section.40}%
 \contentsline {section}{\numberline {3.7}QUADRO COMPARATIVO}{18}{section.41}%
-\contentsline {section}{\numberline {3.8}SÍNTESE E POSICIONAMENTO}{19}{section.43}%
+\contentsline {section}{\numberline {3.8}SÍNTESE E POSICIONAMENTO}{18}{section.43}%
 \contentsline {chapter}{\numberline {4}Arquitetura e Implementação}{21}{chapter.44}%
 \contentsline {section}{\numberline {4.1}Visão Geral da Arquitetura}{21}{section.45}%
 \contentsline {section}{\numberline {4.2}Dados}{21}{section.47}%
@@ -83,24 +83,24 @@
 \contentsline {chapter}{\MakeUppercase []{Referências}}{72}{section.138}%
 \ttl@change@i {\@ne }{chapter}{0pt}{\addvspace {12pt}\bfseries }{\MakeUppercase \appendixname ~\thecontentslabel ~-~}{}{\titlerule *[0.5pc]{.}\contentspage }\relax 
 \ttl@change@v {chapter}{}{}{}\relax 
-\contentsline {chapter}{\numberline {A}Mapa de Implementação}{78}{appendix.139}%
-\contentsline {section}{\numberline {A.1}Tecnologias da implementação}{79}{section.140}%
-\contentsline {section}{\numberline {A.2}Componentes e arquivos}{79}{section.142}%
-\contentsline {section}{\numberline {A.3}Detalhes de persistência}{81}{section.144}%
-\contentsline {section}{\numberline {A.4}Códigos de erro do relógio causal}{81}{section.146}%
-\contentsline {section}{\numberline {A.5}Reservas de orçamento e tarifas}{82}{section.147}%
-\contentsline {section}{\numberline {A.6}Constantes da versão v3}{82}{section.148}%
-\contentsline {section}{\numberline {A.7}Regras detalhadas das versões v2 e v3}{82}{section.150}%
-\contentsline {subsection}{\numberline {A.7.1}Versão v2}{82}{subsection.151}%
-\contentsline {subsection}{\numberline {A.7.2}Versão v3}{83}{subsection.152}%
-\contentsline {chapter}{\numberline {B}Caminho de Ativo Único e Camada de Experimentos}{85}{appendix.153}%
-\contentsline {section}{\numberline {B.1}Dados do protocolo de ativo único}{86}{section.154}%
-\contentsline {section}{\numberline {B.2}Indicadores, estratégias e motor de \textit {backtesting}}{86}{section.155}%
-\contentsline {section}{\numberline {B.3}Sistema multiagente de ativo único}{87}{section.156}%
-\contentsline {section}{\numberline {B.4}Camada de experimentos e proveniência}{88}{section.158}%
-\contentsline {chapter}{\numberline {C}Empacotamento e Publicação das Campanhas}{89}{appendix.159}%
-\contentsline {section}{\numberline {C.1}Executores, manifestos e \textit {lock}}{90}{section.160}%
-\contentsline {section}{\numberline {C.2}Artefatos por pregão}{90}{section.161}%
-\contentsline {section}{\numberline {C.3}Exportadores}{91}{section.162}%
-\contentsline {section}{\numberline {C.4}Publicação e rotas}{91}{section.163}%
+\contentsline {chapter}{\numberline {A}Mapa de Implementação}{79}{appendix.139}%
+\contentsline {section}{\numberline {A.1}Tecnologias da implementação}{80}{section.140}%
+\contentsline {section}{\numberline {A.2}Componentes e arquivos}{80}{section.142}%
+\contentsline {section}{\numberline {A.3}Detalhes de persistência}{82}{section.144}%
+\contentsline {section}{\numberline {A.4}Códigos de erro do relógio causal}{82}{section.146}%
+\contentsline {section}{\numberline {A.5}Reservas de orçamento e tarifas}{83}{section.147}%
+\contentsline {section}{\numberline {A.6}Constantes da versão v3}{83}{section.148}%
+\contentsline {section}{\numberline {A.7}Regras detalhadas das versões v2 e v3}{83}{section.150}%
+\contentsline {subsection}{\numberline {A.7.1}Versão v2}{83}{subsection.151}%
+\contentsline {subsection}{\numberline {A.7.2}Versão v3}{84}{subsection.152}%
+\contentsline {chapter}{\numberline {B}Caminho de Ativo Único e Camada de Experimentos}{86}{appendix.153}%
+\contentsline {section}{\numberline {B.1}Dados do protocolo de ativo único}{87}{section.154}%
+\contentsline {section}{\numberline {B.2}Indicadores, estratégias e motor de \textit {backtesting}}{87}{section.155}%
+\contentsline {section}{\numberline {B.3}Sistema multiagente de ativo único}{88}{section.156}%
+\contentsline {section}{\numberline {B.4}Camada de experimentos e proveniência}{89}{section.158}%
+\contentsline {chapter}{\numberline {C}Empacotamento e Publicação das Campanhas}{90}{appendix.159}%
+\contentsline {section}{\numberline {C.1}Executores, manifestos e \textit {lock}}{91}{section.160}%
+\contentsline {section}{\numberline {C.2}Artefatos por pregão}{91}{section.161}%
+\contentsline {section}{\numberline {C.3}Exportadores}{92}{section.162}%
+\contentsline {section}{\numberline {C.4}Publicação e rotas}{92}{section.163}%
 \contentsfinish 

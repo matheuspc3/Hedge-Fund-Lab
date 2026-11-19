@@ -31,11 +31,11 @@ Outra medida amplamente utilizada é o momentum, o retorno acumulado em uma jane
 \mathrm{Mom}_{n,t} = \frac{P_t}{P_{t-n}} - 1.
 \end{equation}
 
-\citet{JegadeeshTitman1993} mostram que estratégias baseadas em momentum produzem retornos anormais positivos. A ideia central é que ativos com bom desempenho em uma janela recente tendem a continuar superando os demais \citep{Moskowitz2012}.
+\citet{JegadeeshTitman1993} mostram que estratégias baseadas em momentum produzem retornos anormais positivos. A ideia central é que ativos com bom desempenho em uma janela recente tendem a continuar superando os demais. \citet{Moskowitz2012} documentam um efeito análogo na série temporal de cada ativo: o retorno passado do próprio ativo ajuda a prever seu retorno futuro, em mercados futuros de ações, moedas, \textit{commodities} e títulos.
 
 \subsection{Estratégias de Reversão à Média (Mean Reversion)}
 
-A hipótese de reversão à média (\textit{mean reversion}) pressupõe que desvios expressivos em relação a um nível considerado normal tendem a ser parcialmente revertidos. \citet{PoterbaSummers1988} investigam componentes transitórios dos preços e encontram evidências de reversão em horizontes longos. O sinal pode ser obtido pelo \textit{z-score}:
+A hipótese de reversão à média (\textit{mean reversion}) pressupõe que desvios expressivos em relação a um nível considerado normal tendem a ser parcialmente revertidos. \citet{PoterbaSummers1988} investigam componentes transitórios dos preços e encontram evidências de reversão em horizontes longos, embora a hipótese de passeio aleatório não seja rejeitada aos níveis convencionais de significância. O sinal pode ser obtido pelo \textit{z-score}:
 
 \begin{equation}
 z_t = \frac{P_t - \mu_t}{\sigma_t},
@@ -63,7 +63,7 @@ Entre os indicadores mais utilizados destacam-se o Índice de Força Relativa (\
 
 \noindent em que $\mathrm{EMA}_{m,t}$ é a média móvel exponencial do preço com período $m$. O cruzamento entre o MACD e a linha de sinal indica a mudança de tendência.
 
-A comparação entre momentum e reversão à média é relevante porque essas estratégias representam hipóteses opostas sobre a dinâmica dos retornos e, em mercados sujeitos a mudanças de regime, podem atuar de forma complementar \citep{JegadeeshTitman1993, PoterbaSummers1988, Moskowitz2012}.
+A comparação entre momentum e reversão à média é relevante porque essas estratégias representam hipóteses opostas sobre a dinâmica dos retornos, e a evidência empírica sugere que ambas coexistem em horizontes diferentes: persistência em horizontes de até um ano e reversão parcial em horizontes mais longos \citep{JegadeeshTitman1993, PoterbaSummers1988, Moskowitz2012}.
 
 \section{TEORIA DE PORTFÓLIO E CARTEIRAS DE REFERÊNCIA}
 
@@ -87,7 +87,7 @@ A carteira de mínima variância é uma aplicação direta da estrutura de Marko
 
 Estratégias simples cumprem o papel de base comparativa na avaliação de sistemas de decisão: têm implementação direta e dependem pouco de estimações sofisticadas, o que facilita o contraste com abordagens mais complexas \citep{DeMiguel2009, LopezDePrado2018}.
 
-A estratégia de comprar e manter (\textit{buy and hold}, referida como Buy \& Hold quando designa a carteira de referência) é passiva: o investidor compra uma carteira e permanece posicionado durante todo o período. Em \textit{backtests}, fornece uma linha de base de baixa complexidade para verificar se uma estratégia ativa gera valor além da simples exposição ao mercado, após risco e custos \citep{LopezDePrado2018, Bailey2017}. Neste trabalho, permite distinguir ganhos associados à deliberação dos agentes daqueles que decorreriam apenas do comportamento dos ativos.
+A estratégia de comprar e manter (\textit{buy and hold}, referida como Buy \& Hold quando designa a carteira de referência) é passiva: o investidor compra uma carteira e permanece posicionado durante todo o período. Em \textit{backtests}, fornece uma linha de base de baixa complexidade para verificar se uma estratégia ativa gera valor além da simples exposição ao mercado, após risco e custos \citep{LopezDePrado2018}. Neste trabalho, permite distinguir ganhos associados à deliberação dos agentes daqueles que decorreriam apenas do comportamento dos ativos.
 
 A carteira igualmente ponderada (\textit{Equal Weight}) distribui o capital igualmente entre os ativos selecionados. Incorpora diversificação sem estimar o retorno esperado nem a matriz de covariância exigidos pela otimização de Markowitz, e \citet{DeMiguel2009} mostram que é difícil de superar fora da amostra. Por essa razão, permite avaliar se o aumento de complexidade se traduz em ganhos consistentes de desempenho ajustado ao risco.
 
@@ -105,7 +105,7 @@ R_{i,t} - R_{f,t} = \alpha_i + \beta_m (R_{m,t} - R_{f,t}) + \beta_s\, \mathit{S
 
 \textit{Backtesting} é a simulação de uma estratégia sobre dados históricos, aplicando as regras de decisão no passado. Estratégias quantitativas estão sujeitas ao sobreajuste (\textit{overfitting}), em que resultados positivos decorrem de seleções excessivamente ajustadas aos dados ou do vazamento de informação futura.
 
-\citet{White2000} discute o \textit{data snooping}, que ocorre quando muitas estratégias ou parâmetros são testados sobre o mesmo conjunto de dados e apenas os melhores resultados são reportados. \citet{Hansen2005} complementa com um teste de habilidade preditiva superior, que evita atribuir ao método um desempenho fruto do acaso. \citet{Bailey2017} definem a probabilidade de sobreajuste do \textit{backtest} (\textit{Probability of Backtest Overfitting} -- PBO) como a probabilidade de que a configuração escolhida como a melhor dentro da amostra tenha desempenho abaixo da mediana fora dela, e mostram que ela cresce com o número de configurações testadas.
+\citet{White2000} discute o \textit{data snooping}, que ocorre quando muitas estratégias ou parâmetros são testados sobre o mesmo conjunto de dados e apenas os melhores resultados são reportados. \citet{Hansen2005} complementa com um teste de habilidade preditiva superior, que evita atribuir ao método um desempenho fruto do acaso. \citet{Bailey2017} definem a probabilidade de sobreajuste do \textit{backtest} (\textit{Probability of Backtest Overfitting} -- PBO) como a probabilidade de que a configuração escolhida como a melhor dentro da amostra tenha desempenho abaixo da mediana fora dela, e discutem que a probabilidade de falsos positivos cresce com o número de configurações testadas sobre os mesmos dados.
 
 \section{MÉTRICAS DE DESEMPENHO E RISCO}
 
@@ -143,10 +143,10 @@ O quarto é a multiplicidade. Ao testar vários contrastes, a probabilidade de a
 
 \section{MODELOS DE LINGUAGEM E SISTEMAS MULTIAGENTES EM FINANÇAS}
 
-O uso de \textit{Large Language Models} (LLMs) em finanças quantitativas vem sendo investigado como alternativa para incorporar contexto, raciocínio textual e coordenação de tarefas em decisões que tradicionalmente dependem de regras fixas ou modelos numéricos. O paradigma do \textit{Agentic Trading} descrito por \citet[p. 1]{Xia2026} trata esses modelos como agentes capazes de recuperar informação, estruturar argumentos e emitir decisões em ciclos iterativos. A literatura recente sugere que o ganho potencial desses sistemas depende menos do uso isolado de um LLM e mais da forma como memória, especialização funcional e mecanismos de verificação são organizados \citep{Li2023, Xing2024, TradingAgents2024}. Os resultados desses trabalhos são discutidos no Capítulo~\ref{cha:relacionados}; aqui apresentam-se apenas os conceitos.
+O uso de \textit{Large Language Models} (LLMs) em finanças quantitativas vem sendo investigado como alternativa para incorporar contexto, raciocínio textual e coordenação de tarefas em decisões que tradicionalmente dependem de regras fixas ou modelos numéricos. O paradigma do \textit{Agentic Trading} descrito por \citet[p. 1]{Xia2026} trata esses modelos como agentes que percebem sinais de mercado, mantêm contexto e memória, raciocinam sobre decisões, emitem ações executáveis e se adaptam a regimes de mercado. Propostas recentes organizam esses sistemas em torno de memória, especialização funcional e mecanismos de verificação, em vez de um LLM isolado \citep{Li2023, Xing2024, TradingAgents2024}. Os resultados desses trabalhos são discutidos no Capítulo~\ref{cha:relacionados}; aqui apresentam-se apenas os conceitos.
 
-\paragraph*{Sistemas multiagentes e papéis.} Um sistema multiagente reúne agentes autônomos que interagem para resolver um problema \citep{Wooldridge2009}. Com LLMs, a decomposição do processo decisório em papéis ou personas especializados, como análise técnica, gestão de risco e gestão de portfólio, delimita o escopo analítico de cada agente \citep{Li2023}.
+\paragraph*{Sistemas multiagentes e papéis.} Um sistema multiagente reúne agentes autônomos que interagem para resolver um problema \citep{Wooldridge2009}. Com LLMs, a decomposição do processo decisório em papéis ou personas especializados delimita o escopo analítico de cada agente: por função, como análise técnica, gestão de risco e gestão de portfólio \citep{TradingAgents2024}, ou por perfil, como tolerância a risco e setor de atuação \citep{Li2023}.
 
-\paragraph*{Agregação e debate.} Decisões de vários agentes ou execuções podem ser combinadas por votação. A autoconsistência adota a resposta mais frequente entre raciocínios amostrados de forma independente \citep{Wang2023}. Uma alternativa é o debate, em que agentes com papéis distintos confrontam argumentos para identificar erros, como no modelo de discussão heterogênea de \citet{Xing2024}.
+\paragraph*{Agregação e debate.} Decisões de vários agentes ou execuções podem ser combinadas por votação. A autoconsistência adota a resposta mais frequente entre raciocínios amostrados de forma independente \citep{Wang2023}. Uma alternativa é o debate, em que agentes confrontam argumentos ao longo de rodadas para identificar erros \citep{Du2024}; outra é a discussão heterogênea de \citet{Xing2024}, em que agentes especializados em tipos de erro analisam o caso e uma etapa final agrega suas análises.
 
 \paragraph*{Raciocínio encadeado.} O \textit{chain-of-thought} induz o modelo a produzir passos intermediários antes da resposta \citep{Wei2022}, e sua variante \textit{zero-shot} dispensa exemplos, bastando a instrução de raciocinar por etapas \citep{Kojima2022}. Em finanças, \citet{FinCoT2025} propõem guiar o raciocínio por roteiros definidos por especialistas.

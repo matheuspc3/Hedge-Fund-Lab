@@ -2,7 +2,7 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {3.1}{\ignorespaces Comparação entre trabalhos relacionados e o Hedge-fund-lab.}}{18}{table.caption.42}%
+\contentsline {table}{\numberline {3.1}{\ignorespaces Comparação entre trabalhos relacionados e o Hedge-fund-lab.}}{19}{table.caption.42}%
 \addvspace {10\p@ }
 \contentsline {table}{\numberline {4.1}{\ignorespaces Features entregues aos analistas. $P_t$ é o fechamento ajustado da sessão de referência; $\mathrm {SMA}_n$ é a média móvel simples de $n$ sessões; $\mathrm {BB}^{\pm }=\mathrm {SMA}_{20}\pm 2\,\sigma _{20}$, com $\sigma _{20}$ o desvio-padrão amostral das 20 últimas sessões.}}{23}{table.caption.51}%
 \contentsline {table}{\numberline {4.2}{\ignorespaces Diferenças arquiteturais entre as três gerações da carteira Multiagentes no Replay Contínuo.}}{29}{table.caption.69}%
@@ -18,9 +18,9 @@
 \contentsline {table}{\numberline {6.5}{\ignorespaces Indicadores de comportamento da carteira Multiagentes nas três versões do Replay Contínuo.}}{55}{table.caption.119}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {A.1}{\ignorespaces Tecnologias da implementação do Hedge-fund-lab.}}{79}{table.caption.141}%
-\contentsline {table}{\numberline {A.2}{\ignorespaces Mapeamento entre componentes e arquivos do repositório.}}{80}{table.caption.143}%
-\contentsline {table}{\numberline {A.3}{\ignorespaces Constantes determinísticas da versão v3.}}{83}{table.caption.149}%
+\contentsline {table}{\numberline {A.1}{\ignorespaces Tecnologias da implementação do Hedge-fund-lab.}}{80}{table.caption.141}%
+\contentsline {table}{\numberline {A.2}{\ignorespaces Mapeamento entre componentes e arquivos do repositório.}}{81}{table.caption.143}%
+\contentsline {table}{\numberline {A.3}{\ignorespaces Constantes determinísticas da versão v3.}}{84}{table.caption.149}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \contentsfinish 

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.11.17)  19 NOV 2026 20:12
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.11.17)  19 NOV 2026 20:51
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1612,12 +1612,12 @@ Cap\'{\i }tulo 2.
 Cap\'{\i }tulo 3.
 [12
 
-] [13] [14] [15] [16] [17] [18]) (chapters/04-arquitetura.tex [19] [20]
+] [13] [14] [15] [16] [17] [18] [19]) (chapters/04-arquitetura.tex [20]
 Cap\'{\i }tulo 4.
 [21
 
 ] [22] [23] [24] [25] [26] [27] [28] [29] [30]
-<images/explorador-replay.jpg, id=1213, 1269.74374pt x 892.33376pt>
+<images/explorador-replay.jpg, id=1217, 1269.74374pt x 892.33376pt>
 File: images/explorador-replay.jpg Graphic file (type jpg)
 <use images/explorador-replay.jpg>
 Package pdftex.def Info: images/explorador-replay.jpg  used on input line 269.
@@ -1677,29 +1677,29 @@ Cap\'{\i }tulo 7.
 ] [66] [67] [68] [69]) [70] [71] (main.bbl [72
 
 
-] [73] [74] [75] [76])
-(chapters/apendices.tex [77]
+] [73] [74] [75] [76] [77])
+(chapters/apendices.tex [78]
 APÊNDICE A.
-[78
+[79
 
-] [79
+] [80
 
-] [80]
+] [81]
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10.95> not available
 (Font)              Font shape `T1/cmtt/m/n' tried instead on input line 91.
- [81] [82] [83] [84]
+ [82] [83] [84] [85]
 APÊNDICE B.
-[85
+[86
 
-] [86
+] [87
 
-] [87] [88]
+] [88] [89]
 APÊNDICE C.
-[89
+[90
 
-] [90
+] [91
 
-]) [91] 
+]) [92] 
 enddocument/afterlastpage (AED): lastpage setting LastPage.
 (main.aux)
  ***********
@@ -1714,9 +1714,9 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 24147F4B54CF120F60FB24EFD51A6AFD;22123.
  ) 
 Here is how much of TeX's memory you used:
- 48602 strings out of 467871
- 1093928 string characters out of 5418375
- 1822217 words of memory out of 5000000
+ 48603 strings out of 467871
+ 1093936 string characters out of 5418375
+ 1821193 words of memory out of 5000000
  76347 multiletter control sequences out of 15000+600000
  654014 words of font info for 109 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -1755,9 +1755,9 @@ ype1/public/amsfonts/cm/cmsy10.pfb><C:/Users/LUCAS/AppData/Local/Programs/MiKTe
 X/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/LUCAS/AppData/Local/Progra
 ms/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/LUCAS/AppData/Loca
 l/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on main.pdf (104 pages, 1089556 bytes).
+Output written on main.pdf (105 pages, 1096278 bytes).
 PDF statistics:
- 2831 PDF objects out of 2984 (max. 8388607)
- 339 named destinations out of 1000 (max. 500000)
+ 2854 PDF objects out of 2984 (max. 8388607)
+ 340 named destinations out of 1000 (max. 500000)
  834 words of extra memory for PDF output out of 10000 (max. 10000000)
 
