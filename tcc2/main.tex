@@ -31,6 +31,7 @@
 \newacronym{csrf}{CSRF}{Cross-Site Request Forgery}
 \newacronym{csv}{CSV}{Comma-Separated Values}
 \newacronym{cvar}{CVaR}{Conditional Value at Risk}
+\newacronym{dp}{DP}{Decisão de Produto}
 \newacronym{dqn}{DQN}{Deep Q-Network}
 \newacronym{gsm8k}{GSM8K}{Grade School Math 8K}
 \newacronym{http}{HTTP}{Hypertext Transfer Protocol}
@@ -43,13 +44,16 @@
 \newacronym{ohlcv}{OHLCV}{Open, High, Low, Close, Volume}
 \newacronym{pl}{PL}{Patrimônio Líquido}
 \newacronym{ppo}{PPO}{Proximal Policy Optimization}
+\newacronym{sha}{SHA}{Secure Hash Algorithm}
 \newacronym{slsqp}{SLSQP}{Sequential Least Squares Programming}
+\newacronym{sql}{SQL}{Structured Query Language}
 \newacronym{tdqn}{TDQN}{Trading Deep Q-Network}
 % ponytail: \glsaddall lista todas as siglas declaradas sem exigir \gls no texto, que
 % mantém as expansões escritas à mão. Se passar a usar \gls, remova esta linha.
 \glsaddall
 
 \usepackage{tikz}
+\usepackage{placeins}
 \usetikzlibrary{arrows.meta, positioning}
 \usepackage{pgfplots} % figuras do replay (figures/replay-*.tex)
 \pgfplotsset{compat=1.18}
@@ -86,8 +90,13 @@ The evaluation of quantitative strategies in non-stationary markets is subject t
 \end{abstract}
 
 \listoffigurespage
-\listoftablespage
-\listofacronymspage
+
+\begingroup
+  \let\cleardoublepage\clearpage
+  \listoftablespage
+  \listofacronymspage
+\endgroup
+
 \tableofcontentspage
 
 \mainmatter

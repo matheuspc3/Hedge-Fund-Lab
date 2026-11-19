@@ -37,7 +37,7 @@ def arquivos():
 
 def compilar(pasta):
     passos = [["pdflatex", "-interaction=nonstopmode", "main.tex"], ["bibtex", "main"],
-              ["makeglossaries", "main"], ["pdflatex", "-interaction=nonstopmode", "main.tex"],
+              ["pdflatex", "-interaction=nonstopmode", "main.tex"],
               ["pdflatex", "-interaction=nonstopmode", "main.tex"]]
     for cmd in passos:
         subprocess.run(cmd, cwd=pasta, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

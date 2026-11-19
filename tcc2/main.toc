@@ -87,20 +87,20 @@
 \contentsline {section}{\numberline {A.1}Tecnologias da implementação}{79}{section.140}%
 \contentsline {section}{\numberline {A.2}Componentes e arquivos}{79}{section.142}%
 \contentsline {section}{\numberline {A.3}Detalhes de persistência}{81}{section.144}%
-\contentsline {section}{\numberline {A.4}Códigos de erro do relógio causal}{81}{section.145}%
-\contentsline {section}{\numberline {A.5}Reservas de orçamento e tarifas}{81}{section.146}%
-\contentsline {section}{\numberline {A.6}Constantes da versão v3}{82}{section.147}%
-\contentsline {section}{\numberline {A.7}Regras detalhadas das versões v2 e v3}{82}{section.149}%
-\contentsline {subsection}{\numberline {A.7.1}Versão v2}{82}{subsection.150}%
-\contentsline {subsection}{\numberline {A.7.2}Versão v3}{83}{subsection.151}%
-\contentsline {chapter}{\numberline {B}Caminho de Ativo Único e Camada de Experimentos}{85}{appendix.152}%
-\contentsline {section}{\numberline {B.1}Dados do protocolo de ativo único}{86}{section.153}%
-\contentsline {section}{\numberline {B.2}Indicadores, estratégias e motor de \textit {backtesting}}{86}{section.154}%
-\contentsline {section}{\numberline {B.3}Sistema multiagente de ativo único}{87}{section.155}%
-\contentsline {section}{\numberline {B.4}Camada de experimentos e proveniência}{88}{section.157}%
-\contentsline {chapter}{\numberline {C}Empacotamento e Publicação das Campanhas}{89}{appendix.158}%
-\contentsline {section}{\numberline {C.1}Executores, manifestos e \textit {lock}}{90}{section.159}%
-\contentsline {section}{\numberline {C.2}Artefatos por pregão}{90}{section.160}%
-\contentsline {section}{\numberline {C.3}Exportadores}{91}{section.161}%
-\contentsline {section}{\numberline {C.4}Publicação e rotas}{91}{section.162}%
+\contentsline {section}{\numberline {A.4}Códigos de erro do relógio causal}{81}{section.146}%
+\contentsline {section}{\numberline {A.5}Reservas de orçamento e tarifas}{82}{section.147}%
+\contentsline {section}{\numberline {A.6}Constantes da versão v3}{82}{section.148}%
+\contentsline {section}{\numberline {A.7}Regras detalhadas das versões v2 e v3}{82}{section.150}%
+\contentsline {subsection}{\numberline {A.7.1}Versão v2}{82}{subsection.151}%
+\contentsline {subsection}{\numberline {A.7.2}Versão v3}{83}{subsection.152}%
+\contentsline {chapter}{\numberline {B}Caminho de Ativo Único e Camada de Experimentos}{85}{appendix.153}%
+\contentsline {section}{\numberline {B.1}Dados do protocolo de ativo único}{86}{section.154}%
+\contentsline {section}{\numberline {B.2}Indicadores, estratégias e motor de \textit {backtesting}}{86}{section.155}%
+\contentsline {section}{\numberline {B.3}Sistema multiagente de ativo único}{87}{section.156}%
+\contentsline {section}{\numberline {B.4}Camada de experimentos e proveniência}{88}{section.158}%
+\contentsline {chapter}{\numberline {C}Empacotamento e Publicação das Campanhas}{89}{appendix.159}%
+\contentsline {section}{\numberline {C.1}Executores, manifestos e \textit {lock}}{90}{section.160}%
+\contentsline {section}{\numberline {C.2}Artefatos por pregão}{90}{section.161}%
+\contentsline {section}{\numberline {C.3}Exportadores}{91}{section.162}%
+\contentsline {section}{\numberline {C.4}Publicação e rotas}{91}{section.163}%
 \contentsfinish 

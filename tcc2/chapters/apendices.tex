@@ -78,10 +78,67 @@ Implantação & \texttt{Dockerfile}, \texttt{railway.json} \\
 
 \section{Detalhes de persistência}
 
-As séries do pipeline são persistidas pelo módulo \texttt{src/db}, composto pela configuração de conexão (\texttt{connection.py}) e pela definição do esquema relacional (\texttt{models.py}); o endereço do banco é configurável (\texttt{src/config.py}), com SQLite como valor padrão.
+As séries do pipeline são persistidas pelo módulo \texttt{src/db}, composto pela configuração de conexão (\texttt{connection.py}) e pela definição do esquema relacional (\texttt{models.py}); o endereço do banco é configurável (\texttt{src/config.py}), com SQLite como valor padrão. A Figura~\ref{fig:hfl-der} apresenta o diagrama entidade-relacionamento das três tabelas do esquema.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  box/.style={draw, rounded corners=2pt, align=center, inner sep=3pt, font=\small},
+  rel/.style={thick},
+]
+\node[box] (ativos) at (0,0) {
+  \begin{tabular}{@{}lll@{}}
+    \multicolumn{3}{c}{\textbf{\texttt{ativos}}}\\ \hline
+    PK & \texttt{id}          & INTEGER\\
+    UQ & \texttt{ticker}      & VARCHAR(20)\\
+       & \texttt{setor}       & VARCHAR(100)\\
+       & \texttt{created\_at} & DATETIME\\
+  \end{tabular}
+};
+\node[box, anchor=north] (cotacoes) at (-3.2,-2.2) {
+  \begin{tabular}{@{}lll@{}}
+    \multicolumn{3}{c}{\textbf{\texttt{cotacoes\_diarias}}}\\ \hline
+    PK & \texttt{id}          & INTEGER\\
+    FK & \texttt{ativo\_id}   & INTEGER\\
+       & \texttt{data}        & DATE\\
+       & \texttt{abertura}    & FLOAT\\
+       & \texttt{maxima}      & FLOAT\\
+       & \texttt{minima}      & FLOAT\\
+       & \texttt{fechamento}  & FLOAT\\
+       & \texttt{volume}      & FLOAT\\
+  \end{tabular}
+};
+\node[box, anchor=north] (indicadores) at (3.2,-2.2) {
+  \begin{tabular}{@{}lll@{}}
+    \multicolumn{3}{c}{\textbf{\texttt{indicadores\_tecnicos}}}\\ \hline
+    PK & \texttt{id}          & INTEGER\\
+    FK & \texttt{ativo\_id}   & INTEGER\\
+       & \texttt{data}        & DATE\\
+       & \texttt{sma\_50}     & FLOAT\\
+       & \texttt{sma\_200}    & FLOAT\\
+       & \texttt{bb\_upper}   & FLOAT\\
+       & \texttt{bb\_middle}  & FLOAT\\
+       & \texttt{bb\_lower}   & FLOAT\\
+       & \texttt{rsi}         & FLOAT\\
+       & \texttt{macd}        & FLOAT\\
+       & \texttt{macd\_sinal} & FLOAT\\
+  \end{tabular}
+};
+
+\coordinate (juncao) at (0,-1.5);
+\draw[rel] (ativos.south) -- node[right, font=\footnotesize] {\(1\)} (juncao);
+\draw[rel] (juncao) -| (cotacoes.north);
+\draw[rel] (juncao) -| (indicadores.north);
+\node[font=\footnotesize, fill=white, inner sep=1pt, above right] at (cotacoes.north) {\(0..N\)};
+\node[font=\footnotesize, fill=white, inner sep=1pt, above right] at (indicadores.north) {\(0..N\)};
+\end{tikzpicture}
+\caption{Diagrama entidade-relacionamento do banco de dados de mercado do Hedge-fund-lab. PK indica chave primária, FK indica chave estrangeira e UQ indica restrição de unicidade. O par \texttt{(ativo\_id, data)} é único em cada tabela dependente.}
+\label{fig:hfl-der}
+\end{figure}
 
 O livro contábil das carteiras (identidade \texttt{HFL-MANUAL-PORTFOLIO-V1}) grava cada evento em uma tabela SQLite com gatilhos que recusam \texttt{UPDATE} e \texttt{DELETE}. As escritas usam \texttt{BEGIN IMMEDIATE} e \texttt{synchronous=FULL}. Valores monetários e quantidades são tratados com \texttt{Decimal} e arredondados a centavos pelo núcleo contábil reutilizado de \texttt{scripts/multiasset\_portfolio.py}.
 
+\FloatBarrier
 \section{Códigos de erro do relógio causal}
 
 Os controles de causalidade descritos na Seção~\ref{sec:arq-relogio} interrompem a execução com os seguintes códigos:

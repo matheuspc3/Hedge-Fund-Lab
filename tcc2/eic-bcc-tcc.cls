@@ -522,13 +522,16 @@
   \begingroup
   \let\ps@plain\ps@empty
   \pagestyle{empty}
-  \printglossary[type=\acronymtype, title=LISTA DE ACRÔNIMOS, style=linkednoindex]
+  \printnoidxglossary[type=\acronymtype, title=LISTA DE ACRÔNIMOS, style=linkednoindex]
   \cleardoublepage
   \endgroup
 }
 
 % Enable the glossary system
-\makeglossaries
+% ponytail: modo noidx (ordenação interna em LaTeX) — o modo externo
+% (\makeglossaries) exige rodar makeindex/makeglossaries, que o latexmk local
+% não roda, deixando a LISTA DE ACRÔNIMOS vazia.
+\makenoidxglossaries
 
 % Configure hiperlinks for acronym
 \renewcommand*{\glstextformat}[1]{\textcolor{black}{#1}} % Remove link color

@@ -13,14 +13,19 @@ sys.stdout.reconfigure(encoding="utf-8")  # console do Windows não é UTF-8 por
 build = Path(sys.argv[1] if len(sys.argv) > 1 else Path(__file__).resolve().parents[1])
 log = (build / "main.log").read_text(encoding="utf-8", errors="replace")
 toc = (build / "main.toc").read_text(encoding="utf-8", errors="replace")
+aux = (build / "main.aux").read_text(encoding="utf-8", errors="replace")
 acr = build / "main.acr"
+tem_acronimos = (
+    (acr.exists() and "glossentry" in acr.read_text(encoding="utf-8", errors="replace"))
+    or r"\@gls@reference{acronym}" in aux
+)
 
 checks = {
     "hifenização sem padrões do português": "No hyphenation patterns were preloaded" in log,
     "caixa estourando a margem (Overfull \\hbox)": "Overfull \\hbox" in log,
     "nível de marcador pulado (hyperref)": "between bookmark levels is greater" in log,
     "referência ou citação indefinida": bool(re.search(r"undefined on input|There were undefined", log)),
-    "lista de acrônimos vazia": not acr.exists() or "glossentry" not in acr.read_text(encoding="utf-8", errors="replace"),
+    "lista de acrônimos vazia": not tem_acronimos,
     "entrada x.y.0.z no sumário": bool(re.search(r"\\numberline \{\d+\.\d+\.0", toc)),
 }
 falhas = [nome for nome, falhou in checks.items() if falhou]

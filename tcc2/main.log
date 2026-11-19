@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.11.17)  19 NOV 2026 17:17
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.11.17)  19 NOV 2026 20:12
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -831,15 +831,6 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 Package hyperref Info: Option `plainpages' set `false' on input line 115.
 Package hyperref Info: Option `hypertexnames' set `false' on input line 115.
 Package hyperref Info: Option `unicode' set `true' on input line 115.
-\glswrite=\write4
-\glo@acronym@file=\write5
-\openout5 = `main.acn'.
-
-Package glossaries Info: Writing glossary file main.acn on input line 531.
-\glo@acronyms@file=\write6
-\openout6 = `main.acn'.
-
-Package glossaries Info: Writing glossary file main.acn on input line 531.
 )
 (C:\Users\LUCAS\AppData\Local\Programs\MiKTeX\tex/latex/pgf/frontendlayer\tikz.
 sty
@@ -890,7 +881,7 @@ libraryfiltered.code.tex
 \pgf@yc=\dimen305
 \pgf@xd=\dimen306
 \pgf@yd=\dimen307
-\w@pgf@writea=\write7
+\w@pgf@writea=\write4
 \r@pgf@reada=\read3
 \c@pgf@counta=\count371
 \c@pgf@countb=\count372
@@ -1143,6 +1134,9 @@ File: pgfmodulematrix.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 z/libraries\tikzlibrarytopaths.code.tex
 File: tikzlibrarytopaths.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 )))
+(C:\Users\LUCAS\AppData\Local\Programs\MiKTeX\tex/latex/placeins\placeins.sty
+Package: placeins 2005/04/18  v 2.2
+)
 (C:\Users\LUCAS\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
 aryarrows.meta.code.tex
 File: pgflibraryarrows.meta.code.tex 2025-08-29 v3.1.11a (3.1.11a)
@@ -1300,29 +1294,30 @@ tex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count399
 ) (main.aux
+\g__glossaries_gls_ref_acronym_int=\count400
 Package babel Info: 'brazil' activates 'portuges' shorthands.
-(babel)             Reported on input line 18.
+(babel)             Reported on input line 44.
 )
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 72.
-LaTeX Font Info:    ... okay on input line 72.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 72.
-LaTeX Font Info:    ... okay on input line 72.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 72.
-LaTeX Font Info:    ... okay on input line 72.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 72.
-LaTeX Font Info:    ... okay on input line 72.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 72.
-LaTeX Font Info:    ... okay on input line 72.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 72.
-LaTeX Font Info:    ... okay on input line 72.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 72.
-LaTeX Font Info:    ... okay on input line 72.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 72.
-LaTeX Font Info:    ... okay on input line 72.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 72.
-LaTeX Font Info:    ... okay on input line 72.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 76.
+LaTeX Font Info:    ... okay on input line 76.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 76.
+LaTeX Font Info:    ... okay on input line 76.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 76.
+LaTeX Font Info:    ... okay on input line 76.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 76.
+LaTeX Font Info:    ... okay on input line 76.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 76.
+LaTeX Font Info:    ... okay on input line 76.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 76.
+LaTeX Font Info:    ... okay on input line 76.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 76.
+LaTeX Font Info:    ... okay on input line 76.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 76.
+LaTeX Font Info:    ... okay on input line 76.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 76.
+LaTeX Font Info:    ... okay on input line 76.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -1362,16 +1357,16 @@ LaTeX Font Info:    ... okay on input line 72.
 (C:\Users\LUCAS\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
 ii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count400
+\scratchcounter=\count401
 \scratchdimen=\dimen364
 \scratchbox=\box89
-\nofMPsegments=\count401
-\nofMParguments=\count402
+\nofMPsegments=\count402
+\nofMParguments=\count403
 \everyMPshowfont=\toks63
-\MPscratchCnt=\count403
+\MPscratchCnt=\count404
 \MPscratchDim=\dimen365
-\MPnumerator=\count404
-\makeMPintoPDFobject=\count405
+\MPnumerator=\count405
+\makeMPintoPDFobject=\count406
 \everyMPtoPDFconversion=\toks64
 )
 (C:\Users\LUCAS\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
@@ -1415,11 +1410,11 @@ Package: lscape 2020/05/28 v3.02 Landscape Pages (DPC)
 )
 Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
 ))
-Package hyperref Info: Link coloring OFF on input line 72.
+Package hyperref Info: Link coloring OFF on input line 76.
 
 (main.out) (main.out)
-\@outlinefile=\write8
-\openout8 = `main.out'.
+\@outlinefile=\write5
+\openout5 = `main.out'.
 
 
 Package pgfplots notification 'compat/show suggested version=true': document ha
@@ -1427,142 +1422,140 @@ s been generated with the most recent feature set (\pgfplotsset{compat=1.18}).
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/m/scsl' undefined
-(Font)              using `T1/cmtt/m/sc' instead on input line 72.
+(Font)              using `T1/cmtt/m/sc' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/b/n' undefined
-(Font)              using `T1/cmtt/m/n' instead on input line 72.
+(Font)              using `T1/cmtt/m/n' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/b/it' undefined
-(Font)              using `T1/cmtt/b/n' instead on input line 72.
+(Font)              using `T1/cmtt/b/n' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/b/sl' undefined
-(Font)              using `T1/cmtt/b/it' instead on input line 72.
+(Font)              using `T1/cmtt/b/it' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/b/scit' undefined
-(Font)              using `T1/cmtt/b/sc' instead on input line 72.
+(Font)              using `T1/cmtt/b/sc' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/b/sc' undefined
-(Font)              using `T1/cmtt/b/n' instead on input line 72.
+(Font)              using `T1/cmtt/b/n' instead on input line 76.
 
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <12> not available
-(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 72.
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 76.
 LaTeX Font Info:    Font shape `T1/cmtt/bx/it' in size <12> not available
-(Font)              Font shape `T1/cmtt/m/it' tried instead on input line 72.
+(Font)              Font shape `T1/cmtt/m/it' tried instead on input line 76.
 
 LaTeX Font Warning: Font shape `T1/cmtt/bx/sl' undefined
-(Font)              using `T1/cmtt/bx/it' instead on input line 72.
+(Font)              using `T1/cmtt/bx/it' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/bx/scit' undefined
-(Font)              using `T1/cmtt/bx/sc' instead on input line 72.
+(Font)              using `T1/cmtt/bx/sc' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/bx/sc' undefined
-(Font)              using `T1/cmtt/bx/n' instead on input line 72.
+(Font)              using `T1/cmtt/bx/n' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/sbx/sc' undefined
-(Font)              using `T1/cmtt/bx/sc' instead on input line 72.
+(Font)              using `T1/cmtt/bx/sc' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/sbx/n' undefined
-(Font)              using `T1/cmtt/bx/n' instead on input line 72.
+(Font)              using `T1/cmtt/bx/n' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/sbx/it' undefined
-(Font)              using `T1/cmtt/bx/it' instead on input line 72.
+(Font)              using `T1/cmtt/bx/it' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/bx/sl' undefined
-(Font)              using `T1/cmtt/bx/it' instead on input line 72.
+(Font)              using `T1/cmtt/bx/it' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/sbx/it' undefined
-(Font)              using `T1/cmtt/bx/it' instead on input line 72.
+(Font)              using `T1/cmtt/bx/it' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/bx/scit' undefined
-(Font)              using `T1/cmtt/bx/sc' instead on input line 72.
+(Font)              using `T1/cmtt/bx/sc' instead on input line 76.
 
 LaTeX Font Info:    Font shape `T1/cmtt/bx/sc' in size <12> not available
-(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 72.
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 76.
 
 LaTeX Font Warning: Font shape `T1/cmtt/bc/sc' undefined
-(Font)              using `T1/cmtt/c/sc' instead on input line 72.
+(Font)              using `T1/cmtt/c/sc' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/c/n' undefined
-(Font)              using `T1/cmtt/m/n' instead on input line 72.
+(Font)              using `T1/cmtt/m/n' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/c/it' undefined
-(Font)              using `T1/cmtt/c/n' instead on input line 72.
+(Font)              using `T1/cmtt/c/n' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/c/sl' undefined
-(Font)              using `T1/cmtt/c/it' instead on input line 72.
+(Font)              using `T1/cmtt/c/it' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/c/scit' undefined
-(Font)              using `T1/cmtt/c/sc' instead on input line 72.
+(Font)              using `T1/cmtt/c/sc' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/c/sc' undefined
-(Font)              using `T1/cmtt/c/n' instead on input line 72.
+(Font)              using `T1/cmtt/c/n' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/lc/sc' undefined
-(Font)              using `T1/cmtt/c/sc' instead on input line 72.
+(Font)              using `T1/cmtt/c/sc' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/lc/n' undefined
-(Font)              using `T1/cmtt/c/n' instead on input line 72.
+(Font)              using `T1/cmtt/c/n' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/lc/it' undefined
-(Font)              using `T1/cmtt/c/it' instead on input line 72.
+(Font)              using `T1/cmtt/c/it' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/c/sl' undefined
-(Font)              using `T1/cmtt/c/it' instead on input line 72.
+(Font)              using `T1/cmtt/c/it' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/lc/it' undefined
-(Font)              using `T1/cmtt/c/it' instead on input line 72.
+(Font)              using `T1/cmtt/c/it' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/c/scit' undefined
-(Font)              using `T1/cmtt/c/sc' instead on input line 72.
+(Font)              using `T1/cmtt/c/sc' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/m/ui' undefined
-(Font)              using `T1/cmtt/m/n' instead on input line 72.
+(Font)              using `T1/cmtt/m/n' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/bx/ui' undefined
-(Font)              using `T1/cmtt/bx/n' instead on input line 72.
+(Font)              using `T1/cmtt/bx/n' instead on input line 76.
 
 
 LaTeX Font Warning: Font shape `T1/cmtt/m/In' undefined
-(Font)              using `T1/cmtt/m/n' instead on input line 72.
+(Font)              using `T1/cmtt/m/n' instead on input line 76.
 
 [1
 
-\openout4 = `main.ist'.
-
 {C:/Users/LUCAS/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
-LaTeX Font Info:    Trying to load font information for U+msa on input line 74.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 78.
 
 
 (C:\Users\LUCAS\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 74.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 78.
 
 
 (C:\Users\LUCAS\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
@@ -1576,32 +1569,36 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 
 
 ] (main.lof)
-\tf@lof=\write9
-\openout9 = `main.lof'.
+\tf@lof=\write6
+\openout6 = `main.lof'.
 
  [4
 
 
-] (main.lot)
-\tf@lot=\write10
-\openout10 = `main.lot'.
+] [5] (main.lot)
+\tf@lot=\write7
+\openout7 = `main.lot'.
 
- [5
-
-
-] (main.acr [6
+ [6
 
 
+]
 
-]) [7] (main.toc
-[8
+Package glossaries Info: Preparing to sort glossary `acronym' (total number of
+(glossaries)             referenced entries: 32)
+
+[7
 
 
-] [9])
-\tf@toc=\write11
-\openout11 = `main.toc'.
 
- [10] (chapters/01-introducao.tex
+] [8] (main.toc [9
+
+
+] [10])
+\tf@toc=\write8
+\openout8 = `main.toc'.
+
+ [11] (chapters/01-introducao.tex
 Cap\'{\i }tulo 1.
 [1
 
@@ -1620,7 +1617,7 @@ Cap\'{\i }tulo 4.
 [21
 
 ] [22] [23] [24] [25] [26] [27] [28] [29] [30]
-<images/explorador-replay.jpg, id=1203, 1269.74374pt x 892.33376pt>
+<images/explorador-replay.jpg, id=1213, 1269.74374pt x 892.33376pt>
 File: images/explorador-replay.jpg Graphic file (type jpg)
 <use images/explorador-replay.jpg>
 Package pdftex.def Info: images/explorador-replay.jpg  used on input line 269.
@@ -1687,7 +1684,10 @@ APÊNDICE A.
 
 ] [79
 
-] [80] [81] [82] [83] [84]
+] [80]
+LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10.95> not available
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 91.
+ [81] [82] [83] [84]
 APÊNDICE B.
 [85
 
@@ -1711,13 +1711,13 @@ L3 programming layer <2025-12-24>
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 263D89AD2DBBCD600C14BBA2E9CE19E3;22123.
+(rerunfilecheck)             Checksum: 24147F4B54CF120F60FB24EFD51A6AFD;22123.
  ) 
 Here is how much of TeX's memory you used:
- 48353 strings out of 467871
- 1088894 string characters out of 5418375
- 1818650 words of memory out of 5000000
- 76099 multiletter control sequences out of 15000+600000
+ 48602 strings out of 467871
+ 1093928 string characters out of 5418375
+ 1822217 words of memory out of 5000000
+ 76347 multiletter control sequences out of 15000+600000
  654014 words of font info for 109 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  90i,19n,131p,2475b,2432s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1755,9 +1755,9 @@ ype1/public/amsfonts/cm/cmsy10.pfb><C:/Users/LUCAS/AppData/Local/Programs/MiKTe
 X/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/LUCAS/AppData/Local/Progra
 ms/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/LUCAS/AppData/Loca
 l/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on main.pdf (103 pages, 1084939 bytes).
+Output written on main.pdf (104 pages, 1089556 bytes).
 PDF statistics:
- 2819 PDF objects out of 2984 (max. 8388607)
- 337 named destinations out of 1000 (max. 500000)
+ 2831 PDF objects out of 2984 (max. 8388607)
+ 339 named destinations out of 1000 (max. 500000)
  834 words of extra memory for PDF output out of 10000 (max. 10000000)
 
