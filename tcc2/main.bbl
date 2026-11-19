@@ -5,6 +5,12 @@ Bailey, D., Borwein, J., Lopez~de Prado, M., and Zhu, Q.
 \newblock The probability of backtest overfitting.
 \newblock {\em Journal of Computational Finance}, 20(4):39--69, 2017.
 \url{https://doi.org/10.21314/JCF.2016.322}
+\bibitem[{Banco Central do Brasil}, 2026]{BCBCDI2026}
+{Banco Central do Brasil}.
+\newblock Sistema gerenciador de séries temporais: série 12, taxa de juros
+  {CDI}.
+\newblock \url{https://www3.bcb.gov.br/sgspub/}, 2026.
+
 \bibitem[Bollinger, 2001]{Bollinger2001}
 Bollinger, J.
 \newblock {\em Bollinger on Bollinger Bands}.
@@ -89,6 +95,12 @@ Golchin, S. and Surdeanu, M.
 \newblock In {\em International Conference on Learning Representations (ICLR)},
   2024.
 
+\bibitem[{Google DeepMind}, 2026]{GeminiModelCard2026}
+{Google DeepMind}.
+\newblock Gemini 3.8 {Flash} model card.
+\newblock \url{https://deepmind.google/models/model-cards/gemini-3-8-flash/},
+  2026.
+
 \bibitem[Gu et~al., 2020]{Gu2020}
 Gu, S., Kelly, B., and Xiu, D.
 \newblock Empirical asset pricing via machine learning.
@@ -122,6 +134,12 @@ Jiang, Z., Xu, D., and Liang, J.
   management problem.
 \newblock {\em arXiv}, 2017.
 
+\bibitem[Kojima et~al., 2022]{Kojima2022}
+Kojima, T., Gu, S.~S., Reid, M., Matsuo, Y., and Iwasawa, Y.
+\newblock Large language models are zero-shot reasoners.
+\newblock In {\em Advances in Neural Information Processing Systems},
+  volume~35, pages 22199--22213, 2022.
+\url{https://doi.org/10.52202/068431-1613}
 \bibitem[Krauss et~al., 2017]{Krauss2017}
 Krauss, C., Do, X.~A., and Huck, N.
 \newblock Deep neural networks, gradient-boosted trees, random forests:
@@ -141,6 +159,12 @@ Li, W.~W., Kim, H., Cucuringu, M., and Ma, T.
 \newblock In {\em Proceedings of the 32nd ACM SIGKDD Conference on Knowledge
   Discovery and Data Mining V.1}, pages 2711--2722, 2026.
 \url{https://doi.org/10.1145/3770854.3785702}
+\bibitem[Li et~al., 2025]{ProfitMirage2025}
+Li, X., Zeng, Y., Xing, X., Xu, J., and Xu, X.
+\newblock {Profit Mirage}: Revisiting information leakage in {LLM}-based
+  financial agents.
+\newblock {\em arXiv}, 2025.
+\url{https://doi.org/10.48550/arXiv.2510.07920}
 \bibitem[Li et~al., 2023]{Li2023}
 Li, Y., Yu, Y., Li, H., Chen, Z., and Khashanah, K.
 \newblock Tradinggpt: Multi-agent system with layered memory and distinct
@@ -183,12 +207,17 @@ L{\'o}pez~de Prado, M.
 \newblock {\em Advances in Financial Machine Learning}.
 \newblock Wiley, 2018.
 
-\bibitem[Lopez-Lira and Tang, 2023]{LopezLira2023}
+\bibitem[Lopez-Lira and Tang, 2026]{LopezLira2023}
 Lopez-Lira, A. and Tang, Y.
-\newblock Can chatgpt forecast stock price movements? return predictability and
-  large language models.
-\newblock {\em arXiv}, 2023.
-
+\newblock Can {ChatGPT} forecast stock price movements? {Return} predictability
+  and large language models.
+\newblock {\em Journal of Financial Economics}, 184:104335, 2026.
+\url{https://doi.org/10.1016/j.jfineco.2026.104335}
+\bibitem[Lopez-Lira et~al., 2025]{LopezLira2025}
+Lopez-Lira, A., Tang, Y., and Zhu, M.
+\newblock The memorization problem: Can we trust {LLMs}' economic forecasts?
+\newblock {\em arXiv}, 2025.
+\url{https://doi.org/10.48550/arXiv.2504.14765}
 \bibitem[Magdon-Ismail et~al., 2004]{Magdon2004}
 Magdon-Ismail, M., Atiya, A.~F., Pratap, A., and Abu-Mostafa, Y.~S.
 \newblock On the maximum drawdown of a brownian motion.
@@ -281,6 +310,18 @@ Th{\'e}ate, T. and Ernst, D.
 \newblock An application of deep reinforcement learning to algorithmic trading.
 \newblock {\em Expert Systems with Applications}, 173:114632, 2021.
 \url{https://doi.org/10.1016/j.eswa.2021.114632}
+\bibitem[Wang, 2026a]{Wang2026beta}
+Wang, J.
+\newblock {LLM} trading agents earn beta, not alpha: A look-ahead-free
+  benchmark.
+\newblock {\em arXiv}, 2026a.
+\url{https://doi.org/10.48550/arXiv.2611.19530}
+\bibitem[Wang, 2026b]{Wang2026}
+Wang, J.
+\newblock The only edge was memorized in training: {LLM} trading agents around
+  earnings and bad news.
+\newblock {\em arXiv}, 2026b.
+\url{https://doi.org/10.48550/arXiv.2611.22177}
 \bibitem[Wang et~al., 2023]{Wang2023}
 Wang, X., Wei, J., Schuurmans, D., Le, Q., Chi, E., Narang, S., Chowdhery, A.,
   and Zhou, D.
@@ -289,6 +330,14 @@ Wang, X., Wei, J., Schuurmans, D., Le, Q., Chi, E., Narang, S., Chowdhery, A.,
 \newblock In {\em International Conference on Learning Representations (ICLR)},
   2023.
 
+\bibitem[Wei et~al., 2022]{Wei2022}
+Wei, J., Wang, X., Schuurmans, D., Bosma, M., Ichter, B., Xia, F., Chi, E., Le,
+  Q., and Zhou, D.
+\newblock Chain-of-thought prompting elicits reasoning in large language
+  models.
+\newblock In {\em Advances in Neural Information Processing Systems},
+  volume~35, pages 24824--24837, 2022.
+\url{https://doi.org/10.52202/068431-1800}
 \bibitem[White, 2000]{White2000}
 White, H.
 \newblock A reality check for data snooping.
@@ -298,6 +347,11 @@ White, H.
 Wilder, J.~W.
 \newblock {\em New Concepts in Technical Trading Systems}.
 \newblock Trend Research, 1978.
+
+\bibitem[Wooldridge, 2009]{Wooldridge2009}
+Wooldridge, M.
+\newblock {\em An Introduction to {MultiAgent} Systems}.
+\newblock John Wiley \& Sons, Chichester, 2nd edition, 2009.
 
 \bibitem[Wu et~al., 2023]{Wu2023}
 Wu, S., Irsoy, O., Lu, S., Dabravolski, V., Dredze, M., Gehrmann, S., Kambadur,
@@ -321,9 +375,10 @@ Xie, Q., Han, W., Chen, Z., Xiang, R., Zhang, X., He, Y., Xiao, M., Li, D.,
   Zhang, T., Liu, Z., Xiong, G., Deng, Z., Jiang, Y., Yao, Z., Li, H., Yu, Y.,
   Hu, G., Huang, J., Liu, X.-Y., Lopez-Lira, A., Wang, B., Lai, Y., Wang, H.,
   Peng, M., Ananiadou, S., and Huang, J.
-\newblock Finben: A holistic financial benchmark for large language models.
-\newblock {\em arXiv}, 2024.
-
+\newblock {FinBen}: A holistic financial benchmark for large language models.
+\newblock In {\em Advances in Neural Information Processing Systems},
+  volume~37, pages 95716--95743, 2024.
+\url{https://doi.org/10.52202/079017-3033}
 \bibitem[Xing, 2024]{Xing2024}
 Xing, F.
 \newblock Designing heterogeneous llm agents for financial sentiment analysis.
@@ -353,6 +408,12 @@ Zhang, C., Liu, X., Zhang, Z., Jin, M., Li, L., Wang, Z., Hua, W., Shu, D.,
   stock trading in simulated real-world environments.
 \newblock {\em arXiv}, 2024a.
 
+\bibitem[Zhang, 2026]{Zhang2026}
+Zhang, H.
+\newblock Short windows, unmodelled costs, unknown cutoffs: A pre-registered
+  evidence audit of 91 {LLM} trading papers.
+\newblock {\em arXiv}, 2026.
+\url{https://doi.org/10.48550/arXiv.2611.18934}
 \bibitem[Zhang et~al., 2024b]{FinAgent2024}
 Zhang, W., Zhao, L., Xia, H., Sun, S., Sun, J., Qin, M., Li, X., Zhao, Y.,
   Zhao, Y., Cai, X., Zheng, L., Wang, X., and An, B.

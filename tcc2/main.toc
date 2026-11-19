@@ -1,130 +1,106 @@
 \babel@toc {brazil}{}\relax 
 \contentsline {chapter}{\numberline {1}Introdução}{1}{chapter.1}%
-\contentsline {chapter}{\numberline {2}Fundamentação Teórica}{4}{chapter.8}%
-\contentsline {section}{\numberline {2.1}HIPÓTESE DE EFICIÊNCIA DE MERCADO}{4}{section.9}%
-\contentsline {subsection}{\numberline {2.1.1}Críticas Comportamentais e a Hipótese de Mercados Adaptativos}{4}{subsection.10}%
-\contentsline {section}{\numberline {2.2}BENCHMARKS SIMPLES: BUY AND HOLD E EQUAL WEIGHT}{5}{section.11}%
-\contentsline {subsection}{\numberline {2.2.1}Buy and Hold}{5}{subsection.12}%
-\contentsline {subsection}{\numberline {2.2.2}Equal Weight}{5}{subsection.13}%
-\contentsline {section}{\numberline {2.3}ESTRATÉGIAS BASEADAS EM ANÁLISE TÉCNICA}{5}{section.14}%
-\contentsline {subsection}{\numberline {2.3.1}Estratégias de Tendência (Trend Following)}{5}{subsection.15}%
-\contentsline {subsection}{\numberline {2.3.2}Estratégias de Reversão à Média (Mean Reversion)}{6}{subsection.18}%
-\contentsline {section}{\numberline {2.4}FACTOR INVESTING E MODELOS DE PRECIFICAÇÃO DE ATIVOS}{7}{section.22}%
-\contentsline {section}{\numberline {2.5}TEORIA MODERNA DE PORTFÓLIO}{7}{section.24}%
-\contentsline {subsection}{\numberline {2.5.1}Carteira de Mínima Variância}{7}{subsection.26}%
-\contentsline {subsection}{\numberline {2.5.2}Relação Risco-Retorno}{8}{subsection.27}%
-\contentsline {section}{\numberline {2.6}SISTEMAS MULTIAGENTES E MODELOS DE LINGUAGEM EM FINANÇAS}{8}{section.28}%
-\contentsline {subsection}{\numberline {2.6.1}Arquitetura Multiagente e a Atribuição de Personas}{8}{subsection.29}%
-\contentsline {subsection}{\numberline {2.6.2}O Fluxo de Debate Heterogêneo e Mitigação de Erros}{8}{subsection.30}%
-\contentsline {subsection}{\numberline {2.6.3}Estruturação do Raciocínio Encadeado (Chain-of-Thought)}{9}{subsection.31}%
-\contentsline {section}{\numberline {2.7}BACKTESTING EM SÉRIES FINANCEIRAS E RISCOS METODOLÓGICOS}{9}{section.32}%
-\contentsline {section}{\numberline {2.8}MÉTRICAS DE DESEMPENHO E RISCO}{9}{section.33}%
-\contentsline {subsection}{\numberline {2.8.1}Retorno Acumulado e Sharpe Ratio}{9}{subsection.34}%
-\contentsline {subsection}{\numberline {2.8.2}Sortino Ratio e Maximum Drawdown}{10}{subsection.36}%
-\contentsline {subsection}{\numberline {2.8.3}Turnover e Custos de Transação}{10}{subsection.37}%
-\contentsline {chapter}{\numberline {3}Trabalhos Relacionados}{11}{chapter.38}%
-\contentsline {section}{\numberline {3.1}APRENDIZADO POR REFORÇO APLICADO À DECISÃO FINANCEIRA}{11}{section.39}%
-\contentsline {section}{\numberline {3.2}APRENDIZADO DE MÁQUINA PARA PREVISÃO DE RETORNOS}{12}{section.40}%
-\contentsline {section}{\numberline {3.3}MODELOS DE LINGUAGEM COMO AGENTES DE DECISÃO FINANCEIRA}{12}{section.41}%
-\contentsline {section}{\numberline {3.4}SISTEMAS MULTIAGENTES BASEADOS EM LLM PARA NEGOCIAÇÃO}{13}{section.42}%
-\contentsline {section}{\numberline {3.5}AVALIAÇÃO DE LLMS EM FINANÇAS E CONTAMINAÇÃO TEMPORAL}{14}{section.43}%
-\contentsline {section}{\numberline {3.6}DELIBERAÇÃO, DIVERSIDADE E AUTOCONSISTÊNCIA ENTRE AGENTES LLM}{15}{section.44}%
-\contentsline {section}{\numberline {3.7}QUADRO COMPARATIVO}{16}{section.45}%
-\contentsline {section}{\numberline {3.8}SÍNTESE E POSICIONAMENTO}{16}{section.47}%
-\contentsline {chapter}{\numberline {4}Arquitetura e Implementação}{19}{chapter.48}%
-\contentsline {section}{\numberline {4.1}Visão Geral da Arquitetura}{19}{section.49}%
-\contentsline {section}{\numberline {4.2}Pipeline de Dados}{20}{section.51}%
-\contentsline {section}{\numberline {4.3}Camada de Persistência}{21}{section.53}%
-\contentsline {section}{\numberline {4.4}Indicadores e Estratégias}{21}{section.54}%
-\contentsline {section}{\numberline {4.5}Motor de Backtesting}{22}{section.55}%
-\contentsline {section}{\numberline {4.6}Sistema Multiagente de Ativo Único}{22}{section.56}%
-\contentsline {section}{\numberline {4.7}Carteira Multiagente Multiativos}{24}{section.58}%
-\contentsline {subsection}{\numberline {4.7.1}Comitê de analistas por ativo}{24}{subsection.59}%
-\contentsline {subsection}{\numberline {4.7.2}Analista de risco por ativo}{25}{subsection.60}%
-\contentsline {subsection}{\numberline {4.7.3}Gestor global da carteira}{25}{subsection.61}%
-\contentsline {subsection}{\numberline {4.7.4}Compilador determinístico da proposta}{25}{subsection.62}%
-\contentsline {subsection}{\numberline {4.7.5}Planejamento da execução e livro}{25}{subsection.63}%
-\contentsline {section}{\numberline {4.8}Relógio Causal do Pregão}{26}{section.65}%
-\contentsline {section}{\numberline {4.9}Arquitetura do Replay Contínuo}{27}{section.70}%
-\contentsline {subsection}{\numberline {4.9.1}Runners, identidades e isolamento}{28}{subsection.71}%
-\contentsline {subsection}{\numberline {4.9.2}Carteiras iniciais e referências pré-calculadas}{28}{subsection.72}%
-\contentsline {subsection}{\numberline {4.9.3}Laço diário e semântica \textit {fail-closed}}{29}{subsection.73}%
-\contentsline {subsection}{\numberline {4.9.4}Orçamento e rastreamento das chamadas}{29}{subsection.74}%
-\contentsline {subsection}{\numberline {4.9.5}Exportação, pacotes selados e explorador de consulta}{30}{subsection.75}%
-\contentsline {section}{\numberline {4.10}Evolução da Arquitetura entre Versões}{30}{section.76}%
-\contentsline {subsection}{\numberline {4.10.1}Versão v2}{31}{subsection.78}%
-\contentsline {subsection}{\numberline {4.10.2}Versão v3}{32}{subsection.79}%
-\contentsline {section}{\numberline {4.11}Operação Diária}{33}{section.81}%
-\contentsline {section}{\numberline {4.12}Camada de Experimentos e Proveniência}{34}{section.82}%
-\contentsline {section}{\numberline {4.13}Frontend e Operação}{35}{section.83}%
-\contentsline {chapter}{\numberline {5}Metodologia Experimental}{36}{chapter.84}%
-\contentsline {section}{\numberline {5.1}Caracterização da Pesquisa}{36}{section.85}%
-\contentsline {section}{\numberline {5.2}Desenho do Replay}{37}{section.86}%
-\contentsline {section}{\numberline {5.3}Operacionalização das Hipóteses}{38}{section.87}%
-\contentsline {paragraph}{\numberline {5.3.0.0.1}H1.}{39}{paragraph.90}%
-\contentsline {paragraph}{\numberline {5.3.0.0.2}H2.}{39}{paragraph.91}%
-\contentsline {paragraph}{\numberline {5.3.0.0.3}Papel distinto das versões.}{39}{paragraph.92}%
-\contentsline {paragraph}{\numberline {5.3.0.0.4}H0.}{40}{paragraph.93}%
-\contentsline {section}{\numberline {5.4}Carteiras de Referência}{40}{section.94}%
-\contentsline {section}{\numberline {5.5}Métricas de Avaliação}{41}{section.96}%
-\contentsline {paragraph}{\numberline {5.5.0.0.1}Sharpe Ratio líquido (critério primário).}{41}{paragraph.97}%
-\contentsline {paragraph}{\numberline {5.5.0.0.2}Sortino Ratio.}{42}{paragraph.99}%
-\contentsline {paragraph}{\numberline {5.5.0.0.3}\textit {Maximum Drawdown}.}{42}{paragraph.101}%
-\contentsline {paragraph}{\numberline {5.5.0.0.4}Retorno e volatilidade.}{42}{paragraph.102}%
-\contentsline {paragraph}{\numberline {5.5.0.0.5}Operações, custos e giro.}{42}{paragraph.103}%
-\contentsline {section}{\numberline {5.6}Inferência Estatística}{43}{section.105}%
-\contentsline {subsection}{\numberline {5.6.1}Bootstrap A}{43}{subsection.106}%
-\contentsline {subsection}{\numberline {5.6.2}Multiplicidade}{44}{subsection.115}%
-\contentsline {section}{\numberline {5.7}Protocolo Confirmatório Planejado e Acompanhamento Prospectivo}{45}{section.116}%
-\contentsline {subsection}{\numberline {5.7.1}Desenho original}{45}{subsection.117}%
-\contentsline {subsection}{\numberline {5.7.2}Situação e razões da não execução}{45}{subsection.118}%
-\contentsline {subsection}{\numberline {5.7.3}Acompanhamento prospectivo}{46}{subsection.119}%
-\contentsline {section}{\numberline {5.8}Ameaças à Validade}{46}{section.120}%
-\contentsline {paragraph}{\numberline {5.8.0.0.1}Contaminação do modelo e antecipação de informação.}{46}{paragraph.121}%
-\contentsline {paragraph}{\numberline {5.8.0.0.2}Ajuste dentro da amostra.}{46}{paragraph.122}%
-\contentsline {paragraph}{\numberline {5.8.0.0.3}Amostra única e escopo reduzido.}{47}{paragraph.123}%
-\contentsline {paragraph}{\numberline {5.8.0.0.4}Intervenções em bloco.}{47}{paragraph.124}%
-\contentsline {paragraph}{\numberline {5.8.0.0.5}Custo e execução simplificados.}{47}{paragraph.125}%
-\contentsline {paragraph}{\numberline {5.8.0.0.6}Cesta inicial imposta.}{47}{paragraph.126}%
-\contentsline {paragraph}{\numberline {5.8.0.0.7}Alcance de H1.}{47}{paragraph.127}%
-\contentsline {chapter}{\numberline {6}Resultados e Discussão}{49}{chapter.128}%
-\contentsline {section}{\numberline {6.1}Contexto de Mercado do Período}{49}{section.129}%
-\contentsline {section}{\numberline {6.2}Resultados Agregados das Carteiras}{50}{section.131}%
-\contentsline {paragraph}{\numberline {6.2.0.0.1}Patrimônio e retorno.}{50}{paragraph.136}%
-\contentsline {paragraph}{\numberline {6.2.0.0.2}Sharpe e Sortino.}{52}{paragraph.137}%
-\contentsline {paragraph}{\numberline {6.2.0.0.3}\textit {Drawdown}.}{52}{paragraph.138}%
-\contentsline {paragraph}{\numberline {6.2.0.0.4}Operações, custos e caixa.}{52}{paragraph.139}%
-\contentsline {paragraph}{\numberline {6.2.0.0.5}Pregões sem análise.}{53}{paragraph.140}%
-\contentsline {section}{\numberline {6.3}Decisão sobre as Hipóteses}{53}{section.141}%
-\contentsline {subsection}{\numberline {6.3.1}H1: tendência contra pesos iguais}{54}{subsection.143}%
-\contentsline {subsection}{\numberline {6.3.2}H2 na versão pré-especificada}{54}{subsection.144}%
-\contentsline {subsection}{\numberline {6.3.3}Contrastes descritivos das versões exploratórias}{55}{subsection.145}%
-\contentsline {subsection}{\numberline {6.3.4}Síntese sobre H0}{55}{subsection.146}%
-\contentsline {section}{\numberline {6.4}Evolução Arquitetural entre as Versões}{55}{section.147}%
-\contentsline {subsection}{\numberline {6.4.1}Diagnóstico da versão v1}{56}{subsection.149}%
-\contentsline {subsection}{\numberline {6.4.2}Versão v2: correções mecânicas e arrasto de caixa}{57}{subsection.155}%
-\contentsline {subsection}{\numberline {6.4.3}Versão v3: especialização do comitê e governança do gestor}{58}{subsection.157}%
-\contentsline {paragraph}{\numberline {6.4.3.0.1}Diversidade do comitê.}{59}{paragraph.158}%
-\contentsline {paragraph}{\numberline {6.4.3.0.2}Inversão do perfil de execução.}{59}{paragraph.159}%
-\contentsline {paragraph}{\numberline {6.4.3.0.3}Saídas totais e preço médio.}{59}{paragraph.160}%
-\contentsline {paragraph}{\numberline {6.4.3.0.4}Proventos e caixa.}{59}{paragraph.161}%
-\contentsline {paragraph}{\numberline {6.4.3.0.5}Resultado por ativo.}{60}{paragraph.162}%
-\contentsline {paragraph}{\numberline {6.4.3.0.6}Mecanismos efetivamente acionados.}{60}{paragraph.163}%
-\contentsline {paragraph}{\numberline {6.4.3.0.7}Efeitos colaterais.}{60}{paragraph.164}%
-\contentsline {section}{\numberline {6.5}Discussão}{61}{section.165}%
-\contentsline {paragraph}{\numberline {6.5.0.0.1}O que os resultados permitem afirmar.}{61}{paragraph.166}%
-\contentsline {paragraph}{\numberline {6.5.0.0.2}O que os resultados não permitem afirmar.}{61}{paragraph.167}%
-\contentsline {section}{\numberline {6.6}Acompanhamento Prospectivo Preliminar}{62}{section.168}%
-\contentsline {chapter}{\numberline {7}Conclusão}{64}{chapter.169}%
-\contentsline {section}{\numberline {7.1}Síntese do Trabalho}{64}{section.170}%
-\contentsline {section}{\numberline {7.2}Resposta à Pergunta de Pesquisa e às Hipóteses}{64}{section.171}%
-\contentsline {paragraph}{\numberline {7.2.0.0.1}H1.}{65}{paragraph.172}%
-\contentsline {paragraph}{\numberline {7.2.0.0.2}H2.}{65}{paragraph.173}%
-\contentsline {paragraph}{\numberline {7.2.0.0.3}H0.}{65}{paragraph.174}%
-\contentsline {paragraph}{\numberline {7.2.0.0.4}Versões exploratórias.}{65}{paragraph.175}%
-\contentsline {section}{\numberline {7.3}Resposta à Pergunta Arquitetural}{66}{section.176}%
-\contentsline {section}{\numberline {7.4}Limitações}{67}{section.177}%
-\contentsline {section}{\numberline {7.5}Trabalhos Futuros}{68}{section.178}%
-\contentsline {section}{\numberline {7.6}Considerações Finais}{68}{section.179}%
-\contentsline {chapter}{\MakeUppercase []{Referências}}{69}{section.179}%
+\contentsline {chapter}{\numberline {2}Fundamentação Teórica}{5}{chapter.8}%
+\contentsline {section}{\numberline {2.1}HIPÓTESE DE EFICIÊNCIA DE MERCADO E MERCADOS ADAPTATIVOS}{5}{section.9}%
+\contentsline {section}{\numberline {2.2}ESTRATÉGIAS BASEADAS EM ANÁLISE TÉCNICA}{5}{section.10}%
+\contentsline {subsection}{\numberline {2.2.1}Estratégias de Tendência (Trend Following)}{6}{subsection.11}%
+\contentsline {subsection}{\numberline {2.2.2}Estratégias de Reversão à Média (Mean Reversion)}{6}{subsection.14}%
+\contentsline {section}{\numberline {2.3}TEORIA DE PORTFÓLIO E CARTEIRAS DE REFERÊNCIA}{7}{section.19}%
+\contentsline {subsection}{\numberline {2.3.1}Carteira de Mínima Variância}{7}{subsection.21}%
+\contentsline {subsection}{\numberline {2.3.2}Buy and Hold e Equal Weight}{8}{subsection.23}%
+\contentsline {section}{\numberline {2.4}MODELOS DE FATORES}{8}{section.24}%
+\contentsline {section}{\numberline {2.5}BACKTESTING, SOBREAJUSTE E CONTAMINAÇÃO TEMPORAL}{9}{section.26}%
+\contentsline {section}{\numberline {2.6}MÉTRICAS DE DESEMPENHO E RISCO}{9}{section.27}%
+\contentsline {subsection}{\numberline {2.6.1}Retorno Acumulado e Sharpe Ratio}{9}{subsection.28}%
+\contentsline {subsection}{\numberline {2.6.2}Sortino Ratio e Maximum Drawdown}{9}{subsection.30}%
+\contentsline {subsection}{\numberline {2.6.3}Turnover e Custos de Transação}{10}{subsection.31}%
+\contentsline {section}{\numberline {2.7}INFERÊNCIA ESTATÍSTICA NA COMPARAÇÃO DE ESTRATÉGIAS}{10}{section.32}%
+\contentsline {section}{\numberline {2.8}MODELOS DE LINGUAGEM E SISTEMAS MULTIAGENTES EM FINANÇAS}{10}{section.33}%
+\contentsline {chapter}{\numberline {3}Trabalhos Relacionados}{12}{chapter.34}%
+\contentsline {section}{\numberline {3.1}APRENDIZADO POR REFORÇO APLICADO À DECISÃO FINANCEIRA}{12}{section.35}%
+\contentsline {section}{\numberline {3.2}APRENDIZADO DE MÁQUINA PARA PREVISÃO DE RETORNOS}{13}{section.36}%
+\contentsline {section}{\numberline {3.3}MODELOS DE LINGUAGEM COMO AGENTES DE DECISÃO FINANCEIRA}{14}{section.37}%
+\contentsline {section}{\numberline {3.4}SISTEMAS MULTIAGENTES BASEADOS EM LLM PARA NEGOCIAÇÃO}{15}{section.38}%
+\contentsline {section}{\numberline {3.5}AVALIAÇÃO DE LLMS EM FINANÇAS E CONTAMINAÇÃO TEMPORAL}{16}{section.39}%
+\contentsline {section}{\numberline {3.6}DELIBERAÇÃO, DIVERSIDADE E AUTOCONSISTÊNCIA ENTRE AGENTES LLM}{17}{section.40}%
+\contentsline {section}{\numberline {3.7}QUADRO COMPARATIVO}{18}{section.41}%
+\contentsline {section}{\numberline {3.8}SÍNTESE E POSICIONAMENTO}{19}{section.43}%
+\contentsline {chapter}{\numberline {4}Arquitetura e Implementação}{21}{chapter.44}%
+\contentsline {section}{\numberline {4.1}Visão Geral da Arquitetura}{21}{section.45}%
+\contentsline {section}{\numberline {4.2}Dados}{21}{section.47}%
+\contentsline {section}{\numberline {4.3}Livro Contábil de Eventos}{22}{section.48}%
+\contentsline {section}{\numberline {4.4}Carteira Multiagente Multiativos}{23}{section.49}%
+\contentsline {subsection}{\numberline {4.4.1}Comitê de analistas por ativo}{23}{subsection.50}%
+\contentsline {subsection}{\numberline {4.4.2}Analista de risco por ativo}{24}{subsection.52}%
+\contentsline {subsection}{\numberline {4.4.3}Gestor global da carteira}{24}{subsection.53}%
+\contentsline {subsection}{\numberline {4.4.4}Compilador determinístico da proposta}{24}{subsection.54}%
+\contentsline {subsection}{\numberline {4.4.5}Planejamento da execução e livro}{25}{subsection.55}%
+\contentsline {section}{\numberline {4.5}Relógio Causal do Pregão}{25}{section.57}%
+\contentsline {section}{\numberline {4.6}Carteiras de Referência}{26}{section.62}%
+\contentsline {section}{\numberline {4.7}Mecanismo do Replay Contínuo}{27}{section.63}%
+\contentsline {subsection}{\numberline {4.7.1}Execução, identidade e isolamento}{27}{subsection.64}%
+\contentsline {subsection}{\numberline {4.7.2}Laço diário e semântica \textit {fail-closed}}{28}{subsection.65}%
+\contentsline {subsection}{\numberline {4.7.3}Orçamento e diário de chamadas}{28}{subsection.66}%
+\contentsline {subsection}{\numberline {4.7.4}Exportação e consulta}{28}{subsection.67}%
+\contentsline {section}{\numberline {4.8}Evolução da Arquitetura entre Versões}{29}{section.68}%
+\contentsline {subsection}{\numberline {4.8.1}Versão v2}{29}{subsection.70}%
+\contentsline {subsection}{\numberline {4.8.2}Versão v3}{30}{subsection.71}%
+\contentsline {section}{\numberline {4.9}Operação Diária e Interface}{30}{section.72}%
+\contentsline {chapter}{\numberline {5}Metodologia Experimental}{32}{chapter.74}%
+\contentsline {section}{\numberline {5.1}Caracterização da Pesquisa}{32}{section.75}%
+\contentsline {section}{\numberline {5.2}Do Protocolo Planejado ao Replay}{33}{section.76}%
+\contentsline {subsection}{\numberline {5.2.1}Detalhes do protocolo original}{34}{subsection.78}%
+\contentsline {section}{\numberline {5.3}Desenho do Replay}{35}{section.79}%
+\contentsline {section}{\numberline {5.4}Operacionalização das Hipóteses}{36}{section.81}%
+\contentsline {section}{\numberline {5.5}Carteiras de Referência}{39}{section.84}%
+\contentsline {section}{\numberline {5.6}Métricas de Avaliação}{40}{section.86}%
+\contentsline {section}{\numberline {5.7}Inferência Estatística}{42}{section.90}%
+\contentsline {subsection}{\numberline {5.7.1}Bootstrap A}{42}{subsection.91}%
+\contentsline {subsection}{\numberline {5.7.2}Multiplicidade}{43}{subsection.100}%
+\contentsline {section}{\numberline {5.8}Acompanhamento Prospectivo}{44}{section.101}%
+\contentsline {section}{\numberline {5.9}Ameaças à Validade}{44}{section.102}%
+\contentsline {chapter}{\numberline {6}Resultados e Discussão}{47}{chapter.104}%
+\contentsline {section}{\numberline {6.1}Contexto de Mercado do Período}{47}{section.105}%
+\contentsline {section}{\numberline {6.2}Resultados Agregados das Carteiras}{48}{section.107}%
+\contentsline {section}{\numberline {6.3}Decisão sobre as Hipóteses}{51}{section.112}%
+\contentsline {subsection}{\numberline {6.3.1}H1: tendência contra pesos iguais}{51}{subsection.114}%
+\contentsline {subsection}{\numberline {6.3.2}H2 na versão pré-especificada}{53}{subsection.115}%
+\contentsline {subsection}{\numberline {6.3.3}Contrastes descritivos das versões exploratórias}{53}{subsection.116}%
+\contentsline {subsection}{\numberline {6.3.4}Síntese sobre H0}{54}{subsection.117}%
+\contentsline {section}{\numberline {6.4}Evolução Arquitetural entre as Versões}{54}{section.118}%
+\contentsline {subsection}{\numberline {6.4.1}Diagnóstico da versão v1}{56}{subsection.121}%
+\contentsline {subsection}{\numberline {6.4.2}Versão v2: correções mecânicas e arrasto de caixa}{57}{subsection.127}%
+\contentsline {subsection}{\numberline {6.4.3}Versão v3: especialização do comitê e governança do gestor}{59}{subsection.129}%
+\contentsline {section}{\numberline {6.5}Discussão}{61}{section.130}%
+\contentsline {section}{\numberline {6.6}Acompanhamento Prospectivo Preliminar}{63}{section.131}%
+\contentsline {chapter}{\numberline {7}Conclusão}{65}{chapter.132}%
+\contentsline {section}{\numberline {7.1}Síntese do Trabalho}{65}{section.133}%
+\contentsline {section}{\numberline {7.2}Resposta à Pergunta de Pesquisa e às Hipóteses}{66}{section.134}%
+\contentsline {section}{\numberline {7.3}Resposta à Pergunta Arquitetural}{67}{section.135}%
+\contentsline {section}{\numberline {7.4}Limitações}{68}{section.136}%
+\contentsline {section}{\numberline {7.5}Trabalhos Futuros}{69}{section.137}%
+\contentsline {section}{\numberline {7.6}Considerações Finais}{70}{section.138}%
+\contentsline {chapter}{\MakeUppercase []{Referências}}{72}{section.138}%
+\ttl@change@i {\@ne }{chapter}{0pt}{\addvspace {12pt}\bfseries }{\MakeUppercase \appendixname ~\thecontentslabel ~-~}{}{\titlerule *[0.5pc]{.}\contentspage }\relax 
+\ttl@change@v {chapter}{}{}{}\relax 
+\contentsline {chapter}{\numberline {A}Mapa de Implementação}{78}{appendix.139}%
+\contentsline {section}{\numberline {A.1}Tecnologias da implementação}{79}{section.140}%
+\contentsline {section}{\numberline {A.2}Componentes e arquivos}{79}{section.142}%
+\contentsline {section}{\numberline {A.3}Detalhes de persistência}{81}{section.144}%
+\contentsline {section}{\numberline {A.4}Códigos de erro do relógio causal}{81}{section.145}%
+\contentsline {section}{\numberline {A.5}Reservas de orçamento e tarifas}{81}{section.146}%
+\contentsline {section}{\numberline {A.6}Constantes da versão v3}{82}{section.147}%
+\contentsline {section}{\numberline {A.7}Regras detalhadas das versões v2 e v3}{82}{section.149}%
+\contentsline {subsection}{\numberline {A.7.1}Versão v2}{82}{subsection.150}%
+\contentsline {subsection}{\numberline {A.7.2}Versão v3}{83}{subsection.151}%
+\contentsline {chapter}{\numberline {B}Caminho de Ativo Único e Camada de Experimentos}{85}{appendix.152}%
+\contentsline {section}{\numberline {B.1}Dados do protocolo de ativo único}{86}{section.153}%
+\contentsline {section}{\numberline {B.2}Indicadores, estratégias e motor de \textit {backtesting}}{86}{section.154}%
+\contentsline {section}{\numberline {B.3}Sistema multiagente de ativo único}{87}{section.155}%
+\contentsline {section}{\numberline {B.4}Camada de experimentos e proveniência}{88}{section.157}%
+\contentsline {chapter}{\numberline {C}Empacotamento e Publicação das Campanhas}{89}{appendix.158}%
+\contentsline {section}{\numberline {C.1}Executores, manifestos e \textit {lock}}{90}{section.159}%
+\contentsline {section}{\numberline {C.2}Artefatos por pregão}{90}{section.160}%
+\contentsline {section}{\numberline {C.3}Exportadores}{91}{section.161}%
+\contentsline {section}{\numberline {C.4}Publicação e rotas}{91}{section.162}%
 \contentsfinish 

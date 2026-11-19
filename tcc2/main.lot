@@ -2,19 +2,25 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {3.1}{\ignorespaces Comparação entre trabalhos relacionados e o Hedge-fund-lab.}}{17}{table.caption.46}%
+\contentsline {table}{\numberline {3.1}{\ignorespaces Comparação entre trabalhos relacionados e o Hedge-fund-lab.}}{18}{table.caption.42}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {4.1}{\ignorespaces Stack implementado do Hedge-fund-lab.}}{19}{table.caption.50}%
-\contentsline {table}{\numberline {4.2}{\ignorespaces Diferenças arquiteturais entre as três gerações da carteira Multiagentes no Replay Contínuo.}}{31}{table.caption.77}%
-\contentsline {table}{\numberline {4.3}{\ignorespaces Constantes determinísticas da versão v3.}}{32}{table.caption.80}%
+\contentsline {table}{\numberline {4.1}{\ignorespaces Features entregues aos analistas. $P_t$ é o fechamento ajustado da sessão de referência; $\mathrm {SMA}_n$ é a média móvel simples de $n$ sessões; $\mathrm {BB}^{\pm }=\mathrm {SMA}_{20}\pm 2\,\sigma _{20}$, com $\sigma _{20}$ o desvio-padrão amostral das 20 últimas sessões.}}{23}{table.caption.51}%
+\contentsline {table}{\numberline {4.2}{\ignorespaces Diferenças arquiteturais entre as três gerações da carteira Multiagentes no Replay Contínuo.}}{29}{table.caption.69}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {5.1}{\ignorespaces Operacionalização das hipóteses no Replay Contínuo Abril--Novembro de 2026.}}{38}{table.caption.89}%
-\contentsline {table}{\numberline {5.2}{\ignorespaces Carteiras de referência do Replay Contínuo e seu papel no estudo.}}{41}{table.caption.95}%
+\contentsline {table}{\numberline {5.1}{\ignorespaces Operacionalização das hipóteses no Replay Contínuo Abril--Novembro de 2026.}}{37}{table.caption.83}%
+\contentsline {table}{\numberline {5.2}{\ignorespaces Carteiras de referência do Replay Contínuo e seu papel no estudo.}}{40}{table.caption.85}%
+\contentsline {table}{\numberline {5.3}{\ignorespaces Ameaças à validade, sentido provável do viés e resultados afetados.}}{46}{table.caption.103}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {6.1}{\ignorespaces Variação de preço dos ativos do universo no período do Replay Contínuo.}}{49}{table.caption.130}%
-\contentsline {table}{\numberline {6.2}{\ignorespaces Retorno e risco das carteiras no Replay Contínuo, 06/04/2026 a 12/11/2026 (153 pregões). Sharpe pela definição \texttt {H2\_SCIENTIFIC\_SHARPE\_DEFINITION\_V1} ($r_f = 0$); Sortino com $r_f = 0$ e MAR $= 0$.}}{50}{table.caption.132}%
-\contentsline {table}{\numberline {6.3}{\ignorespaces Operações, custos e caixa das carteiras no Replay Contínuo. Giro = volume negociado estimado (custo / 0{,}03\%) dividido pelo patrimônio médio.}}{50}{table.caption.133}%
-\contentsline {table}{\numberline {6.4}{\ignorespaces Comparações pareadas de Sharpe no Replay Contínuo (153 pregões) pelo \textit {bootstrap} A: estacionário, \textit {basic} centrado, $B=5000$, semente 20261008, bloco médio 10. $\Delta $ = Sharpe(A) $-$ Sharpe(B), $r_f = 0$. $p_+$ e $L_{95}$: teste unilateral de superioridade (regra congelada); $U_{95}$ e $p_-$: direção inversa, exploratória. Holm dentro de cada família de cinco referências.}}{53}{table.caption.142}%
-\contentsline {table}{\numberline {6.5}{\ignorespaces Indicadores de comportamento da carteira Multiagentes nas três versões do Replay Contínuo.}}{56}{table.caption.148}%
+\contentsline {table}{\numberline {6.1}{\ignorespaces Variação de preço dos ativos do universo no período do Replay Contínuo (preço de referência de entrada em 02/04 e fechamento em 12/11).}}{47}{table.caption.106}%
+\contentsline {table}{\numberline {6.2}{\ignorespaces Retorno e risco das carteiras no Replay Contínuo, 06/04/2026 a 12/11/2026 (153 pregões). Sharpe pela definição \texttt {H2\_SCIENTIFIC\_SHARPE\_DEFINITION\_V1} ($r_f = 0$); Sortino com $r_f = 0$ e MAR $= 0$.}}{48}{table.caption.108}%
+\contentsline {table}{\numberline {6.3}{\ignorespaces Operações, custos e caixa das carteiras no Replay Contínuo. Giro = volume negociado estimado (custo / 0{,}03\%) dividido pelo patrimônio médio.}}{48}{table.caption.109}%
+\contentsline {table}{\numberline {6.4}{\ignorespaces Comparações pareadas de Sharpe no Replay Contínuo (153 pregões) pelo \textit {bootstrap} A: estacionário, \textit {basic} centrado, $B=5000$, semente 20261008, bloco médio 10. $\Delta $ = Sharpe(A) $-$ Sharpe(B), $r_f = 0$. $p_+$ e $L_{95}$: teste unilateral de superioridade (regra congelada); $U_{95}$ e $p_-$: direção inversa, exploratória. Holm dentro de cada família de cinco referências.}}{52}{table.caption.113}%
+\contentsline {table}{\numberline {6.5}{\ignorespaces Indicadores de comportamento da carteira Multiagentes nas três versões do Replay Contínuo.}}{55}{table.caption.119}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {A.1}{\ignorespaces Tecnologias da implementação do Hedge-fund-lab.}}{79}{table.caption.141}%
+\contentsline {table}{\numberline {A.2}{\ignorespaces Mapeamento entre componentes e arquivos do repositório.}}{80}{table.caption.143}%
+\contentsline {table}{\numberline {A.3}{\ignorespaces Constantes determinísticas da versão v3.}}{82}{table.caption.148}%
+\addvspace {10\p@ }
 \addvspace {10\p@ }
 \contentsfinish 

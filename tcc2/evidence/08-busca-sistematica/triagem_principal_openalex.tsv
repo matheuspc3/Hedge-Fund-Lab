@@ -1,0 +1,430 @@
+id	decisao	codigo	multiagente	motivo
+W7115067259	EXCLUI	E6	S	sem resumo; título não indica decisão de negociação avaliada
+W4408371594	INCLUI	I	S	dúvida: negociação cripto multiagente com cenários, sem métrica financeira explícita
+W7130570750	INCLUI	I	S	dúvida: alocação de carteira multiagente, sem métrica financeira explícita
+W7152970628	INCLUI	I	S	dúvida: sem resumo; título indica gestão de carteira com agentes LLM empírica
+W7226003535	INCLUI	I	S	agentes LLM rebalanceiam carteiras; retorno acumulado e Sharpe avaliados
+W7214216194	INCLUI	I	S	supervisão multiagente de posições LLM; retorno, Sharpe e drawdown avaliados
+W7170779355	EXCLUI	E1	S	mercado de eletricidade e carbono, não financeiro
+W7155742781	EXCLUI	E6	S	gestão de finanças pessoais, sem decisão de negociação ou carteira
+W7213465012	EXCLUI	E1	S	mercado de bens simulado, não financeiro
+W4415884391	INCLUI	I	S	dúvida: recomendação de ações multiagente; métricas não explicitamente financeiras
+W7166742333	LEVANTAMENTO	L	-	revisão sobre sistemas multiagente LLM em simulação de mercado financeiro
+W4415592916	INCLUI	I	S	agentes LLM simulam negociação; retorno, Sharpe e drawdown avaliados
+W7167519610	EXCLUI	E4	S	análise multiagente avaliada por juiz LLM e usuários, sem resultado financeiro
+W7213888507	INCLUI	I	N	dúvida: decisões de negociação de LLM em eventos; métrica é concentração, não retorno
+W7171390967	EXCLUI	E6	S	detecção de fraude em demonstrações financeiras, não decisão de negociação
+W4409210602	EXCLUI	E4	S	recomendação de investimento sem avaliação empírica reportada
+W7213562452	EXCLUI	E6	S	sem resumo; título é pesquisa operacional, não finanças
+W7117768133	EXCLUI	E1	S	análise de avaliações de produtos, não mercado financeiro
+W7171740922	INCLUI	I	S	dúvida: decisões de posição em petróleo; acurácia direcional, sem retorno explícito
+W7167917355	EXCLUI	E4	S	consultoria educacional de investimento sem avaliação financeira
+W7225087356	INCLUI	I	S	agentes LLM negociam; Sharpe, drawdown e violação de risco avaliados
+W7204099913	INCLUI	I	N	LLM negocia em backtests com Sharpe e drawdown
+W7114782805	EXCLUI	E4	S	arquitetura conceitual, sem avaliação empírica
+W7135075882	EXCLUI	E5	S	agentes LLM geram escores de fator; PPO decide a operação
+W4407377523	INCLUI	I	S	dúvida: gestão de carteira é um dos casos; resultados com retorno e Sharpe
+W7172349301	INCLUI	I	S	resumo de estudo: agentes LLM hierárquicos em ações japonesas, retorno ajustado ao risco
+W7225877194	INCLUI	I	S	dúvida: sem resumo; título indica sistema multiagente de negociação com memória
+W7134165979	EXCLUI	E5	S	sem resumo; LLM gera fatores alfa, não decide a operação
+W7136504384	EXCLUI	E4	S	framework analítico conceitual, sem avaliação empírica
+W7154577270	INCLUI	I	S	agentes LLM em decisão de ações; backtest de 24 anos com retorno e Sharpe
+W7162766012	EXCLUI	E3	-	sem resumo; ferramenta didática de simulação, sem decisão avaliada
+W7172441344	INCLUI	I	S	agentes Bull e Bear gateiam execução; Sharpe e drawdown avaliados
+W7154466927	EXCLUI	E2	S	sem resumo; classificação de sentimento financeiro
+W7211878571	EXCLUI	E6	S	sem resumo; análise financeira, sem decisão de negociação
+W7157724053	EXCLUI	E6	S	avaliação de risco em financiamento de cadeia de suprimentos, não negociação
+W7166835871	EXCLUI	E3	-	ferramenta (toolchain) para agentes de negociação, sem avaliação de decisão
+W7213293100	EXCLUI	E2	-	LLM só classifica sentimento; decisões de negociação são de DRL
+W4413018474	EXCLUI	E6	S	perfilagem de investidor por conversa, sem decisão de negociação
+W7160668761	EXCLUI	E6	S	análise financeira e relatório estratégico, sem decisão de carteira avaliada
+W7130384783	INCLUI	I	S	agentes LLM com entropia para risco; retorno anualizado e Sharpe vs baselines
+W7203615371	EXCLUI	E4	S	proposta teórica; validação empírica adiada
+W4405572383	INCLUI	I	S	dúvida: agentes com DRL e backtesting; resultado financeiro pouco explícito
+W7140220795	INCLUI	I	N	agente LLM negocia em séries sintéticas; supera estratégias heurísticas
+W7154966679	EXCLUI	E6	S	detecção de vishing, não decisão de negociação
+W7224689277	EXCLUI	E5	N	LLM extrai sinais; agente RL decide a carteira
+W7166802868	EXCLUI	E3	S	framework de avaliação de risco de equipes LLM, não decisão de negociação
+W7162682214	INCLUI	I	S	dúvida: sem resumo; título indica negociação quantitativa multiagente com LLM e RL
+W7104392809	EXCLUI	E4	S	relatórios de investimento avaliados por qualidade, sem resultado financeiro
+W7213560710	LEVANTAMENTO	L	-	revisão sobre agentes LLM em decisão de investimento
+W7104050307	INCLUI	I	S	dúvida: sem resumo; título indica negociação de Bitcoin com backtest
+W7213551149	INCLUI	I	S	dúvida: simulação de mercado de ouro com agentes LLM; sem métrica de retorno
+W4414019821	EXCLUI	E2	S	previsão de mercado por sentimento, sem decisão avaliada
+W7216425168	EXCLUI	E6	S	detecção de fraude e risco, não decisão de negociação
+W7104389650	EXCLUI	E4	S	relatórios e recomendações avaliados por qualidade, sem resultado financeiro
+W7225863621	EXCLUI	E6	S	sem resumo; diagnóstico de não determinismo, sem decisão de negociação
+W7215037100	EXCLUI	E6	S	extração de dados ESG de relatórios, sem decisão de negociação
+W7168079414	EXCLUI	E2	N	sem resumo; previsão de mercado com agentes de linguagem
+W7204272224	EXCLUI	E6	S	inteligência tecnológica a partir de patentes, não financeiro
+W7167101265	EXCLUI	E2	S	sem resumo; mineração de opinião e previsão de tendência
+W7134933297	INCLUI	I	S	dúvida: LLMs negociam em simulação com personas; métrica não financeira explícita
+W7127365153	EXCLUI	E6	N	recomendação de notícias, não decisão de negociação
+W4416286109	EXCLUI	E1	N	mercado de energia peer-to-peer, não financeiro
+W4405440125	EXCLUI	E1	N	mercado de eletricidade; previsão de preço
+W4413703364	EXCLUI	E6	S	verificação de alegações de notícias, não decisão de negociação
+W7170181557	EXCLUI	E1	S	análise de dados de comércio exterior, não mercado financeiro
+W4413880912	EXCLUI	E6	S	escalonamento de contêineres Docker, não decisão financeira
+W4409166235	EXCLUI	E6	N	sem resumo; assessoria financeira conversacional, sem decisão avaliada
+W7161602853	EXCLUI	E2	S	monitoramento e sentimento de notícias, sem decisão de negociação
+W7153140305	EXCLUI	E1	S	apostas esportivas em mercados de previsão, não financeiros
+W7130505189	INCLUI	I	N	dúvida: agentes LLM negociam em mercado artificial; anomalias de preço, sem retorno
+W7167223787	EXCLUI	E6	S	benchmark de memória em agentes, sem tarefa financeira
+W7162774842	EXCLUI	E3	-	benchmark de fatores entre mercados, sem decisão de negociação de agentes
+W7161332619	EXCLUI	E1	S	mercado imobiliário simulado, não financeiro
+W7235844440	EXCLUI	E1	S	sem resumo; comércio mediado por agentes, não mercado financeiro
+W7220821479	EXCLUI	E6	S	orquestração segura de agentes, sem tarefa financeira de decisão
+W7214607450	EXCLUI	E6	S	mitigação de alucinação em QA financeira, sem decisão de negociação
+W7153846082	EXCLUI	E1	N	pesquisa de mercado com agentes, não financeiro
+W7167885093	EXCLUI	E1	S	mercado de eletricidade para lances, não financeiro
+W7213538717	INCLUI	I	N	dúvida: agentes GPT respondem sobre sinais; retornos são das estratégias
+W7160597885	EXCLUI	E4	S	pesquisa de ações sem avaliação financeira quantitativa
+W7124967256	INCLUI	I	S	agentes RAG e previsão para decisão de investimento; backtest com retorno e CAGR
+W7160619825	EXCLUI	E6	N	manutenção de pontes, não financeiro
+W7125630038	LEVANTAMENTO	L	-	revisão sobre agentes LLM de análise de mercado em nuvem
+W7204661834	EXCLUI	E6	S	detecção de conluio em decisões de crédito, não negociação
+W7133537078	INCLUI	I	S	dúvida: conselho de carteira com auditoria de riscos; métricas de risco de investimento
+W4416198711	EXCLUI	E5	S	agentes LLM geram fatores alfa; a operação não é decidida pelo LLM
+W7155052646	EXCLUI	E2	N	previsão de séries temporais financeiras, sem decisão de negociação
+W4408018843	EXCLUI	E4	N	chatbot de pesquisa de ações sem avaliação financeira
+W4416923496	EXCLUI	E6	N	QA financeira com ajuste fino, sem decisão de negociação
+W7202141410	EXCLUI	E6	-	framework de conformidade, sem decisão de negociação
+W7154499518	EXCLUI	E4	S	fluxo conceitual com exemplo ilustrativo, sem avaliação
+W4417452945	EXCLUI	E5	N	LLM conversacional; PPO gera a alocação de carteira
+W7224959837	EXCLUI	E6	S	sem resumo; QA sobre demonstrações financeiras
+W7213264954	EXCLUI	E1	N	simulação de mercado de carbono, não financeiro
+W7134238882	EXCLUI	E5	N	LLM gera sinais de sentimento; controlador RL decide a carteira
+W7134188215	INCLUI	I	N	dúvida: sem resumo; título indica otimização de carteira com agente LLM
+W7117572150	INCLUI	I	S	dúvida: recomendações de ações avaliadas por acurácia direcional contra o mercado
+W7124719010	LEVANTAMENTO	L	-	revisão sobre sistemas multiagente para alocação de ativos
+W7203694954	EXCLUI	E6	S	gestão financeira empresarial, não mercado de ativos
+W7160714406	INCLUI	I	N	agente LLM negocia ações com retorno e aprendizado por reflexão
+W4399485552	EXCLUI	E1	S	mercado de eletricidade, não financeiro
+W7164892512	EXCLUI	E6	-	sem resumo; segurança de agentes LLM, sem tarefa financeira
+W4404351567	EXCLUI	E6	N	análise de relatórios XBRL, sem decisão de negociação
+W4416034487	EXCLUI	E4	S	relatórios de investimento avaliados por Likert e taxa de vitória, sem retorno
+W7125961405	INCLUI	I	S	agentes LLM selecionam e gerenciam carteira; supera baselines com risco controlado
+W7155035830	EXCLUI	E2	S	previsão de indicadores de mercado com debate, sem decisão avaliada
+W7212140695	EXCLUI	E6	S	sem resumo; análise financeira, sem decisão de negociação
+W7214989179	EXCLUI	E1	S	monitoramento de mercado farmacêutico, não financeiro
+W4416195913	EXCLUI	E6	S	QA educacional em finanças; sem decisão de negociação ou carteira
+W7128728076	INCLUI	I	S	agentes LLM debatem decisões de investimento; backtest com Sharpe e drawdown
+W4416044357	EXCLUI	E6	S	sem resumo; título não indica LLM decidindo negociação ou carteira
+W7162405503	EXCLUI	E1	S	simulação de adoção por consumidores; sem ativos financeiros
+W4411447278	EXCLUI	E5	N	LLM só gera sinais de sentimento; decisão é de agentes RL
+W7125980349	EXCLUI	E6	-	segurança de aplicações com agentes LLM; sem finanças
+W4411612802	LEVANTAMENTO	L	-	revisão de frameworks multiagente em serviços financeiros
+W4413968229	EXCLUI	E6	-	seleção de LLM para assistentes de IA; não financeiro
+W7123956700	EXCLUI	E6	S	sem resumo; título não indica LLM decidindo negociação
+W7203971136	LEVANTAMENTO	L	-	revisão de sistemas de recomendação de ações com LLMs
+W4416923556	EXCLUI	E5	N	LLM gera sentimento como entrada; decisão é de agentes DRL
+W4416930569	LEVANTAMENTO	L	-	revisão do panorama de frameworks multiagente com LLM em finanças
+W7155062764	INCLUI	I	S	sistema multiagente com LLMs decide carteira; experimentos superam baselines
+W4412405878	EXCLUI	E1	N	mercado de eletricidade, não financeiro
+W7224643698	EXCLUI	E6	S	avalia adesão a recomendações de agentes, sem resultado financeiro
+W7155412193	EXCLUI	E4	S	proposta conceitual de assistente financeiro, sem avaliação
+W4416034134	LEVANTAMENTO	L	-	survey de agentes LLM em finanças, incluindo trading
+W4414648481	INCLUI	I	S	agentes LLM orquestrados geram recomendações de trading; backtesting com retorno
+W7163678787	INCLUI	I	N	agente LLM aloca carteira; métricas de desempenho em longo horizonte
+W7208838097	INCLUI	I	S	dúvida: LLM gera e avalia estratégias de alpha com backtest e Sharpe
+W7155205695	EXCLUI	E6	-	sem resumo; retenção de dados em assistentes empresariais
+W4414039849	EXCLUI	E3	-	benchmark de competições FinRL; sem LLM decidindo operações
+W7167941523	EXCLUI	E6	S	roteamento de requisições em sistemas financeiros; sem negociação
+W7162950061	EXCLUI	E5	N	LLM gera análises e relatórios; sem recomendação de investimento
+W4416195096	LEVANTAMENTO	L	-	survey de agentes LLM para gestão de investimentos
+W7213897890	INCLUI	I	N	LLM propõe estratégias de trading avaliadas por backtest e alocação de carteira
+W4404208640	LEVANTAMENTO	L	-	revisão de LLMs em finanças e gestão de investimentos
+W7128592059	EXCLUI	E4	S	arquitetura e plano de avaliação para demonstrativos, sem resultados
+W7197002970	LEVANTAMENTO	L	-	tutorial e visão geral de IA generativa em mercados financeiros
+W7224413597	INCLUI	I	N	dúvida: LLM converte texto em ordens em mercado simulado; avalia retornos locais
+W7124425420	EXCLUI	E6	S	sem resumo; orçamento pessoal e consultoria, sem LLM claro
+W7153642486	EXCLUI	E5	N	LLM gera análise de sentimento; recomendação vem de escore ponderado
+W4416923051	EXCLUI	E6	S	QA e sentimento com adaptadores LoRA; sem decisão de negociação
+W7160243447	INCLUI	I	N	LLMs emitem compras e vendas em simulação de negociação com retorno
+W4415124666	EXCLUI	E2	S	previsão de preço com agentes LLM e séries temporais; sem decisão avaliada
+W7127431319	EXCLUI	E1	N	mercado de eletricidade, não financeiro
+W7213972140	EXCLUI	E6	S	sem resumo; título não indica LLM decidindo negociação
+W7126245069	EXCLUI	E3	S	framework aberto sem avaliação de decisão de negociação
+W7224651728	EXCLUI	E6	S	tradução de documentos financeiros; sem decisão de negociação
+W7165127702	EXCLUI	E2	S	previsão de preço com agentes LLM; sem decisão avaliada
+W4412408093	EXCLUI	E5	N	sem resumo; LLM parece apoiar exploração de agente RL, não decidir
+W7220840187	EXCLUI	E6	-	sem resumo; verificação de chamadas de ferramentas em dados financeiros
+W7221861487	EXCLUI	E4	S	assistente multiagente sem avaliação empírica dos resultados
+W7202151141	INCLUI	I	N	LLM combina indicadores e notícias em decisões de trading; avalia risco
+W7167725755	EXCLUI	E6	S	detecção de fraude com SLM; não é negociação
+W7235381817	EXCLUI	E6	S	avalia acurácia e consistência de decisão, sem resultado financeiro
+W7128504597	EXCLUI	E6	-	estudo de intenção de uso por usuários; sem decisão de negociação
+W7213924465	INCLUI	I	N	dúvida: LLM gera ordens em mercado artificial; avaliação por fatos estilizados
+W7155544495	EXCLUI	E6	S	classificação de sensibilidade de documentos; sem negociação
+W7222395788	EXCLUI	E6	S	sem resumo; detecção de anomalias em transações
+W7225869935	EXCLUI	E6	S	sem resumo; verificação de reembolsos
+W4413745906	LEVANTAMENTO	L	-	revisão de LLMs em mercados de ações, incluindo trading
+W4416034999	EXCLUI	E6	S	QA financeiro com cascata multiagente; sem decisão de negociação
+W7212354795	EXCLUI	E6	S	envenenamento de dados em deliberação financeira; sem negociação
+W7136693580	EXCLUI	E6	N	QA sobre relatórios financeiros e RI; sem decisão de negociação
+W4414088766	EXCLUI	E4	S	relatório de análise de ações com 11 agentes; sem resultado financeiro
+W7224545377	EXCLUI	E6	S	QA financeiro com agentes de informação assimétrica; sem negociação
+W7160315630	INCLUI	I	S	seis agentes LLM debatem e recomendam compra, venda ou manutenção; backtest com retorno
+W7215221436	LEVANTAMENTO	L	-	revisão teórica e meta-análise de agentes generativos em finanças
+W7161865200	LEVANTAMENTO	L	-	revisão de modelos baseados em agentes em mercados financeiros
+W7226011882	EXCLUI	E6	S	engenharia de atributos para fraude; não é negociação
+W7163680668	EXCLUI	E2	S	análise de sentimento de notícias financeiras; sem decisão avaliada
+W7223984355	EXCLUI	E6	S	sistema de portfólio docente; sem finanças
+W7135234160	EXCLUI	E1	N	mercado de eletricidade, não financeiro
+W7161644968	EXCLUI	E6	S	gêmeo digital de conformidade para contas a pagar; sem negociação
+W7164188843	EXCLUI	E6	S	sem resumo; raciocínio multimodal em QA financeiro
+W7226034186	EXCLUI	E6	S	auditoria de fluxos multiagente; não decide negociação
+W7171494577	LEVANTAMENTO	L	-	síntese sistemática de IA agêntica em bancos e mercados de capitais
+W7117965745	EXCLUI	E6	S	sem resumo; RAG multiagente sobre relatórios de banco central
+W4416909509	EXCLUI	E5	N	LLM resume notícias como entrada; decisão é de agente RL
+W7167461953	EXCLUI	E5	N	LLM gera escores semânticos; decisão é de agente DRL
+W7167343940	EXCLUI	E1	-	sem resumo; mercados de eletricidade e carbono
+W7203654049	EXCLUI	E6	-	versão avaliada sem LLM; agentes neurais e simbólicos
+W7161472937	EXCLUI	E5	S	LLM gera relatórios de análise; sem decisão de operação avaliada
+W7154344718	EXCLUI	E5	N	LLM estima probabilidades; decisão de spread é analítica
+W4401434217	EXCLUI	E4	-	discussão geral sobre LLMs em finanças; sem avaliação
+W4390231192	EXCLUI	E6	N	orçamento pessoal; sem ativos financeiros
+W7204535915	EXCLUI	E6	N	otimização de redes de água; não financeiro
+W7131403380	EXCLUI	E6	S	gestão de dados mestres; não é negociação
+W7123287366	EXCLUI	E4	-	arquitetura conceitual de plataforma de trading, sem resultados
+W7161308597	EXCLUI	E6	S	acurácia em relatórios financeiros; sem decisão avaliada
+W4417358068	EXCLUI	E6	N	detecção de fraude com RL; não é negociação
+W4407208294	EXCLUI	E1	S	jogo de mercado de equilíbrio para MBA; sem ativos financeiros
+W7226007780	EXCLUI	E2	N	previsão de resultados de lucros; sem decisão de negociação
+W4415987092	EXCLUI	E6	-	sem resumo; extração de indicadores de relatórios
+W7213360004	EXCLUI	E6	N	sem resumo; verificação de artefatos de auditoria
+W7225994460	EXCLUI	E2	N	classificação de notícias quanto à tese; sem decisão avaliada
+W4415688892	LEVANTAMENTO	L	-	revisão de agentes de IA em finanças e fintech
+W7213787618	LEVANTAMENTO	L	-	revisão sistemática PRISMA de sistemas financeiros multiagente
+W4407590721	EXCLUI	E5	N	LLM gera consultas; GAN e VAE geram dados de juros
+W7164009184	EXCLUI	E2	S	previsão direcional com agentes LLM; sem decisão de negociação
+W7223300761	EXCLUI	E1	S	mercado de energia de usinas virtuais; não financeiro
+W7172115053	EXCLUI	E5	S	sem resumo; LLM parece apenas interpretar, não decidir
+W7220648456	LEVANTAMENTO	L	-	revisão de LLMs em fraude, risco e pagamentos
+W4412475058	LEVANTAMENTO	L	-	survey de LLMs em sistemas financeiros
+W7221550956	EXCLUI	E6	S	quiosque de voz para crédito governamental; sem negociação
+W7221146762	INCLUI	I	S	três agentes LLM geram sinais de trading; carteira avaliada com Sharpe e drawdown
+W4402683984	EXCLUI	E5	N	LLM minera fatores; decisão e avaliação de previsão, não de operação
+W4397023841	EXCLUI	E6	-	analítica de surtos; não financeiro
+W7122591965	EXCLUI	E6	-	sem resumo; título não indica LLM decidindo negociação
+W7172512493	EXCLUI	E6	N	execução de transações com verificação simbólica; não negociação
+W4406264474	EXCLUI	E5	N	LLM gera código para consultas; não decide operações
+W7131642288	EXCLUI	E6	-	sem resumo; segurança de fluxos com agentes LLM
+W7166851409	EXCLUI	E1	S	mercado de energia com agentes LLM; não financeiro
+W7222850454	EXCLUI	E6	S	automação de back-office financeiro; sem decisão de negociação
+W7172200379	EXCLUI	E6	S	sem resumo; QA sobre notícias financeiras
+W4407590748	EXCLUI	E4	S	robo-advisor proposto sem resultados financeiros
+W7221145542	EXCLUI	E6	N	cálculo de imposto com ferramenta determinística; não negociação
+W7131670208	EXCLUI	E1	N	mercado de energia; RL decide, LLM só traduz em cronograma
+W7213970138	EXCLUI	E6	S	operações de pagamento, não negociação de ativos
+W7130610180	EXCLUI	E1	S	mercado de eletricidade simulado, não financeiro
+W7224461042	EXCLUI	E6	S	Q&A de finanças pessoais, sem decisão de negociação
+W7222342581	EXCLUI	E5	-	sem resumo; título indica LLM como apoio à análise, não decisão
+W7220698601	EXCLUI	E6	-	parsing de intenção para fechamento contábil, não negociação
+W4416342767	EXCLUI	E4	-	proposta conceitual de liquidação, sem avaliação empírica
+W7214299289	EXCLUI	E6	-	sem resumo; vigilância de dispositivos médicos, não financeiro
+W4408565193	EXCLUI	E5	N	LLM só interface; decisões vêm de indicadores e previsão ML
+W7205709869	INCLUI	I	S	agentes LLM negociam em simulação com resultado de lucro
+W7147307203	LEVANTAMENTO	L	-	revisão de paradigmas de agentes em investimento quantitativo
+W7160389520	INCLUI	I	S	sem resumo; título indica agentes LLM de trading; dúvida: sem resumo
+W7160147849	EXCLUI	E1	S	mercado elétrico (SDAC), diagnóstico de preço, não financeiro
+W7204464092	EXCLUI	E6	-	sem resumo; jogo Pokémon, sem contexto financeiro
+W4409426259	EXCLUI	E2	S	classificação de sentimento financeiro, sem decisão de negociação
+W7140141945	INCLUI	I	S	agentes LLM preveem choques e reportam Sharpe; dúvida: previsão como sinal
+W7160514423	INCLUI	I	S	agentes LLM recomendam BUY/SELL/HOLD com retorno avaliado
+W7213390825	EXCLUI	E6	S	chatbot de conselho financeiro pessoal, sem negociação avaliada
+W7225408032	EXCLUI	E6	S	transações de pagamento, não ativos financeiros
+W7225468137	EXCLUI	E5	S	LLM sintetiza texto; score de risco é determinístico
+W7160718927	EXCLUI	E6	-	sem resumo; QA financeiro com KG, sem decisão de negociação
+W7138984481	EXCLUI	E2	S	sentimento e índice de risco, sem decisão de negociação
+W7163925689	INCLUI	I	S	agentes LLM alocam carteira no S&P 500 vs buy-and-hold, com Sharpe
+W4413406544	EXCLUI	E6	-	sem resumo; título genérico, sem decisão de negociação indicada
+W4416016641	EXCLUI	E6	N	extração de informação de dados lácteos, sem decisão financeira
+W7213162316	EXCLUI	E6	S	agente de data science financeira, sem decisão de investimento
+W7216845876	LEVANTAMENTO	L	-	síntese teórica sobre agentes LLM e blockchain em fintech
+W7212065478	INCLUI	I	N	LLM decide ação e quantidade por trade, avaliado fora da amostra
+W7234653420	EXCLUI	E5	N	LLM extrai dados e calcula indicadores; não decide operação
+W4416034501	INCLUI	I	S	papéis de analistas geram recomendações de investimento avaliadas
+W7213645393	EXCLUI	E6	-	impacto da IA em vieses de investidores; LLM não decide operações
+W7155419494	EXCLUI	E6	-	ameaças cibernéticas em serviços financeiros, sem decisão de negociação
+W7166047937	EXCLUI	E6	S	detecção de fraude em transações, não negociação
+W7204272740	EXCLUI	E6	S	comparação de protocolos de comunicação, sem decisão de negociação
+W4411447274	EXCLUI	E5	N	LLM gera sinais de sentimento; PPO decide a negociação
+W4416195097	EXCLUI	E5	S	agente RL decide; LLM só posta análises de mercado
+W4413640086	EXCLUI	E6	S	acurácia em perguntas de cripto, sem resultado financeiro
+W7160123846	EXCLUI	E6	S	avaliação de respostas sobre earnings calls por LLM-juiz, sem retorno
+W7215123988	EXCLUI	E4	-	posicionamento e framework regulatório, sem avaliação empírica
+W7118967769	EXCLUI	E4	-	paradigma conceitual de agentes autônomos cripto, sem avaliação
+W7216526470	EXCLUI	E6	S	governança de pagamentos e crimes financeiros, sem negociação
+W7225109914	EXCLUI	E1	N	lances em mercado de eletricidade e carbono, não financeiro
+W7225173382	EXCLUI	E6	-	sem resumo; cibersegurança agêntica, não financeiro
+W7118047066	EXCLUI	E6	-	sem resumo; título genérico de análise financeira com LLM
+W4413909532	EXCLUI	E4	-	estudo qualitativo sobre agentes em análise financeira, sem decisão avaliada
+W7142729135	EXCLUI	E4	S	ensaio conceitual sobre agentes em finanças pessoais, sem avaliação
+W7117234219	EXCLUI	E2	-	sem resumo; título indica previsão de lucros por agente multimodal
+W7168141617	EXCLUI	E6	-	orçamento corporativo, não negociação de ativos financeiros
+W7214011554	INCLUI	I	S	agentes LLM em debate e risco para trading A-share com retorno avaliado
+W7169781538	EXCLUI	E4	S	revisão conceitual de decisões financeiras corporativas, sem avaliação
+W7149926154	EXCLUI	E6	S	orçamento de marketing e auditoria, não ativos financeiros
+W4410926033	EXCLUI	E6	-	compliance KYC/AML, sem decisão de negociação
+W7202306872	EXCLUI	E6	-	function calling em backend corporativo, sem mercado financeiro
+W4416978575	INCLUI	I	S	dupla de agentes recomenda comprar/não comprar; dúvida: acurácia, sem retorno
+W7138116413	EXCLUI	E6	S	compliance regulatório, não decisão de negociação
+W7169859902	EXCLUI	E6	-	modelo teórico de opiniões sobre mercado de LLM, sem LLM e sem ativos
+W7141012976	EXCLUI	E6	-	latência e compressão de contexto, sem decisão ou retorno avaliado
+W4417133375	EXCLUI	E6	-	comentário sobre modelo de mercado; LLM não decide operações
+W4411714797	EXCLUI	E6	-	QA financeiro sobre FinanceBench, sem decisão de negociação
+W4413457037	EXCLUI	E6	N	avaliação de crédito, não negociação de ativos
+W4416922821	EXCLUI	E6	-	QA e raciocínio CFA com LoRA, sem decisão de negociação
+W7204184373	EXCLUI	E6	-	sem resumo; deliberação em engenharia de software
+W7162249060	EXCLUI	E6	S	QA sobre grafos de conhecimento, sem finanças de mercado
+W7164745804	EXCLUI	E2	-	sem resumo; título indica previsão de tendência de ações
+W7214715513	EXCLUI	E5	N	ML decide metas e risco; LLM só gera explicações
+W4415953732	EXCLUI	E4	-	artigo conceitual com agenda, sem resultados empíricos
+W7204784865	EXCLUI	E6	-	verificação de afirmações financeiras, sem decisão de negociação
+W7172251652	EXCLUI	E6	-	sem resumo; detecção de corrupção em relatórios, não negociação
+W7165796627	EXCLUI	E6	-	automação de seguros e setor público, não negociação
+W7162134694	EXCLUI	E6	-	governança de agentes com restrições; sem contexto financeiro no resumo
+W7163190866	EXCLUI	E6	-	governança organizacional de agentes, não negociação
+W7225291816	LEVANTAMENTO	L	-	scoping review de 165 estudos sobre LLM e agentes em alfa
+W7131796845	EXCLUI	E6	-	firewall semântico em chatbot bancário, não negociação
+W7213944862	EXCLUI	E6	S	monitoramento de desvio de intenção, não decisão de negociação
+W7155504383	EXCLUI	E6	-	busca contextual em KG, sem decisão de negociação avaliada
+W7164403684	EXCLUI	E6	S	auditoria de RAG em sistemas regulados, não negociação
+W7234548886	EXCLUI	E6	-	observabilidade de agentes, não decisão de negociação
+W4415974685	INCLUI	I	S	sistema multiagente LLM de trading; dúvida: acurácia direcional, sem retorno
+W7225004804	EXCLUI	E6	S	consultoria de aposentadoria, avaliação por rubrica, sem retorno
+W7162400160	EXCLUI	E6	-	desempenho e energia de workflows LLM, sem finanças
+W7170051459	EXCLUI	E4	S	roadmap institucional com entrevistas, sem decisão de negociação
+W7214033583	EXCLUI	E6	S	extração e conformidade regulatória, não negociação
+W7170148932	EXCLUI	E6	S	análise temática de tuítes, não decisão financeira
+W7202392607	EXCLUI	E4	S	arquitetura de referência conceitual, sem avaliação de decisões
+W4414296899	EXCLUI	E6	-	revisão sobre reconciliação financeira, sem decisão de negociação
+W7161585688	EXCLUI	E6	-	helpdesk financeiro com RLHF, sem decisão de negociação
+W7220336631	EXCLUI	E1	S	mercado de trabalho flexível, não financeiro
+W4413074682	INCLUI	I	S	agentes VLM e LLM decidem compra e venda em futuros agrícolas
+W7162849450	INCLUI	I	N	agente LLM decide trading; dúvida: avaliação centrada em previsão
+W4416838114	EXCLUI	E2	-	previsão de preços de ações com LLM, sem decisão avaliada
+W7225632998	EXCLUI	E6	-	revisão sobre honeypots de contratos inteligentes, não negociação
+W7224163021	EXCLUI	E6	S	QA financeiro com KG, sem decisão de negociação
+W7126395656	EXCLUI	E5	N	sem resumo; FinBERT classifica sentimento e DDQN decide
+W4411447327	EXCLUI	E3	-	ambiente de simulação para contest, sem decisão de LLM
+W7228825689	EXCLUI	E6	-	sem resumo; membranas para remoção de PFAS, não financeiro
+W7128611306	EXCLUI	E6	S	orientação financeira em tempo real, sem resultado financeiro
+W7166841376	EXCLUI	E6	S	geração de relatórios financeiros, sem decisão de investimento
+W7126171656	EXCLUI	E6	-	sem resumo; teste de passeio aleatório, não decisão
+W7128046379	EXCLUI	E6	-	avaliação de portfólios de estudantes, não financeiro
+W7217281896	EXCLUI	E4	-	arquitetura conceitual de conformidade, sem avaliação empírica
+W4412789947	EXCLUI	E6	S	checagem de relações em demonstrações contábeis, não negociação
+W7221155324	EXCLUI	E4	S	protótipo de caixa corporativo, sem avaliação de retorno
+W4411447309	EXCLUI	E5	N	LLM gera sinais de notícia; RL decide a negociação
+W7162092602	EXCLUI	E6	-	viés em resumos de LLM sobre fraudes, não decisão
+W7204619536	EXCLUI	E6	S	DevOps de pagamentos, sem decisão de negociação
+W4404699539	EXCLUI	E6	-	agente de atendimento sobre produtos, sem decisão de carteira
+W7223153450	LEVANTAMENTO	L	-	revisão de IA em mercados financeiros com comparação experimental
+W7224618153	EXCLUI	E6	-	benchmark de documentos corporativos para agentes de código
+W4414077015	EXCLUI	E3	N	benchmark de QA financeiro com ferramentas; sem decisão de negociação
+W7225988091	EXCLUI	E6	N	governança de agentes para detecção de fraude; não é negociação
+W7166823336	EXCLUI	E6	N	contas a receber em ERP; sem negociação de ativos financeiros
+W4412945479	INCLUI	I	N	dúvida: agente decide investimento; avaliação só de alinhamento, sem retorno
+W7214946327	EXCLUI	E3	N	infraestrutura de dados via MCP; sem tarefa de decisão avaliada
+W7217363509	EXCLUI	E4	N	agenda de pesquisa sobre fraude de cartão; sem avaliação empírica
+W4414463276	LEVANTAMENTO	L	-	revisão sobre agentic AI em autonomia financeira
+W7150875607	EXCLUI	E4	S	método conceitual de risco financeiro de organizações; sem avaliação de negociação
+W7234770293	EXCLUI	E4	N	arquitetura para decisão de crédito; não é negociação; sem avaliação financeira
+W7154283164	LEVANTAMENTO	L	-	revisão sobre agentic AI em funções financeiras corporativas
+W7165861710	LEVANTAMENTO	L	-	revisão sobre LLMs em auditoria de relatórios financeiros
+W7162429484	EXCLUI	E1	-	sem resumo; tema hídrico-agrícola, não financeiro
+W7212449198	EXCLUI	E2	-	survey de previsão de séries temporais; sem decisão de negociação avaliada
+W7203619376	LEVANTAMENTO	L	-	revisão de teoria de carteira até investimento com agentes LLM
+W4415254339	EXCLUI	E6	N	agentes GenAI em ERP financeiro público; sem negociação de ativos
+W7226034491	EXCLUI	E3	N	seleção de ferramentas para agentes financeiros; sem decisão de negociação
+W7204177100	EXCLUI	E6	N	LLM classifica publicações de revisão de VC; não decide investimento
+W7165371347	EXCLUI	E6	S	text-to-SQL para dados de marketing; sem decisão financeira
+W7167481291	EXCLUI	E2	N	sem resumo; título indica previsão de séries de ações
+W7154981679	EXCLUI	E6	S	fraude e perfil de risco de clientes; não é negociação
+W7212222247	EXCLUI	E6	S	automação de processos bancários; não é negociação de ativos
+W7222938920	EXCLUI	E6	-	revisão de compressão de LLM; tema não financeiro
+W4408146566	EXCLUI	E3	N	sistema de perguntas e respostas financeiras; sem decisão de negociação
+W7225099949	EXCLUI	E2	N	previsão direcional de ações por ensemble; sem resultado financeiro
+W7128519007	EXCLUI	E6	S	RAG para regulação de mercado de eletricidade; não financeiro
+W4416119908	EXCLUI	E6	-	impacto da IA na qualidade de divulgação financeira; sem negociação
+W7165201815	EXCLUI	E6	N	chatbot de orçamento pessoal; não é alocação de ativos financeiros
+W7204470097	EXCLUI	E6	-	survey de firewalls para prompts; tema de segurança, não financeiro
+W4410961826	EXCLUI	E1	-	mercado geral e marketing com IA generativa; não financeiro
+W7214937587	EXCLUI	E6	N	ações financeiras sintéticas de workflow; sem negociação de ativos
+W7154466410	EXCLUI	E6	-	sem resumo; survey de alinhamento de LLMs, não financeiro
+W7222934836	EXCLUI	E1	N	publicidade digital; mercado não financeiro
+W7214930160	EXCLUI	E1	S	compartilhamento de dados de manufatura; mercado de dados não financeiro
+W7138840392	EXCLUI	E1	N	mercado de eletricidade e DER; não financeiro
+W7225250516	EXCLUI	E6	S	verificação de presença para sistema financeiro; sem decisão avaliada
+W7224572098	EXCLUI	E1	N	populações sintéticas para pesquisa de mercado; não financeiro
+W4410895375	EXCLUI	E6	N	sem resumo; mentor educacional de modelagem financeira
+W7221716324	EXCLUI	E1	S	mercado de trabalho e vagas; não financeiro
+W7171688203	EXCLUI	E2	-	sem resumo; título indica previsão de mercado e cadeia de suprimentos
+W4415532996	LEVANTAMENTO	L	-	revisão de IA generativa em economia financeira
+W7223219087	EXCLUI	E6	-	visão geral de modelos de IA e regulação brasileira; não financeiro
+W4405710675	EXCLUI	E6	N	atendimento ao cliente com IA; sem negociação
+W4412377862	LEVANTAMENTO	L	-	tutorial que revisa IR e LLM em finanças, incluindo carteiras
+W4407264175	EXCLUI	E6	-	sem resumo; título sobre adoção de IA em finanças, sem decisão de LLM
+W7225199013	EXCLUI	E6	-	revisão de estratégia empresarial; não financeira
+W4409968239	EXCLUI	E6	N	consulta em linguagem natural a dados educacionais; não financeiro
+W4410349955	EXCLUI	E6	N	detecção de fraude em DeFi com GNN e RL; não LLM nem negociação
+W4412886895	EXCLUI	E3	-	benchmark e leaderboard de LLM financeiro coreano; sem negociação
+W7142927822	LEVANTAMENTO	L	-	revisão de arquiteturas de agentes financeiros incluindo LLM
+W7222819913	EXCLUI	E2	N	sem resumo; título indica previsão de tendência de ações
+W4404952869	EXCLUI	E1	N	conformidade de contratos inteligentes em comércio de eletricidade e carbono
+W7160254291	EXCLUI	E6	-	sem resumo; tradução financeira, sem decisão de negociação
+W7171353822	EXCLUI	E5	-	PPO decide carteira; FinBERT só gera embeddings de sentimento
+W7166550039	EXCLUI	E6	S	extração de causalidade em textos financeiros; sem decisão de negociação
+W4414904513	EXCLUI	E1	N	agregação de preferências para seleção de portfólio de inovação; não financeiro
+W4410867872	EXCLUI	E4	-	arquitetura conceitual de plataforma de empréstimos; sem avaliação de LLM
+W7213747524	EXCLUI	E3	-	sem resumo; benchmark de avaliação financeira multimodal
+W7165395817	EXCLUI	E1	S	simulação de conselho municipal de orçamento; não financeiro
+W7167084133	INCLUI	I	N	dúvida: agente LLM negocia NFT; avaliação sem retorno financeiro
+W4400207803	EXCLUI	E6	-	sem resumo; instrutores virtuais de educação financeira
+W4413234045	EXCLUI	E6	S	autocorreção de infraestrutura de HFT; não decide negociação
+W7225109497	EXCLUI	E6	S	geração de séries de preços; não há decisão de negociação
+W7133361728	EXCLUI	E6	N	assistente de finanças pessoais; não negocia ativos
+W7220368349	LEVANTAMENTO	L	-	revisão de investimento quantitativo em ações e agentes LLM
+W4412378282	EXCLUI	E4	-	proposta de workshop sobre IR e IA generativa; sem avaliação
+W4417358049	LEVANTAMENTO	L	-	revisão de IA no conjunto de ferramentas de ciência de dados financeira
+W7153004392	EXCLUI	E2	N	sem resumo; título indica previsão de movimento de ações
+W7128468820	EXCLUI	E3	N	QA sobre documentos financeiros; sem decisão de negociação
+W4408219430	EXCLUI	E5	N	LLM gera insumo de notícias; DRL decide a carteira
+W7216522486	EXCLUI	E6	-	revisão de fraude com ML; LLM é tema secundário
+W4410004591	EXCLUI	E5	N	DQN decide poupança e investimento; GPT só traduz respostas
+W7164558154	EXCLUI	E4	N	arquitetura conceitual de governança de IA financeira; sem avaliação
+W7163735760	EXCLUI	E6	-	sem resumo; verificação de afirmações, não decisão financeira
+W7163055571	LEVANTAMENTO	L	-	revisão de decisão híbrida humano-IA em finanças
+W7214126319	EXCLUI	E5	N	sem resumo; RL de negociação com sentimento, sem LLM decisor
+W4406621991	LEVANTAMENTO	L	-	revisão de IA generativa e big data em risco financeiro
+W7155050784	EXCLUI	E6	N	simulação de usuários para diálogo financeiro; não negocia
+W7220475889	EXCLUI	E4	-	framework conceitual de segurança e risco de modelo; sem avaliação
+W7224504569	EXCLUI	E6	N	tarefas de NER e QA financeiro; sem decisão de negociação
+W4407949467	EXCLUI	E6	-	instrutores virtuais de educação financeira; sem decisão de negociação
+W7224541484	EXCLUI	E6	N	análise de hesitação em atendimento financeiro; não decide investimento
+W7211920845	EXCLUI	E6	-	identidade de aprendizes de inglês com IA; não financeiro
+W7169794178	EXCLUI	E6	-	compressão de mensagens MCP; não financeiro
+W7160027865	EXCLUI	E6	-	sem resumo; capítulo geral sobre IA em finanças
+W7124899927	EXCLUI	E1	S	geração de relatórios de trading de eletricidade; mercado não financeiro
+W4416768577	EXCLUI	E4	N	modelo financeiro corporativo sem avaliação empírica de decisão
+W7169886796	EXCLUI	E6	S	risco geográfico AML com mistura de especialistas; não negocia
+W7167693129	EXCLUI	E6	-	estudo de casos de integração de IA em fintech; sem decisão avaliada
+W7171848311	EXCLUI	E6	-	sem resumo; microsserviços para detecção de fraude
+W7224638729	EXCLUI	E6	S	sumarização científica longa; tema não financeiro
+W7104280333	EXCLUI	E4	S	modelo conceitual de moderação de agentes em decisão de investimento
+W7124959434	EXCLUI	E4	N	framework conceitual de crime financeiro sem avaliação
+W7156017686	EXCLUI	E6	-	sem resumo; tema médico-urológico, não financeiro
+W7167793684	EXCLUI	E5	-	LLM só extrai critérios; pontuação de energia não é negociação
+W4415723430	EXCLUI	E2	S	sinais de mercado a partir de dados alternativos; previsão sem decisão avaliada
+W7140658110	LEVANTAMENTO	L	-	revisão sistemática de IA agêntica em gestão de projetos financeiros
+W7224136932	EXCLUI	E5	N	agente LLM ajusta hiperparâmetros; previsão de orçamento de museus
+W4414143055	LEVANTAMENTO	L	-	revisão de tecnologias digitais e LLM no desenvolvimento financeiro
+W7167339205	EXCLUI	E6	N	automação de processos corporativos; não é negociação
+W7163063111	EXCLUI	E4	-	sem resumo; artefato de design de copiloto financeiro, sem avaliação
+W7211976715	EXCLUI	E2	-	sem resumo; previsão de risco bancário a partir de notícias
+W7220042740	EXCLUI	E2	-	previsão de séries financeiras com Transformer; sem LLM decisor
+W7169881103	EXCLUI	E6	-	design de servidores MCP para analítica; não financeiro
+W7212791347	EXCLUI	E6	-	questionário sobre XAI em bancos móveis; sem decisão de negociação
+W7222730736	EXCLUI	E6	-	entrevistas sobre IA-fintech e empreendedorismo; sem decisão de negociação

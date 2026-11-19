@@ -385,7 +385,7 @@ def figura(nome, legenda, ylabel, prefixo, chaves, extra=""):
 todas = ["ma_v1", "ma_v2", "ma_v3", "bh", "sma", "boll", "ew", "mv"]
 figura("replay-patrimonio",
        "Patrimônio de fechamento das carteiras no Replay Contínuo, de 02/04/2026 "
-       "(R\\$ 100 mil) a 12/11/2026. As referências são idênticas nas três campanhas.",
+       "(R\\$~100 mil) a 12/11/2026. As referências são idênticas nas três campanhas.",
        "Patrimônio (R\\$ mil)", "eq_", todas)
 figura("replay-drawdown",
        "Drawdown (queda em relação ao pico anterior) das carteiras no Replay Contínuo.",

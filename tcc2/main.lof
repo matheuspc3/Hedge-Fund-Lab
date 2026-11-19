@@ -3,13 +3,20 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces Fluxo do pipeline de dados científico: preço oficial da B3 (COTAHIST) combinado ao fator de ajuste por proventos do \texttt {yfinance}, seguido de transformação, carga e persistência em SQLite.}}{21}{figure.caption.52}%
-\contentsline {figure}{\numberline {4.2}{\ignorespaces Grafo de decisão do sistema multiagente de ativo único (LangGraph): sequência linear \texttt {technical\_analyst} $\rightarrow $ \texttt {risk\_manager}, com aresta condicional que encaminha ao \texttt {portfolio\_manager} apenas quando o veredito é \texttt {APROVADO}.}}{23}{figure.caption.57}%
-\contentsline {figure}{\numberline {4.3}{\ignorespaces Fluxo de um pregão $t$ na carteira multiagente multiativos. Caixas sombreadas são etapas determinísticas; caixas brancas envolvem chamadas ao modelo de linguagem (a etapa de risco apenas quando a regra dura não se aplica). O retângulo tracejado indica as etapas executadas por ativo.}}{26}{figure.caption.64}%
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Componentes do Hedge-fund-lab. Caixas sombreadas são etapas determinísticas; caixas brancas envolvem chamadas ao modelo de linguagem. O retângulo tracejado delimita a cadeia de decisão, alimentada pela base congelada (\textit {replay}) ou pelo ciclo diário (tracejado).}}{22}{figure.caption.46}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Fluxo de um pregão $t$ na carteira multiagente multiativos. Caixas sombreadas são etapas determinísticas; caixas brancas envolvem chamadas ao modelo de linguagem (a etapa de risco apenas quando a regra dura não se aplica). O retângulo tracejado indica as etapas executadas por ativo.}}{25}{figure.caption.56}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Explorador do Replay Contínuo (v1), na sessão de 12/11/2026: seletores de carteira, sessão e ativo; patrimônio, retorno desde D0, diferença para o \textit {Buy \& Hold}, caixa, valores a receber e custos acumulados da carteira Multiagentes; e curvas de retorno das seis carteiras de 06/04 a 12/11/2026.}}{31}{figure.caption.73}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Linha do tempo do estudo: janelas do protocolo planejado (acima, em anos) e eventos de 2026 (abaixo, em meses). As janelas de Validação e de Teste Final foram apenas propostas.}}{33}{figure.caption.77}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Desenho experimental do replay: três campanhas com seis carteiras cada, série pareada de 153 retornos, Bootstrap A e famílias de contrastes. Contornos tracejados indicam o que não recebe decisão inferencial.}}{36}{figure.caption.80}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Patrimônio de fechamento das carteiras no Replay Contínuo, de 02/04/2026 (R\$~100 mil) a 12/11/2026. As referências são idênticas nas três campanhas.}}{49}{figure.caption.110}%
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Drawdown (queda em relação ao pico anterior) das carteiras no Replay Contínuo.}}{49}{figure.caption.111}%
+\contentsline {figure}{\numberline {6.3}{\ignorespaces Comportamento do comitê e das operações da carteira Multiagentes por versão: (a) distribuição dos placares do sinal vencedor, em percentual dos pareceres com análise completa (765 na v1, 760 na v2 e 745 na v3); (b) RSI médio das compras e das vendas executadas.}}{56}{figure.caption.120}%
+\contentsline {figure}{\numberline {6.4}{\ignorespaces Caixa em percentual do patrimônio das três versões da carteira Multiagentes no Replay Contínuo.}}{58}{figure.caption.128}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {6.1}{\ignorespaces Patrimônio de fechamento das carteiras no Replay Contínuo, de 02/04/2026 (R\$ 100 mil) a 12/11/2026. As referências são idênticas nas três campanhas.}}{51}{figure.caption.134}%
-\contentsline {figure}{\numberline {6.2}{\ignorespaces Drawdown (queda em relação ao pico anterior) das carteiras no Replay Contínuo.}}{51}{figure.caption.135}%
-\contentsline {figure}{\numberline {6.3}{\ignorespaces Caixa em percentual do patrimônio das três versões da carteira Multiagentes no Replay Contínuo.}}{59}{figure.caption.156}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {B.1}{\ignorespaces Grafo de decisão do caminho de ativo único (LangGraph): sequência linear \texttt {technical\_analyst} $\rightarrow $ \texttt {risk\_manager}, com aresta condicional ao \texttt {portfolio\_manager} apenas quando o veredito é \texttt {APROVADO}.}}{87}{figure.caption.156}%
 \addvspace {10\p@ }
 \contentsfinish 

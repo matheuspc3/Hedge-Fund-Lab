@@ -11,11 +11,87 @@ Este capítulo descreve o desenho experimental pelo qual as hipóteses do trabal
 \section{Caracterização da Pesquisa}
 \label{sec:met-caracterizacao}
 
-A pesquisa é aplicada, de abordagem quantitativa e de caráter exploratório e comparativo. O método é a simulação retrospectiva (\textit{replay}) de um processo de decisão com inferência real do modelo de linguagem sobre um período fechado: as decisões da carteira Multiagentes resultam de chamadas efetivas ao \texttt{gemini-3.8-flash}, e não de respostas simuladas. As respostas simuladas e a rede bloqueada foram usadas apenas para qualificar o mecanismo antes de cada execução paga (Seção~\ref{sec:arq-evolucao}) e não integram nenhum resultado.
+A pesquisa é aplicada, de abordagem quantitativa e de caráter comparativo. O método é a simulação retrospectiva (\textit{replay}) de um processo de decisão com inferência real do modelo de linguagem sobre um período fechado: as decisões da carteira Multiagentes resultam de chamadas efetivas ao \texttt{gemini-3.8-flash}, e não de respostas simuladas. As respostas simuladas e a rede bloqueada foram usadas apenas para qualificar o mecanismo antes de cada execução paga (Seção~\ref{sec:arq-evolucao}) e não integram nenhum resultado.
 
-O desenho é pareado: todas as carteiras partem do mesmo estado, são avaliadas nas mesmas sessões, sob os mesmos preços de execução e marcação e sob o mesmo custo de negociação, de modo que as diferenças observadas pertencem às regras de decisão. Duas perguntas organizam o estudo. A primeira corresponde às hipóteses herdadas do TCC1 (Seção~\ref{sec:met-hipoteses}). A segunda é arquitetural e exploratória: mantidos o modelo, a quantidade de agentes, os dados e a execução, quanto do comportamento da carteira multiagente depende da especialização dos analistas e das regras determinísticas aplicadas sobre a proposta do gestor. A primeira pergunta é respondida principalmente pela versão v1; a segunda, pela comparação entre as três versões.
+O desenho é pareado: todas as carteiras partem do mesmo estado, são avaliadas nas mesmas sessões, sob os mesmos preços de execução e marcação e sob o mesmo custo de negociação, de modo que as diferenças observadas são atribuíveis às regras de decisão, condicionalmente à trajetória e à execução observadas. Duas perguntas organizam o estudo. A primeira corresponde às hipóteses herdadas do TCC 1 (Seção~\ref{sec:met-hipoteses}). A segunda é arquitetural e descritiva: mantidos o modelo, a quantidade de agentes, os dados e a execução, quanto do comportamento da carteira multiagente depende da especialização dos analistas e das regras determinísticas aplicadas sobre a proposta do gestor. A primeira pergunta é respondida principalmente pela versão v1; a segunda, pela comparação entre as três versões.
 
-O replay foi produzido em novembro de 2026, depois do fim do período simulado, como extensão exploratória autorizada pela DP-37, que reabre a DP-31 apenas para essa reconstrução e não afirma ausência de contaminação do modelo. Essa natureza retrospectiva é a principal restrição do estudo e condiciona a leitura de todos os resultados (Seção~\ref{sec:met-ameacas}).
+O replay foi produzido em novembro de 2026, depois do fim do período simulado, como extensão retrospectiva autorizada pela \mbox{DP-37}, que reabre a \mbox{DP-31} apenas para essa reconstrução e não afirma ausência de contaminação do modelo. Essa natureza retrospectiva é a principal restrição do estudo e condiciona a leitura de todos os resultados (Seção~\ref{sec:met-ameacas}). O estatuto das versões difere: a v1 é pré-especificada e recebe decisão inferencial, condicionada à possível contaminação do modelo; a v2 e a v3 são iterações exploratórias, ajustadas dentro da amostra, e recebem apenas descrição; o acompanhamento prospectivo é a única avaliação livre de contaminação (Seção~\ref{sec:met-prospectivo}).
+
+\section{Do Protocolo Planejado ao Replay}
+\label{sec:met-protocolo}
+
+O planejamento original previa avaliar H2 por um protocolo confirmatório com fases em ordem fixa sobre um único ativo (PETR4.SA), cujo Teste Final, isolado e único momento confirmatório, ocuparia a janela proposta de 01/09/2025 a 31/08/2026; o desenho completo está na Subseção~\ref{sec:met-protocolo-detalhes}. Esse protocolo não foi concluído, e o replay o substitui como estudo empírico do trabalho. A Figura~\ref{fig:met-linha-tempo} situa no tempo as janelas planejadas, o corte de conhecimento declarado do modelo e os eventos do replay e do acompanhamento prospectivo.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+  lab/.style={font=\scriptsize, align=center},
+  seg/.style={draw, minimum height=6mm, inner sep=1pt, font=\scriptsize, align=center},
+  mk/.style={font=\scriptsize, align=center},
+]
+% Escala superior: 1,7 cm por ano, origem em 2018,0
+\node[lab, anchor=east] at (-0.15,0) {Planejado};
+\fill[gray!25] (0.05,-0.3) rectangle (10.35,0.3);
+\fill[gray!50] (10.4,-0.3) rectangle (11.25,0.3);
+\draw[dashed, fill=white] (11.3,-0.3) rectangle (13.0,0.3);
+\draw[dashed, fill=gray!10] (13.0,-0.3) rectangle (14.7,0.3);
+\draw (0.05,-0.3) rectangle (11.25,0.3);
+\node[lab] at (5.2,0) {Desenvolvimento (âncoras elegíveis, 12/01/2018--28/02/2024)};
+\node[lab] at (12.15,0) {Validação};
+\node[lab] at (13.85,0) {Teste Final};
+\node[lab] at (9.6,-0.85) {janela sequencial\\01/03--30/08/2024};
+\draw[-{Stealth}] (10.5,-0.65) -- (10.85,-0.32);
+\foreach \y in {2018,2020,2022,2024,2026}{
+  \draw ({1.7*(\y-2018)},-1.45) -- ++(0,-0.08);
+  \node[lab] at ({1.7*(\y-2018)},-1.7) {\y};
+}
+\draw (0,-1.45) -- (14.75,-1.45);
+\draw[dashed] (13.9,0.3) -- (13.9,1.0);
+\node[mk] at (13.9,1.3) {corte declarado\\do modelo (mar/2026)};
+\node[lab] at (13.0,-0.85) {janelas propostas,\\não aprovadas};
+% Escala inferior: 2026, 1,6 cm por mês, março = 0
+\def\mx#1{(1.6*(#1-3))}
+\node[lab, anchor=east] at (-0.15,-3.9) {2026};
+\draw (0,-4.5) -- (14.4,-4.5);
+\foreach \m/\n in {3/mar,4/abr,5/mai,6/jun,7/jul,8/ago,9/set,10/out,11/nov}{
+  \draw ({1.6*(\m-3)},-4.5) -- ++(0,-0.08);
+  \node[lab, anchor=west] at ({1.6*(\m-3)+0.08},-4.78) {\n};
+}
+\fill[gray!25] (0,-4.25) rectangle (1.6,-3.95);
+\draw (0,-4.25) rectangle (1.6,-3.95);
+\node[lab] at (0.8,-3.6) {março: corte\\do modelo};
+\fill[gray!50] ({1.6*(4.167-3)},-4.25) rectangle ({1.6*(11.37-3)},-3.95);
+\draw ({1.6*(4.167-3)},-4.25) rectangle ({1.6*(11.37-3)},-3.95);
+\node[lab] at (7.6,-3.6) {replay: 153 pregões, 06/04--12/11};
+\draw[fill=white] ({1.6*(4.167-3)},-3.35) rectangle ({1.6*(4.567-3)},-3.15);
+\draw[fill=white] ({1.6*(4.633-3)},-3.35) rectangle ({1.6*(5.133-3)},-3.15);
+\node[lab, anchor=west] at ({1.6*(5.133-3)+0.1},-3.25) {ensaios curtos: 06--17/04 e 20/04--05/05};
+\draw ({1.6*(10.42-3)},-4.25) -- ++(0,-1.0);
+\node[lab, anchor=east] at ({1.6*(10.42-3)-0.05},-5.4) {início do acompanhamento\\prospectivo, 14/10};
+\draw[dashed] ({1.6*(10.61-3)},-3.95) -- ++(0,0.35);
+\node[lab, anchor=south] at ({1.6*(10.61-3)-0.2},-3.3) {ciclo\\autônomo\\20/10};
+\draw[-{Stealth}] ({1.6*(11.5-3)},-5.25) -- ({1.6*(11.5-3)},-4.55);
+\node[lab, anchor=north east] at ({1.6*(11.5-3)+0.5},-5.25) {campanhas\\13, 15 e 16/11};
+\end{tikzpicture}%
+}
+\caption{Linha do tempo do estudo: janelas do protocolo planejado (acima, em anos) e eventos de 2026 (abaixo, em meses). As janelas de Validação e de Teste Final foram apenas propostas.}
+\label{fig:met-linha-tempo}
+{\footnotesize Fonte: elaborado pelos autores, a partir de \path{docs/DIRECAO_DO_PROJETO.md} (\mbox{DP-31}, \mbox{DP-34} e \mbox{DP-37}) e do texto deste capítulo.}
+\end{figure}
+
+A figura mostra que a janela proposta para o Teste Final (09/2025 a 08/2026) começa antes do corte do modelo e se sobrepõe apenas em parte ao replay (04/2026 a 11/2026), que ocorre integralmente depois do corte declarado. As campanhas foram executadas depois do último pregão simulado, e o acompanhamento prospectivo, iniciado em 14/10/2026, é a única avaliação em que cada decisão precede seu desfecho.
+
+As fases de desenvolvimento foram executadas em sucessivas emendas do tratamento, e a Validação foi executada em caráter provisório e descritivo, sem a aprovação formal prevista no protocolo; seus resultados não são usados para decidir as hipóteses (resumo em \path{tcc2/evidence/03-metodo-h2/H2_V6_OA1_VALIDATION_SCIENTIFIC_SUMMARY.md}). O \textit{Freeze} formal e o Teste Final não foram executados, por três razões. Primeiro, as janelas de Validação e de Teste Final e a especificação da camada de avaliação nunca receberam a aprovação formal prevista dos autores e do orientador. Segundo, a \mbox{DP-31} (17/10/2026) estabeleceu que agentes de IA só são avaliados de forma prospectiva, porque a simulação retrospectiva com o modelo é contaminada pelo conhecimento que ele pode ter do desfecho; a janela proposta para o Teste Final termina em agosto de 2026 e, em grande parte, antecede o corte de conhecimento declarado do modelo (março de 2026). Terceiro, três execuções por fase sobre janelas anuais multiplicariam o custo de inferência. Os resultados provisórios desse caminho não são usados para decidir as hipóteses.
+
+Do protocolo, o replay herda a definição do Sharpe, o Bootstrap A, a configuração do comitê técnico e o princípio causal; não herda a separação entre calibração e avaliação, a janela reservada, as três repetições, o universo de ativo único nem a estrutura de custos. O replay é, portanto, o estudo empírico pelo qual as hipóteses são respondidas, com o alcance mais restrito que sua natureza retrospectiva impõe: decisão inferencial apenas para a v1, condicionada à possível contaminação, e descrição para a v2 e a v3.
+
+\subsection{Detalhes do protocolo original}
+\label{sec:met-protocolo-detalhes}
+
+O planejamento inicial previa avaliar H2 no caminho de ativo único (Apêndice~\ref{ap:ativo-unico}, Seções~\ref{sec:arq-ativo-unico} e~\ref{sec:arq-experimentos}), sobre PETR4.SA, por um protocolo com fases em ordem fixa e autoridades não cumulativas: \textit{Hardening}, ajuste de configuração sem acesso a métricas financeiras; CAL-A; Desenvolvimento Sequencial; Relatório de Estresse; CAL-B; \textit{Freeze}, congelamento final da configuração; Validação, descritiva; e Teste Final, isolado e único momento confirmatório. O conjunto elegível de âncoras tinha 1.519 sessões, de 12/01/2018 a 28/02/2024, cada uma com ao menos 504 sessões de histórico; o diagnóstico do \textit{Hardening} usava 8 estados sintéticos e 4 sessões reais (\texttt{H\_real}), excluídas dos demais conjuntos. As calibrações usavam um conjunto de 30 âncoras cronológicas (20 para a CAL-A e 10 para a CAL-B, disjuntas) e até oito âncoras de estresse; a janela sequencial (01/03/2024 a 30/08/2024) e as quatro janelas de estresse foram congeladas, enquanto as janelas de Validação (02/09/2024 a 29/08/2025) e de Teste Final (01/09/2025 a 31/08/2026) foram apenas propostas.
+
+A configuração do comitê foi congelada --- \textit{self-consistency} com cinco analistas, limiar de consenso 0,6 e voto obrigatório de todos, \texttt{gemini-3.8-flash} com temperatura 1,0 e até 8.192 \textit{tokens} de saída, peso-alvo determinístico --- e sua integridade era verificada por \textit{hash} fixo da especificação do participante (\texttt{PARTICIPANT\_SHA256}) antes de cada fase. A simulação seguia o princípio pseudo-\textit{live} causal, com decisão no fechamento de $t$, execução na abertura de $t+1$ e histórico expansivo mínimo de 504 sessões, com custo de 5 pontos-base de \textit{spread} e taxa de 0,032\% sobre o nocional. O estimando era a média dos Sharpes de três execuções do modelo menos o Sharpe do Buy \& Hold, com um único contraste confirmatório no Teste Final pelo Bootstrap A. A calibração não constituía treinamento: o modelo chega pré-treinado, sem ajuste fino, e o que se ajustava era a configuração do sistema.
 
 \section{Desenho do Replay}
 \label{sec:met-desenho}
@@ -23,27 +99,59 @@ O replay foi produzido em novembro de 2026, depois do fim do período simulado, 
 Os elementos do desenho, comuns às três versões, são:
 
 \begin{itemize}
-    \item \textbf{Período:} 153 pregões da B3, de 06/04/2026 a 12/11/2026. O início corresponde ao primeiro pregão de abril, posterior ao corte de conhecimento declarado do modelo (março de 2026); o fim corresponde ao último fechamento disponível na data da execução. O período não foi escolhido a partir de retornos observados.
-    \item \textbf{Universo:} BBAS3, ITUB4, PETR4, VALE3 e WEGE3, fixo durante todo o período, inclusive quando a posição em um ativo é zerada.
-    \item \textbf{Capital:} R\$ 100.000,00 independentes por carteira, sem aportes nem retiradas.
-    \item \textbf{Cesta inicial imposta:} todas as carteiras começam com a mesma cesta (DP-20) --- 20\% do capital por ativo, em ações inteiras, ao fechamento de 02/04/2026, sessão de referência anterior ao primeiro pregão, com custo zero e sem alegação de execução a mercado ---, resultando em 855 BBAS3, 461 ITUB4, 415 PETR4, 239 VALE3 e 397 WEGE3. A alocação inicial não é escolhida pelos agentes nem pelas regras de referência.
+    \item \textbf{Período:} 153 pregões da B3, de 06/04/2026 a 12/11/2026. O início corresponde ao primeiro pregão de abril, posterior ao corte de conhecimento declarado do modelo (março de 2026) \citep{GeminiModelCard2026}; o fim corresponde ao último fechamento disponível na data da execução. O período não foi escolhido a partir de retornos observados.
+    \item \textbf{Universo:} BBAS3, ITUB4, PETR4, VALE3 e WEGE3, ações de grande liquidez e ampla cobertura no mercado brasileiro, de setores distintos (bancos, petróleo, mineração e bens de capital). O tamanho do universo foi limitado pelo custo de inferência, que cresce linearmente com o número de ativos (cinco analistas e um analista de risco por ativo, mais o gestor, em cada pregão); a arquitetura não depende desse número. O universo foi fixado antes do replay, sem uso do desempenho do período como critério, e mantido durante toda a campanha, inclusive quando a posição em um ativo é zerada.
+    \item \textbf{Capital:} R\$~100.000,00 independentes por carteira, sem aportes nem retiradas.
+    \item \textbf{Cesta inicial imposta:} todas as carteiras começam com a mesma cesta (\mbox{DP-20}) --- 20\% do capital por ativo, em ações inteiras, ao fechamento de 02/04/2026, sessão de referência anterior ao primeiro pregão, com custo zero e sem alegação de execução a mercado ---, resultando em 855 BBAS3, 461 ITUB4, 415 PETR4, 239 VALE3 e 397 WEGE3. A alocação inicial não é escolhida pelos agentes nem pelas regras de referência.
     \item \textbf{Seis carteiras:} a carteira Multiagentes e cinco referências determinísticas (Seção~\ref{sec:met-referencias}). Cada versão (v1, v2 e v3) constitui uma campanha própria, com seis livros independentes; as cinco referências são as mesmas nas três campanhas, e sua igualdade em patrimônio, caixa, recebíveis, custos e posições é conferida por auditoria (Seção~\ref{sec:arq-replay}).
     \item \textbf{Trajetória única, sem reinício:} cada carteira percorre os 153 pregões em sequência, carregando posições, caixa e recebíveis de um pregão para o seguinte. Um pregão sem decisão válida da carteira Multiagentes (\texttt{NO\_ANALYSIS}) preserva as posições vigentes e é marcado normalmente; nenhuma decisão é fabricada e nenhum pregão é removido da série.
-    \item \textbf{Execução e contabilidade:} decisão com dados até o fechamento de $t-1$, execução no OPEN RAW B3 de $t$ com custo proporcional de 0,03\% por operação posterior à entrada, marcação no fechamento RAW B3 de $t$ e proventos conforme a DP-30, sem remuneração do caixa (Seção~\ref{sec:arq-relogio}). O custo de inferência, em dólares, é contabilizado em orçamento separado e não é deduzido do patrimônio das carteiras.
+    \item \textbf{Execução e contabilidade:} decisão com dados até o fechamento de $t-1$, execução no OPEN RAW B3 de $t$ com custo proporcional de 0,03\% por operação posterior à entrada, marcação no fechamento RAW B3 de $t$ e proventos conforme a \mbox{DP-30}, sem remuneração do caixa (Seção~\ref{sec:arq-relogio}). O custo de inferência, em dólares, é contabilizado em orçamento separado e não é deduzido do patrimônio das carteiras.
     \item \textbf{Configuração fixa dos agentes:} cinco analistas por ativo, até um analista de risco por ativo e um gestor, todos no \texttt{gemini-3.8-flash} com temperatura 1,0, nas três versões (Seção~\ref{sec:arq-evolucao}). Cada versão foi executada uma única vez.
 \end{itemize}
 
-A unidade de análise é a série de retornos diários de cada carteira. A curva de patrimônio tem 154 pontos: o capital inicial no fechamento de referência de 02/04/2026 e os 153 patrimônios de fechamento, cada um igual às posições marcadas a mercado mais caixa e recebíveis. Daí resultam 153 retornos diários simples, líquidos dos custos de negociação, alinhados nas mesmas sessões para as seis carteiras; dias sem operação permanecem na série.
+A unidade de análise é a série de retornos diários de cada carteira. A curva de patrimônio tem 154 pontos: o capital inicial no fechamento de referência de 02/04/2026 e os 153 patrimônios de fechamento, cada um igual às posições marcadas a mercado mais caixa e recebíveis. Daí resultam 153 retornos diários simples, líquidos dos custos de negociação, alinhados nas mesmas sessões para as seis carteiras; dias sem operação permanecem na série. A Figura~\ref{fig:met-desenho} resume o desenho: três campanhas de seis carteiras cada, a série pareada de retornos, o Bootstrap A (Seção~\ref{sec:met-inferencia}) e as famílias de contrastes (Seção~\ref{sec:met-hipoteses}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  bx/.style={draw, rounded corners=2pt, align=center, font=\scriptsize, inner sep=3pt, text width=#1},
+  bx/.default=3cm,
+  arr/.style={-{Stealth}, thick},
+]
+\node[bx=3.1cm, fill=gray!20] (v1) at (0,1.5) {Campanha v1\\Multiagentes v1};
+\node[bx=3.1cm, fill=gray!20] (v2) at (0,0.5) {Campanha v2\\Multiagentes v2};
+\node[bx=3.1cm, fill=gray!20] (v3) at (0,-0.5) {Campanha v3\\Multiagentes v3};
+\node[bx=3.1cm, dashed] (ref) at (0,-2.3) {5 referências, iguais nas três campanhas (paridade conferida): Buy \& Hold, SMA 50/200, Bollinger 20/2, Equal Weight 63d, Mínima Variância 252/63};
+\node[bx=2.6cm] (ser) at (4.2,0) {153 retornos diários pareados por carteira (6 carteiras por campanha)};
+\node[bx=2.6cm, fill=gray!10] (boot) at (7.2,0) {Bootstrap A\\5000 reamostras, bloco médio 10, contraste de Sharpe líquido};
+\node[bx=3.7cm, fill=gray!40] (h1) at (11.8,1.6) {\textbf{H1} (inferencial)\\SMA 50/200 $\times$ Equal Weight 63d\\1 contraste, $\alpha = 0{,}05$};
+\node[bx=3.7cm, fill=gray!40] (h2) at (11.8,0) {\textbf{H2-v1} (inferencial)\\Multiagentes v1 $\times$ 5 referências\\interseção--união; Holm};
+\node[bx=3.7cm, dashed] (h3) at (11.8,-1.6) {\textbf{v2 e v3} (descritivos)\\10 contrastes, sem estatuto de teste};
+\draw[arr] (v1.east) -- ++(0.35,0) |- ([yshift=0.25cm]ser.west);
+\draw[arr] (v2.east) -- (v2.east -| ser.west);
+\draw[arr] (v3.east) -- ++(0.35,0) |- ([yshift=-0.25cm]ser.west);
+\draw[arr] (ref.east) -- ++(0.35,0) |- ([yshift=-0.55cm]ser.west);
+\draw[arr] (ser) -- (boot);
+\draw[arr] (boot.east) -- ++(0.3,0) |- (h1.west);
+\draw[arr] (boot.east) -- (h2.west);
+\draw[arr] (boot.east) -- ++(0.3,0) |- (h3.west);
+\end{tikzpicture}
+\caption{Desenho experimental do replay: três campanhas com seis carteiras cada, série pareada de 153 retornos, Bootstrap A e famílias de contrastes. Contornos tracejados indicam o que não recebe decisão inferencial.}
+\label{fig:met-desenho}
+{\footnotesize Fonte: elaborado pelos autores.}
+\end{figure}
+
+Na Figura~\ref{fig:met-desenho}, apenas H1 e H2-v1, cujas carteiras têm regras fixadas antes do replay, produzem decisão sobre H0; os contrastes de v2 e v3 usam o mesmo procedimento, mas são apenas descritivos.
 
 \section{Operacionalização das Hipóteses}
 \label{sec:met-hipoteses}
 
-As hipóteses do TCC1 são preservadas:
+As hipóteses são as do Capítulo~\ref{cha:introducao}, preservadas do TCC 1:
 
 \begin{itemize}
-    \item \textbf{H1:} estratégias baseadas em \textit{momentum} e \textit{trend following} apresentam desempenho superior ao \textit{equal weight} em termos de Sharpe Ratio líquido;
-    \item \textbf{H2:} o sistema multiagente baseado em LLMs apresenta desempenho superior ajustado ao risco em relação aos \textit{benchmarks}, com Sharpe Ratio líquido como critério primário e Sortino Ratio, \textit{Maximum Drawdown} e \textit{turnover} como critérios complementares;
-    \item \textbf{H0:} não há diferença estatisticamente significativa entre as abordagens.
+    \item \textbf{H1:} Estratégias baseadas em \textit{momentum} e \textit{trend following} apresentam desempenho superior ao \textit{equal weight} em termos de Sharpe Ratio líquido;
+    \item \textbf{H2:} O sistema multiagente baseado em LLMs apresenta desempenho superior ajustado ao risco em relação aos \textit{benchmarks} considerados, tendo o Sharpe Ratio líquido como critério principal e o Sortino Ratio, o \textit{Maximum Drawdown} e o \textit{turnover} como critérios complementares;
+    \item \textbf{H0:} Não há diferença estatisticamente significativa entre as abordagens.
 \end{itemize}
 
 No replay, cada hipótese é convertida em contrastes entre Sharpes de carteiras pareadas, conforme a Tabela~\ref{tab:met-hipoteses}. Para um par de carteiras $(A, B)$, o contraste é
@@ -60,7 +168,7 @@ No replay, cada hipótese é convertida em contrastes entre Sharpes de carteiras
 \caption{Operacionalização das hipóteses no Replay Contínuo Abril--Novembro de 2026.}
 \label{tab:met-hipoteses}
 \small
-\begin{tabular}{>{\raggedright\arraybackslash}p{2.0cm} >{\raggedright\arraybackslash}p{4.6cm} >{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{4.6cm}}
+\begin{tabular}{>{\raggedright\arraybackslash}p{1.8cm} >{\raggedright\arraybackslash}p{4.2cm} >{\raggedright\arraybackslash}p{3.2cm} >{\raggedright\arraybackslash}p{4.4cm}}
 \toprule
 \textbf{Hipótese} & \textbf{Carteiras comparadas} & \textbf{Contraste} & \textbf{Estatuto} \\
 \midrule
@@ -72,15 +180,15 @@ H0 & Todas as anteriores & Não rejeição em cada família & Decidida pelo Boot
 \end{tabular}
 \end{table}
 
-\paragraph{H1.} A hipótese é operacionalizada pela carteira de referência SMA 50/200, única regra de tendência entre as referências, contra a carteira Equal Weight 63d, que materializa a linha de base de pesos iguais. As duas são determinísticas, não chamam o modelo de linguagem e foram calculadas antes de qualquer inferência paga, com parâmetros fixados pela DP-36 e pelas definições multiativos existentes, sem calibração pelo resultado. O contraste de H1, portanto, não é afetado pela possível contaminação do modelo nem pelo ajuste das versões v2 e v3. A correspondência entre H1 e esse par foi estabelecida na redação deste trabalho, após o replay; ela não resulta de seleção entre alternativas, porque nenhuma outra referência implementa uma regra de tendência (a Bollinger 20/2 é de reversão à média e a Mínima Variância é uma regra de alocação por risco). O alcance de H1 fica restrito a uma regra de tendência com uma parametrização, e não à família de estratégias de \textit{momentum} \citep{JegadeeshTitman1993, Moskowitz2012} (Seção~\ref{sec:met-ameacas}).
+\paragraph*{H1.} A hipótese é operacionalizada pela carteira de referência SMA 50/200, única regra de tendência entre as referências, contra a carteira Equal Weight 63d, que materializa a linha de base de pesos iguais. As duas são determinísticas, não chamam o modelo de linguagem e foram calculadas antes de qualquer inferência paga, com parâmetros fixados pela \mbox{DP-36} e pelas definições multiativos existentes, sem calibração pelo resultado. O contraste de H1, portanto, não é afetado pela possível contaminação do modelo nem pelo ajuste das versões v2 e v3. A correspondência entre H1 e esse par foi estabelecida na redação deste trabalho, após o replay; ela não resulta de seleção entre alternativas, porque nenhuma outra referência implementa uma regra de tendência (a Bollinger 20/2 é de reversão à média e a Mínima Variância é uma regra de alocação por risco). O alcance de H1 fica restrito a uma regra de tendência com uma parametrização, e não à família de estratégias de \textit{momentum} \citep{JegadeeshTitman1993, Moskowitz2012} (Seção~\ref{sec:met-ameacas}).
 
-\paragraph{H2.} A carteira Multiagentes é comparada com as cinco referências: Buy \& Hold, SMA 50/200, Bollinger 20/2, Equal Weight 63d e Mínima Variância 252/63. O Sharpe líquido é o critério primário e o único submetido a contraste inferencial; Sortino, \textit{Maximum Drawdown}, retorno, volatilidade, operações, custos e giro são critérios complementares, reportados de forma descritiva, sem contrastes adicionais.
+\paragraph*{H2.} A carteira Multiagentes é comparada com as cinco referências: Buy \& Hold, SMA 50/200, Bollinger 20/2, Equal Weight 63d e Mínima Variância 252/63. O Sharpe líquido é o critério primário e o único submetido a contraste inferencial; Sortino, \textit{Maximum Drawdown}, retorno, volatilidade, operações, custos e giro são critérios complementares, reportados de forma descritiva, sem contrastes adicionais.
 
-\paragraph{Papel distinto das versões.} A versão v1 é a execução pré-especificada: reproduz a arquitetura multiativos já em operação diária (Seção~\ref{sec:arq-operacao-diaria}), com comitês, risco, gestor, esquemas, quórum, vetos e \textit{prompts} inalterados, e com o único ajuste autorizado de natureza operacional (até duas tentativas de transporte por chamada lógica). Os dois ensaios curtos anteriores, sobre subjanelas de abril e maio de 2026, usaram a mesma arquitetura e não autorizaram calibração de vendas, \textit{prompts} ou controles. As regras da v1 foram, portanto, fixadas antes de qualquer observação de seu desempenho no replay, e é dela que provém a resposta principal a H2. A pré-especificação refere-se ao replay, e não ao mercado: a arquitetura foi desenvolvida em 2026, quando parte do período já havia transcorrido, embora não tenha sido ajustada a ele.
+\paragraph*{Papel distinto das versões.} A versão v1 é a execução pré-especificada: reproduz a arquitetura multiativos já em operação diária (Seção~\ref{sec:arq-operacao-diaria}), com comitês, risco, gestor, esquemas, quórum, vetos e \textit{prompts} inalterados, e com o único ajuste autorizado de natureza operacional (até duas tentativas de transporte por chamada lógica). Dois ensaios curtos anteriores, sobre subjanelas (06--17/04/2026, escolhida antes de medir retorno, e 20/04--05/05/2026, escolhida pela queda observada), usaram a mesma arquitetura e não autorizaram calibração de vendas, \textit{prompts} ou controles. As regras da v1 foram fixadas antes da observação de seu desempenho na trajetória contínua de 153 pregões, e é dela que provém a resposta principal a H2; os ensaios, porém, observaram desempenho em trechos desse período, e a v1 não é independente deles. A pré-especificação refere-se ao replay, e não ao mercado: a arquitetura foi desenvolvida em 2026, quando parte do período já havia transcorrido, e não há registro de ajuste a ele, mas também não há prova de que não tenha havido influência.
 
 As versões v2 e v3 são iterações exploratórias, desenhadas após a auditoria das versões anteriores sobre os mesmos 153 pregões (Seção~\ref{sec:arq-evolucao}). Seus limiares e regras foram escolhidos com conhecimento do período, das falhas observadas na versão anterior e do desempenho das referências; a v3, em particular, foi desenhada quando já se sabia qual referência havia obtido o melhor resultado. Cada uma foi executada uma única vez, sem amostra de validação separada. Por isso, \textbf{os resultados de v2 e v3 são otimistas por construção}: a melhora em relação à v1 mede a capacidade da arquitetura de incorporar correções dentro da amostra, e não desempenho esperado fora dela. Seus contrastes com as referências são calculados pelo mesmo procedimento da v1 e reportados apenas como descrição, sem estatuto de teste. A comparação entre as versões responde à pergunta arquitetural da Seção~\ref{sec:met-caracterizacao} e atribui as diferenças ao conjunto de intervenções de cada versão, e não a mecanismos isolados.
 
-\paragraph{H0.} A hipótese nula é decidida separadamente em cada família pelo Bootstrap A. Para H1, H0 é rejeitada quando o contraste $\Delta_{\text{SMA},\text{EW}}$ atende ao critério de superioridade da Seção~\ref{sec:met-inferencia}. Para H2, o enunciado de superioridade em relação aos \textit{benchmarks} só é sustentado se os cinco contrastes da v1 atenderem ao critério; a superioridade em relação a referências individuais é declarada apenas após a correção de multiplicidade da Seção~\ref{sec:met-inferencia}. Contrastes de v2 e v3 não rejeitam H0, qualquer que seja seu valor-$p$. A não rejeição de H0 não demonstra igualdade de desempenho: em uma amostra de 153 pregões, ela é compatível com diferenças econômicas relevantes que o teste não tem poder para detectar.
+\paragraph*{H0.} Na operacionalização, H0 é a hipótese nula unilateral $\Delta_{A,B} \leq 0$ de cada contraste, coerente com o enunciado de superioridade de H1 e H2. A hipótese nula é decidida separadamente em cada família pelo Bootstrap A. Para H1, H0 é rejeitada quando o contraste $\Delta_{\text{SMA},\text{EW}}$ atende ao critério de superioridade da Seção~\ref{sec:met-inferencia}. Para H2, o enunciado de superioridade em relação aos \textit{benchmarks} só é sustentado se os cinco contrastes da v1 atenderem ao critério; a superioridade em relação a referências individuais é declarada apenas após a correção de multiplicidade da Seção~\ref{sec:met-inferencia}. Contrastes de v2 e v3 não rejeitam H0, qualquer que seja seu valor-$p$. A não rejeição de H0 não demonstra igualdade de desempenho: em uma amostra de 153 pregões, ela é compatível com diferenças econômicas relevantes que o teste não tem poder para detectar.
 
 \section{Carteiras de Referência}
 \label{sec:met-referencias}
@@ -92,27 +200,27 @@ As cinco referências são determinísticas, não chamam modelos e reutilizam im
 \caption{Carteiras de referência do Replay Contínuo e seu papel no estudo.}
 \label{tab:met-referencias}
 \small
-\begin{tabular}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{8.6cm} >{\raggedright\arraybackslash}p{3.4cm}}
+\begin{tabular}{>{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{8.4cm} >{\raggedright\arraybackslash}p{3.2cm}}
 \toprule
 \textbf{Carteira} & \textbf{Regra} & \textbf{Papel} \\
 \midrule
-Buy \& Hold & Mantém a cesta inicial, sem rebalanceamento (DP-11). & H2 \\
-SMA 50/200 & Por ativo, parcela independente de 20\% do capital inicial; vende a posição inteira no cruzamento descendente da média de 50 pregões sob a de 200 e recompra, com o saldo da própria parcela, no cruzamento ascendente, apenas se a posição estiver zerada (\texttt{sma\_cross.py}, DP-36). & H1 (tendência); H2 \\
-Bollinger 20/2 & Mesma mecânica de parcelas; compra no rompimento da banda inferior (20 pregões, 2 desvios) com posição zerada e vende a posição inteira no rompimento da banda superior (\texttt{bollinger\_bands.py}, DP-36). & H2 \\
+Buy \& Hold & Mantém a cesta inicial, sem rebalanceamento (\mbox{DP-11}). & H2 \\
+SMA 50/200 & Por ativo, parcela independente de 20\% do capital inicial; vende a posição inteira no cruzamento descendente da média de 50 pregões sob a de 200 e recompra, com o saldo da própria parcela, no cruzamento ascendente, apenas se a posição estiver zerada (\texttt{sma\_cross.py}, \mbox{DP-36}). & H1 (tendência); H2 \\
+Bollinger 20/2 & Mesma mecânica de parcelas; compra no rompimento da banda inferior (20 pregões, 2 desvios) com posição zerada e vende a posição inteira no rompimento da banda superior (\texttt{bollinger\_bands.py}, \mbox{DP-36}). & H2 \\
 Equal Weight 63d & Rebalanceia para pesos iguais (1/5) na primeira sessão e a cada 63 pregões (\texttt{EqualWeightPortfolio}). & H1 (linha de base); H2 \\
 Mínima Variância 252/63 & Pesos de mínima variância estimados com 252 retornos, somente comprados, recalculados na primeira sessão e a cada 63 pregões (\texttt{MinVariancePortfolio}, SLSQP com objetivo reescalado). & H2 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Três propriedades dessas regras são relevantes para a interpretação. Primeiro, a SMA 50/200 é uma regra de eventos: partindo da cesta já investida, ela só altera a posição de um ativo quando ocorre um cruzamento de médias, de modo que, em um período sem cruzamentos, sua trajetória coincide com a do Buy \& Hold naquele ativo, possibilidade aceita explicitamente na DP-36. Segundo, como a cesta inicial já tem pesos próximos de 20\%, a Equal Weight 63d difere do Buy \& Hold apenas pelos três rebalanceamentos do período, decididos nos fechamentos das sessões 1, 64 e 127 e executados na abertura seguinte. Terceiro, a carteira de pesos iguais é um referencial reconhecidamente difícil de superar em alocação de carteiras \citep{DeMiguel2009}, o que torna o contraste de H1 exigente. O primeiro sinal das referências usa o fechamento do primeiro pregão da campanha, enquanto a primeira decisão dos agentes usa o fechamento anterior; essa assimetria de uma sessão decorre da DP-36 e é registrada no manifesto da campanha.
+Três propriedades dessas regras são relevantes para a interpretação. Primeiro, a SMA 50/200 é uma regra de eventos: partindo da cesta já investida, ela só altera a posição de um ativo quando ocorre um cruzamento de médias, de modo que, em um período sem cruzamentos, sua trajetória coincide com a do Buy \& Hold naquele ativo, possibilidade aceita explicitamente na \mbox{DP-36}. Segundo, como a cesta inicial já tem pesos próximos de 20\%, a Equal Weight 63d difere do Buy \& Hold apenas pelos três rebalanceamentos do período, decididos nos fechamentos das sessões 1, 64 e 127 e executados na abertura seguinte. Terceiro, a carteira de pesos iguais é um referencial reconhecidamente difícil de superar em alocação de carteiras \citep{DeMiguel2009}, o que torna o contraste de H1 exigente. O primeiro sinal das referências usa o fechamento do primeiro pregão da campanha, enquanto a primeira decisão dos agentes usa o fechamento anterior; essa assimetria de uma sessão decorre da \mbox{DP-36} e é registrada no manifesto da campanha.
 
 \section{Métricas de Avaliação}
 \label{sec:met-metricas}
 
-As métricas são calculadas sobre a série de 153 retornos diários $r_1, \ldots, r_n$ ($n = 153$) e sobre a curva de patrimônio da Seção~\ref{sec:met-desenho}, com as funções de \texttt{src/backtesting/metrics.py}. O cálculo para o replay está em \texttt{tcc2/scripts/metricas\_replay.py}, que confere, por asserções, os estados diários, a paridade das referências entre versões e os totais de patrimônio, operações e custos contra os documentos de auditoria.
+As métricas são calculadas sobre a série de 153 retornos diários $r_1, \ldots, r_n$ ($n = 153$) e sobre a curva de patrimônio da Seção~\ref{sec:met-desenho}, com as funções de \texttt{src/backtesting/metrics.py}. O cálculo para o replay está em \path{tcc2/scripts/metricas_replay.py}, que confere, por asserções, os estados diários, a paridade das referências entre versões e os totais de patrimônio, operações e custos contra os documentos de auditoria.
 
-\paragraph{Sharpe Ratio líquido (critério primário).} Adota-se a definição congelada \texttt{H2\_SCIENTIFIC\_SHARPE\_DEFINITION\_V1}:
+\paragraph*{Sharpe Ratio líquido (critério primário).} Adota-se a definição congelada \texttt{H2\_SCIENTIFIC\_SHARPE\_DEFINITION\_V1}:
 
 \begin{equation}
 S = \frac{\bar{r} - r_f/252}{\hat{\sigma}_r}\,\sqrt{252}, \qquad r_f = 0,
@@ -121,7 +229,7 @@ S = \frac{\bar{r} - r_f/252}{\hat{\sigma}_r}\,\sqrt{252}, \qquad r_f = 0,
 
 \noindent em que $\bar{r}$ é a média dos retornos diários líquidos e $\hat{\sigma}_r$ seu desvio-padrão amostral (\textit{ddof} = 1). Quando há menos de dois retornos ou o desvio-padrão é nulo, inferior a $10^{-15}$ ou não numérico, a convenção do protocolo atribui $S = 0$; dados inválidos interrompem o cálculo. A definição foi congelada para o protocolo da Seção~\ref{sec:met-protocolo} e é reutilizada no replay para manter a mesma fórmula. A taxa livre de risco nula é coerente com a contabilidade da simulação, na qual o caixa não é remunerado, mas ignora o custo de oportunidade de uma taxa de juros positiva.
 
-\paragraph{Sortino Ratio.} Calculado por \texttt{sortino\_ratio}, com $r_f = 0$ e retorno mínimo aceitável diário $\text{MAR} = 0$ \citep{Sortino1994}:
+\paragraph*{Sortino Ratio.} Calculado por \texttt{sortino\_ratio}, com $r_f = 0$ e retorno mínimo aceitável diário $\text{MAR} = 0$ \citep{Sortino1994}:
 
 \begin{equation}
 \text{Sortino} = \frac{\bar{r} - r_f/252}{\sqrt{\frac{1}{n}\sum_{t=1}^{n}\min(r_t - \text{MAR}, 0)^2}}\,\sqrt{252}.
@@ -130,18 +238,18 @@ S = \frac{\bar{r} - r_f/252}{\hat{\sigma}_r}\,\sqrt{252}, \qquad r_f = 0,
 
 \noindent Esses parâmetros são valores técnicos do módulo, não política científica congelada.
 
-\paragraph{\textit{Maximum Drawdown}.} Maior queda relativa entre um pico e um vale posterior da curva de patrimônio \citep{Magdon2004}, calculada por \texttt{max\_drawdown}, acompanhada da maior sequência de pregões consecutivos abaixo do pico anterior (\texttt{max\_drawdown\_duration}).
+\paragraph*{\textit{Maximum Drawdown}.} Maior queda relativa entre um pico e um vale posterior da curva de patrimônio \citep{Magdon2004}, calculada por \texttt{max\_drawdown}, acompanhada da maior sequência de pregões consecutivos abaixo do pico anterior (\texttt{max\_drawdown\_duration}).
 
-\paragraph{Retorno e volatilidade.} Retorno total no período, retorno anualizado composto (expoente $252/153$) e volatilidade anualizada (desvio amostral $\times\sqrt{252}$). A anualização de 153 pregões é extrapolação e serve apenas para comparar escalas.
+\paragraph*{Retorno e volatilidade.} Retorno total no período, retorno anualizado composto (expoente $252/153$) e volatilidade anualizada (desvio amostral $\times\sqrt{252}$). A anualização de 153 pregões é extrapolação e serve apenas para comparar escalas.
 
-\paragraph{Operações, custos e giro.} As operações são contadas como mudanças de quantidade de um ativo entre estados diários consecutivos, a partir da cesta inicial, cuja montagem não entra na contagem. O custo é o total acumulado de custos de negociação. Como o custo é proporcional e único (0,03\%), o volume negociado é estimado por $V = C / 0{,}0003$, e o giro no período é
+\paragraph*{Operações, custos e giro.} As operações são contadas como mudanças de quantidade de um ativo entre estados diários consecutivos, a partir da cesta inicial, cuja montagem não entra na contagem. O custo é o total acumulado de custos de negociação. Como o custo é proporcional e único (0,03\%), o volume negociado é estimado por $V = C / 0{,}0003$, e o giro no período é
 
 \begin{equation}
 \text{Giro} = \frac{C / 0{,}0003}{\overline{PL}},
 \label{eq:met-giro}
 \end{equation}
 
-\noindent em que $C$ é o custo total e $\overline{PL}$ o patrimônio médio dos 153 fechamentos. O arredondamento do custo ao centavo admite erro de até cerca de R\$ 16,67 no volume estimado de cada operação. Essa medida de \textit{turnover} difere da função \texttt{turnover} de \texttt{metrics.py}, que mede a variação de pesos, e da definição do protocolo original (nocional executado sobre o capital inicial); é a medida adotada no replay porque é reconstruível diretamente das séries seladas.
+\noindent em que $C$ é o custo total e $\overline{PL}$ o patrimônio médio dos 153 fechamentos. O arredondamento do custo ao centavo admite erro de até cerca de R\$~16,67 no volume estimado de cada operação. Essa medida de \textit{turnover} difere da função \texttt{turnover} de \texttt{metrics.py}, que mede a variação de pesos, e da definição do protocolo original (nocional executado sobre o capital inicial); é a medida adotada no replay porque é reconstruível diretamente das séries seladas.
 
 \section{Inferência Estatística}
 \label{sec:met-inferencia}
@@ -179,41 +287,49 @@ Os contrastes são organizados em famílias, e apenas as famílias principais da
     \item \textbf{v2 e v3:} os dez contrastes adicionais e as comparações entre versões não compõem família inferencial. Seus valores-$p$, inclusive os ajustados por Holm, são reportados apenas para descrição; nenhum ajuste corrige a busca implícita que gerou as versões, e, como as regras foram escolhidas com base nos mesmos dados, um valor-$p$ inferior a 0,05 nessas versões não tem interpretação de teste nem rejeita H0 \citep{White2000, Bailey2017}.
 \end{itemize}
 
+\section{Acompanhamento Prospectivo}
+\label{sec:met-prospectivo}
 
-\section{Protocolo Confirmatório Planejado e Acompanhamento Prospectivo}
-\label{sec:met-protocolo}
-
-\subsection{Desenho original}
-
-O planejamento inicial previa avaliar H2 no caminho de ativo único (Seções~\ref{sec:arq-ativo-unico} e~\ref{sec:arq-experimentos}), sobre PETR4.SA, por um protocolo com fases em ordem fixa e autoridades não cumulativas: \textit{Hardening}, ajuste de configuração sem acesso a métricas financeiras; CAL-A; Desenvolvimento Sequencial; Relatório de Estresse; CAL-B; \textit{Freeze}, congelamento final da configuração; Validação, descritiva; e Teste Final, isolado e único momento confirmatório. A série de desenvolvimento (\texttt{H\_real}) tinha 1519 sessões, de 12/01/2018 a 28/02/2024. As calibrações usavam um conjunto de 30 âncoras cronológicas (20 para a CAL-A e 10 para a CAL-B, disjuntas) e até oito âncoras de estresse; a janela sequencial (01/03/2024 a 30/08/2024) e as quatro janelas de estresse foram congeladas, enquanto as janelas de Validação (02/09/2024 a 29/08/2025) e de Teste Final (01/09/2025 a 31/08/2026) foram apenas propostas.
-
-A configuração do comitê foi congelada --- \textit{self-consistency} com cinco analistas, limiar de consenso 0,6 e voto obrigatório de todos, \texttt{gemini-3.8-flash} com temperatura 1,0 e até 8.192 \textit{tokens} de saída, peso-alvo determinístico --- e sua integridade era verificada por \textit{hash} fixo da especificação do participante (\texttt{PARTICIPANT\_SHA256}) antes de cada fase. A simulação seguia o princípio pseudo-\textit{live} causal, com decisão no fechamento de $t$, execução na abertura de $t+1$ e histórico expansivo mínimo de 504 sessões, com custo de 5 pontos-base de \textit{spread} e taxa de 0,032\% sobre o nocional. O estimando era a média dos Sharpes de três execuções do modelo menos o Sharpe do Buy \& Hold, com um único contraste confirmatório no Teste Final pelo Bootstrap A. A calibração não constituía treinamento: o modelo chega pré-treinado, sem ajuste fino, e o que se ajustava era a configuração do sistema.
-
-\subsection{Situação e razões da não execução}
-
-As fases de desenvolvimento foram executadas em sucessivas emendas do tratamento, e a Validação chegou a ser executada em caráter provisório e descritivo, autorizada apenas pelo autor e sem ratificação acadêmica. O \textit{Freeze} formal e o Teste Final não foram executados, por três razões. Primeiro, as janelas de Validação e de Teste Final e a especificação da camada de avaliação nunca receberam a aprovação formal prevista dos autores e do orientador. Segundo, a DP-31 (17/10/2026) estabeleceu que agentes de IA só são avaliados de forma prospectiva, porque a simulação retrospectiva com o modelo é contaminada pelo conhecimento que ele pode ter do desfecho; a janela proposta para o Teste Final termina em agosto de 2026 e, em grande parte, antecede o corte de conhecimento declarado do modelo (março de 2026). Terceiro, o custo de inferência de três execuções por fase sobre janelas anuais. Os resultados provisórios desse caminho não são usados para decidir as hipóteses.
-
-Do protocolo, o replay herda a definição do Sharpe, o Bootstrap A, a configuração do comitê técnico e o princípio causal; não herda a separação entre calibração e avaliação, a janela reservada, as três repetições, o universo de ativo único nem a estrutura de custos. O replay é, portanto, o estudo empírico pelo qual as hipóteses são respondidas, com o alcance mais restrito que sua natureza retrospectiva e exploratória impõe.
-
-\subsection{Acompanhamento prospectivo}
-
-A avaliação compatível com a DP-31 é o acompanhamento diário prospectivo da carteira multiativos, iniciado em 14/10/2026 com carteiras Multiagentes e Buy \& Hold de mesma cesta inicial (DP-20) e conduzido pelo ciclo autônomo descrito na Seção~\ref{sec:arq-operacao-diaria}. Nesse regime, cada decisão é registrada antes de o desfecho existir, o que exclui por construção a contaminação do modelo pelo resultado. O acompanhamento é a continuação natural do replay, mas, no horizonte deste trabalho, cobre poucas semanas e não sustenta inferência sobre as hipóteses; sua observação preliminar é apresentada no Capítulo~\ref{cha:resultados} (Seção~\ref{sec:obs-operacional}). A avaliação prospectiva de uma versão congelada da carteira, sem novos ajustes, é o passo que poderia converter os achados exploratórios do replay em evidência fora da amostra.
+A avaliação compatível com a \mbox{DP-31} é o acompanhamento diário prospectivo da carteira multiativos, iniciado em 14/10/2026 com carteiras Multiagentes e Buy \& Hold de mesma cesta inicial (\mbox{DP-20}), com a arquitetura da v1 (as regras da v2 e da v3 existem apenas nos \textit{scripts} do replay), e conduzido pelo ciclo autônomo descrito na Seção~\ref{sec:arq-operacao-diaria}. Nesse regime, cada decisão é registrada antes de o desfecho existir, o que exclui por construção a contaminação do modelo pelo resultado. O acompanhamento é a continuação natural do replay, mas, no horizonte deste trabalho, cobre poucas semanas e não sustenta inferência sobre as hipóteses; sua observação preliminar é apresentada no Capítulo~\ref{cha:resultados} (Seção~\ref{sec:obs-operacional}). A avaliação prospectiva da v3 com regras congeladas, sem novos ajustes, é trabalho futuro e o passo que poderia converter os achados exploratórios da v2 e da v3 em evidência fora da amostra.
 
 \section{Ameaças à Validade}
 \label{sec:met-ameacas}
 
-\paragraph{Contaminação do modelo e antecipação de informação.} Os controles de causalidade garantem que nenhuma entrada entregue aos agentes contenha informação posterior à sessão de referência (Seção~\ref{sec:arq-relogio}), mas não impedem que o modelo conheça o período por seu treinamento. O corte de conhecimento declarado do \texttt{gemini-3.8-flash} (março de 2026) antecede o período, mas não é verificável: o corpus de treinamento não é auditável, as campanhas foram executadas em 13, 15 e 16/11/2026, depois do período, e o identificador do modelo é um \textit{alias} sem garantia de versão imutável. Os analistas técnicos recebem apenas \textit{features} adimensionais, sem o dia-alvo; o gestor, porém, recebe \textit{tickers}, datas e preços, e é o canal mais exposto. Não houve anonimização dos ativos nem teste de detecção de contaminação, estratégias discutidas na Seção~\ref{sec:rel-avaliacao} \citep{Glasserman2023, Golchin2024, Drinkall2024}. Além disso, preços, fatores de ajuste e proventos foram adquiridos depois do período e não constituem um arquivo \textit{point-in-time}. A contaminação, se existir, favorece a carteira Multiagentes e não afeta as referências determinísticas nem, portanto, o contraste de H1.
+\paragraph*{Contaminação do modelo e antecipação de informação.} Os controles de causalidade garantem que nenhuma entrada entregue aos agentes contenha informação posterior à sessão de referência (Seção~\ref{sec:arq-relogio}), mas não impedem que o modelo conheça o período por seu treinamento. O corte de conhecimento declarado do \texttt{gemini-3.8-flash} (março de 2026) antecede o período, mas não é verificável: o corpus de treinamento não é auditável, as campanhas foram executadas em 13, 15 e 16/11/2026, depois do período, e o identificador do modelo é um \textit{alias} sem garantia de versão imutável. Os analistas técnicos e o analista de risco recebem apenas \textit{features} adimensionais e métricas de risco, sem \textit{ticker}, data nem preço, o que fecha nessas etapas o canal de memorização do período; o gestor, porém, recebe \textit{tickers}, datas e preços, e é o canal exposto. Não houve anonimização dos ativos no gestor nem teste de detecção de contaminação, estratégias discutidas na Seção~\ref{sec:rel-avaliacao} \citep{Glasserman2023, Golchin2024, Drinkall2024}. Além disso, preços, fatores de ajuste e proventos foram adquiridos depois do período e não constituem um arquivo \textit{point-in-time}. A contaminação, se existir, tende a favorecer a carteira Multiagentes: em agentes LLM de negociação, retornos de \textit{backtest} obtidos dentro da janela de conhecimento do modelo desaparecem fora dela \citep{ProfitMirage2025}, e conhecer apenas o \textit{ticker} e a data já permite algum acerto direcional antes do corte \citep{Wang2026}. O efeito não é garantido, pois o conhecimento prévio sobre a empresa também pode prejudicar a decisão \citep{Glasserman2023}. A contaminação não afeta as referências determinísticas nem, portanto, o contraste de H1.
 
-\paragraph{Ajuste dentro da amostra.} As versões v2 e v3 foram desenhadas após a observação das versões anteriores nos mesmos 153 pregões, com limiares escolhidos com conhecimento do período e das referências, e sem amostra de validação. Seus resultados são otimistas por construção e podem refletir sobreajuste a esta trajetória \citep{White2000, Bailey2017}. A resposta principal a H2 limita-se, por isso, à v1.
+\paragraph*{Ajuste dentro da amostra.} As versões v2 e v3 foram desenhadas após a observação das versões anteriores nos mesmos 153 pregões, com limiares escolhidos com conhecimento do período e das referências, e sem amostra de validação. Seus resultados são otimistas por construção e podem refletir sobreajuste a esta trajetória \citep{White2000, Bailey2017}. A resposta principal a H2 limita-se, por isso, à v1.
 
-\paragraph{Amostra única e escopo reduzido.} O estudo cobre uma única trajetória de 153 pregões, cinco ações do mercado brasileiro e um único regime de mercado. Cada versão foi executada uma vez, sem repetições que permitam estimar a variância entre execuções do modelo. O poder estatístico é baixo (Seção~\ref{sec:met-inferencia}), e a ordenação das carteiras pode depender do regime do período; a validade externa é correspondentemente limitada.
+\paragraph*{Amostra única e escopo reduzido.} O estudo cobre uma única trajetória de 153 pregões, cinco ações do mercado brasileiro e um único regime de mercado. Cada versão foi executada uma vez, sem repetições que permitam estimar a variância entre execuções do modelo. O poder estatístico é baixo (Seção~\ref{sec:met-inferencia}), e a ordenação das carteiras pode depender do regime do período; a validade externa é correspondentemente limitada.
 
-\paragraph{Intervenções em bloco.} Cada versão alterou vários fatores ao mesmo tempo (Tabela~\ref{tab:evolucao-versoes}), sem ablação. Não é possível atribuir efeito a cada pilar isoladamente, e parte dos mecanismos pode não ter sido acionada no período. Também diferem entre as versões o número de pregões sem análise e, possivelmente, a versão do modelo servida sob o mesmo \textit{alias} em cada data de execução, fatores de confusão que o desenho não elimina.
+\paragraph*{Intervenções em bloco.} Cada versão alterou vários fatores ao mesmo tempo (Tabela~\ref{tab:evolucao-versoes}), sem ablação. Não é possível atribuir efeito a cada pilar isoladamente, e parte dos mecanismos pode não ter sido acionada no período. Também diferem entre as versões o número de pregões sem análise e, possivelmente, a versão do modelo servida sob o mesmo \textit{alias} em cada data de execução, fatores de confusão que o desenho não elimina.
 
-\paragraph{Custo e execução simplificados.} A execução usa a abertura oficial diária (PREABE) como aproximação do leilão, sem \textit{spread}, impacto de mercado, microestrutura ou liquidação em D+2, e com aprovação hipotética às 09:00. O custo é proporcional (0,03\%), sem custo fixo nem lote mínimo, o que favorece estratégias com muitas operações pequenas. O caixa não é remunerado, o JCP é tributado à alíquota única de 15\% e o custo de inferência não é deduzido do patrimônio da carteira Multiagentes.
+\paragraph*{Custo e execução simplificados.} A execução usa a abertura oficial diária (PREABE) como aproximação do leilão, sem \textit{spread}, impacto de mercado, microestrutura ou liquidação em D+2, e com aprovação hipotética às 09:00. O custo é proporcional (0,03\%), sem custo fixo nem lote mínimo, o que favorece estratégias com muitas operações pequenas. O custo de inferência não é deduzido do patrimônio da carteira Multiagentes. O JCP é creditado líquido de 15\% de imposto, mas não há imposto sobre ganho de capital, assimetria que favorece estratégias que realizam lucros. A ausência de remuneração do caixa não é neutra: penaliza as carteiras com mais caixa médio (Bollinger 20/2, 49,06\%, e SMA 50/200, 31,39\%) em relação às sempre investidas (Buy \& Hold, Equal Weight 63d e Mínima Variância 252/63, todas com caixa médio inferior a 1\%). Para dimensionar, o CDI acumulado no período foi de 8,33\% \citep{BCBCDI2026}. A diferença de caixa médio entre a SMA 50/200 e a Equal Weight 63d é de 30,69 pontos percentuais, e a remuneração desse excedente ao CDI daria, em aproximação que ignora o momento em que o caixa esteve aplicado, cerca de 2,56 pontos percentuais ($30{,}69\% \times 8{,}33\%$), contra uma diferença de retorno de 1,00 ponto percentual a favor da Equal Weight 63d ($-11{,}13\%$ contra $-10{,}13\%$). Nenhuma carteira superou o CDI do período; a maior, a Bollinger 20/2, rendeu 4,89\%. O contraste de Sharpe de H1, calculado com $r_f = 0$, deve ser lido com essa ressalva.
 
-\paragraph{Cesta inicial imposta.} Todas as carteiras partem da mesma cesta investida, montada a custo zero. Essa condição torna a comparação pareada, mas condiciona os resultados: a Equal Weight 63d permanece próxima do Buy \& Hold, a SMA 50/200 só se afasta da cesta inicial quando ocorrem cruzamentos, e a carteira Multiagentes não escolhe sua alocação de partida.
+\paragraph*{Cesta inicial imposta.} Todas as carteiras partem da mesma cesta investida, montada a custo zero. Essa condição torna a comparação pareada, mas condiciona os resultados: a Equal Weight 63d permanece próxima do Buy \& Hold, a SMA 50/200 só se afasta da cesta inicial quando ocorrem cruzamentos, e a carteira Multiagentes não escolhe sua alocação de partida.
 
-\paragraph{Alcance de H1.} H1 é respondida por uma única regra de tendência, a SMA 50/200 em sua forma de eventos com parcelas independentes por ativo, contra uma carteira de pesos iguais com rebalanceamento a cada 63 pregões. O resultado não se generaliza para a família de estratégias de \textit{momentum} e \textit{trend following}, que inclui o \textit{momentum} transversal \citep{JegadeeshTitman1993}, o \textit{momentum} de série temporal \citep{Moskowitz2012}, outras regras de médias móveis \citep{Brock1992} e outras janelas e parametrizações.
+\paragraph*{Alcance de H1.} H1 é respondida por uma única regra de tendência, a SMA 50/200 em sua forma de eventos com parcelas independentes por ativo, contra uma carteira de pesos iguais com rebalanceamento a cada 63 pregões. O resultado não se generaliza para a família de estratégias de \textit{momentum} e \textit{trend following}, que inclui o \textit{momentum} transversal \citep{JegadeeshTitman1993}, o \textit{momentum} de série temporal \citep{Moskowitz2012}, outras regras de médias móveis \citep{Brock1992} e outras janelas e parametrizações.
+
+\paragraph*{Síntese.} A Tabela~\ref{tab:met-ameacas} resume o sentido provável do viés de cada ameaça e os resultados que ela alcança; ela sintetiza os parágrafos acima e não os substitui.
+
+\begin{table}[htbp]
+\centering
+\caption{Ameaças à validade, sentido provável do viés e resultados afetados.}
+\label{tab:met-ameacas}
+\small
+\begin{tabular}{>{\raggedright\arraybackslash}p{3.6cm} >{\raggedright\arraybackslash}p{5.8cm} >{\raggedright\arraybackslash}p{4.6cm}}
+\toprule
+\textbf{Ameaça} & \textbf{Sentido provável do viés} & \textbf{Resultados afetados} \\
+\midrule
+Contaminação do modelo & Tende a favorecer a Multiagentes; não garantido; canal restrito ao gestor & v1, v2 e v3; não afeta H1 \\
+Ajuste dentro da amostra & Favorece v2 e v3 & v2 e v3 \\
+Execução única, temperatura 1,0 & Indeterminado & v1, v2 e v3 \\
+Caixa sem remuneração (CDI de 8,33\% no período) & Penaliza carteiras com mais caixa médio (Bollinger 20/2, SMA 50/200) & H1 (descritivo); referências com caixa \\
+Custo apenas proporcional (0,03\%) & Favorece muitas operações pequenas & Carteiras com mais operações \\
+Sem imposto sobre ganho de capital & Favorece quem realiza lucro & Carteiras com vendas lucrativas \\
+Cesta inicial imposta & Aproxima a Equal Weight 63d do Buy \& Hold e limita a SMA 50/200 & H1 \\
+Seleção do universo & Indeterminado & Níveis de todas as carteiras \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 Nenhum desempenho dos agentes é presumido a priori. Os resultados do replay são apresentados no Capítulo~\ref{cha:resultados} como evidência descritiva desta trajetória, com decisão inferencial restrita aos contrastes pré-especificados e sujeita às ameaças acima.

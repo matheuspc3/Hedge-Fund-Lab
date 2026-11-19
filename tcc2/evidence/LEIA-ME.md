@@ -93,7 +93,23 @@ O arquivo `Resultados-comparados.md`, na raiz desta pasta, já existia e não fo
 `main.tex` copiado de `docs/faculdade/monografia/`. Existem três versões do
 texto do TCC 1 no repositório, com a mesma estrutura de seções e tamanhos
 diferentes: esta (457 linhas), `tcc2/source/tcc1/main.tex` (407) e
-`tcc2/referencia/main.tex` (360). Falta decidir qual é a versão entregue.
+`tcc2/referencia/main.tex` (360). Em 19/11/2026, Lucas decidiu que não é preciso
+fixar a versão entregue: o TCC 1 foi uma proposta, e o TCC 2 só precisa usar o
+mesmo enunciado das hipóteses nos capítulos 1 e 5.
+
+### `08-busca-sistematica/` — capítulo 3
+
+Não é cópia: é a busca sistemática feita em 19/11/2026 no arXiv e no OpenAlex para
+o capítulo de trabalhos relacionados, com strings, resultados brutos, critérios,
+triagem por título e resumo e os scripts que a reproduzem. A Scopus ficou
+inacessível (login CAFe fora do ar) e é opcional.
+
+### `09-cdi-periodo/` — capítulos 5, 6 e 7
+
+Não é cópia: série diária do CDI (Banco Central, SGS 12) dos 153 pregões do replay,
+baixada em 19/11/2026. Acumulado de 8,33%; dimensiona o viés do caixa sem
+remuneração. Detalhes em `09-cdi-periodo/README.md`.
+Detalhes em `08-busca-sistematica/README.md`.
 
 ## Atenção: dados que vieram de fora do Git
 

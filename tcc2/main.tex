@@ -18,13 +18,36 @@
 
 \newacronym{tcc}{TCC}{Trabalho de Conclusão de Curso}
 \newacronym{llm}{LLM}{Large Language Model}
-\newacronym{etl}{ETL}{Extract, Transform, Load}
 \newacronym{emh}{EMH}{Efficient Market Hypothesis}
 \newacronym{amh}{AMH}{Adaptive Markets Hypothesis}
-\newacronym{mas}{MAS}{Multi-Agent Systems}
 \newacronym{rsi}{RSI}{Relative Strength Index}
 \newacronym{sma}{SMA}{Simple Moving Average}
 \newacronym{macd}{MACD}{Moving Average Convergence Divergence}
+\newacronym{arima}{ARIMA}{AutoRegressive Integrated Moving Average}
+\newacronym{b3}{B3}{Brasil, Bolsa, Balcão}
+\newacronym{cdi}{CDI}{Certificado de Depósito Interbancário}
+\newacronym{cfa}{CFA}{Chartered Financial Analyst}
+\newacronym{cotahist}{COTAHIST}{Cotações Históricas (arquivo de negociações da B3)}
+\newacronym{csrf}{CSRF}{Cross-Site Request Forgery}
+\newacronym{csv}{CSV}{Comma-Separated Values}
+\newacronym{cvar}{CVaR}{Conditional Value at Risk}
+\newacronym{dqn}{DQN}{Deep Q-Network}
+\newacronym{gsm8k}{GSM8K}{Grade School Math 8K}
+\newacronym{http}{HTTP}{Hypertext Transfer Protocol}
+\newacronym{ia}{IA}{Inteligência Artificial}
+\newacronym{jcp}{JCP}{Juros sobre Capital Próprio}
+\newacronym{json}{JSON}{JavaScript Object Notation}
+\newacronym{lstm}{LSTM}{Long Short-Term Memory}
+\newacronym{mar}{MAR}{Minimum Acceptable Return}
+\newacronym{mdd}{MDD}{Maximum Drawdown}
+\newacronym{ohlcv}{OHLCV}{Open, High, Low, Close, Volume}
+\newacronym{pl}{PL}{Patrimônio Líquido}
+\newacronym{ppo}{PPO}{Proximal Policy Optimization}
+\newacronym{slsqp}{SLSQP}{Sequential Least Squares Programming}
+\newacronym{tdqn}{TDQN}{Trading Deep Q-Network}
+% ponytail: \glsaddall lista todas as siglas declaradas sem exigir \gls no texto, que
+% mantém as expansões escritas à mão. Se passar a usar \gls, remova esta linha.
+\glsaddall
 
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta, positioning}
@@ -53,12 +76,12 @@
 \makeapproval
 
 \begin{resumo}
-A avaliação de estratégias quantitativas em mercados não estacionários é sujeita a custos, dependência de regime e superajuste. Este trabalho apresenta o Hedge-fund-lab, laboratório quantitativo de \textit{backtesting} baseado em sistemas multiagentes, e o emprega para verificar se uma carteira decidida por agentes baseados em \textit{Large Language Models} (LLMs) apresenta desempenho ajustado ao risco superior ao de carteiras de referência clássicas. O laboratório integra dados oficiais da B3 (COTAHIST), um livro contábil de eventos auditável e comitês de analistas técnicos, analistas de risco e um gestor de carteira, cuja proposta é submetida a um compilador determinístico de regras. O estudo empírico é um replay retrospectivo de 153 pregões, de abril a novembro de 2026, com cinco ações e R\$ 100 mil por carteira, no qual a carteira multiagente é comparada a cinco referências determinísticas (Buy \& Hold, SMA 50/200, Bollinger 20/2, Equal Weight e Mínima Variância) em três versões: a v1, pré-especificada, e as v2 e v3, iterações exploratórias desenhadas após a observação do mesmo período. As hipóteses são decididas pelo Sharpe líquido com \textit{bootstrap} estacionário pareado (Bootstrap A). A v1 terminou em $-17{,}82\%$, abaixo das cinco referências, e nenhum de seus contrastes rejeitou a hipótese nula; a SMA 50/200 tampouco superou a Equal Weight. A v3 terminou em $+0{,}07\%$, acima de quatro referências e abaixo da Bollinger 20/2 ($+4{,}89\%$), resultado otimista por construção. Conclui-se que não há evidência de superioridade dos agentes e que, nesta trajetória, a especialização do comitê e a governança determinística alteraram de forma mensurável o comportamento da carteira. A avaliação livre de contaminação do modelo depende do acompanhamento prospectivo, já em curso.
+A avaliação de estratégias quantitativas em mercados não estacionários é sujeita a custos, dependência de regime e superajuste, e avaliações publicadas de agentes de negociação baseados em modelos de linguagem costumam usar janelas curtas, ignorar custos e testar períodos que o modelo pode ter visto no treinamento. Este trabalho apresenta o Hedge-fund-lab, laboratório quantitativo de \textit{backtesting} baseado em sistemas multiagentes, e o emprega para verificar se uma carteira decidida por agentes baseados em \textit{Large Language Models} (LLMs) apresenta desempenho ajustado ao risco superior ao de carteiras de referência clássicas. O laboratório integra dados oficiais da B3 (COTAHIST), um livro contábil de eventos auditável e comitês de analistas técnicos, analistas de risco e um gestor de carteira, cuja proposta é submetida a um compilador determinístico de regras. O estudo empírico é um replay retrospectivo de 153 pregões, de abril a novembro de 2026, com cinco ações e R\$ 100 mil por carteira, no qual a carteira multiagente é comparada a cinco referências determinísticas (Buy \& Hold, SMA 50/200, Bollinger 20/2, Equal Weight e Mínima Variância) em três versões: a v1, pré-especificada, e as v2 e v3, iterações exploratórias desenhadas após a observação do mesmo período. As hipóteses são decididas pelo Sharpe líquido com \textit{bootstrap} estacionário pareado (Bootstrap A). A v1 terminou em $-17{,}82\%$, abaixo das cinco referências, e nenhum de seus contrastes rejeitou a hipótese nula; a SMA 50/200 tampouco superou a Equal Weight. A v3 terminou em $+0{,}07\%$, acima de quatro referências e abaixo da Bollinger 20/2 ($+4{,}89\%$), resultado otimista por construção. Conclui-se que não há evidência de superioridade dos agentes e que, nesta trajetória, a especialização do comitê e a governança determinística alteraram de forma mensurável o comportamento da carteira. A avaliação livre de contaminação depende do acompanhamento prospectivo: a arquitetura da v1 é acompanhada diariamente desde 14/10/2026, e a avaliação da v3 com regras congeladas fica como trabalho futuro.
 \palavraschave{Análise Quantitativa. Sistemas Multiagentes. Large Language Models. Backtesting. Mercado Acionário Brasileiro.}
 \end{resumo}
 
 \begin{abstract}
-The evaluation of quantitative strategies in non-stationary markets is subject to costs, regime dependence, and overfitting. This work presents the Hedge-fund-lab, a quantitative backtesting laboratory based on multi-agent systems, and uses it to test whether a portfolio managed by agents based on Large Language Models (LLMs) achieves higher risk-adjusted performance than classical benchmark portfolios. The laboratory integrates official B3 trading records (COTAHIST), an auditable event ledger, and committees of technical analysts, risk analysts, and a portfolio manager whose proposal is submitted to a deterministic rule compiler. The empirical study is a retrospective replay of 153 trading sessions, from April to November 2026, with five stocks and BRL 100,000 per portfolio, in which the multi-agent portfolio is compared with five deterministic benchmarks (Buy \& Hold, SMA 50/200, Bollinger 20/2, Equal Weight, and Minimum Variance) in three versions: v1, pre-specified, and v2 and v3, exploratory iterations designed after observing the same period. The hypotheses are decided on the net Sharpe ratio with a paired stationary bootstrap (Bootstrap A). Version v1 ended at $-17.82\%$, below all five benchmarks, and none of its contrasts rejected the null hypothesis; SMA 50/200 did not outperform Equal Weight either. Version v3 ended at $+0.07\%$, above four benchmarks and below Bollinger 20/2 ($+4.89\%$), a result optimistic by construction. The study concludes that there is no evidence of agent superiority and that, along this trajectory, committee specialization and deterministic governance measurably changed the portfolio's behavior. An evaluation free from model contamination depends on the prospective daily tracking already under way.
+The evaluation of quantitative strategies in non-stationary markets is subject to costs, regime dependence, and overfitting, and published evaluations of language-model trading agents often use short windows, ignore costs, and test periods the model may have seen during training. This work presents the Hedge-fund-lab, a quantitative backtesting laboratory based on multi-agent systems, and uses it to test whether a portfolio managed by agents based on Large Language Models (LLMs) achieves higher risk-adjusted performance than classical benchmark portfolios. The laboratory integrates official B3 trading records (COTAHIST), an auditable event ledger, and committees of technical analysts, risk analysts, and a portfolio manager whose proposal is submitted to a deterministic rule compiler. The empirical study is a retrospective replay of 153 trading sessions, from April to November 2026, with five stocks and BRL 100,000 per portfolio, in which the multi-agent portfolio is compared with five deterministic benchmarks (Buy \& Hold, SMA 50/200, Bollinger 20/2, Equal Weight, and Minimum Variance) in three versions: v1, pre-specified, and v2 and v3, exploratory iterations designed after observing the same period. The hypotheses are decided on the net Sharpe ratio with a paired stationary bootstrap (Bootstrap A). Version v1 ended at $-17.82\%$, below all five benchmarks, and none of its contrasts rejected the null hypothesis; SMA 50/200 did not outperform Equal Weight either. Version v3 ended at $+0.07\%$, above four benchmarks and below Bollinger 20/2 ($+4.89\%$), a result optimistic by construction. The study concludes that there is no evidence of agent superiority and that, along this trajectory, committee specialization and deterministic governance measurably changed the portfolio's behavior. A contamination-free evaluation depends on prospective tracking: the v1 architecture has been tracked daily since 14 October 2026, and a frozen-rule evaluation of v3 is left for future work.
 \keywords{Quantitative Analysis. Multi-Agent Systems. Large Language Models. Backtesting. Brazilian Stock Market.}
 \end{abstract}
 
@@ -80,5 +103,8 @@ The evaluation of quantitative strategies in non-stationary markets is subject t
 \backmatter
 
 \referencepage % Comando do molde para renderizar o arquivo "references.bib"
+
+\appendix
+\input{chapters/apendices}
 
 \end{document}

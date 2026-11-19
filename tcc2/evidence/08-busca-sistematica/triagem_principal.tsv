@@ -1,0 +1,475 @@
+id	decisao	codigo	multiagente	motivo
+2304.03279v4	EXCLUI	E6	-	jogos de escolha com ética; tema não financeiro
+2306.07402v1	EXCLUI	E6	-	atendimento ao cliente com LLM; sem ativos financeiros
+2308.09975v2	EXCLUI	E3	-	benchmark de conhecimento financeiro, sem decisão de negociação
+2309.03736v1	INCLUI	I	S	dúvida: agentes LLM decidem trades; resumo sem métrica financeira explícita
+2311.13743v2	INCLUI	I	N	agente LLM decide investimentos com avaliação em ações
+2312.04740v1	EXCLUI	E1	-	mercado de pesos de modelos, sem ativos financeiros
+2401.06164v1	EXCLUI	E4	-	recomendações avaliadas por qualidade textual, sem resultado financeiro
+2401.05799v1	EXCLUI	E2	S	classificação de sentimento financeiro, sem decisão de negociação
+2402.03659v3	INCLUI	I	N	dúvida: LLM prevê ações e testa construção de carteira com métricas
+2402.03755v1	INCLUI	I	N	dúvida: agente gera sinais de trading; avaliação por acurácia de previsão
+2402.12659v2	INCLUI	I	N	dúvida: benchmark amplo com tarefa de trading avaliada com LLMs
+2402.18485v3	INCLUI	I	N	agente multimodal decide trades; lucro superior a baselines
+2403.14443v1	EXCLUI	E1	-	mercado de informação, não financeiro
+2403.19735v1	EXCLUI	E6	S	detecção de anomalias em dados de mercado, não decisão de negociação
+2405.04294v1	EXCLUI	E6	S	due diligence de crédito estruturado, não negociação
+2405.06626v2	EXCLUI	E6	-	compressão de LLM, tema não financeiro
+2405.14767v2	EXCLUI	E3	S	plataforma de agentes financeiros sem tarefa de decisão avaliada
+2405.16581v4	EXCLUI	E6	-	bandidos e regret, tema não financeiro
+2406.00974v1	EXCLUI	E1	-	leilão de energia (FCAS), não ativo financeiro
+2406.06379v1	EXCLUI	E3	N	sistema de análise financeira sem decisão de negociação avaliada
+2406.11903v1	LEVANTAMENTO	L	-	survey de LLMs em aplicações financeiras
+2406.11569v6	EXCLUI	E6	-	aprendizado federado sem tema financeiro
+2407.09546v2	INCLUI	I	N	agente LLM reflexivo decide trades de cripto; backtest
+2406.19966v1	INCLUI	I	N	agente LLM negocia em mercado acionário simulado com resultados
+2407.00365v1	EXCLUI	E3	S	benchmark e sistema de QA financeiro, sem decisão de negociação
+2407.00995v1	EXCLUI	E1	-	precificação de dados de tráfego, mercado não financeiro
+2407.06567v3	INCLUI	I	S	equipe de agentes LLM decide ações e portfólio; avaliado
+2407.18957v5	INCLUI	I	S	agentes LLM investidores negociam ações com resultado avaliado
+2408.06361v2	LEVANTAMENTO	L	-	survey de agentes LLM em trading
+2409.07486v2	EXCLUI	E6	-	modelo generativo de ordens, não baseado em linguagem
+2409.06289v4	INCLUI	I	S	dúvida: LLM gera fatores e agentes filtram; retorno de carteira avaliado
+2409.08357v2	EXCLUI	E1	-	experimento de mercado genérico, sem ativos financeiros
+2409.09013v2	EXCLUI	E6	-	veracidade vs utilidade em diálogos, tema não financeiro
+2410.00031v2	EXCLUI	E1	-	conluio em mercado de commodities de produção, não negociação
+2410.00354v1	INCLUI	I	S	decisões hierárquicas de investimento avaliadas contra traders profissionais
+2410.21280v1	INCLUI	I	S	dúvida: agentes LLM negociam títulos; avaliação por volume, não retorno
+2410.12051v1	EXCLUI	E6	N	atendimento bancário em realidade mista, sem decisão de investimento
+2410.12464v3	INCLUI	I	S	agentes factual e subjetivo decidem trades de cripto com lucro avaliado
+2410.14587v1	INCLUI	I	N	dúvida: agentes com VLM decidem compra e venda em mercado virtual
+2410.19727v1	EXCLUI	E3	S	análise de documentos regulatórios, sem decisão de negociação
+2410.21741v1	EXCLUI	E6	S	QA numérico financeiro, sem decisão de negociação
+2411.08899v1	INCLUI	I	S	dúvida: agentes LLM decidem trades; reflexão avaliada por ablação
+2411.17724v1	EXCLUI	E6	-	casas e comércio em mundo simulado, tema não financeiro
+2502.15684v1	EXCLUI	E3	S	recuperação de informação financeira, sem decisão de negociação
+2412.11192v1	EXCLUI	E2	S	previsão de volatilidade em dia de eleição, sem decisão avaliada
+2501.10388v2	EXCLUI	E1	-	infraestrutura para agentes em mercados digitais; proposta conceitual
+2412.18174v1	INCLUI	I	N	dúvida: benchmark com tarefas de trading e carteira em ambientes
+2412.20138v7	INCLUI	I	S	equipe de agentes decide trades; retorno, Sharpe e drawdown
+2501.00826v3	INCLUI	I	S	agentes decidem carteira cripto; backtest com retorno e Sharpe
+2501.12399v2	EXCLUI	E5	N	gera relatórios de análise; não decide operação
+2501.08215v3	EXCLUI	E6	-	modelo teórico de bolhas, sem LLM
+2501.10963v2	EXCLUI	E3	-	leaderboard de LLMs financeiros, sem decisão de negociação
+2501.16356v1	EXCLUI	E2	N	viés de decisões binárias de LLM, sem resultado financeiro
+2502.00415v2	INCLUI	I	S	agentes LLM selecionam ações; retorno acumulado vs índice
+2502.01506v5	INCLUI	I	N	agentes LLM investidores em mercado simulado com bolhas emergentes
+2502.18471v2	EXCLUI	E5	N	gera contexto para consultas, não decide operações
+2502.05439v2	EXCLUI	E6	S	modelagem e risco de crédito, não negociação
+2502.07393v1	INCLUI	I	N	LLM gera sinais de risco e recomendação; backtest Nasdaq-100
+2502.13165v1	INCLUI	I	S	gestor e especialistas decidem trades de hedge; retorno avaliado
+2502.11433v3	INCLUI	I	N	LLM como política de RL em trading; avaliado por retorno
+2502.15800v3	INCLUI	I	N	agentes LLM negociam ativo em mercado experimental com bolhas
+2502.15865v2	INCLUI	I	N	dúvida: auditoria de agentes LLM em finanças; decisão de negociação não explícita
+2502.16343v1	INCLUI	I	N	agente DRL com LLM que posta; lucro em mercado simulado
+2502.17967v2	INCLUI	I	N	agentes LLM negociam em mercado simulado com desempenho avaliado
+2502.18658v4	EXCLUI	E6	-	assistência de programação, tema não financeiro
+2502.20757v1	EXCLUI	E6	-	segurança em diálogo de personagens, tema não financeiro
+2503.00320v2	INCLUI	I	N	dúvida: LLM decide compra de títulos por clientes em ABM; sem retorno
+2503.02692v1	INCLUI	I	S	agentes LLM e humano decidem investimentos; simulação de trading
+2503.05828v1	EXCLUI	E1	-	mercado interno de sub-agentes de RL, não financeiro
+2503.16041v2	EXCLUI	E5	S	gera relatórios de mercado de carbono, sem decisão de operação
+2503.17963v1	EXCLUI	E3	-	leaderboard e dataset financeiro coreano, sem decisão de negociação
+2503.18313v2	INCLUI	I	S	agentes LLM decidem estratégias de fundos em arena ao vivo
+2503.21422v1	LEVANTAMENTO	L	-	survey de IA em investimento quantitativo
+2504.00338v1	EXCLUI	E6	-	publicidade de produtos químicos, tema não financeiro
+2504.05104v2	EXCLUI	E6	N	classificação de projetos de financiamento climático, não negociação
+2504.05862v2	INCLUI	I	N	dúvida: LLM recomenda investimentos em estudo com usuários; sem retorno
+2504.10789v1	INCLUI	I	S	LLMs com estratégias distintas negociam em livro de ordens simulado
+2504.14233v1	EXCLUI	E5	S	gera relatórios financeiros estruturados, sem decisão de operação
+2504.14493v4	EXCLUI	E6	N	RAG de conformidade em documentos financeiros, sem negociação
+2504.15716v1	EXCLUI	E3	N	modelo e dataset de raciocínio financeiro, sem decisão de negociação
+2505.06408v2	INCLUI	I	N	agente RL com sinais de LLM negocia NASDAQ-100; backtest
+2505.07078v6	INCLUI	I	N	estratégias LLM de timing avaliadas por backtest de longo prazo
+2505.07457v1	INCLUI	I	N	agentes LLM negociam em mercado experimental de ativo; dinâmica de preço
+2505.10278v2	INCLUI	I	S	agentes heterogêneos constroem carteira; retorno em ações chinesas
+2505.11065v2	INCLUI	I	S	agentes LLM decidem em fundos com dados ao vivo; perdas avaliadas
+2505.14727v1	LEVANTAMENTO	L	-	revisão de alfa com agentes LLM
+2508.00828v1	EXCLUI	E3	N	benchmark de pesquisa financeira em SEC, sem decisão de negociação
+2505.19197v3	EXCLUI	E5	S	extrai KPIs e gera SQL; LLM não decide operações
+2506.00073v4	EXCLUI	E1	-	negociação de consumo com produtos, não financeiro
+2506.03861v2	INCLUI	I	S	MAS com sentimento do Reddit negocia cripto em alta frequência; resultados
+2506.09080v2	INCLUI	I	S	agentes LLM decidem posições com retorno ajustado ao risco
+2506.08726v3	EXCLUI	E6	S	QA numérico de documentos financeiros, sem negociação
+2506.12088v2	EXCLUI	E6	-	survey geral de riscos de LLM; finanças periférica
+2506.16813v1	EXCLUI	E2	S	previsão de padrões de preço com agentes, sem decisão avaliada
+2506.22708v1	EXCLUI	E1	-	mercado P2P de energia, não financeiro
+2507.01990v1	LEVANTAMENTO	L	-	survey de LLM em investimentos e análise de mercado
+2506.23273v2	EXCLUI	E6	S	text2sql sobre demonstrações contábeis, sem decisão de negociação
+2507.03435v1	EXCLUI	E2	S	análise e descrição de tendências, sem decisão avaliada
+2507.10448v1	EXCLUI	E5	S	gera relatórios financeiros, sem decisão de operação
+2507.08339v4	EXCLUI	E6	N	QA financeiro com prompts e agentes, sem negociação
+2507.08584v1	INCLUI	I	N	agente LLM descobre modelo de risco que orienta decisões diárias; backtest
+2507.09179v3	EXCLUI	E5	N	LLM gera features; RL detecta manipulação, não decide operação
+2507.09255v1	INCLUI	I	S	dúvida: simulador de negociação com agentes LLM; resultados não explícitos
+2507.20474v3	INCLUI	I	S	agentes LLM geram estratégias cripto; retornos superiores avaliados
+2507.22911v2	EXCLUI	E6	-	marketing de energia elétrica, tema não financeiro
+2507.14995v4	EXCLUI	E1	-	mercado P2P de energia elétrica, não financeiro
+2507.16802v4	EXCLUI	E3	N	modelo financeiro e benchmark de QA, sem negociação
+2507.22932v1	INCLUI	I	N	dúvida: LLM de sentimento alimenta RL de carteira; título diverge do resumo
+2507.18560v1	INCLUI	I	N	dúvida: mesmo resumo de carteira; LLM gera sinal para RL
+2508.00554v5	INCLUI	I	S	equipes de agentes LLM decidem trades; backtest em ações A
+2508.01370v1	EXCLUI	E5	S	gera relatórios de mercado, sem decisão de operação
+2508.02292v2	INCLUI	I	N	dúvida: plataforma com tarefas de trading e carteira avaliadas com LLM
+2508.02366v3	INCLUI	I	N	LLM gera estratégias que guiam RL; Sharpe e drawdown avaliados
+2508.14052v4	EXCLUI	E3	N	benchmark de recuperação financeira, sem decisão de negociação
+2508.11120v2	EXCLUI	E6	S	segmentação de público de marketing, tema não financeiro
+2508.11152v1	INCLUI	I	S	agentes por papel selecionam ações; desempenho vs benchmark
+2508.13915v1	EXCLUI	E2	N	previsão de séries financeiras com AutoML e LLM, sem decisão
+2508.17565v1	INCLUI	I	S	agentes LLM decidem compra e venda; backtest em ações
+2508.17906v2	EXCLUI	E3	N	grafo de conhecimento de 10-K, sem decisão de negociação
+2508.18610v1	EXCLUI	E1	N	Mercado de energia P2P; não é mercado financeiro
+2508.21368v1	INCLUI	I	N	dúvida: tokens DePIN; agentes LLM investem em infraestrutura em simulação
+2509.00958v1	EXCLUI	E1	S	Portfólio de patentes para transferência de tecnologia; não financeiro
+2509.04794v1	EXCLUI	E6	N	Controle de personalidade em LLM; sem finanças
+2509.06069v1	EXCLUI	E1	N	Mercado de serviços de especialistas; não financeiro
+2509.09727v1	EXCLUI	E6	S	QA de educação financeira; sem decisão de negociação
+2509.09995v4	INCLUI	I	S	dúvida: agentes LLM para HFT; avaliação por acurácia preditiva em horizonte curto
+2509.13160v1	EXCLUI	E3	N	Benchmark de busca financeira; sem decisão de carteira
+2509.14180v1	EXCLUI	E3	N	Dataset de raciocínio para finanças pessoais; sem decisão avaliada
+2509.14221v3	EXCLUI	E1	S	Anúncios em respostas de chatbots; não financeiro
+2509.17395v1	EXCLUI	E6	S	Recomendações avaliadas só por juízes; sem resultado financeiro
+2511.14767v1	EXCLUI	E1	N	Mercado de trabalho de TI; não financeiro
+2509.24344v1	EXCLUI	E5	S	LLM gera relatórios financeiros; não decide operação
+2510.00857v2	EXCLUI	E6	N	Decisões gerenciais com dano; não financeiro
+2510.01451v1	INCLUI	I	N	dúvida: agentes LLM tomam decisões de negociação com herding em laboratório
+2510.02209v2	INCLUI	I	N	Agentes LLM negociam ações com retorno, drawdown e Sharpe
+2510.03847v1	EXCLUI	E6	N	Survey de SLMs para agentes; não financeiro
+2510.04643v1	INCLUI	I	S	Agentes com negociação simulada e retorno em três anos
+2510.04787v2	INCLUI	I	S	dúvida: LLM gera estratégia em código; lucratividade avaliada em pares reais
+2510.05533v1	LEVANTAMENTO	L	-	Survey de LLMs em previsão e negociação financeira
+2510.05710v2	EXCLUI	E3	N	Benchmark de extração de grafo de conhecimento financeiro
+2510.07920v1	INCLUI	I	N	Agentes LLM financeiros avaliados por retorno em backtest; trata vazamento temporal
+2510.08068v2	INCLUI	I	S	Sistema multiagente cripto com backtest e retorno frente a buy-and-hold
+2510.08268v1	EXCLUI	E2	S	Previsão de tendência de cripto; sem decisão de negociação avaliada
+2510.15949v5	INCLUI	I	S	Agente central de negociação com ordens executáveis e avaliação financeira
+2510.11695v2	INCLUI	I	N	Benchmark ao vivo de agentes LLM de negociação com resultados
+2510.12189v1	INCLUI	I	N	dúvida: LLM decide compra e venda em simulação de mercado; sem retorno explícito
+2510.13936v2	EXCLUI	E3	N	Benchmark de análise financeira; sem decisão de negociação
+2510.14264v2	INCLUI	I	N	Agente único com RL e ferramentas; métricas financeiras de trading
+2510.17017v4	EXCLUI	E6	N	Segurança de agentes de busca; não financeiro
+2510.17108v4	EXCLUI	E6	S	Análise de crédito avaliada por especialistas; sem resultado financeiro
+2510.17235v1	EXCLUI	E6	S	Chatbot cripto avaliado por chamadas de ferramenta e satisfação; sem retorno
+2510.18155v1	EXCLUI	E1	S	Simulação de consumidores em marketing; não financeiro
+2511.01869v2	EXCLUI	E2	N	Classificação de sentimento de notícias de títulos; sem decisão avaliada
+2510.20099v1	EXCLUI	E6	N	Insights de investimento avaliados por QA humano; sem resultado financeiro
+2510.23032v1	INCLUI	I	S	Sistema multiagente com backtest e retorno ajustado ao risco
+2510.25779v1	EXCLUI	E1	S	Mercado agêntico de produtos e serviços; não financeiro
+2510.27251v2	INCLUI	I	S	Agentes de decisão direcional e de posição com avaliação de retorno
+2511.06448v2	EXCLUI	E6	S	Fraude financeira em redes sociais; sem decisão de negociação
+2511.12306v2	EXCLUI	E1	N	Mercado de freelancing; não financeiro
+2511.12599v1	INCLUI	I	S	Agentes de decisão dupla com retorno e restrição de risco
+2511.13614v1	INCLUI	I	S	Cinco agentes LLM de estratégias de alfa com comunicação e desempenho financeiro
+2511.14130v3	EXCLUI	E6	S	Recuperação de documentos financeiros; sem decisão de negociação
+2511.17621v2	EXCLUI	E1	S	Mercado de crenças epistêmicas; não financeiro
+2511.21728v2	EXCLUI	E1	N	Diálogo de marketing emocional; não financeiro
+2511.18177v1	EXCLUI	E6	N	RAG financeiro; sem decisão de negociação
+2511.20613v1	EXCLUI	E1	N	Leilão e roteamento logístico; não financeiro
+2512.04112v1	EXCLUI	E1	N	Estratégia de marketing e narrativas publicitárias; não financeiro
+2512.10971v1	INCLUI	I	N	Agentes LLM negociam ações, cripto e futuros com retorno
+2512.01439v1	EXCLUI	E6	S	Assistente financeiro multilíngue para clientes; sem decisão de negociação
+2512.02261v1	INCLUI	I	N	Agentes LLM de negociação com backtest, drawdown e concentração
+2512.02436v4	EXCLUI	E5	S	LLM propõe relações entre mercados de previsão; não decide operação
+2512.04988v2	EXCLUI	E1	S	Mercado de trabalho de agentes de IA; não financeiro
+2512.08088v1	EXCLUI	E6	N	Embeddings para recuperação em RAG financeiro; sem decisão
+2512.09440v1	EXCLUI	E2	N	Previsão e texto explicável; avaliação por acurácia, sem negociação
+2512.09506v6	EXCLUI	E3	N	Benchmark de conformidade e agência financeira
+2512.14735v2	EXCLUI	E3	S	Dataset de perguntas sobre imagens financeiras; sem decisão
+2512.11933v1	EXCLUI	E4	S	Proposta conceitual de governança; caso ilustrativo sem avaliação empírica
+2512.14744v1	EXCLUI	E6	N	QA financeiro verificado; sem decisão de negociação
+2512.13168v5	EXCLUI	E3	N	Benchmark de fluxos de trabalho em planilhas financeiras
+2512.20082v2	EXCLUI	E2	N	Classificação de sentimento de notícias com ajuste por retorno
+2512.21878v1	INCLUI	I	S	Sistema multiagente gera carteiras semanais avaliadas por retorno
+2512.23489v2	EXCLUI	E2	S	Previsão de sucesso de startups; sem decisão de negociação avaliada
+2512.24314v2	EXCLUI	E3	N	Modelo financeiro e benchmarks de QA; sem decisão de negociação
+2601.03061v1	EXCLUI	E1	S	Agentes de compra e vendedores; não financeiro
+2601.05039v1	EXCLUI	E3	S	Benchmark de agentes de pesquisa para previsão; sem decisão de carteira
+2601.07853v2	EXCLUI	E3	N	Benchmark de segurança de agentes financeiros
+2601.08641v3	INCLUI	I	S	Agentes multimodais de copy trading com retorno em meme coins
+2601.08676v3	EXCLUI	E6	S	Análise ESG de relatórios; sem decisão de negociação
+2601.11369v2	EXCLUI	E1	S	Mercado de Cournot de bens; não financeiro
+2601.11496v3	EXCLUI	E1	S	Negociação e persuasão de bens; não financeiro
+2601.11958v1	INCLUI	I	N	LLM ranqueia ações do Russell 1000 com alfa e Sharpe
+2601.12152v1	EXCLUI	E6	S	Ideação de pesquisa acadêmica; sem finanças
+2601.13545v3	EXCLUI	E2	N	Previsão de mercados de predição com calibração; sem negociação
+2602.00082v1	INCLUI	I	S	Agentes multiagente geram sinais de posição com backtest de REITs
+2601.17263v1	EXCLUI	E1	N	Mercado de Cournot de bens; não financeiro
+2601.17865v2	EXCLUI	E6	N	Amostragem de LLMs; não financeiro
+2601.18735v1	EXCLUI	E1	S	Mercado de incerteza visual entre agentes; não financeiro
+2602.13227v1	EXCLUI	E1	S	Negociação de fatias de rede 6G; não financeiro
+2602.00133v1	INCLUI	I	N	dúvida: agentes de negociação em replay de mercados de predição com taxas
+2602.00948v1	INCLUI	I	N	LLM é um dos traders heterogêneos em simulação de mercado com estratégias
+2602.07023v2	INCLUI	I	N	dúvida: agentes LLM negociam ações; avaliação comportamental sem retorno
+2602.03130v1	EXCLUI	E3	N	Benchmark multimodal de finanças; sem decisão de negociação
+2602.06008v2	EXCLUI	E1	S	Negociação de produtos, aluguéis e corridas; não financeiro
+2602.18481v2	EXCLUI	E5	N	LLM gera fatores alfa; execução é determinística e não decide
+2602.11886v1	EXCLUI	E6	N	Extração de tripletas de relatórios; sem decisão
+2602.11918v1	INCLUI	I	S	dúvida: agentes extraem argumentos que guiam carteira; retorno avaliado
+2602.15019v5	EXCLUI	E1	N	Busca de ativos biofarmacêuticos; não são ativos financeiros
+2603.13244v1	EXCLUI	E4	N	Ensaio conceitual sobre governança de agentes; sem avaliação
+2602.19073v1	EXCLUI	E3	N	Suíte de avaliação de FinLLMs; sem decisão de negociação
+2602.21091v1	INCLUI	I	N	dúvida: traders LLM em mercado de predição com juros; participação e viés
+2603.19254v2	EXCLUI	E3	N	Benchmark de pesquisa financeira; sem decisão de negociação
+2602.23330v1	INCLUI	I	S	Equipe multiagente com backtest e retorno ajustado ao risco
+2602.23784v1	EXCLUI	E6	N	Modelo generativo de fluxo de ordens; não é LLM decisor
+2603.00285v1	INCLUI	I	N	Agentes LLM em trading adversarial avaliados por Sharpe e drawdown
+2603.04663v2	EXCLUI	E6	N	Raciocínio numérico com verificação; sem decisão de negociação
+2603.08262v2	EXCLUI	E3	N	Benchmark de uso de ferramentas financeiras; sem decisão de negociação
+2603.08853v1	EXCLUI	E1	S	Mercado de serviços com assimetria de informação; não financeiro
+2603.10092v1	INCLUI	I	N	dúvida: camada de execução para agentes de trading; replay com MDD e CVaR
+2604.09611v1	EXCLUI	E6	N	Desempenho e energia de workflows de LLM; não financeiro
+2603.12564v8	INCLUI	I	N	dúvida: LLM recomenda ações por perfil de risco; sem métrica de retorno
+2603.13942v3	EXCLUI	E4	N	Arcabouço conceitual com caso exploratório; sem avaliação do modelo
+2603.14265v2	EXCLUI	E6	S	Privacidade em QA médico; não financeiro
+2603.16112v2	EXCLUI	E6	N	Raciocínio financeiro em QA; sem negociação
+2603.16365v3	EXCLUI	E5	S	LLM gera código de fatores; decisão pelo executor determinístico
+2603.22305v1	INCLUI	I	N	LLM converte notícias em alocação de ETFs avaliada por desempenho
+2603.17692v1	INCLUI	I	S	Quatro agentes LLM geram scores; política PPO com Sharpe
+2603.22567v1	INCLUI	I	S	Consenso entre agentes LLM com retorno e risco em backtest
+2603.22651v1	EXCLUI	E6	S	Extração de documentos financeiros; sem negociação
+2603.23300v2	INCLUI	I	S	Dois agentes LLM selecionam ativos; retorno e Sharpe avaliados
+2603.23640v2	EXCLUI	E6	N	Inferência de LLM em borda; não financeiro
+2603.24943v1	EXCLUI	E3	N	Benchmark de uso de ferramentas financeiras via MCP; sem decisão
+2603.26815v3	EXCLUI	E6	N	RAG de QA financeiro; sem decisão de negociação
+2603.27539v1	LEVANTAMENTO	L	-	Survey de sistemas multiagente LLM para trading
+2604.01483v1	EXCLUI	E4	N	Proposta de guardrail sem avaliação empírica
+2604.03664v1	EXCLUI	E6	S	QA numérico em relatórios financeiros; sem decisão de negociação
+2604.03888v1	INCLUI	I	S	dúvida: enxame de LLMs em mercados de predição; avaliação por calibração
+2604.05523v2	EXCLUI	E1	S	Mercado de varejo de mercadorias; não financeiro
+2604.05966v2	EXCLUI	E6	S	Relatórios financeiros localizados; sem decisão de negociação
+2604.18602v2	INCLUI	I	N	LLMs negociam ativos em mercado simulado; avaliados por bolhas e lucros
+2604.16472v1	EXCLUI	E1	S	Negociação de bens entre LLMs; não são ativos financeiros
+2604.09056v1	EXCLUI	E3	N	Detecção de risco em diálogos financeiros; sem decisão de negociação
+2605.05211v1	LEVANTAMENTO	L	-	Revisão de LLMs para previsão e sistemas de negociação
+2604.10996v1	EXCLUI	E5	N	LLM só gera features; agente PPO decide a negociação
+2604.11304v1	EXCLUI	E3	N	Benchmark de workflows de banco de investimento; sem decisão de negociação
+2604.12127v1	EXCLUI	E1	N	Negociação de espectro de radiofrequência; não financeiro
+2604.14222v2	EXCLUI	E3	N	QA sobre documentos financeiros; sem decisão de negociação
+2605.16297v1	EXCLUI	E6	-	Prontidão de tarefas para agentes em TI de serviços financeiros
+2604.15075v1	EXCLUI	E6	N	Custo-benefício de agentes de engenharia de software; sem finanças
+2604.15151v1	EXCLUI	E3	N	Benchmark de geração de código de estratégias; decisão não avaliada
+2604.16862v1	INCLUI	I	N	LLM decide em simulação cronológica de trading; avalia retorno e risco
+2604.17327v1	INCLUI	I	S	Agentes especialistas e agente de síntese recomendam ações; retorno validado
+2604.18373v1	INCLUI	I	N	Dúvida: agentes LLM negociam em mercado experimental; métrica é bolha de preço
+2604.19299v1	EXCLUI	E6	S	Agentes de linguagem pequenos em tarefas gerais; sem finanças
+2604.19633v1	EXCLUI	E3	N	Benchmark de perguntas financeiras com ferramentas; sem decisão de negociação
+2604.22230v2	EXCLUI	E1	-	Manipulação de desempenho no mercado de trabalho; não financeiro
+2604.23897v1	EXCLUI	E1	-	Leilões de tarefas de engenharia de software; não financeiro
+2604.24668v3	EXCLUI	E3	N	Benchmark de bajulação em tarefas financeiras; sem decisão de carteira
+2604.25224v2	EXCLUI	E3	N	Protocolo de validação de juízes LLM; sem resultado financeiro
+2604.26220v1	EXCLUI	E1	N	Compra de bens de consumo por agente; não financeiro
+2604.26747v1	EXCLUI	E5	N	LLM propõe hipóteses de fatores; motor determinístico decide a carteira
+2605.12532v1	INCLUI	I	S	Dúvida: agentes em dry-run ao vivo; sem métrica financeira reportada
+2605.01892v1	EXCLUI	E4	S	Artigo de posição sobre cibersegurança em finanças; sem avaliação
+2605.02503v3	EXCLUI	E3	N	Benchmark de análise exploratória de dados financeiros; sem negociação
+2605.05409v2	EXCLUI	E3	N	QA financeiro com RAG agentivo; sem decisão de negociação
+2605.05580v2	INCLUI	I	S	Agentes montam carteira cross-section com execução; retorno ajustado a risco
+2605.05739v3	INCLUI	I	S	Dúvida: sistema agêntico de previsão de ações avaliado por Sharpe e juízes LLM
+2605.06024v1	INCLUI	I	N	Agentes LLM negociam ações em 2025; retornos e taxa de acerto
+2605.06822v1	INCLUI	I	S	Agente de trading com agente de atribuição; desempenho financeiro avaliado
+2605.09185v1	INCLUI	I	N	Dúvida: ataques a agentes de trading medidos por decisões, não retorno
+2605.09823v3	EXCLUI	E1	S	Agendamento de calendários entre assistentes; não financeiro
+2605.10059v3	EXCLUI	E1	S	Mercado de e-commerce com vendedores e compradores; não financeiro
+2605.23955v4	LEVANTAMENTO	L	-	Revisão de determinismo em IA financeira, incluindo agentes LLM
+2605.11522v1	EXCLUI	E3	N	Substrato e ferramenta para DeFi; sem avaliação de decisão de LLM
+2605.14537v1	EXCLUI	E1	N	Jogo de leilão com cartas; economia simulada sem ativos financeiros
+2605.14744v1	EXCLUI	E6	N	Decisões de crédito bancário com governança; não é negociação
+2605.16895v1	EXCLUI	E4	-	Artigo de posição sobre alfa reportado de agentes LLM
+2605.28850v3	INCLUI	I	N	Agentes LLM em testbed de trading; retornos, calibração e risco
+2605.19127v1	EXCLUI	E1	S	Privacidade em conversas de agentes; não é mercado financeiro
+2605.19337v2	LEVANTAMENTO	L	-	Survey de agentes LLM em negociação e trading algorítmico
+2606.00061v1	INCLUI	I	N	Dúvida: previsões direcionais LLM com Sharpe de estratégia long/cash
+2605.22664v5	EXCLUI	E3	N	Benchmark de planilhas financeiras; sem decisão de negociação
+2605.23007v1	EXCLUI	E5	N	LLM gera código e fatores; busca evolutiva e backtest decidem
+2605.24490v2	INCLUI	I	S	Agentes especialistas com pesos Shapley; carteira cripto com Sharpe
+2605.25030v1	EXCLUI	E3	S	RAG multiagente sobre filings; QA sem decisão de negociação
+2605.27333v1	EXCLUI	E6	S	Guarda de chamadas de ferramenta; aprova ou recusa, não negocia
+2605.27864v5	EXCLUI	E4	S	Arquitetura de pesquisa fundamentalista; sem avaliação de decisão
+2605.28359v1	INCLUI	I	N	Agentes LLM negociam CSI300 com retornos e atribuição de alfa
+2605.29653v2	EXCLUI	E1	N	Jogo de cartas colecionáveis; não financeiro
+2608.18078v1	EXCLUI	E1	N	Precificação em oligopólio de bens; não ativos financeiros
+2605.30802v1	EXCLUI	E6	S	Resolução de mercados de previsão; não é decisão de negociação
+2605.30907v1	EXCLUI	E3	N	Benchmark de planilhas financeiras; sem decisão de negociação
+2605.31064v1	EXCLUI	E3	N	QA financeiro com compilação de programas; sem negociação
+2606.11238v2	EXCLUI	E6	S	Análise de crédito naval com LLMs; sem negociação de ativos
+2606.00939v1	INCLUI	I	S	Dúvida: comitê de agentes financeiros recomenda ações; sem retorno
+2606.01552v1	EXCLUI	E1	N	Interpretação de papéis de agentes; sem mercado financeiro
+2606.01886v1	EXCLUI	E3	N	Arquitetura de memória para agentes financeiros; sem retorno avaliado
+2606.02528v3	INCLUI	I	N	Dúvida: LLM altera alocação de carteira em Bitcoin; mede peso, não retorno
+2606.03034v1	EXCLUI	E1	N	Mercado de capacidades entre agentes; não financeiro
+2606.03800v2	EXCLUI	E6	N	Geração de tarefas de RL para agentes; não financeiro
+2610.06856v1	EXCLUI	E4	-	Conceito de ETF agentic com dimensionamento; sem avaliação empírica
+2606.06823v1	INCLUI	I	N	Dúvida: agente LLM com alfa restrito; Rank IC e drawdown no CSI300
+2608.26114v1	EXCLUI	E3	N	QA sobre depósitos a prazo; sem decisão de negociação
+2606.08283v1	INCLUI	I	S	Agentes macro com vieses opostos montam ETFs; Sharpe líquido de custos
+2606.08450v1	EXCLUI	E5	N	LLM define estados e recompensas; PPO decide a carteira
+2606.09421v3	EXCLUI	E6	N	Reescrita de skills para agentes; sem finanças
+2608.18099v1	INCLUI	I	N	Dúvida: construção de carteira com verificadores; sem retorno financeiro
+2606.13038v1	EXCLUI	E2	N	Previsão de mercados de previsão; sem decisão de negociação avaliada
+2606.17041v6	EXCLUI	E6	N	Meta-análise científica com agentes; não financeiro
+2606.17458v1	EXCLUI	E3	N	Benchmark de pesquisa financeira profunda; sem decisão de negociação
+2606.17642v6	EXCLUI	E3	N	Benchmark de raciocínio multimodal financeiro; sem decisão de negociação
+2606.20041v2	EXCLUI	E6	S	Cenários macroeconômicos e capital bancário; não negocia ativos
+2606.22000v1	EXCLUI	E3	N	Benchmark de contabilidade de construção; sem negociação
+2606.22385v1	INCLUI	I	N	LLM escolhe estratégia programática em trading multiativo; retornos
+2606.22769v1	EXCLUI	E1	-	Vagas de emprego agrupadas; mercado de trabalho, não financeiro
+2606.23032v3	EXCLUI	E3	N	Benchmark de diligência de IPO; perguntas sem decisão de negociação
+2607.16229v1	EXCLUI	E2	N	Probabilidade e intervalo de retorno; só previsão, sem carteira
+2606.25358v1	EXCLUI	E6	S	Avaliação de educação financeira em jogo; sem mercado
+2606.26583v1	EXCLUI	E2	N	Correlação de previsões LLM em mercados de previsão; só previsão
+2606.29142v2	EXCLUI	E6	-	Segurança e obrigações regulatórias de agentes; sem negociação
+2606.29194v1	EXCLUI	E5	S	Agentes geram fatores de alfa; avaliação por Sharpe, sem decisão LLM
+2606.29251v3	EXCLUI	E5	N	LLM comprime documentos financeiros; decisão de investimento não é dele
+2606.29556v1	EXCLUI	E4	-	Proposta conceitual sem implementação; políticas neurais, não LLM
+2606.29771v3	INCLUI	I	S	Comitê de agentes LLM em backtest e paper trading; retornos e custos
+2606.31461v1	INCLUI	I	S	Dúvida: agentes LLM compram e vendem skins CS2; retorno acumulado
+2606.31522v2	INCLUI	I	N	Agentes LLM com mandatos em mercado simulado; comportamento de carteira
+2607.05863v1	EXCLUI	E1	S	Negociação de bens com compradores; não ativos financeiros
+2607.08652v1	EXCLUI	E1	S	Mercado de produtos entre agentes; não financeiro
+2607.08681v1	EXCLUI	E1	S	Mercado de energia solar; não financeiro
+2607.09641v1	EXCLUI	E5	N	LLM codifica narrativas; DQN decide detecção de fraude, não negociação
+2607.19409v1	EXCLUI	E3	N	Benchmark de tarefas financeiras empresariais; sem negociação
+2607.10286v3	INCLUI	I	N	Agentes LLM em trading com atribuição de lucro e custo
+2607.11141v1	INCLUI	I	S	Dúvida: plataforma avalia agentes multiagentes em trading com curvas de capital
+2607.12233v1	INCLUI	I	S	Oito especialistas LLM e meta-agente negociam TSLA ao vivo; retorno
+2607.12252v2	EXCLUI	E3	N	Benchmark de relatórios de pesquisa financeira; sem negociação
+2607.15640v1	EXCLUI	E5	S	LLM extrai arestas de empresas; não decide a operação
+2607.19794v1	EXCLUI	E5	S	LLMs e modelos classificam sentimento; sinal, não decisão do LLM
+2607.19967v1	EXCLUI	E1	N	Alocação de transporte de carga; mercado não financeiro
+2607.20645v1	EXCLUI	E3	N	Benchmark de julgamento de notícias; sem decisão de negociação
+2607.24875v1	EXCLUI	E4	S	Proposta com resultados simulados rotulados; sem avaliação empírica
+2607.24889v2	EXCLUI	E3	N	Benchmark de modelos de valuation; sem decisão de negociação
+2607.25253v2	EXCLUI	E1	N	Mercado de recomendação de produtos; não financeiro
+2607.26642v1	EXCLUI	E5	N	LLM traduz esquemas em fatores; surrogate escolhe a busca
+2607.27853v2	EXCLUI	E3	N	Plataforma de pesquisa financeira com benchmark de relatórios; sem negociação
+2607.28840v1	EXCLUI	E4	-	Artigo de posição sobre validação de sistemas financeiros LLM
+2608.11232v1	EXCLUI	E3	N	Benchmark de perguntas sobre backtests; sem decisão de negociação
+2608.00764v1	EXCLUI	E3	N	Benchmark de indicadores financeiros; sem decisão de negociação
+2608.01204v1	INCLUI	I	S	Consultores LLM influenciam decisões de fundos; trajetórias com desfecho
+2608.02311v3	EXCLUI	E4	-	Framework de governança em gestão de ativos; sem avaliação empírica
+2608.04077v1	EXCLUI	E3	N	Benchmark de entregáveis financeiros profissionais; sem negociação
+2608.04843v1	EXCLUI	E6	N	Memória de agentes em conversas longas; sem finanças
+2608.28632v2	INCLUI	I	N	Dúvida: LLM seleciona alfas e modelo para estratégia avaliada em CSI
+2608.05668v1	INCLUI	I	S	Agentes multimodais especialistas geram sinais de trading; retornos
+2608.06108v2	INCLUI	I	N	LLMs decidem investimentos de investidores reais; avaliado por resultados
+2608.09988v1	INCLUI	I	S	Agente LLM gerencia carteira S&P 500 com retornos e custos
+2608.08497v1	EXCLUI	E1	S	Simulação de comunidade SocialFi; sem decisão em ativos financeiros
+2608.11683v1	EXCLUI	E3	N	Benchmark de pesquisa de investidores; sem decisão de negociação
+2609.05462v1	EXCLUI	E1	S	Leilões de energia P2P; mercado não financeiro
+2608.12841v3	INCLUI	I	S	dúvida: agentes LLM propõem fatores que formam sinal; Sharpe em teste
+2608.13024v5	EXCLUI	E2	N	previsão de desfecho de eventos, sem decisão de carteira
+2608.28646v1	EXCLUI	E6	N	alocação de ETFs por LLM, mas só métricas de violação de limites
+2608.14765v1	EXCLUI	E6	-	limpeza de dados, sem decisão de negociação
+2608.16386v2	EXCLUI	E3	N	modelos e benchmarks de QA financeira, sem decisão de negociação
+2608.17220v1	EXCLUI	E6	N	autorização de transações DeFi; avalia segurança, sem retorno financeiro
+2608.17800v1	EXCLUI	E6	-	benchmark de tarefas de startups, não financeiras
+2608.17933v1	EXCLUI	E2	N	detecção de pontos de mudança, sem decisão de operação
+2608.19974v2	INCLUI	I	S	dúvida: traders LLM enviam ordens em simulação; sem métrica de retorno explícita
+2610.08806v1	EXCLUI	E4	-	teoria sobre risco sistêmico, sem avaliação empírica
+2608.22842v1	EXCLUI	E6	-	análise de documentos financeiros, sem decisão de negociação
+2608.22852v1	INCLUI	I	N	dúvida: LLM decide compra e venda; backtest exploratório com carteira
+2608.23867v1	EXCLUI	E1	S	mercado de tarefas entre agentes, não financeiro
+2608.23908v1	INCLUI	I	S	recomendações de liquidação de carteira; resultado é economia fiscal
+2608.24069v2	INCLUI	I	S	dúvida: sistema de trading multiagente; avalia decisão final, sem retorno explícito
+2608.26990v1	EXCLUI	E6	S	pesquisa de ações com testes de software; declara ausência de resultado financeiro
+2608.27734v1	INCLUI	I	N	agente descobre estratégias; backtests com Sharpe e custos
+2608.28399v2	INCLUI	I	N	LLM decide long ou flat; retornos por intervalo medidos
+2608.29372v2	INCLUI	I	N	agentes adaptativos de trading; retornos de carteira em 36 execuções
+2608.30177v1	EXCLUI	E6	-	memória de agentes LLM, sem tema financeiro
+2609.29701v1	INCLUI	I	S	debate multiagente para alocação de carteira; Sharpe e retorno
+2609.01918v1	EXCLUI	E1	S	mercado de energia P2P, não de ativos financeiros
+2609.02580v1	EXCLUI	E1	S	duplo leilão genérico com agentes LLM, sem ativos financeiros
+2609.04373v1	INCLUI	I	N	dúvida: traders LLM em simulação; resultado é risco de mercado
+2609.04667v1	EXCLUI	E1	N	simulação de ERP e mercado de produtos, não financeiro
+2609.04706v1	EXCLUI	E6	N	decisões de pagamento e liquidação, não negociação de ativos
+2609.04917v1	LEVANTAMENTO	L	-	revisão crítica de IA em ações e cripto
+2609.05663v1	INCLUI	I	-	agentes LLM em produção; retorno e taxa de acerto em mercado real
+2609.06117v1	EXCLUI	E3	N	benchmark de perguntas sobre dados e previsões, sem decisão
+2611.18612v1	EXCLUI	E1	-	economia simulada; ativos financeiros não são negociados explicitamente
+2609.07675v2	INCLUI	I	S	dúvida: agentes LLM negociam ativos em bolsa simulada; sem métrica financeira explícita
+2611.18613v1	EXCLUI	E5	N	LLM gera sinais semânticos; a ordem é decidida por modelo de utilidade
+2609.11607v1	EXCLUI	E2	S	LLM prevê receita de firmas, sem decisão de carteira avaliada
+2609.17632v1	INCLUI	I	S	agente de trading evoluído por experiência; Sharpe e retorno acumulado
+2609.18357v1	EXCLUI	E1	N	precificação em duopólio de Bertrand, não mercado financeiro
+2609.19550v1	EXCLUI	E1	S	otimização de materiais, não financeiro
+2609.19705v3	INCLUI	I	N	dúvida: LLM vende posições em mercado simulado; queda de preço mensurada
+2609.19789v1	INCLUI	I	S	sistema multiagente de trading; Sharpe e métricas de backtest
+2609.24002v1	EXCLUI	E3	-	benchmark de QA financeira com ambiguidade, sem decisão de negociação
+2609.25192v1	EXCLUI	E3	N	benchmark de busca financeira, sem decisão de negociação
+2609.25677v1	EXCLUI	E1	N	marketing visual com consumidores sintéticos, não financeiro
+2609.25960v1	EXCLUI	E6	-	políticas programáticas, sem LLM decidindo
+2609.27051v1	EXCLUI	E5	N	LLM propõe fatores; outro referee decide admissão
+2609.28771v1	EXCLUI	E2	S	avaliação só de acurácia direcional, sem resultado financeiro
+2609.30940v1	EXCLUI	E6	S	corridas bancárias e rolagem de dívida, sem negociação de ativos
+2609.32379v1	INCLUI	I	N	agente em simulação financeira; retorno total sob execução estressada
+2609.32746v1	EXCLUI	E2	S	descoberta de equações para valuation, sem decisão de negociação
+2609.33289v2	EXCLUI	E1	N	negociação bilateral de produtos, não mercado financeiro
+2609.33470v2	INCLUI	I	N	agentes LLM operam opções; retornos e métricas de risco
+2609.34004v2	INCLUI	I	S	agentes LLM pontuam ações para portfólio; Sharpe líquido
+2609.34211v2	EXCLUI	E3	S	dataset de fraude enriquecido por agentes, sem decisão de negociação
+2609.38224v1	EXCLUI	E6	-	governança de agentes com privilégios de sistema, não financeiro
+2609.34510v1	INCLUI	I	-	benchmark de métodos de trading cripto; backtest, paper e live
+2609.34821v1	EXCLUI	E1	S	mercado de bens entre empresas, não de ativos financeiros
+2609.36914v2	EXCLUI	E2	N	previsão de retorno de ações, sem decisão de carteira avaliada
+2609.39420v1	EXCLUI	E5	N	LLM gera código de estratégia; avaliação é de compilação e execução
+2609.39958v1	EXCLUI	E6	N	geração de apresentações bancárias, sem decisão de negociação
+2610.03524v1	EXCLUI	E6	-	text-to-SQL financeiro, sem decisão de negociação
+2610.04040v1	INCLUI	I	N	agente troca posições em eventos; retorno de deployment versus aleatório
+2610.06947v1	EXCLUI	E3	-	benchmark de mineração de fatores; LLM é apenas um método
+2610.05077v1	INCLUI	I	-	políticas LLM e clássicas negociam em caminhos sintéticos; Sharpe
+2610.05823v1	EXCLUI	E1	S	aluguel de imóveis com assistentes, não financeiro
+2610.09872v1	INCLUI	I	N	agentes LLM operam em mercado ao vivo; retornos e diagnósticos
+2610.10407v1	INCLUI	I	N	LLM escolhe estratégias de opções; retorno e Sharpe fora da amostra
+2610.11732v2	INCLUI	I	N	agente de carteira com memória; retorno contra 1/N
+2610.12988v1	INCLUI	I	S	sistema multiagente de swing trading cripto; Sharpe e drawdown
+2610.13273v1	EXCLUI	E6	S	especificações de API, não financeiro
+2610.15973v3	INCLUI	I	N	LLM decide compra e empréstimo em mercado simulado; dívida e write-offs
+2610.16911v1	EXCLUI	E6	-	auditoria de agentes de código, não financeiro
+2610.24033v1	EXCLUI	E1	N	mercado de aritmética simulada, sem ativos financeiros
+2610.24289v1	EXCLUI	E6	-	medição de salvaguardas de código; sem resultado financeiro
+2611.21653v1	EXCLUI	E2	S	ataque a classificador de sentimento financeiro, não decisão
+2610.25847v1	INCLUI	I	S	LLM trader com red team em ações dos EUA; retorno e Sharpe
+2610.26036v1	EXCLUI	E3	-	benchmark de busca multi-hop financeira, sem decisão de negociação
+2610.26101v1	EXCLUI	E6	S	desenvolvimento de estratégia avaliado por fidelidade e execução, sem retorno
+2610.26438v1	INCLUI	I	N	dúvida: LLM compra ou vende após notícia falsa; taxa de sucesso do ataque
+2610.26662v1	INCLUI	I	N	dúvida: agente de trading em conta de papel; sem métrica de retorno explícita
+2610.26770v2	EXCLUI	E6	-	harness de agentes de código, não financeiro
+2610.27488v1	EXCLUI	E6	N	revisão de memos de crédito, não decisão de negociação
+2610.28787v1	EXCLUI	E1	N	precificação em mercado de bens, não financeiro
+2610.29245v1	EXCLUI	E6	N	intervenção de política em mercado simulado, não negociação
+2610.30113v1	INCLUI	I	N	LLM constrói estratégias A-shares; retorno em período selado
+2610.30557v1	INCLUI	I	S	sistema multiagente de investimento ao vivo; retorno e drawdown
+2610.31711v1	EXCLUI	E6	-	construção de planilhas financeiras, sem decisão de negociação
+2610.31325v1	EXCLUI	E6	S	decisões clínicas, não financeiras
+2610.33109v1	LEVANTAMENTO	L	-	survey de incerteza em modelos financeiros
+2610.33536v1	EXCLUI	E6	-	simulação de fraude, sem negociação de ativos
+2610.34887v1	EXCLUI	E6	-	auditoria de números de relatórios, sem decisão de negociação
+2610.37166v2	EXCLUI	E3	-	benchmark de busca financeira, sem decisão de negociação
+2610.38342v1	INCLUI	I	-	benchmark de pesquisa de ações com desempenho de investimento simulado
+2610.38924v1	EXCLUI	E6	-	perguntas sobre arquivo de documentos, sem decisão de negociação
+2610.39230v1	EXCLUI	E6	S	arquitetura de IA financeira para ERP, sem decisão de negociação
+2610.41228v1	LEVANTAMENTO	L	-	revisão de IA em finanças
+2610.42004v1	EXCLUI	E1	N	negociação de tarifas entre países, não de ativos financeiros
+2611.00515v2	INCLUI	I	-	agentes LLM negociam ações A; auditoria de decisões e impacto em portfólio
+2611.02001v1	EXCLUI	E3	N	benchmark de memória em diálogo financeiro, sem decisão
+2611.04375v1	EXCLUI	E6	-	validação de memos de pesquisa, sem decisão de negociação
+2611.06607v1	INCLUI	I	N	LLM propõe estratégias; backtests com Sharpe e P&L após custos
+2611.10016v1	EXCLUI	E1	S	marketing digital, não financeiro
+2611.09528v1	EXCLUI	E5	N	ferramenta determinística de seleção; LLM apenas chama a ferramenta
+2611.10414v1	INCLUI	I	S	dúvida: juízos de LLM sobre notícias; retornos anormais e posições por código
+2611.12953v1	EXCLUI	E6	-	procedimentos empresariais, não financeiro
+2611.10586v1	INCLUI	I	S	sistema multiagente de futuros cripto; retorno em dados reais
+2611.12966v1	EXCLUI	E3	-	benchmark de pesquisa de investimento, sem decisão avaliada por retorno
+2611.11657v1	INCLUI	I	S	agentes LLM com momentum; retorno em conta de papel
+2611.12269v1	INCLUI	I	S	agentes LLM de trading cripto; retorno e Sharpe
+2611.17939v1	EXCLUI	E6	N	agente de pesquisa financeira avaliado por rubricas, não por negociação
+2611.18130v1	EXCLUI	E3	-	benchmark de exames de certificação, sem decisão de negociação
+2611.18150v1	INCLUI	I	S	painel de traders LLM por ação; retorno e drawdown em 2025
+2611.18493v1	INCLUI	I	N	dúvida: agentes LLM enviam ordens em LOB; alertas e preenchimentos medidos
+2611.18908v1	EXCLUI	E1	-	mercado de memes, não de ativos financeiros
+2611.18934v1	LEVANTAMENTO	L	-	auditoria de 91 artigos sobre agentes LLM de trading
+2611.19311v1	INCLUI	I	S	dúvida: mercados de agentes LLM com alocação ações/caixa; resultado é rastreamento de trajetória
+2611.19530v1	INCLUI	I	-	agentes LLM negociam ações; retorno decomposto em alfa e exposição
+2611.20423v1	EXCLUI	E6	-	verificação de números de agentes, sem decisão de negociação
+2611.22177v1	INCLUI	I	-	agentes LLM em eventos de balanço e quedas; retorno após custos
+2611.22338v1	EXCLUI	E6	-	avaliação de relatórios de pesquisa, sem decisão de negociação

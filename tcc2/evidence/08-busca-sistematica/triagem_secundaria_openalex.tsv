@@ -1,0 +1,79 @@
+id	decisao	codigo	multiagente	motivo
+W7214235736	INCLUI	I	-	Anonimização vazada em placebo de LLM sobre 10-K; mede contaminação de corte de conhecimento
+W7138929956	INCLUI	I	-	dúvida: LLMs e cronologia para evitar viés de antecipação em backtests financeiros
+W7160656235	INCLUI	I	-	dúvida: trading com LLM que afirma eliminar viés de antecipação por execução ao vivo
+W7171517045	EXCLUI	E2	-	Contaminação por desinformação em multiagentes de saúde; não é viés temporal financeiro
+W7204605644	LEVANTAMENTO	L	-	Survey de LLM e RL em finanças; viés de antecipação citado como lacuna crítica
+W7197043862	EXCLUI	E6	-	Contaminação de benchmark geral de LLM; sem tarefa financeira
+W7138161862	INCLUI	I	-	dúvida: benchmark financeiro gerado por fórmulas para evitar contaminação de treino
+W7164686788	INCLUI	I	-	dúvida: viés de antecipação citado como desafio em consultoria financeira com LLM e SLM
+W7166834389	INCLUI	I	-	Mede viés de antecipação em código financeiro gerado por LLM com teste de truncamento
+W4406324480	INCLUI	I	-	Viés de antecipação em LLMs comerciais para contabilidade e finanças
+W7224426193	LEVANTAMENTO	L	-	Survey de LLMs em finanças; contaminação de dados citada como desafio
+W7214783769	EXCLUI	E2	-	Defasagem e embargo em features clássicas; LLM apenas explica a previsão
+W4416514095	EXCLUI	E1	-	Desaprendizado de LLM sobre dados pessoais; tema não financeiro
+W7225592399	INCLUI	I	-	Corte de conhecimento do GPT-4o-mini sobrepõe o ano de teste financeiro
+W7168105196	INCLUI	I	-	dúvida: sem resumo; título indica ofuscação temporal para validar LLM em regimes de mercado
+W4390790246	EXCLUI	E1	-	Revisão geral de PLN com LLMs; tema não financeiro
+W7224347295	EXCLUI	E1	-	Elicitação proativa em diálogo; tema não financeiro
+W7225873387	EXCLUI	E6	-	Sem resumo; LLM em value investing sem contaminação indicada no título
+W7159663372	EXCLUI	E1	-	Roubo de segredos em fine-tuning local; segurança, não financeiro
+W7163227906	EXCLUI	E1	-	Privacidade e memorização em LLM; finanças só como domínio citado
+W7141012976	INCLUI	I	-	Viés de antecipação em LLM de trading; reconstrução temporal garante integridade em backtests
+W7115567234	EXCLUI	E1	-	Revisão de raciocínio matemático em LLM; finanças só citadas
+W7222950207	INCLUI	I	-	Mede memorização e corte temporal de LLMs em previsão de retorno cross-section
+W7160216614	INCLUI	I	-	dúvida: relatórios financeiros de LLM avaliados perto do corte de conhecimento
+W7212310443	INCLUI	I	-	Auditoria de contaminação treino/teste e memorização em sentimento financeiro com LLM
+W7221480496	EXCLUI	E2	-	Memorização de privacidade em dados sintéticos tabulares; não é viés temporal
+W4416549320	EXCLUI	E1	-	Robots.txt e bots de LLM; governança web, tema não financeiro
+W7128803414	EXCLUI	E1	-	Revisão de privacidade em GPT; finanças só como domínio de aplicação
+W4416448413	EXCLUI	E6	-	Sem resumo; sentimento de MD&A sem contaminação indicada no título
+W7204622090	EXCLUI	E1	-	Detecção de informação sensível com LLM; tema não financeiro
+W7220951161	EXCLUI	E1	-	Privacidade em agentes conversacionais; tema não financeiro
+W4413334981	EXCLUI	E1	-	LLMs em gastroenterologia; tema não financeiro
+W7168159363	EXCLUI	E6	-	Sem resumo; benchmark de conformidade de LLM em trading sem contaminação indicada
+W7204737012	EXCLUI	E6	-	Mitigação de alucinação em RAG; não é viés temporal
+W7213543096	INCLUI	I	-	Teste de anonimização contra viés de antecipação em tom de MD&A com LLM
+W7202205995	INCLUI	I	-	dúvida: RAG contra corte de conhecimento em análise financeira; foco principal é alucinação
+W7154610297	EXCLUI	E2	-	Previsão com VADER e SVM, sem LLM; memorização de árvore de decisão
+W7162099833	EXCLUI	E2	-	Contaminação de sentimento por bots; não decorre de conhecimento do modelo
+W7222957074	INCLUI	I	-	dúvida: viés de antecipação em formalização de modelo financeiro gerada por LLM
+W7204640376	EXCLUI	E1	-	Revisão de RAG; finanças só como domínio, tema não financeiro
+W4379648026	EXCLUI	E2	-	Look-ahead tratado em previsão com FinBERT e SVM; sem decisão de LLM
+W7213437544	EXCLUI	E6	-	Ensino de finanças com IA; sem contaminação temporal
+W4407554187	INCLUI	I	-	Mascara detalhes para mitigar viés de antecipação em embeddings com corte recente
+W4410217432	EXCLUI	E6	-	Revisão de sentimento em manchetes bancárias; sem contaminação temporal
+W7221597804	EXCLUI	E2	-	Memorização de PII em fine-tuning; sentido de privacidade, não viés temporal
+W7127574829	EXCLUI	E1	-	BERT com privacidade diferencial para entidades pessoais; tema não financeiro
+W4408985588	EXCLUI	E1	-	RAG híbrido com corte de conhecimento genérico; tema não financeiro
+W7164988427	EXCLUI	E2	-	Defasagem contra look-ahead em previsão de preço; sem decisão de LLM
+W7224352575	EXCLUI	E1	-	Prefácio de workshop de interpretabilidade; tema não financeiro
+W7117309229	EXCLUI	E1	-	Revisão de privacidade em GenAI; tema não financeiro
+W7126021392	EXCLUI	E1	-	Revisão de privacidade em GenAI; tema não financeiro
+W7201866974	EXCLUI	E1	-	Sem resumo e título genérico; tema não financeiro
+W7160315985	EXCLUI	E2	-	Backtesting de previsão de séries sem LLM; evita vazamento clássico
+W4411722185	EXCLUI	E1	-	Carta sobre LLM em educação cirúrgica; tema não financeiro
+W7225787678	INCLUI	I	-	Ablação sem look-ahead de LLM em triagem de distress em empresas coreanas
+W7167315939	EXCLUI	E1	-	Dissertação sobre privacidade e unlearning; tema não financeiro
+W4408848241	EXCLUI	E1	-	Capítulo geral de aplicações de PLN; tema não financeiro
+W7170359520	EXCLUI	E1	-	Vulnerabilidades de contratos inteligentes; tema não financeiro
+W4382769595	EXCLUI	E1	-	Texto a partir de dados com difusão; tema não financeiro
+W7220854946	INCLUI	I	-	dúvida: sentimento com LLM em trading; alinhamento temporal declarado para evitar look-ahead
+W7204937512	EXCLUI	E1	-	Survey de privacidade em Transformers para séries; tema não financeiro
+W7216114278	EXCLUI	E2	-	Bibliometria sobre IA em contabilidade; contaminação refere-se à busca
+W7138904834	EXCLUI	E6	-	Pedagogia de ciência de dados com Bollinger; sem contaminação temporal
+W7233598093	INCLUI	I	-	dúvida: agentes com raciocínio sem look-ahead sobre competitividade de empresas com sinais de mercado
+W7172534737	EXCLUI	E1	-	Detecção de vishing em áudio; tema não financeiro de mercado
+W4405840446	EXCLUI	E1	-	Sem resumo; oftalmologia de glaucoma; tema não financeiro
+W4410973714	EXCLUI	E1	-	IA em medicina do sono; tema não financeiro
+W7225896015	EXCLUI	E1	-	Segurança de agentes de IA; finanças só como domínio citado
+W4386305619	EXCLUI	E1	-	ChatGPT em medicina laboratorial; tema não financeiro
+W7222899286	EXCLUI	E6	-	Revisão de código gerado por IA em software regulado; sem decisão financeira
+W4392552874	EXCLUI	E1	-	Reflexão sobre IA em reumatologia; tema não financeiro
+W4407708133	EXCLUI	E1	-	Aumento de dados em saúde mental; tema não financeiro
+W4416776051	EXCLUI	E1	-	Computação óptica; tema não financeiro
+W4413137393	EXCLUI	E1	-	Clima e sistemas de saúde; tema não financeiro
+W7131668182	EXCLUI	E1	-	Anais de pré-analítica laboratorial; tema não financeiro
+W4396656705	EXCLUI	E1	-	Logs de EHR e carga de trabalho clínica; tema não financeiro
+W7143885331	EXCLUI	E1	-	Editorial sobre governança marinha; tema não financeiro
+W7131372834	EXCLUI	E1	-	Resumo de congresso de infectologia; tema não financeiro

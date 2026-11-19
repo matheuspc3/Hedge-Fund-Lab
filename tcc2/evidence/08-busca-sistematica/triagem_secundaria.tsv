@@ -1,0 +1,85 @@
+id	decisao	codigo	multiagente	motivo
+2304.07619v6	INCLUI	I	-	manchetes pós-corte de conhecimento evitam viés de antecipação nos retornos
+2305.02823v2	INCLUI	I	-	testa memorização fora do período de treino em expectativas financeiras
+2309.17322v1	INCLUI	I	-	mede e corrige viés de antecipação em backtest de sentimento
+2312.12728v3	EXCLUI	E2	-	look-ahead usado em outro sentido (aceleração de inferência)
+2404.04885v2	EXCLUI	E1	-	previsão de carga elétrica, tema energético
+2406.12719v4	EXCLUI	E6	-	contaminação discutida em WTQ, não em tarefa financeira
+2407.02301v1	EXCLUI	E6	-	benchmark financeiro sem tratar contaminação ou viés temporal
+2410.04526v4	INCLUI	I	-	dúvida: benchmark com holdout anti-contaminação, sem medir o efeito
+2410.05725v2	EXCLUI	E1	-	memorização para privacidade; finanças só como domínio experimental
+2410.10866v1	EXCLUI	E1	-	desaprendizado de dados sensíveis, tema de privacidade
+2411.16569v1	INCLUI	I	-	LLM prevê correlações e avalia estratégias; mede viés de antecipação
+2412.12567v4	INCLUI	I	-	dúvida: benchmark financeiro desenhado contra contaminação, sem medir o efeito
+2502.05087v3	EXCLUI	E1	-	memorização em aprendizado federado para privacidade; finanças é um dos domínios
+2503.04756v1	EXCLUI	E1	-	avaliação privada de LLMs gerais; sem mercado financeiro
+2502.21206v3	INCLUI	I	-	modelo ponto-no-tempo sem informação futura; retornos de ações com Sharpe
+2504.16116v4	INCLUI	I	-	dúvida: benchmark Web3 com verificação de memorização; vínculo financeiro fraco
+2504.14765v2	INCLUI	I	-	mostra memorização de dados econômicos e financeiros antes do corte
+2505.12238v1	EXCLUI	E1	-	dataset sintético de PII; memorização de privacidade
+2506.02515v4	INCLUI	I	-	dúvida: benchmark financeiro com geração livre de contaminação
+2506.04450v5	EXCLUI	E1	-	classificação de laudos radiológicos com DP
+2506.06060v2	EXCLUI	E1	-	extração de PII em aprendizado federado jurídico
+2507.18417v1	INCLUI	I	-	dúvida: memorização discutida em SFT para sentimento e backtest financeiro
+2508.11987v3	EXCLUI	E1	-	previsão geral de eventos; finanças é um domínio entre outros
+2510.02209v2	INCLUI	I	-	dúvida: benchmark de trading com design livre de contaminação
+2510.07920v1	INCLUI	I	-	lucro de agentes financeiros some fora da janela de conhecimento
+2510.13499v2	EXCLUI	E1	-	intenção de consumidores, sem tema financeiro
+2510.14162v2	INCLUI	I	-	mede viés de antecipação de preços de ações em relação ao corte
+2510.20699v1	INCLUI	I	-	LLM de ponto no tempo evita look-ahead em previsão de volatilidade
+2511.05535v1	EXCLUI	E2	-	contaminação sintética de corpus, sem finanças
+2510.26538v3	EXCLUI	E1	-	reflexão sobre pesquisa em engenharia de software
+2511.14214v2	INCLUI	I	-	dúvida: testa cronologia de LLMs motivada por viés de antecipação financeiro
+2511.15364v2	INCLUI	I	-	anonimização mede viés de antecipação em previsão de rebaixamento de crédito
+2512.06607v2	INCLUI	I	-	remove conhecimento futuro de LLM para backtests financeiros
+2512.10563v3	EXCLUI	E2	-	contaminação como poluição de contexto em fluxos de trabalho
+2512.12924v1	EXCLUI	E2	-	look-ahead em sinais de microestrutura sem LLM
+2512.23132v1	EXCLUI	E1	-	ameaças de segurança a sistemas de ML
+2512.23847v2	INCLUI	I	-	detecta viés de antecipação em previsões de LLM por memorização
+2601.11958v1	INCLUI	I	-	agente com predições coletadas no presente; sem look-ahead por construção
+2601.12259v1	INCLUI	I	-	dúvida: previsão em domínios verticais com pipeline livre de contaminação
+2601.13770v1	INCLUI	I	-	benchmark de viés de antecipação em LLMs ponto-no-tempo para finanças
+2601.20141v1	EXCLUI	E1	-	percepção de ação climática em 125 países
+2602.09504v2	INCLUI	I	-	objetivo revelado induz viés; corte de conhecimento afeta previsões financeiras
+2602.14233v1	LEVANTAMENTO	L	-	revisão de 164 artigos sobre vieses na avaliação de LLMs financeiros
+2603.00285v1	INCLUI	I	-	dúvida: benchmark de trading adversarial com dados renováveis contra contaminação
+2603.11838v2	INCLUI	I	-	modelos com corte anual; viés de antecipação em retornos de ações
+2603.12564v8	EXCLUI	E2	-	contaminação por ferramenta manipulada, não conhecimento temporal
+2603.20965v2	INCLUI	I	-	avaliação restrita a período pós-lançamento para reduzir contaminação
+2603.26797v2	INCLUI	I	-	memorização e inferência de pertinência em sinais financeiros; viés de antecipação
+2603.27539v1	LEVANTAMENTO	L	-	survey de sistemas multiagente financeiros incluindo viés de antecipação
+2604.14199v1	INCLUI	I	-	dúvida: mercado de previsão com benchmark à prova de contaminação
+2604.17327v1	INCLUI	I	-	sinais gerados ao vivo eliminam viés de antecipação em carteira de ações
+2607.11889v3	INCLUI	I	-	modelos ponto-no-tempo para evitar viés em backtests financeiros
+2607.22545v1	EXCLUI	E6	-	classificador de segurança; contaminação de dataset, sem decisão financeira
+2606.00061v1	INCLUI	I	-	inputs anonimizados contra memorização em previsão financeira
+2605.22672v2	EXCLUI	E6	-	previsão de séries em epidemias e mercados; contaminação não é o foco
+2605.24564v2	INCLUI	I	-	atenua memória de desfechos históricos em backtests de ações
+2606.20625v2	EXCLUI	E6	-	memória de busca de fatores; sem conhecimento temporal do modelo
+2605.28359v1	INCLUI	I	-	mascara identificadores para separar memória de decisão em trading
+2606.17110v2	EXCLUI	E1	-	envenenamento para extrair dados de treino; tema de privacidade
+2606.18192v2	INCLUI	I	-	corpus financeiro pós-corte com baixa sobreposição com Common Crawl
+2606.22000v1	INCLUI	I	-	dúvida: agente financeiro com split privado protegido contra contaminação
+2606.23032v3	INCLUI	I	-	dúvida: benchmark financeiro com perguntas privadas contra contaminação
+2607.16227v1	EXCLUI	E1	-	survey de unlearning para cibersegurança
+2606.24950v1	INCLUI	I	-	textos filtrados pela data de publicação contra viés de antecipação financeiro
+2607.16229v1	INCLUI	I	-	portão temporal contra viés de antecipação em previsão financeira
+2606.29771v3	INCLUI	I	-	portão temporal e custos contra viés de antecipação em carteiras com LLM
+2607.01388v2	INCLUI	I	-	dúvida: benchmark financeiro com templates para dados livres de contaminação
+2607.28661v1	INCLUI	I	-	dúvida: memorização de fórmulas financeiras no pré-treino afeta o desempenho
+2608.01181v1	INCLUI	I	-	entrevistas arquivadas antes da janela de retorno evitam viés de antecipação
+2608.11381v1	INCLUI	I	-	dúvida: splits anti-memorização em análise financeira com LLM
+2608.13024v5	INCLUI	I	-	portão temporal e sonda de nome-data contra vazamento em previsão financeira
+2608.23058v1	LEVANTAMENTO	L	-	survey de agentes LLM de previsão; contaminação é um dos temas
+2608.27734v1	INCLUI	I	-	look-ahead excluído por construção e seleção corrigida em estratégias
+2608.30110v1	INCLUI	I	-	nowcasting com LLM livre de contaminação, avaliado por retornos de anúncio
+2609.04806v1	INCLUI	I	-	dúvida: valores canônicos memorizados em resumos financeiros
+2610.00309v1	EXCLUI	E1	-	controle de acesso para PII em LLMs
+2610.18435v1	INCLUI	I	-	dúvida: GPT-4o sem memória de desfechos avalia artigos de finanças
+2611.03985v1	INCLUI	I	-	protocolo contra look-ahead e memorização em sinais de ações
+2611.06808v1	INCLUI	I	-	mede conhecimento temporal de LLM para escolher períodos de backtest
+2611.13550v1	INCLUI	I	-	dúvida: modelo sintético evita look-ahead em previsão de lucros
+2611.18130v1	INCLUI	I	-	dúvida: benchmark financeiro atualizável contra vazamento para treino
+2611.18934v1	LEVANTAMENTO	L	-	auditoria de 91 artigos sobre trading com LLM e viés de antecipação
+2611.19530v1	INCLUI	I	-	backtest sem look-ahead; memorização de anos passados em agentes de trading
+2611.22177v1	INCLUI	I	-	ganhos dos agentes vêm de memorização em torno de resultados de empresas
