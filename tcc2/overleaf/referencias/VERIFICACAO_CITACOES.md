@@ -1,7 +1,7 @@
 # Verificação das citações do TCC 2
 
 Feita em 19/11/2026. Para cada citação (`\cite`) das obras que têm PDF com texto em
-`tcc2/referencias/`, procurou-se no PDF o trecho que sustenta a frase do TCC, julgou-se o
+`tcc2/overleaf/referencias/`, procurou-se no PDF o trecho que sustenta a frase do TCC, julgou-se o
 apoio e grifou-se o trecho. A busca e o primeiro julgamento foram feitos com modelos de
 linguagem, em cinco lotes; as divergências relevantes foram conferidas à mão. **Revisão dos
 autores pendente**, a começar pelas linhas "sustenta em parte" e "não sustenta".

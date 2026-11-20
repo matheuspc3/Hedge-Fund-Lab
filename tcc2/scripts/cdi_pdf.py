@@ -1,4 +1,4 @@
-"""Gera tcc2/referencias/BCBCDI2026.pdf a partir da série do CDI baixada da API do Banco Central.
+"""Gera tcc2/overleaf/referencias/BCBCDI2026.pdf a partir da série do CDI baixada da API do Banco Central.
 
 Uso (na raiz do repositório, com PyMuPDF instalado num ambiente à parte):
     python tcc2/scripts/cdi_pdf.py
@@ -37,5 +37,5 @@ for n, bloco in enumerate(blocos):
     pg = doc.new_page()
     texto = (cab if n == 0 else cab[-1:]) + bloco
     pg.insert_text((50, 60), "\n".join(texto), fontname="cour", fontsize=9)
-doc.save(TCC2 / "referencias" / "BCBCDI2026.pdf")
+doc.save(TCC2 / "overleaf" / "referencias" / "BCBCDI2026.pdf")
 print(f"{len(dados)} dias, acumulado {acum:.4f}%, {doc.page_count} páginas")

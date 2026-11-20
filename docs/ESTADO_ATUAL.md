@@ -21,7 +21,7 @@ selados e os três runners; nenhum arquivo das campanhas alterado, sem novas
 inferências. O texto distingue mecanismos acionados e dormentes na v3 e
 registra o ganho como resultado dentro da amostra, sem alegar superioridade.
 `check_docs.py` PASS. Próximo passo: revisar com Lucas e portar as seções para
-`tcc2/chapters/*.tex`, a monografia do TCC 2 (TCC-02).
+`tcc2/overleaf/chapters/*.tex`, a monografia do TCC 2 (TCC-02).
 
 **16/11 — consulta v3 publicada, DP-37 / REPLAY-03:** deploy Railway
 `e46df0c3-cbe0-4568-8355-1dbf237f21c6` (`25577de`) SUCCESS no ambiente `tcc`.

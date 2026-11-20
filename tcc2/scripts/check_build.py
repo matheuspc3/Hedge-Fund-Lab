@@ -1,6 +1,6 @@
 """Confere a compilação da monografia contra os defeitos corrigidos no Lote 0.
 
-Uso (depois de compilar em tcc2/): python scripts/check_build.py [diretorio_do_build]
+Uso (depois de compilar em tcc2/overleaf/): python tcc2/scripts/check_build.py [diretorio_do_build]
 Falha (código 1) se o log ou os auxiliares mostrarem: hifenização sem padrões do
 português, caixa estourando a margem, níveis de marcador pulados (\\paragraph
 numerado), referência ou citação indefinida, lista de acrônimos vazia ou entrada
@@ -10,7 +10,7 @@ import re, sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")  # console do Windows não é UTF-8 por padrão
-build = Path(sys.argv[1] if len(sys.argv) > 1 else Path(__file__).resolve().parents[1])
+build = Path(sys.argv[1] if len(sys.argv) > 1 else Path(__file__).resolve().parents[1] / "overleaf")
 log = (build / "main.log").read_text(encoding="utf-8", errors="replace")
 toc = (build / "main.toc").read_text(encoding="utf-8", errors="replace")
 aux = (build / "main.aux").read_text(encoding="utf-8", errors="replace")

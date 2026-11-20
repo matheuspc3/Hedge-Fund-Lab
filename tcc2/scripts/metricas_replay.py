@@ -7,8 +7,8 @@ Lê tcc2/evidence/04-replay-abril-novembro/dados/series-v{1,2,3}/daily.csv,
 reutiliza src/backtesting/metrics.py (Sharpe H2_SCIENTIFIC_SHARPE_DEFINITION_V1)
 e grava:
     tcc2/agent-reports/METRICAS_REPLAY.md
-    tcc2/chapters/tabelas/metricas-replay.tex
-    tcc2/figures/replay-series.csv + replay-{patrimonio,drawdown,caixa}.tex (pgfplots)
+    tcc2/overleaf/chapters/tabelas/metricas-replay.tex
+    tcc2/overleaf/figures/replay-series.csv + replay-{patrimonio,drawdown,caixa}.tex (pgfplots)
 Os asserts conferem os dados contra o documento mestre
 (relatorios/evolucao_replay_v1_v2_v3_tcc.md); se algum falhar, nada é gravado.
 """
@@ -22,6 +22,7 @@ from pathlib import Path
 import pandas as pd
 
 TCC2 = Path(__file__).resolve().parents[1]
+OVERLEAF = TCC2 / "overleaf"  # projeto LaTeX (o que sobe para o Overleaf)
 sys.path.insert(0, str(TCC2.parent))
 
 from src.backtesting.metrics import (  # noqa: E402
@@ -266,10 +267,10 @@ md += [
     "",
     "## 5. Figuras e tabelas geradas",
     "",
-    "- `tcc2/chapters/tabelas/metricas-replay.tex`: duas tabelas booktabs "
+    "- `tcc2/overleaf/chapters/tabelas/metricas-replay.tex`: duas tabelas booktabs "
     "(`tab:replay-risco`, `tab:replay-operacoes`).",
-    "- `tcc2/figures/replay-patrimonio.tex`, `replay-drawdown.tex`, `replay-caixa.tex` "
-    "(pgfplots, dados em `tcc2/figures/replay-series.csv`; rótulos "
+    "- `tcc2/overleaf/figures/replay-patrimonio.tex`, `replay-drawdown.tex`, `replay-caixa.tex` "
+    "(pgfplots, dados em `tcc2/overleaf/figures/replay-series.csv`; rótulos "
     "`fig:replay-patrimonio`, `fig:replay-drawdown`, `fig:replay-caixa`). Exigem "
     "`\\usepackage{pgfplots}` no preâmbulo de `main.tex`. matplotlib não está "
     "instalado no ambiente; por isso as figuras são compiladas pelo LaTeX.",
@@ -333,11 +334,11 @@ for k, (_, _, _, nome_tex, _) in CARTEIRAS.items():
         tex.append("\\midrule")
 tex += ["\\bottomrule", "\\end{tabular}}", "\\par\\smallskip\\footnotesize " + FONTE,
         "\\end{table}", ""]
-escrever(TCC2 / "chapters/tabelas/metricas-replay.tex", "\n".join(tex))
+escrever(OVERLEAF / "chapters/tabelas/metricas-replay.tex", "\n".join(tex))
 
 # ---------------------------------------------------------------- figuras pgfplots
 datas = [INICIO] + list(sessoes)
-with open(TCC2 / "figures/replay-series.csv", "w", encoding="utf-8", newline="") as f:
+with open(OVERLEAF / "figures/replay-series.csv", "w", encoding="utf-8", newline="") as f:
     w = csv.writer(f, lineterminator="\n")
     w.writerow(["idx", "data"] + [f"eq_{k}" for k in CARTEIRAS] + [f"dd_{k}" for k in CARTEIRAS]
                + ["cx_ma_v1", "cx_ma_v2", "cx_ma_v3"])
@@ -379,7 +380,7 @@ def figura(nome, legenda, ylabel, prefixo, chaves, extra=""):
         linhas.append(f"\\addlegendentry{{{CARTEIRAS[k][3]}}}")
     linhas += ["\\end{axis}", "\\end{tikzpicture}", f"\\caption{{{legenda}}}",
                f"\\label{{fig:{nome}}}", "\\end{figure}", ""]
-    escrever(TCC2 / f"figures/{nome}.tex", "\n".join(linhas))
+    escrever(OVERLEAF / f"figures/{nome}.tex", "\n".join(linhas))
 
 
 todas = ["ma_v1", "ma_v2", "ma_v3", "bh", "sma", "boll", "ew", "mv"]

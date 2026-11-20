@@ -55,3 +55,8 @@ output/
 
 # Log do BibTeX da monografia (gerado; contém caminhos locais)
 tcc2/main.blg
+
+# Auxiliares da compilação da monografia (regerados a cada build; o main.pdf é versionado)
+tcc2/overleaf/main.*
+!tcc2/overleaf/main.tex
+!tcc2/overleaf/main.pdf

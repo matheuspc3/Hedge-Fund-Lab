@@ -50,5 +50,5 @@ Gerado por `tcc2/scripts/metricas_replay.py` a partir dos `daily.csv` selados em
 
 ## 5. Figuras e tabelas geradas
 
-- `tcc2/chapters/tabelas/metricas-replay.tex`: duas tabelas booktabs (`tab:replay-risco`, `tab:replay-operacoes`).
-- `tcc2/figures/replay-patrimonio.tex`, `replay-drawdown.tex`, `replay-caixa.tex` (pgfplots, dados em `tcc2/figures/replay-series.csv`; rótulos `fig:replay-patrimonio`, `fig:replay-drawdown`, `fig:replay-caixa`). Exigem `\usepackage{pgfplots}` no preâmbulo de `main.tex`. matplotlib não está instalado no ambiente; por isso as figuras são compiladas pelo LaTeX.
+- `tcc2/overleaf/chapters/tabelas/metricas-replay.tex`: duas tabelas booktabs (`tab:replay-risco`, `tab:replay-operacoes`).
+- `tcc2/overleaf/figures/replay-patrimonio.tex`, `replay-drawdown.tex`, `replay-caixa.tex` (pgfplots, dados em `tcc2/overleaf/figures/replay-series.csv`; rótulos `fig:replay-patrimonio`, `fig:replay-drawdown`, `fig:replay-caixa`). Exigem `\usepackage{pgfplots}` no preâmbulo de `main.tex`. matplotlib não está instalado no ambiente; por isso as figuras são compiladas pelo LaTeX.

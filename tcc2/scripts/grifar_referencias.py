@@ -1,7 +1,7 @@
 """Grifa nos PDFs das referências os trechos que sustentam cada citação do TCC.
 
 Uso (na raiz do repositório):
-    python tcc2/scripts/grifar_referencias.py tcc2/referencias/grifos.jsonl
+    python tcc2/scripts/grifar_referencias.py tcc2/overleaf/referencias/grifos.jsonl
 
 Requer PyMuPDF (`pip install pymupdf`), que NÃO é dependência do projeto: rode com um
 ambiente à parte. Cada linha do .jsonl é um grifo:
@@ -21,7 +21,7 @@ from pathlib import Path
 import pymupdf
 
 REPO = Path(__file__).resolve().parents[2]
-REFS = REPO / "tcc2" / "referencias"
+REFS = REPO / "tcc2" / "overleaf" / "referencias"
 ORIG = REPO / "output" / "referencias-originais"
 
 

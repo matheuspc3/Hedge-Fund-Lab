@@ -7,7 +7,7 @@ Importa tcc2/scripts/metricas_replay.py (que refaz seus asserts e regrava, idên
 seus artefatos) para obter as curvas, e reutiliza sem alteração
 src.experiments.h2_evaluation.bootstrap. Grava:
     tcc2/agent-reports/BOOTSTRAP_REPLAY.md
-    tcc2/chapters/tabelas/bootstrap-replay.tex
+    tcc2/overleaf/chapters/tabelas/bootstrap-replay.tex
 """
 
 import math
@@ -283,5 +283,5 @@ tex += [
     "\\end{table}",
     "",
 ]
-mr.escrever(mr.TCC2 / "chapters/tabelas/bootstrap-replay.tex", "\n".join(tex))
+mr.escrever(mr.OVERLEAF / "chapters/tabelas/bootstrap-replay.tex", "\n".join(tex))
 print("OK: bootstrap reprodutível e todos os asserts passaram.")

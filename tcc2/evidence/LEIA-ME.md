@@ -92,8 +92,8 @@ O arquivo `Resultados-comparados.md`, na raiz desta pasta, já existia e não fo
 
 `main.tex` copiado de `docs/faculdade/monografia/`. Existem três versões do
 texto do TCC 1 no repositório, com a mesma estrutura de seções e tamanhos
-diferentes: esta (457 linhas), `tcc2/source/tcc1/main.tex` (407) e
-`tcc2/referencia/main.tex` (360). Em 19/11/2026, Lucas decidiu que não é preciso
+diferentes: esta (457 linhas), `tcc2/arquivo/tcc1/main.tex` (407) e
+`tcc2/arquivo/referencia/main.tex` (360). Em 19/11/2026, Lucas decidiu que não é preciso
 fixar a versão entregue: o TCC 1 foi uma proposta, e o TCC 2 só precisa usar o
 mesmo enunciado das hipóteses nos capítulos 1 e 5.
 
@@ -129,4 +129,4 @@ e dois `manifest.json`) contêm o caminho local da máquina onde foram gerados.
 | Demais documentos `H2_*` (operação, interface, runbooks) | `docs/` | Não são citados pela monografia |
 | `AVALIACAO_COLETA_DADOS_2026-10-14.md`, `PESQUISA_MUNICAO_AGENTES.md`, `PLANO_IMPLEMENTACAO_MULTIAGENTES.md`, `HFL_PREMIUM_V5_PORTFOLIO.md`, `HFL_PLATFORM_AUDIT_V7.md`, `HFL_OPERATIONS_RUNBOOK.md` | `docs/` | Apoio secundário; copiar se algum capítulo passar a usá-los |
 | Relatórios de integração com o Railway e revisão de endpoints | `reports/` | Operacionais |
-| PDFs e normas do TCC 1 | `tcc2/source/tcc1/` e `tcc2/referencia/` | Já estavam na pasta |
+| PDFs e normas do TCC 1 | `tcc2/arquivo/tcc1/` e `tcc2/arquivo/referencia/` | Já estavam na pasta |
