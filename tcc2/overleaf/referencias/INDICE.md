@@ -2,11 +2,11 @@
 
 Acervo reunido em `tcc2/overleaf/referencias/` correspondente às **71 obras citadas** nos arquivos `tcc2/overleaf/chapters/*.tex`.
 
-- **Arquivos PDF presentes:** 51 (217.47 MB / 228,031,017 bytes)
-- **Baixados (versão publicada):** 21
+- **Arquivos PDF presentes:** 63 (252.57 MB / 264,839,451 bytes)
+- **Baixados (versão publicada):** 33
 - **Baixados (preprint / draft / working paper):** 28
-- **Páginas web salvas em PDF:** 2
-- **Pendentes — periódicos/anais pagos:** 15
+- **Páginas web / API salvas em PDF:** 2
+- **Pendentes — periódicos/anais pagos:** 3
 - **Pendentes — livros:** 5
 
 
@@ -19,14 +19,14 @@ Acervo reunido em `tcc2/overleaf/referencias/` correspondente às **71 obras cit
 | `Bollinger2001` | Bollinger (2001) — Bollinger on Bollinger Bands | pendente — livro | McGraw-Hill, 2001 (livro físico/biblioteca) | estratégias e análise técnica | `02-fundamentacao.tex:46` |
 | `Brock1992` | Brock, Lakonishok & LeBaron (1992) — Simple Technical Trading Rules | baixado (publicado) | Cópia local (tcc2/arquivo/referencia/01_estrategias_quantitativas; J. Finance / JSTOR) | estratégias e análise técnica | `02-fundamentacao.tex:16`, `02-fundamentacao.tex:20`, `05-metodologia.tex:310` |
 | `Clarke2006` | Clarke, Silva & Thorley (2006) — Minimum-Variance Portfolios in the U.S. | pendente — pago | https://doi.org/10.3905/jpm.2006.661366 | carteiras e risco | `02-fundamentacao.tex:80` |
-| `DeMiguel2009` | DeMiguel, Garlappi & Uppal (2009) — Optimal Versus Naive Diversification (1/N) | pendente — pago | https://doi.org/10.1093/rfs/hhm075 | carteiras e risco | `02-fundamentacao.tex:88`, `02-fundamentacao.tex:92`, `05-metodologia.tex:216` |
-| `Deng2017` | Deng et al. (2017) — Deep Direct RL for Financial Signal Representation | pendente — pago | https://doi.org/10.1109/TNNLS.2016.2522401 | aprendizado de máquina e por reforço | `03-relacionados.tex:15` |
+| `DeMiguel2009` | DeMiguel, Garlappi & Uppal (2009) — Optimal Versus Naive Diversification (1/N) | baixado (publicado) | https://doi.org/10.1093/rfs/hhm075 (via Periódicos CAPES / CAFe — Oxford Academic) | carteiras e risco | `02-fundamentacao.tex:88`, `02-fundamentacao.tex:92`, `05-metodologia.tex:216` |
+| `Deng2017` | Deng et al. (2017) — Deep Direct RL for Financial Signal Representation | baixado (publicado) | https://doi.org/10.1109/TNNLS.2016.2522401 (via Periódicos CAPES / CAFe — IEEE Xplore) | aprendizado de máquina e por reforço | `03-relacionados.tex:15` |
 | `Drinkall2024` | Drinkall et al. (2024) — Time Machine GPT | baixado (publicado) | https://aclanthology.org/2024.findings-naacl.208.pdf | contaminação temporal | `03-relacionados.tex:51`, `05-metodologia.tex:298` |
 | `Du2024` | Du et al. (2024) — Improving Factuality and Reasoning via Multiagent Debate | baixado (publicado) | https://raw.githubusercontent.com/mlresearch/v235/main/assets/du24e/du24e.pdf | LLMs e agentes | `03-relacionados.tex:59` |
-| `Fama1970` | Fama (1970) — Efficient Capital Markets: Review of Theory and Empirical Work | pendente — pago | https://doi.org/10.1111/j.1540-6261.1970.tb00518.x | mercado e eficiência | `02-fundamentacao.tex:6` |
-| `FamaFrench1992` | Fama & French (1992) — The Cross-Section of Expected Stock Returns | pendente — pago | https://doi.org/10.1111/j.1540-6261.1992.tb04398.x | mercado e eficiência | `02-fundamentacao.tex:8` |
-| `FamaFrench1993` | Fama & French (1993) — Common Risk Factors in Returns on Stocks and Bonds | pendente — pago | https://doi.org/10.1016/0304-405X(93)90023-5 | mercado e eficiência | `02-fundamentacao.tex:96`, `07-conclusao.tex:69` |
-| `FamaFrench2015` | Fama & French (2015) — A Five-Factor Asset Pricing Model | pendente — pago | https://doi.org/10.1016/j.jfineco.2014.10.010 | mercado e eficiência | `02-fundamentacao.tex:102` |
+| `Fama1970` | Fama (1970) — Efficient Capital Markets: Review of Theory and Empirical Work | baixado (publicado) | https://doi.org/10.1111/j.1540-6261.1970.tb00518.x (via Periódicos CAPES / CAFe — Wiley) | mercado e eficiência | `02-fundamentacao.tex:6` |
+| `FamaFrench1992` | Fama & French (1992) — The Cross-Section of Expected Stock Returns | baixado (publicado) | https://doi.org/10.1111/j.1540-6261.1992.tb04398.x (via Periódicos CAPES / CAFe — Wiley) | mercado e eficiência | `02-fundamentacao.tex:8` |
+| `FamaFrench1993` | Fama & French (1993) — Common Risk Factors in Returns on Stocks and Bonds | baixado (publicado) | https://doi.org/10.1016/0304-405X(93)90023-5 (via Periódicos CAPES / CAFe — ScienceDirect) | mercado e eficiência | `02-fundamentacao.tex:96`, `07-conclusao.tex:69` |
+| `FamaFrench2015` | Fama & French (2015) — A Five-Factor Asset Pricing Model | baixado (publicado) | https://doi.org/10.1016/j.jfineco.2014.10.010 (via Periódicos CAPES / CAFe — ScienceDirect) | mercado e eficiência | `02-fundamentacao.tex:102` |
 | `FinAgent2024` | Zhang et al. (2024) — FinAgent: Multimodal Foundation Agent for Financial Trading | baixado (preprint) | https://arxiv.org/pdf/2402.18485.pdf | LLMs e agentes | `03-relacionados.tex:38`, `03-relacionados.tex:79` |
 | `FinBen2024` | Xie et al. (2024) — FinBen: Holistic Financial Benchmark for LLMs | baixado (publicado) | https://proceedings.neurips.cc/paper_files/paper/2024/file/adb1d9fa8be4576d28703b396b82ba1b-Paper-Datasets_and_Benchmarks_Track.pdf | LLMs e agentes | `03-relacionados.tex:49` |
 | `FinCon2024` | Yu et al. (2024) — FinCon: Synthesized LLM Multi-Agent System | baixado (publicado) | https://proceedings.neurips.cc/paper_files/paper/2024/file/f7ae4fe91d96f50abc2211f09b6a7e49-Paper-Conference.pdf | LLMs e agentes | `03-relacionados.tex:40`, `03-relacionados.tex:81` |
@@ -34,7 +34,7 @@ Acervo reunido em `tcc2/overleaf/referencias/` correspondente às **71 obras cit
 | `FinMem2024` | Yu et al. (2024) — FinMem: LLM Trading Agent with Layered Memory | baixado (preprint) | https://arxiv.org/pdf/2311.13743.pdf | LLMs e agentes | `03-relacionados.tex:38` |
 | `FinRL2020` | Liu et al. (2020) — FinRL: Deep RL Library for Automated Stock Trading | baixado (preprint) | https://arxiv.org/pdf/2011.09607.pdf | aprendizado de máquina e por reforço | `03-relacionados.tex:15` |
 | `FINSABER2026` | Li et al. (2026) — Can LLM-based Investing Strategies Outperform in Long Run? | baixado (preprint) | https://arxiv.org/pdf/2505.07078.pdf | LLMs e agentes | `03-relacionados.tex:53`, `03-relacionados.tex:87`, `03-relacionados.tex:97`, `03-relacionados.tex:101` |
-| `Fischer2018` | Fischer & Krauss (2018) — Deep Learning with LSTM for Financial Predictions | pendente — pago | https://doi.org/10.1016/j.ejor.2017.11.054 | aprendizado de máquina e por reforço | `03-relacionados.tex:23` |
+| `Fischer2018` | Fischer & Krauss (2018) — Deep Learning with LSTM for Financial Predictions | baixado (publicado) | https://doi.org/10.1016/j.ejor.2017.11.054 (via Periódicos CAPES / CAFe — ScienceDirect) | aprendizado de máquina e por reforço | `03-relacionados.tex:23` |
 | `GeminiModelCard2026` | Google DeepMind (2026) — Gemini 3.8 Flash Model Card | página salva | https://deepmind.google/models/model-cards/gemini-3-8-flash/ | dados e fontes | `05-metodologia.tex:102` |
 | `Glasserman2023` | Glasserman & Lin (2023) — Assessing Look-Ahead Bias in GPT Sentiment | baixado (preprint) | https://arxiv.org/pdf/2309.17322.pdf | contaminação temporal | `03-relacionados.tex:51`, `05-metodologia.tex:298`, `06-resultados.tex:241` |
 | `Golchin2024` | Golchin & Surdeanu (2024) — Time Travel in LLMs: Tracing Data Contamination | baixado (preprint) | https://arxiv.org/pdf/2308.08493.pdf | contaminação temporal | `03-relacionados.tex:51`, `05-metodologia.tex:298` |
@@ -42,10 +42,10 @@ Acervo reunido em `tcc2/overleaf/referencias/` correspondente às **71 obras cit
 | `Hansen2005` | Hansen (2005) — A Test for Superior Predictive Ability | baixado (preprint) | Cópia local (tcc2/arquivo/referencia/04_backtesting_e_robustez; working paper Stanford abr. 2005) | inferência e sobreajuste | `02-fundamentacao.tex:108`, `02-fundamentacao.tex:140`, `03-relacionados.tex:25`, `03-relacionados.tex:55` |
 | `Harris2003` | Harris (2003) — Trading and Exchanges: Market Microstructure | baixado (preprint) | Cópia local (tcc2/arquivo/referencia/03_metricas_de_desempenho; draft do autor mar. 2002) | mercado e eficiência | `02-fundamentacao.tex:130` |
 | `Holm1979` | Holm (1979) — Simple Sequentially Rejective Multiple Test Procedure | pendente — pago | https://www.jstor.org/stable/4615733 | inferência e sobreajuste | `02-fundamentacao.tex:142`, `05-metodologia.tex:286` |
-| `JegadeeshTitman1993` | Jegadeesh & Titman (1993) — Returns to Buying Winners and Selling Losers | pendente — pago | https://doi.org/10.1111/j.1540-6261.1993.tb04702.x | mercado e eficiência | `02-fundamentacao.tex:8`, `02-fundamentacao.tex:34`, `02-fundamentacao.tex:66`, `05-metodologia.tex:183`, `05-metodologia.tex:310` |
+| `JegadeeshTitman1993` | Jegadeesh & Titman (1993) — Returns to Buying Winners and Selling Losers | baixado (publicado) | https://doi.org/10.1111/j.1540-6261.1993.tb04702.x (via Periódicos CAPES / CAFe — Wiley) | mercado e eficiência | `02-fundamentacao.tex:8`, `02-fundamentacao.tex:34`, `02-fundamentacao.tex:66`, `05-metodologia.tex:183`, `05-metodologia.tex:310` |
 | `Jiang2017` | Jiang, Xu & Liang (2017) — Deep RL Framework for Portfolio Management | baixado (preprint) | https://arxiv.org/pdf/1706.10059.pdf | aprendizado de máquina e por reforço | `03-relacionados.tex:15`, `03-relacionados.tex:77` |
 | `Kojima2022` | Kojima et al. (2022) — Large Language Models are Zero-Shot Reasoners | baixado (publicado) | https://proceedings.neurips.cc/paper_files/paper/2022/file/8bb0d291acd4acf06ef112099c16f326-Paper-Conference.pdf | LLMs e agentes | `02-fundamentacao.tex:152` |
-| `Krauss2017` | Krauss, Do & Huck (2017) — Deep Neural Networks, GBT, RF on the S&P 500 | pendente — pago | https://doi.org/10.1016/j.ejor.2016.10.031 | aprendizado de máquina e por reforço | `03-relacionados.tex:23` |
+| `Krauss2017` | Krauss, Do & Huck (2017) — Deep Neural Networks, GBT, RF on the S&P 500 | baixado (publicado) | https://doi.org/10.1016/j.ejor.2016.10.031 (via Periódicos CAPES / CAFe — ScienceDirect) | aprendizado de máquina e por reforço | `03-relacionados.tex:23` |
 | `Li2023` | Li et al. (2023) — TradingGPT: Multi-Agent System with Layered Memory | baixado (preprint) | https://arxiv.org/pdf/2309.03736.pdf | LLMs e agentes | `02-fundamentacao.tex:146`, `02-fundamentacao.tex:148`, `03-relacionados.tex:38`, `03-relacionados.tex:61` |
 | `Li2024` | Li et al. (2024) — More Agents Is All You Need | baixado (preprint) | https://arxiv.org/pdf/2402.05120.pdf | LLMs e agentes | `03-relacionados.tex:59` |
 | `Liang2024` | Liang et al. (2024) — Encouraging Divergent Thinking via Multi-Agent Debate | baixado (publicado) | https://aclanthology.org/2024.emnlp-main.992.pdf | LLMs e agentes | `03-relacionados.tex:59` |
@@ -57,10 +57,10 @@ Acervo reunido em `tcc2/overleaf/referencias/` correspondente às **71 obras cit
 | `LopezLira2025` | Lopez-Lira, Tang & Zhu (2025) — The Memorization Problem in LLMs' Forecasts | baixado (preprint) | https://arxiv.org/pdf/2504.14765.pdf | contaminação temporal | `03-relacionados.tex:51` |
 | `Magdon2004` | Magdon-Ismail et al. (2004) — On the Maximum Drawdown of a Brownian Motion | baixado (publicado) | https://work.caltech.edu/pub/Magdon-Ismail2004drawdown.pdf | métricas | `02-fundamentacao.tex:126`, `05-metodologia.tex:241` |
 | `Markowitz1952` | Markowitz (1952) — Portfolio Selection | baixado (publicado) | Cópia local (tcc2/arquivo/referencia/02_markowitz_e_benchmarks; J. Finance / JSTOR) | carteiras e risco | `02-fundamentacao.tex:70` |
-| `Moody2001` | Moody & Saffell (2001) — Learning to Trade via Direct Reinforcement | pendente — pago | https://doi.org/10.1109/72.935097 | aprendizado de máquina e por reforço | `03-relacionados.tex:13` |
+| `Moody2001` | Moody & Saffell (2001) — Learning to Trade via Direct Reinforcement | baixado (publicado) | https://doi.org/10.1109/72.935097 (via Periódicos CAPES / CAFe — IEEE Xplore) | aprendizado de máquina e por reforço | `03-relacionados.tex:13` |
 | `Moskowitz2012` | Moskowitz, Ooi & Pedersen (2012) — Time Series Momentum | baixado (publicado) | Cópia local (tcc2/arquivo/referencia/01_estrategias_quantitativas; J. Financial Economics 2012) | estratégias e análise técnica | `02-fundamentacao.tex:34`, `02-fundamentacao.tex:66`, `05-metodologia.tex:183`, `05-metodologia.tex:310` |
-| `Nelson2017` | Nelson, Pereira & de Oliveira (2017) — Stock Market Prediction with LSTM | pendente — pago | https://doi.org/10.1109/IJCNN.2017.7966019 | aprendizado de máquina e por reforço | `03-relacionados.tex:23` |
-| `Politis1994` | Politis & Romano (1994) — The Stationary Bootstrap | pendente — pago | https://doi.org/10.1080/01621459.1994.10476870 | inferência e sobreajuste | `02-fundamentacao.tex:138`, `05-metodologia.tex:276` |
+| `Nelson2017` | Nelson, Pereira & de Oliveira (2017) — Stock Market Prediction with LSTM | baixado (publicado) | https://doi.org/10.1109/IJCNN.2017.7966019 (via Periódicos CAPES / CAFe — IEEE Xplore) | aprendizado de máquina e por reforço | `03-relacionados.tex:23` |
+| `Politis1994` | Politis & Romano (1994) — The Stationary Bootstrap | baixado (publicado) | https://doi.org/10.1080/01621459.1994.10476870 (via Periódicos CAPES / CAFe — JSTOR `stable/2290993`) | inferência e sobreajuste | `02-fundamentacao.tex:138`, `05-metodologia.tex:276` |
 | `PoterbaSummers1988` | Poterba & Summers (1988) — Mean Reversion in Stock Prices | baixado (publicado) | Cópia local (tcc2/arquivo/referencia/01_estrategias_quantitativas; J. Financial Economics 1988) | mercado e eficiência | `02-fundamentacao.tex:38`, `02-fundamentacao.tex:66` |
 | `ProfitMirage2025` | Li et al. (2025) — Profit Mirage: Information Leakage in LLM Financial Agents | baixado (preprint) | https://arxiv.org/pdf/2510.07920.pdf | contaminação temporal | `03-relacionados.tex:51`, `05-metodologia.tex:298`, `06-resultados.tex:241`, `07-conclusao.tex:49` |
 | `Schulman2017` | Schulman et al. (2017) — Proximal Policy Optimization Algorithms | baixado (preprint) | https://arxiv.org/pdf/1707.06347.pdf | aprendizado de máquina e por reforço | `03-relacionados.tex:15` |
@@ -137,7 +137,7 @@ Frases dos capítulos do TCC 2 (`tcc2/overleaf/chapters/*.tex`) que citam cada c
 
 ### DeMiguel2009
 
-*DeMiguel, Garlappi & Uppal (2009) — Optimal Versus Naive Diversification (1/N)* — **pendente — pago**
+*DeMiguel, Garlappi & Uppal (2009) — Optimal Versus Naive Diversification (1/N)* — **baixado (publicado)**
 
 - **02-fundamentacao.tex:88** — Estratégias simples cumprem o papel de base comparativa na avaliação de sistemas de decisão: têm implementação direta e dependem pouco de estimações sofisticadas, o que facilita o contraste com abordagens mais complexas [**`DeMiguel2009`**, `LopezDePrado2018`].
 - **02-fundamentacao.tex:92** — Incorpora diversificação sem estimar o retorno esperado nem a matriz de covariância exigidos pela otimização de Markowitz, e DeMiguel, Garlappi & Uppal (2009) **[`DeMiguel2009`]** mostram que é difícil de superar fora da amostra.
@@ -145,7 +145,7 @@ Frases dos capítulos do TCC 2 (`tcc2/overleaf/chapters/*.tex`) que citam cada c
 
 ### Deng2017
 
-*Deng et al. (2017) — Deep Direct RL for Financial Signal Representation* — **pendente — pago**
+*Deng et al. (2017) — Deep Direct RL for Financial Signal Representation* — **baixado (publicado)**
 
 - **03-relacionados.tex:15** — Deng et al. (2017) **[`Deng2017`]** integraram aprendizado profundo, para a representação de sinais financeiros, e aprendizado por reforço direto, para a decisão de negociação.
 
@@ -164,27 +164,27 @@ Frases dos capítulos do TCC 2 (`tcc2/overleaf/chapters/*.tex`) que citam cada c
 
 ### Fama1970
 
-*Fama (1970) — Efficient Capital Markets: Review of Theory and Empirical Work* — **pendente — pago**
+*Fama (1970) — Efficient Capital Markets: Review of Theory and Empirical Work* — **baixado (publicado)**
 
 - **02-fundamentacao.tex:6** — A Hipótese de Eficiência de Mercado (Efficient Market Hypothesis – EMH), formalizada por Fama (1970) **[`Fama1970`]**, postula que os preços dos ativos financeiros refletem integralmente todas as informações disponíveis.
 - **02-fundamentacao.tex:6** — No mesmo trabalho, Fama (1970) **[`Fama1970`]** distingue três níveis de eficiência: na forma fraca, os preços refletem as informações históricas de preço e volume; na forma semiforte, incorporam todas as informações públicas; na forma forte, refletem todas as informações, inclusive as privadas.
 
 ### FamaFrench1992
 
-*Fama & French (1992) — The Cross-Section of Expected Stock Returns* — **pendente — pago**
+*Fama & French (1992) — The Cross-Section of Expected Stock Returns* — **baixado (publicado)**
 
 - **02-fundamentacao.tex:8** — Contudo, evidências empíricas apontam para anomalias de mercado, como os efeitos momentum e value premium [**`FamaFrench1992`**, `JegadeeshTitman1993`].
 
 ### FamaFrench1993
 
-*Fama & French (1993) — Common Risk Factors in Returns on Stocks and Bonds* — **pendente — pago**
+*Fama & French (1993) — Common Risk Factors in Returns on Stocks and Bonds* — **baixado (publicado)**
 
 - **02-fundamentacao.tex:96** — O modelo de três fatores de Fama & French (1993) **[`FamaFrench1993`]** escreve o retorno excedente de um ativo ou carteira $i$ como:
 - **07-conclusao.tex:69** — Decomposição em fatores. Decompor os retornos das carteiras em mercado, estilo e alfa, para separar exposição de habilidade [**`FamaFrench1993`**, `Wang2026beta`], com uma janela e um universo suficientes para estimar as exposições.
 
 ### FamaFrench2015
 
-*Fama & French (2015) — A Five-Factor Asset Pricing Model* — **pendente — pago**
+*Fama & French (2015) — A Five-Factor Asset Pricing Model* — **baixado (publicado)**
 
 - **02-fundamentacao.tex:102** — Fama & French (2015) **[`FamaFrench2015`]** ampliaram o modelo para cinco fatores, acrescentando rentabilidade e investimento.
 
@@ -238,7 +238,7 @@ Frases dos capítulos do TCC 2 (`tcc2/overleaf/chapters/*.tex`) que citam cada c
 
 ### Fischer2018
 
-*Fischer & Krauss (2018) — Deep Learning with LSTM for Financial Predictions* — **pendente — pago**
+*Fischer & Krauss (2018) — Deep Learning with LSTM for Financial Predictions* — **baixado (publicado)**
 
 - **03-relacionados.tex:23** — Fischer & Krauss (2018) **[`Fischer2018`]** aplicaram redes LSTM à previsão da direção do movimento diário desses constituintes entre 1992 e 2015, com retornos diários de 0,46% e índice de Sharpe de 5,8 antes de custos, acima dos métodos sem memória comparados; a vantagem, porém, é nítida até 2009 e, a partir de 2010, a rentabilidade oscila em torno de zero após custos.
 
@@ -295,7 +295,7 @@ Frases dos capítulos do TCC 2 (`tcc2/overleaf/chapters/*.tex`) que citam cada c
 
 ### JegadeeshTitman1993
 
-*Jegadeesh & Titman (1993) — Returns to Buying Winners and Selling Losers* — **pendente — pago**
+*Jegadeesh & Titman (1993) — Returns to Buying Winners and Selling Losers* — **baixado (publicado)**
 
 - **02-fundamentacao.tex:8** — Contudo, evidências empíricas apontam para anomalias de mercado, como os efeitos momentum e value premium [`FamaFrench1992`, **`JegadeeshTitman1993`**].
 - **02-fundamentacao.tex:34** — Jegadeesh & Titman (1993) **[`JegadeeshTitman1993`]** mostram que estratégias baseadas em momentum produzem retornos anormais positivos.
@@ -318,7 +318,7 @@ Frases dos capítulos do TCC 2 (`tcc2/overleaf/chapters/*.tex`) que citam cada c
 
 ### Krauss2017
 
-*Krauss, Do & Huck (2017) — Deep Neural Networks, GBT, RF on the S&P 500* — **pendente — pago**
+*Krauss, Do & Huck (2017) — Deep Neural Networks, GBT, RF on the S&P 500* — **baixado (publicado)**
 
 - **03-relacionados.tex:23** — Krauss, Do & Huck (2017) **[`Krauss2017`]** compararam redes profundas, árvores com gradient boosting e florestas aleatórias em arbitragem estatística sobre os constituintes do S&P 500.
 
@@ -404,7 +404,7 @@ Frases dos capítulos do TCC 2 (`tcc2/overleaf/chapters/*.tex`) que citam cada c
 
 ### Moody2001
 
-*Moody & Saffell (2001) — Learning to Trade via Direct Reinforcement* — **pendente — pago**
+*Moody & Saffell (2001) — Learning to Trade via Direct Reinforcement* — **baixado (publicado)**
 
 - **03-relacionados.tex:13** — A formulação da negociação como problema de decisão sequencial [`SuttonBarto2018`] tem uma referência inicial em Moody & Saffell (2001) **[`Moody2001`]**, que propuseram o aprendizado por reforço direto (recurrent reinforcement learning) para otimizar sistemas de negociação e alocações de carteira sem estimar uma função de valor.
 
@@ -419,13 +419,13 @@ Frases dos capítulos do TCC 2 (`tcc2/overleaf/chapters/*.tex`) que citam cada c
 
 ### Nelson2017
 
-*Nelson, Pereira & de Oliveira (2017) — Stock Market Prediction with LSTM* — **pendente — pago**
+*Nelson, Pereira & de Oliveira (2017) — Stock Market Prediction with LSTM* — **baixado (publicado)**
 
 - **03-relacionados.tex:23** — No mercado brasileiro, Nelson, Pereira & de Oliveira (2017) **[`Nelson2017`]** alimentaram redes LSTM com indicadores técnicos para prever a direção do preço de ações, com acurácia média próxima de 56%.
 
 ### Politis1994
 
-*Politis & Romano (1994) — The Stationary Bootstrap* — **pendente — pago**
+*Politis & Romano (1994) — The Stationary Bootstrap* — **baixado (publicado)**
 
 - **02-fundamentacao.tex:138** — O bootstrap estacionário de Politis & Romano (1994) **[`Politis1994`]** reamostra blocos de comprimento aleatório, preservando a dependência dentro dos blocos e permitindo estimar a distribuição de uma estatística, como a diferença de Sharpes, sem hipótese paramétrica.
 - **05-metodologia.tex:276** — A reamostragem por blocos de comprimento geométrico segue o bootstrap estacionário de Politis & Romano (1994) **[`Politis1994`]**.
@@ -611,28 +611,16 @@ Frases dos capítulos do TCC 2 (`tcc2/overleaf/chapters/*.tex`) que citam cada c
 
 ## Pendentes
 
-Relação das **20 obras** sem PDF livre automático (15 artigos em periódicos/anais sob paywall ou proteção anti-bot e 5 livros), agrupadas por caminho de obtenção.
+Relação das **8 obras** ainda sem PDF (3 artigos em periódicos sem cobertura na assinatura CAPES/CEFET-RJ e 5 livros), agrupadas por caminho de obtenção.
 
 
-### Rede do campus ou CAPES (periódicos pagos)
+### Periódicos pagos (sem cobertura na assinatura CAPES/CEFET-RJ)
 
-Acessar pelo Portal de Periódicos da CAPES (CAFe institucional) ou rede do campus usando o DOI/URL:
+Verificados em 19–20/11/2026 via Portal de Periódicos da CAPES (CAFe CEFET-RJ), sem assinatura institucional ativa para estes periódicos/anos:
 
-- **`Clarke2006`** — Clarke, Roger and Silva, Harindra and Thorley, Steven (2006). *Minimum-Variance Portfolios in the U.S. Equity Market*. Journal of Portfolio Management, v. 33, n. 1, p. 10–24, 2006. Link: https://doi.org/10.3905/jpm.2006.661366
-- **`DeMiguel2009`** — DeMiguel, Victor and Garlappi, Lorenzo and Uppal, Raman (2009). *Optimal Versus Naive Diversification: How Inefficient is the 1/N Portfolio Strategy?*. Review of Financial Studies, v. 22, n. 5, p. 1915–1953, 2009. Link: https://doi.org/10.1093/rfs/hhm075
-- **`Deng2017`** — Deng, Yue and Bao, Feng and Kong, Youyong and Ren, Zhiquan and Dai, Qionghai (2017). *Deep Direct Reinforcement Learning for Financial Signal Representation and Trading*. IEEE Transactions on Neural Networks and Learning Systems, v. 28, n. 3, p. 653–664, 2017. Link: https://doi.org/10.1109/TNNLS.2016.2522401
-- **`Fama1970`** — Fama, Eugene F. (1970). *Efficient Capital Markets: A Review of Theory and Empirical Work*. Journal of Finance, v. 25, n. 2, p. 383–417, 1970. Link: https://doi.org/10.1111/j.1540-6261.1970.tb00518.x
-- **`FamaFrench1992`** — Fama, Eugene F. and French, Kenneth R. (1992). *The Cross-Section of Expected Stock Returns*. Journal of Finance, v. 47, n. 2, p. 427–465, 1992. Link: https://doi.org/10.1111/j.1540-6261.1992.tb04398.x
-- **`FamaFrench1993`** — Fama, Eugene F. and French, Kenneth R. (1993). *Common Risk Factors in the Returns on Stocks and Bonds*. Journal of Financial Economics, v. 33, n. 1, p. 3–56, 1993. Link: https://doi.org/10.1016/0304-405X(93)90023-5
-- **`FamaFrench2015`** — Fama, Eugene F. and French, Kenneth R. (2015). *A Five-Factor Asset Pricing Model*. Journal of Financial Economics, v. 116, n. 1, p. 1–22, 2015. Link: https://doi.org/10.1016/j.jfineco.2014.10.010
-- **`Fischer2018`** — Fischer, Thomas and Krauss, Christopher (2018). *Deep Learning with Long Short-Term Memory Networks for Financial Market Predictions*. European Journal of Operational Research, v. 270, n. 2, p. 654–669, 2018. Link: https://doi.org/10.1016/j.ejor.2017.11.054 *(Nota: preprint no EconStor / FAU Discussion Papers bloqueado por desafio anti-bot automatizado; tentar via navegador ou CAPES.)*
-- **`Holm1979`** — Holm, Sture (1979). *A Simple Sequentially Rejective Multiple Test Procedure*. Scandinavian Journal of Statistics, v. 6, n. 2, p. 65–70, 1979. Link: https://www.jstor.org/stable/4615733
-- **`JegadeeshTitman1993`** — Jegadeesh, Narasimhan and Titman, Sheridan (1993). *Returns to Buying Winners and Selling Losers: Implications for Stock Market Efficiency*. Journal of Finance, v. 48, n. 1, p. 65–91, 1993. Link: https://doi.org/10.1111/j.1540-6261.1993.tb04702.x
-- **`Krauss2017`** — Krauss, Christopher and Do, Xuan Anh and Huck, Nicolas (2017). *Deep Neural Networks, Gradient-Boosted Trees, Random Forests: Statistical Arbitrage on the S&P 500*. European Journal of Operational Research, v. 259, n. 2, p. 689–702, 2017. Link: https://doi.org/10.1016/j.ejor.2016.10.031 *(Nota: preprint no EconStor / FAU Discussion Papers bloqueado por desafio anti-bot automatizado; tentar via navegador ou CAPES.)*
-- **`Moody2001`** — Moody, John and Saffell, Matthew (2001). *Learning to Trade via Direct Reinforcement*. IEEE Transactions on Neural Networks, v. 12, n. 4, p. 875–889, 2001. Link: https://doi.org/10.1109/72.935097
-- **`Nelson2017`** — Nelson, David M. Q. and Pereira, Adriano C. M. and de Oliveira, Renato A. (2017). *Stock Market's Price Movement Prediction with LSTM Neural Networks*. 2017 International Joint Conference on Neural Networks (IJCNN), p. 1419–1426, 2017. Link: https://doi.org/10.1109/IJCNN.2017.7966019
-- **`Politis1994`** — Politis, Dimitris N. and Romano, Joseph P. (1994). *The Stationary Bootstrap*. Journal of the American Statistical Association, v. 89, n. 428, p. 1303–1313, 1994. Link: https://doi.org/10.1080/01621459.1994.10476870
-- **`Sortino1994`** — Sortino, Frank and Price, Lee (1994). *Performance Measurement in a Downside Risk Framework*. Journal of Investing, v. 3, n. 3, p. 59–64, 1994. Link: https://doi.org/10.3905/joi.3.3.59
+- **`Clarke2006`** — Clarke, Roger and Silva, Harindra and Thorley, Steven (2006). *Minimum-Variance Portfolios in the U.S. Equity Market*. Journal of Portfolio Management, v. 33, n. 1, p. 10–24, 2006. Link: https://doi.org/10.3905/jpm.2006.661366 *(JPM / Portfolio Management Research fora das bases assinadas; verificar outra instituição com ProQuest/EBSCO Business Source Complete ou página institucional dos autores).*
+- **`Holm1979`** — Holm, Sture (1979). *A Simple Sequentially Rejective Multiple Test Procedure*. Scandinavian Journal of Statistics, v. 6, n. 2, p. 65–70, 1979. Link: https://www.jstor.org/stable/4615733 *(JSTOR sem cobertura para este artigo na assinatura CEFET-RJ; Wiley cobre apenas a partir de 1997).*
+- **`Sortino1994`** — Sortino, Frank and Price, Lee (1994). *Performance Measurement in a Downside Risk Framework*. Journal of Investing, v. 3, n. 3, p. 59–64, 1994. Link: https://doi.org/10.3905/joi.3.3.59 *(Journal of Investing / Portfolio Management Research fora das bases assinadas; solicitar aos autores ou consultar biblioteca/base com cobertura).*
 
 ### Biblioteca (livros)
 
@@ -643,14 +631,3 @@ Consultar acervo físico/digital da biblioteca universitária ou empréstimo:
 - **`Shiller2000`** — Shiller, Robert J. (2000). *Irrational Exuberance*. Princeton University Press. *(Sem DOI/URL aberta no `.bib`.)*
 - **`Thaler1993`** — Thaler, Richard H. (1993). *Advances in Behavioral Finance*. Russell Sage Foundation. *(Sem DOI/URL aberta no `.bib`.)*
 - **`Wooldridge2009`** — Wooldridge, Michael (2009). *An Introduction to MultiAgent Systems*, 2nd ed. John Wiley & Sons, Chichester. *(Sem DOI/URL aberta no `.bib`.)*
-
-### Pedido ao autor / repositórios alternativos
-
-Para os itens pagos acima que possuem *working paper* ou repositório institucional sem acesso automatizado livre, ou quando não houver assinatura CAPES para o periódico específico, recomenda-se solicitar cópia aos autores ou consultar manualmente:
-
-- **`Clarke2006`** — `https://doi.org/10.3905/jpm.2006.661366` (*Journal of Portfolio Management*; verificar página institucional dos autores na Analytic Investors / BYU).
-- **`Deng2017`** — `https://doi.org/10.1109/TNNLS.2016.2522401` (IEEE *TNNLS*; solicitar cópia aos autores caso não disponível via IEEE no CAPES).
-- **`FamaFrench2015`** — `https://doi.org/10.1016/j.jfineco.2014.10.010` (possui registro SSRN `https://doi.org/10.2139/ssrn.2287202` além do *Journal of Financial Economics*).
-- **`Fischer2018`** e **`Krauss2017`** — DOIs `https://doi.org/10.1016/j.ejor.2017.11.054` e `https://doi.org/10.1016/j.ejor.2016.10.031` (possuem *working papers* FAU Discussion Papers in Economics no EconStor acessíveis manualmente em navegador, ou pedido aos autores).
-- **`Nelson2017`** — `https://doi.org/10.1109/IJCNN.2017.7966019` (autores da UFMG — DCC/UFMG; versão dos autores indexada no ResearchGate ou pedido direto aos autores).
-- **`Sortino1994`** — `https://doi.org/10.3905/joi.3.3.59` (*Journal of Investing*; solicitar cópia aos autores caso fora da cobertura CAPES).

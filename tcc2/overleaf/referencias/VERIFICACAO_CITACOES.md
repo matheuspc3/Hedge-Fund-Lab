@@ -1,21 +1,23 @@
 # Verificação das citações do TCC 2
 
-Feita em 19/11/2026. Para cada citação (`\cite`) das obras que têm PDF com texto em
+Feita em 19/11/2026 e complementada em 20/11/2026 (lote CAPES/CAFe, +12 PDFs). Para cada citação (`\cite`) das obras que têm PDF com texto em
 `tcc2/overleaf/referencias/`, procurou-se no PDF o trecho que sustenta a frase do TCC, julgou-se o
 apoio e grifou-se o trecho. A busca e o primeiro julgamento foram feitos com modelos de
-linguagem, em cinco lotes; as divergências relevantes foram conferidas à mão. **Revisão dos
+linguagem, em cinco lotes iniciais + lote CAPES/CAFe; as divergências relevantes foram conferidas à mão. **Revisão dos
 autores pendente**, a começar pelas linhas "sustenta em parte" e "não sustenta".
 
-- **Grifos:** 99, em 48 PDFs, gerados por `tcc2/scripts/grifar_referencias.py` a partir de
+- **Grifos:** 121, em 60 PDFs, gerados por `tcc2/scripts/grifar_referencias.py` a partir de
   `grifos.jsonl` (nesta pasta). Cada grifo leva como comentário a frase do TCC que sustenta.
   Os PDFs originais, sem grifo, ficam em `output/referencias-originais/` (fora do Git).
-- **Resultado:** 121 citações verificadas: **95 sustentam**, **25 sustentam em parte**,
-  **1 não sustenta**.
+- **Resultado:** 143 citações verificadas: **116 sustentam**, **26 sustentam em parte**,
+  **1 não sustenta** (121 iniciais + 22 do lote CAPES/CAFe: 21 sustentam, 1 sustenta em parte).
 - **Correções de acervo feitas durante a verificação:** `Xia2026` passou para a versão 2 do
   arXiv (a que contém os números citados); `BCBCDI2026` passou a ser o PDF dos dados da API
-  do Banco Central (`tcc2/scripts/cdi_pdf.py`), em vez da tela inicial do SGS.
+  do Banco Central (`tcc2/scripts/cdi_pdf.py`), em vez da tela inicial do SGS; em 20/11/2026
+  foram acrescentados os 12 PDFs publicados obtidos via Periódicos CAPES (CAFe CEFET-RJ).
 - **Fora desta verificação:** os PDFs digitalizados sem texto (`Brock1992`, `Magdon2004`,
-  `Wilder1978`), a grifar à mão, e as 20 obras sem PDF (ver `INDICE.md`, "Pendentes").
+  `Wilder1978`), a grifar à mão, e as 8 obras ainda sem PDF (3 artigos fora da assinatura
+  CAPES/CEFET-RJ e 5 livros; ver `INDICE.md`, "Pendentes").
 
 ## Correções sugeridas no texto (Lote 3)
 
@@ -75,6 +77,15 @@ correções.
   tamanho e *momentum*).
 - `Wang2026`: a acurácia de 53,3% após o corte tem AUC de 0,52, perto do acaso.
 - `TradingAgents2024`: as "ações dos EUA" são cinco ações de tecnologia.
+- `Fama1970` (lote CAPES/CAFe, `02-fundamentacao.tex:6`): a obra define a forma fraca apenas
+  com históricos de preços/retornos (*"just historical prices"*), sem mencionar "volume".
+
+**Sugestão de ajuste do lote CAPES/CAFe (20/11/2026 — aplicada nos capítulos em 20/11/2026)**
+18. `Nelson2017` em `03-relacionados.tex:23`: o texto dizia "com acurácia média próxima de 56%",
+    mas a obra reporta *"up to an average of 55.9%"* (máximo em BBDC4; na Tabela II, as cinco
+    ações da BM&F Bovespa ficam entre 53,0% e 55,9%, em candles de 15 minutos). Aplicado:
+    "com acurácia média de até 55,9%". (Também ajustada em `02-fundamentacao.tex:6` a ressalva
+    de `Fama1970`: "histórico de preços e retornos", sem "volume".)
 
 ## Tabela completa
 | Chave | Onde | O que o TCC afirma | Apoio | Página | Observação |
@@ -200,3 +211,25 @@ correções.
 | Wang2026 | 07-conclusao.tex:49 | Idem | sustenta | 2 | Idem. |
 | BCBCDI2026 | 07-conclusao.tex:55 | CDI acumulou 8,33%; nenhuma carteira o superou | sustenta | 1 | PDF refeito a partir dos dados da API do SGS (série 12, 153 dias úteis): acumulado de 8,33%. |
 | Wang2026beta | 07-conclusao.tex:69 | decompor retornos em mercado, estilo e alfa para separar exposição de habilidade | sustenta | 1 | O artigo faz exatamente a separação fator/alpha (Seção I, "Exposure Taken for Skill"). |
+| Fama1970 | 02-fundamentacao.tex:6 | EMH postula que os preços refletem integralmente todas as informações disponíveis | sustenta | 1 | "A market in which prices always 'fully reflect' available information is called 'efficient.'" (p. 1); p. 3 descarta lucros acima do equilíbrio com base apenas na informação disponível. |
+| Fama1970 | 02-fundamentacao.tex:6 | Distingue três níveis: forma fraca (preço e volume), semiforte (públicas) e forte (inclusive privadas) | sustenta | 1, 6 | Três formas conferem (p. 1 e p. 6). Ressalva menor: a obra define a forma fraca apenas por históricos de preços/retornos ("just historical prices"), sem mencionar "volume". |
+| FamaFrench1992 | 02-fundamentacao.tex:8 | Evidências empíricas apontam anomalias como momentum e value premium [FamaFrench1992, JegadeeshTitman1993] | sustenta | 1, 2 | Cobre a relação positiva robusta entre valor contábil/mercado (BE/ME, value) e retorno médio, além de tamanho; o momentum vem de JegadeeshTitman1993. Os autores discutem explicação por risco multidimensional. |
+| JegadeeshTitman1993 | 02-fundamentacao.tex:8 | Evidências empíricas apontam anomalias como momentum e value premium [FamaFrench1992, JegadeeshTitman1993] | sustenta | 1 | Cobre o efeito momentum (estratégias de força relativa: comprar vencedoras e vender perdedoras em 3 a 12 meses). |
+| JegadeeshTitman1993 | 02-fundamentacao.tex:34 | Estratégias baseadas em momentum produzem retornos anormais positivos; ativos com bom desempenho recente tendem a superar os demais | sustenta | 1 | Resumo: estratégias que compram ações com bom desempenho passado e vendem as de mau desempenho geram retornos positivos significativos em horizontes de 3 a 12 meses, não explicados por risco sistemático. |
+| JegadeeshTitman1993 | 02-fundamentacao.tex:66 | Persistência em horizontes de até um ano e reversão parcial em horizontes mais longos | sustenta | 1, 3 | Resumo: parte dos retornos anormais gerados no primeiro ano se dissipa nos dois anos seguintes (p. 3: carteira de 6 meses acumula 9,5% em 12 meses e perde mais da metade nos 24 meses seguintes). |
+| DeMiguel2009 | 02-fundamentacao.tex:88 | Estratégias simples cumprem papel de base comparativa: implementação direta e pouca dependência de estimações sofisticadas | sustenta | 2 | "There are two reasons for using the naive rule as a benchmark. First, it is easy to implement because it does not rely either on estimation of the moments of asset returns or on optimization." |
+| DeMiguel2009 | 02-fundamentacao.tex:92 | Carteira igualmente ponderada (1/N) dispensa estimação de retorno esperado/covariância e é difícil de superar fora da amostra | sustenta | 1, 2 | Resumo: nenhum dos 14 modelos avaliados em sete bases empíricas supera consistentemente a regra 1/N fora da amostra em Sharpe, retorno equivalente certo ou giro. |
+| FamaFrench1993 | 02-fundamentacao.tex:96 | Modelo de três fatores (mercado, tamanho SMB e valor HML) para retorno excedente | sustenta | 1, 3 | Identifica os três fatores acionários (mercado, tamanho e BE/ME) e testa interceptos próximos de zero nas regressões de séries temporais (a obra também inclui dois fatores de renda fixa). |
+| FamaFrench2015 | 02-fundamentacao.tex:102 | Ampliaram o modelo para cinco fatores, acrescentando rentabilidade e investimento | sustenta | 1, 2, 3 | Resumo e Seção 1–2: modelo de cinco fatores adiciona rentabilidade (RMW) e investimento (CMA) aos fatores de mercado, tamanho e valor de FF (1993). |
+| Politis1994 | 02-fundamentacao.tex:138 | Bootstrap estacionário reamostra blocos de comprimento aleatório preservando dependência e permitindo estimar distribuição sem hipótese paramétrica | sustenta | 2 | Resumo (p. 2 do PDF / p. 1303 do artigo): reamostragem não paramétrica de blocos de comprimento geométrico aleatório para observações estacionárias fracamente dependentes; o exemplo da diferença de Sharpes é do TCC. |
+| Moody2001 | 03-relacionados.tex:13 | RRL/aprendizado por reforço direto sem função de valor; Sharpe diferencial; custos de transação; S&P 500 + T-Bills e câmbio intradiário; superior ao Q-learning | sustenta | 1 | Resumo confirma literalmente todos os pontos: RRL sem função de valor, Sharpe diferencial, custos de transação, alocação S&P 500/T-Bills, câmbio intradiário e desempenho superior ao Q-learning. |
+| Deng2017 | 03-relacionados.tex:15 | Integraram aprendizado profundo (representação de sinais financeiros) e aprendizado por reforço direto (decisão de negociação) | sustenta | 1, 2 | Resumo e p. 2: parte de deep learning aprende representações informativas das condições dinâmicas do mercado e o módulo de RL direto interage com elas para decidir negociações. |
+| Krauss2017 | 03-relacionados.tex:23 | Compararam redes profundas, árvores com gradient boosting e florestas aleatórias em arbitragem estatística sobre constituintes do S&P 500 | sustenta | 1 | Resumo: implementa e analisa DNN, GBT, random forests e ensembles em arbitragem estatística sobre todas as ações do S&P 500 (1992–2015, sem viés de sobrevivência). |
+| Fischer2018 | 03-relacionados.tex:23 | LSTM na direção diária do S&P 500 (1992–2015): 0,46%/dia e Sharpe 5,8 antes de custos, acima dos métodos sem memória; vantagem nítida até 2009 e em torno de zero após custos a partir de 2010 | sustenta | 1 | Resumo confirma literalmente cada número e conclusão (0,46%/dia, Sharpe 5,8 antes de custos, superior a RAF/DNN/LOG, vantagem clara 1992–2009 e em torno de zero após custos a partir de 2010). |
+| Nelson2017 | 03-relacionados.tex:23 | No mercado brasileiro, alimentaram redes LSTM com indicadores técnicos para prever direção de ações, com acurácia média próxima de 56% | sustenta em parte | 1, 3, 5 | Usa ações do Ibovespa (BM&F Bovespa, candles de 15 min) com LSTM + 175 indicadores técnicos, mas 55,9% é o teto ("up to an average of 55.9%", em BBDC4); na Tabela II (p. 5), as cinco ações ficam entre 53,0% e 55,9% (média ≈ 54,3%). Sugestão: escrever "de até 55,9%". |
+| Fischer2018 | 03-relacionados.tex:25 | Erosão de vantagens após custos e ao longo do tempo reforça a necessidade de controles contra mineração de dados | sustenta | 1, 2 | Resumo e p. 2: a partir de 2010, retornos excedentes parecem arbitrados, com rentabilidade oscilando em torno de zero após custos de transação. |
+| JegadeeshTitman1993 | 05-metodologia.tex:183 | Alcance de H1 não cobre a família de estratégias de momentum | sustenta | 1 | Citação usada para nomear a família de momentum (transversal). |
+| DeMiguel2009 | 05-metodologia.tex:216 | Carteira de pesos iguais é referencial reconhecidamente difícil de superar em alocação de carteiras | sustenta | 1 | Resumo: nenhum dos 14 modelos avaliados supera consistentemente a regra 1/N fora da amostra. |
+| Politis1994 | 05-metodologia.tex:276 | Reamostragem por blocos de comprimento geométrico segue o bootstrap estacionário | sustenta | 2 | Resumo (p. 2 do PDF): "based on resampling blocks of random length, where the length of each block has a geometric distribution." |
+| JegadeeshTitman1993 | 05-metodologia.tex:310 | Resultado não generaliza ao momentum transversal | sustenta | 1 | Obra de referência do momentum transversal (comprar vencedoras e vender perdedoras em corte transversal). |
+| FamaFrench1993 | 07-conclusao.tex:69 | Decompor retornos em mercado, estilo e alfa para separar exposição de habilidade [FamaFrench1993, Wang2026beta] | sustenta | 1, 3 | Fornece o modelo de fatores acionários (mercado, tamanho e valor) com intercepto; a leitura específica de exposição vs. habilidade em agentes LLM vem do par Wang2026beta. |
