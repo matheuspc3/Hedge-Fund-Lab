@@ -12,7 +12,7 @@ O segundo caminho é a carteira multiagente multiativos, com cinco ações e cap
 
 A Figura~\ref{fig:componentes} apresenta seus componentes. Os dados de mercado (COTAHIST e fator de ajuste) são congelados em uma base; sobre ela, a cadeia de decisão combina três papéis baseados em modelo de linguagem (comitê, risco e gestor) e três etapas determinísticas (compilador, planejador e livro de eventos). Essa cadeia é comum ao ciclo diário, que a opera sobre dados correntes, e ao \textit{replay}, que a executa sobre a base congelada. Os resultados são exportados em pacotes selados e consultados em um explorador somente de leitura.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}[
   box/.style={draw, rounded corners=2pt, minimum height=8mm, text width=3.9cm, align=center, inner sep=2pt, font=\footnotesize},
@@ -78,7 +78,7 @@ A carteira opera um universo fixo de cinco ações da B3 (BBAS3, ITUB4, PETR4, V
 
 O comitê por ativo é implementado no Radar multiativos. A preparação da entrada valida o OHLCV, exige histórico mínimo de 200 sessões, verifica a igualdade entre as datas das barras e a grade do \texttt{B3Calendar}, recusa sessões sem negociação e calcula as oito \textit{features} adimensionais da Tabela~\ref{tab:features}, além da volatilidade anualizada dos últimos 21 retornos diários.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Features entregues aos analistas. $P_t$ é o fechamento ajustado da sessão de referência; $\mathrm{SMA}_n$ é a média móvel simples de $n$ sessões; $\mathrm{BB}^{\pm}=\mathrm{SMA}_{20}\pm 2\,\sigma_{20}$, com $\sigma_{20}$ o desvio-padrão amostral das 20 últimas sessões.}
 \label{tab:features}
