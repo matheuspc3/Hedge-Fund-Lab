@@ -316,7 +316,7 @@
   \vspace{10pt}
   \ifdef{\@studentlisten}%
   {\@studentlisten}{\@studentlist}.
-  \textbf{\@englishtitle}. \@date. \pageref{LastPage}. Undergratuade Thesis – Federal Center of Technological Education. Rio de Janeiro, \@date.\\[1cm]
+  \textbf{\@englishtitle}. \@date. \pageref{LastPage}. Undergraduate Thesis – Federal Center of Technological Education. Rio de Janeiro, \@date.\\[1cm]
   \thispagestyle{empty}
 }
 {

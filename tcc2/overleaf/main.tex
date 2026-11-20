@@ -61,6 +61,12 @@
 % Nomes longos em \texttt{} (caminhos de código) não hifenizam; folga extra evita
 % que estourem a margem.
 \setlength{\emergencystretch}{3em}
+% O [htt] gera dezenas de avisos "Font shape T1/cmtt/... undefined" que o próprio
+% hyphenat diz que podem ser ignorados; o silence só os tira do log.
+\usepackage{silence}
+\WarningsOff[hyphenat]
+\WarningFilter{latexfont}{Font shape `T1/cmtt}
+\WarningFilter{latexfont}{Some font shapes were not available}
 \usepackage[htt]{hyphenat} % hifeniza \texttt e permite quebra após \_
 % ponytail: a classe usa \MakeUppercase sem argumento nos títulos do tocloft, o que
 % quebra ("Missing \endcsname") com o LaTeX/tocloft do MiKTeX de 2026. Aqui os nomes
