@@ -584,12 +584,12 @@
   
   % appendix formatting
   \renewcommand{\thechapter}{\Alph{chapter}}  % letters instead of numbers
-  \titleformat{\chapter}  % add APÊNDICE before the appendix title
-    {\normalfont\large\bfseries\centering}
+  \titleformat{\chapter}
+    {\normalfont\large\bfseries}
     {\appendixname~\thechapter~--~}
     {0pt}
     {\large\MakeUppercase}
-  \titlespacing*{\chapter}{0pt}{25em}{0pt}  % centers in new page
+  \titlespacing*{\chapter}{0pt}{0pt}{1.5\baselineskip} % centers in new page
   
   % format how it appears in TOC
   \titlecontents{chapter}[0pt]% identation
@@ -641,7 +641,6 @@
 
 \newcommand{\@chapterbackmatter}[1]{%
   \oldchapter{#1}%
-  \cleardoublepage  % start the appendix or annex text in new page
 }
 
 
