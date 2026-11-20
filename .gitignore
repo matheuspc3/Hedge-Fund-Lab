@@ -10,10 +10,9 @@ build/
 venv/
 env/
 
-# IDE / AI Tools
+# IDE
 .vscode/
 .idea/
-.claude/
 
 # Obsidian: layout pessoal e cache; notas e demais configurações continuam visíveis
 .obsidian/workspace*.json

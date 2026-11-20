@@ -127,6 +127,6 @@ e dois `manifest.json`) contêm o caminho local da máquina onde foram gerados.
 | Chamadas ao modelo e explorador (`calls.json`, `calls.csv`, `explorer.json`, `index.html`, `operations.csv`, `decisions.csv`) | `data/replays/<versão>/exports/` | Mais de 100 MB por versão, fora do Git |
 | Pacotes de evidência selados (`cal_a`, `sequential_dev`, `stress`, `h2_v*` e outros) | `docs/evidence/` | Centenas de MB, selados por hash |
 | Demais documentos `H2_*` (operação, interface, runbooks) | `docs/` | Não são citados pela monografia |
-| `AVALIACAO_COLETA_DADOS_2026-10-14.md`, `PESQUISA_MUNICAO_AGENTES.md`, `PLANO_IMPLEMENTACAO_MULTIAGENTES.md`, `HFL_PREMIUM_V5_PORTFOLIO.md`, `HFL_PLATFORM_AUDIT_V7.md`, `HFL_OPERATIONS_RUNBOOK.md` | `docs/` | Apoio secundário; copiar se algum capítulo passar a usá-los |
+| `AVALIACAO_COLETA_DADOS_2026-10-14.md`, `PESQUISA_MUNICAO_AGENTES.md`, `HFL_PREMIUM_V5_PORTFOLIO.md`, `HFL_PLATFORM_AUDIT_V7.md`, `HFL_OPERATIONS_RUNBOOK.md` | `docs/` | Apoio secundário; copiar se algum capítulo passar a usá-los |
 | Relatórios de integração com o Railway e revisão de endpoints | `reports/` | Operacionais |
 | PDFs e normas do TCC 1 | `tcc2/arquivo/tcc1/` e `tcc2/arquivo/referencia/` | Já estavam na pasta |

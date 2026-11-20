@@ -19,7 +19,6 @@ unused-cache/
 output/
 .vscode/
 .idea/
-.claude/
 .obsidian/
 hedgefundlab.db
 # Monografia do TCC2 (LaTeX e PDFs de referencia): fora da imagem do servidor.

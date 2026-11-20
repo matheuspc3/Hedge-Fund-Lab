@@ -108,7 +108,7 @@ execução e inclui relatos e interface produzidos posteriormente; não existia 
 início pago. A fonte autoritativa da execução é o conjunto
 **`runtime_attestation.json`, snapshots `runtime-final/` e manifests da campanha**,
 com os hashes e as versões efetivamente utilizados. A worktree histórica
-`C:/Users/LUCAS/.codex/worktrees/b507/Hedge-Fund-Lab` mantém esse bundle privado. A integração atual muda
+`<cópia de trabalho local>` mantém esse bundle privado. A integração atual muda
 fontes da aplicação; tentar usá-la contra a campanha antiga deve bloquear com
 **`campaign_identity_changed`**. Esse bloqueio protege a associação entre os
 resultados e o código que efetivamente os produziu.
@@ -186,8 +186,8 @@ dividendos Yahoo sem correspondência B3 bloqueiam o preparo.
 
 Raízes absolutas neste checkout:
 
-- Real preparado: `C:/Users/LUCAS/.codex/worktrees/b507/Hedge-Fund-Lab/data/cache/historical-replay/april-2026-flash/`.
-- Teste: `C:/Users/LUCAS/.codex/worktrees/b507/Hedge-Fund-Lab/data/cache/historical-replay/april-2026-flash-offline/`.
+- Real preparado: `<cópia de trabalho local>/data/cache/historical-replay/april-2026-flash/`.
+- Teste: `<cópia de trabalho local>/data/cache/historical-replay/april-2026-flash-offline/`.
 
 Cada raiz contém `manifest.json`, `market.json`, proventos selados em `market/`,
 50 inputs/CSVs em `sessions/<alvo>/radar/analyses/`, `preflight.json` e,

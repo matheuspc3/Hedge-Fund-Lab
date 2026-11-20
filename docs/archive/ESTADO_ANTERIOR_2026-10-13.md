@@ -1198,7 +1198,7 @@ com um modelo real e comportamento fail-safe em alguns caminhos, não desempenho
   observado.
 - `archive/ROADMAP_IDEIAS.md` marca todo o sistema multiagente como pendente,
   embora uma primeira versão exista; esse roadmap foi substituído.
-- `archive/HANDOFF_OUTRO_PC.md` diz que Prefect foi atualizado para 3.x; o
+- Uma nota de passagem anterior dizia que Prefect foi atualizado para 3.x; o
   `pyproject.toml` e o lock atuais usam Prefect 2.20.25.
 - A monografia descreve um grafo cíclico capaz de pedir reavaliação; o grafo atual
   é linear e não possui retorno do risco ao analista.

@@ -14,7 +14,6 @@ Registros diários: [14/10 — dados e diagnóstico](daily/2026-10-14.md) ·
 | [Roadmap](ROADMAP.md) | O que fazemos a seguir e quais são os critérios de saída? |
 | [Estado atual](ESTADO_ATUAL.md) | O que existe, foi qualificado ou ainda falta? |
 | [Ciclo de uso da plataforma](CICLO_USO_PLATAFORMA.md) | Como criar, alocar, comprar/vender e abrir análises; quais etapas ainda faltam para fechar o uso diário? |
-| [Plano de implementação com multiagentes](PLANO_IMPLEMENTACAO_MULTIAGENTES.md) | Como as entregas de 17–18/10 foram divididas entre agentes, com regras e roteiro de revisão? |
 | [Pesquisa: munição para os agentes](PESQUISA_MUNICAO_AGENTES.md) | Que dados, recortes e estatísticas poderiam ampliar o contexto dos agentes sem antecipação, e quais decisões isso exige (DP-27/DP-31)? |
 | [Deploy no Railway com Tailscale](DEPLOY_RAILWAY.md) | Como pôr o servidor pessoal e a rotina diária (DP-34) no Railway, acessível só pela rede Tailscale? |
 | [Replay multiativos e explorador](REPLAY_MULTIATIVOS.md) | Como consultar a campanha retrospectiva de seis carteiras, seus dados, resultados, fontes e limites (DP-37)? |

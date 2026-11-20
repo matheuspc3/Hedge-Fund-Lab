@@ -121,7 +121,7 @@ com DP-37; a comparação original permanece como evidência da revisão.
 **REPLAY-01 / DP-37 (regras DP-36) — campanha contínua concluída (13/11):** seis carteiras,
 06/04–12/11/2026, 153 pregões sem reset. Referências concluídas antes da inferência;
 Multiagentes terminou às 22:28 (São Paulo), inclusive durante a interrupção do
-Codex, sem nova instância. Os 918 estados diários passaram pela reconciliação.
+acompanhamento, sem nova instância. Os 918 estados diários passaram pela reconciliação.
 Multiagentes: R$ 82.178,71 (-17,8213%); Buy & Hold: R$ 88.791,11 (-11,2089%).
 Bollinger teve o maior patrimônio nesta trajetória: R$ 104.887,05 (+4,8870%).
 Resultado descritivo e retrospectivo, sem evidência de superioridade.

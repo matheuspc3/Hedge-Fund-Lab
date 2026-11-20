@@ -21,6 +21,8 @@ REMOVER=".claude .obsidian AGENTS.md CLAUDE.md tcc2/agent-reports
   tcc2/overleaf/main.lof tcc2/overleaf/main.log tcc2/overleaf/main.lot tcc2/overleaf/main.out
   tcc2/overleaf/main.toc tcc2/overleaf/main.acr tcc2/overleaf/main.alg tcc2/overleaf/main.slg
   tcc2/overleaf/main.blg
+  docs/PLANO_IMPLEMENTACAO_MULTIAGENTES.md docs/archive/HANDOFF_OUTRO_PC.md
+  scripts/preparar_repo_professor.sh
   hedgefundlab.db .coverage backup"
 
 git remote get-url professor >/dev/null 2>&1 || git remote add professor "$PROFESSOR_URL"
@@ -57,7 +59,7 @@ if ! git merge -q --allow-unrelated-histories --no-edit \
 fi
 
 # 3) Checagem: nenhum caminho removido aparece em nenhum commit do resultado.
-vazou=$(git log --name-only --pretty=format: HEAD | grep -E '^(\.claude/|\.obsidian/|AGENTS\.md$|CLAUDE\.md$|tcc2/agent-reports/|tcc2/(overleaf/)?main\.(acn|aux|bbl|fdb_latexmk|fls|ist|lof|log|lot|out|toc|acr|alg|slg|blg)$|hedgefundlab\.db$|\.coverage$|backup/)' | sort -u || true)
+vazou=$(git log --name-only --pretty=format: HEAD | grep -E '^(\.claude/|\.obsidian/|AGENTS\.md$|CLAUDE\.md$|tcc2/agent-reports/|tcc2/(overleaf/)?main\.(acn|aux|bbl|fdb_latexmk|fls|ist|lof|log|lot|out|toc|acr|alg|slg|blg)$|docs/PLANO_IMPLEMENTACAO_MULTIAGENTES\.md$|docs/archive/HANDOFF_OUTRO_PC\.md$|scripts/preparar_repo_professor\.sh$|hedgefundlab\.db$|\.coverage$|backup/)' | sort -u || true)
 [ -z "$vazou" ] || { echo "ERRO: caminhos removidos ainda no historico:"; echo "$vazou"; exit 1; }
 
 git branch -D -q _filtrado

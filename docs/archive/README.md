@@ -28,8 +28,6 @@ Use os documentos canônicos:
   escrito antes de grande parte da implementação atual.
 - [`ROADMAP_IDEIAS.md`](ROADMAP_IDEIAS.md) — backlog/roadmap antigo, substituído
   por `docs/ROADMAP.md`.
-- [`HANDOFF_OUTRO_PC.md`](HANDOFF_OUTRO_PC.md) — handoff de um estado
-  intermediário, potencialmente desatualizado.
 
 Os documentos versionados H2/HFL e os pacotes `docs/evidence` continuam em seus
 caminhos originais: versões antigas também são fontes científicas. Consulte o

@@ -1,6 +1,6 @@
 # Pesquisa: munição histórica e de contexto para os agentes
 
-**18/10/2026 — T4 do [plano multiagentes](PLANO_IMPLEMENTACAO_MULTIAGENTES.md).**
+**18/10/2026.**
 Vinculada a DP-27 (visão de recortes, indicadores e padrões consultáveis pelos
 agentes) e DP-31 (agentes avaliados só de forma prospectiva; munição em fase de
 pesquisa documental). Documento de pesquisa: **não implementa nada, não aprova

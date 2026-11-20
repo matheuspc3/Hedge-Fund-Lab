@@ -108,7 +108,7 @@ Próximo passo: versionar a integração e preparar publicação/transferência 
 
 
 **Registro anterior de 14/11 — commit do replay no original:** código, checks e relatos do replay
-na branch `codex/replay-continuo-2026` do repositório do Matheus, sem dados privados
+em uma branch de trabalho do repositório do Matheus, sem dados privados
 ou troca das fontes seladas. [Revisão das 28 diferenças da fork implantada](../reports/revisao_railway_vs_matheus_2026-11-14.md).
 Nessa etapa, incorporar as mudanças da produção ainda dependia dessa revisão;
 a transferência dos resultados e o deploy não foram executados. O Tailscale exige
@@ -118,7 +118,7 @@ autenticação adicional para a cópia SSH, a ser concluída com Lucas nessa eta
 **13/11/2026 — campanha contínua DP-37 (regras DP-36) concluída:** seis carteiras,
 06/04–12/11, 153 pregões completos, sem lacunas nem reset. Cinco referências
 concluídas antes dos agentes; inferência de 17:41 a 22:28 (São Paulo), com processo
-continuando durante a interrupção do Codex. Reconciliação dos 918 estados PASS.
+continuando durante a interrupção do acompanhamento. Reconciliação dos 918 estados PASS.
 Multiagentes encerrou em R$ 82.178,71 (-17,8213%), R$ 6.612,40 abaixo do Buy & Hold.
 Bollinger teve o maior patrimônio nesta execução: R$ 104.887,05 (+4,8870%).
 [Seis resultados, método e limites](../reports/replay_continuo_2026-04_2026-11.md).
