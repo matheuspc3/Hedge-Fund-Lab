@@ -2,7 +2,8 @@
 # Prepara a branch que leva o historico do Hedge-Fund-Lab (origin, repo do Matheus)
 # para o repositorio oficial do TCC (remote "professor"), sem configs de IA/editor,
 # relatorios de agentes, arquivos gerados do LaTeX e o lixo dos primeiros commits.
-# Autor, data e mensagem de cada commit sao preservados; so os SHAs mudam.
+# Autor, data e mensagem de cada commit sao preservados (so o prefixo de branch
+# "codex/" sai das mensagens de merge); os SHAs mudam.
 # A reescrita e deterministica: rodar de novo com commits novos so acrescenta commits.
 # NAO envia nada: ao final imprime o comando de push.
 #
@@ -35,13 +36,15 @@ git rev-parse -q --verify "refs/remotes/professor/$BRANCH" >/dev/null && base="p
 
 raiz=$(git rev-parse --show-toplevel)
 wt=$(mktemp -d)
+# Com MSYS_NO_PATHCONV o git leria /tmp/... como C:/tmp/...; passa o caminho real do Windows.
+command -v cygpath >/dev/null && wt=$(cygpath -m "$wt")
 trap 'cd "$raiz"; git worktree remove --force "$wt" 2>/dev/null || true' EXIT
 git worktree add -q -B "$BRANCH" "$wt" "$base"
 cd "$wt"
 
 # 1) Copia filtrada do historico do projeto.
 git branch -f _filtrado origin/main
-git filter-branch -f --prune-empty \
+git filter-branch -f --prune-empty --msg-filter 'sed "s#/codex/#/#g"' \
   --index-filter "git rm -r -q --cached --ignore-unmatch -- $(echo $REMOVER)" _filtrado >/dev/null
 git update-ref -d refs/original/refs/heads/_filtrado 2>/dev/null || true
 
