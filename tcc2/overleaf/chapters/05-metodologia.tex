@@ -229,14 +229,14 @@ S = \frac{\bar{r} - r_f/252}{\hat{\sigma}_r}\,\sqrt{252}, \qquad r_f = 0,
 
 \noindent em que $\bar{r}$ é a média dos retornos diários líquidos e $\hat{\sigma}_r$ seu desvio-padrão amostral (\textit{ddof} = 1). Quando há menos de dois retornos ou o desvio-padrão é nulo, inferior a $10^{-15}$ ou não numérico, a convenção do protocolo atribui $S = 0$; dados inválidos interrompem o cálculo. A definição foi congelada para o protocolo da Seção~\ref{sec:met-protocolo} e é reutilizada no replay para manter a mesma fórmula. A taxa livre de risco nula é coerente com a contabilidade da simulação, na qual o caixa não é remunerado, mas ignora o custo de oportunidade de uma taxa de juros positiva.
 
-\paragraph*{Sortino Ratio.} Calculado por \texttt{sortino\_ratio}, com $r_f = 0$ e retorno mínimo aceitável diário $\text{MAR} = 0$ \citep{Sortino1994}:
+\paragraph*{Sortino Ratio.} No replay, a função \texttt{sortino\_ratio} usa a taxa livre de risco anual $r_f = 0$ e o retorno mínimo aceitável diário $\text{MAR} = 0$ para calcular o índice anualizado pela seguinte expressão.
 
 \begin{equation}
 \text{Sortino} = \frac{\bar{r} - r_f/252}{\sqrt{\frac{1}{n}\sum_{t=1}^{n}\min(r_t - \text{MAR}, 0)^2}}\,\sqrt{252}.
 \label{eq:met-sortino}
 \end{equation}
 
-\noindent Esses parâmetros são valores técnicos do módulo, não política científica congelada.
+\noindent Na definição de \citet{Sortino1994}, o numerador é o retorno médio menos o MAR. No replay, $r_f/252 = \text{MAR} = 0$, de modo que os numeradores coincidem. O desvio de queda calculado a partir dos retornos diários e o fator de anualização $\sqrt{252}$ são convenções da implementação.
 
 \paragraph*{\textit{Maximum Drawdown}.} Maior queda relativa entre um pico e um vale posterior da curva de patrimônio \citep{Magdon2004}, calculada por \texttt{max\_drawdown}, acompanhada da maior sequência de pregões consecutivos abaixo do pico anterior (\texttt{max\_drawdown\_duration}).
 
