@@ -245,7 +245,7 @@ mr.escrever(mr.TCC2 / "agent-reports/BOOTSTRAP_REPLAY.md", "\n".join(md))
 ROT_TEX = {"H1": "H1", "H2-v1": "H2 (v1)", "H2-v2": "H2 (v2)", "H2-v3": "H2 (v3)"}
 tex = [
     "% Gerado por tcc2/scripts/bootstrap_replay.py; não editar à mão.",
-    "\\begin{table}[htbp]",
+    "\\begin{table}[H]",
     "\\centering",
     "\\caption{Comparações pareadas de Sharpe no Replay Contínuo (153 pregões) pelo "
     f"\\textit{{bootstrap}} A: estacionário, \\textit{{basic}} centrado, $B={B}$, "

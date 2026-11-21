@@ -219,12 +219,12 @@ FUNCTION {format.names}
         { namesleft #1 >
             { ", " * t * }
             { numnames #2 >
-                { "," * }
+                'skip$
                 'skip$
               if$
               t "others" =
                 { " et~al." * }
-                { " and " * t * }
+                { " e " * t * }
               if$
             }
           if$
@@ -256,8 +256,8 @@ FUNCTION {format.editors}
     { "" }
     { editor format.names
       editor num.names$ #1 >
-        { ", editors" * }
-        { ", editor" * }
+        { " (org.)" * }
+        { " (org.)" * }
       if$
     }
   if$
@@ -317,10 +317,10 @@ FUNCTION {either.or.check}
 FUNCTION {format.bvolume}
 { volume empty$
     { "" }
-    { "volume" volume tie.or.space.connect
+    { "v." volume tie.or.space.connect
       series empty$
         'skip$
-        { " of " * series emphasize * }
+        { " de " * series emphasize * }
       if$
       "volume and number" number either.or.check
     }
@@ -332,8 +332,8 @@ FUNCTION {format.number.series}
     { number empty$
         { series field.or.null }
         { output.state mid.sentence =
-            { "number" }
-            { "Number" }
+            { "n." }
+            { "N." }
           if$
           number tie.or.space.connect
           series empty$
@@ -351,8 +351,8 @@ FUNCTION {format.edition}
 { edition empty$
     { "" }
     { output.state mid.sentence =
-        { edition "l" change.case$ " edition" * }
-        { edition "t" change.case$ " edition" * }
+        { edition "l" change.case$ " ed." * }
+        { edition "t" change.case$ " ed." * }
       if$
     }
   if$
@@ -384,8 +384,8 @@ FUNCTION {format.pages}
 { pages empty$
     { "" }
     { pages multi.page.check
-        { "pages" pages n.dashify tie.or.space.connect }
-        { "page" pages tie.or.space.connect }
+        { "p." pages n.dashify tie.or.space.connect }
+        { "p." pages tie.or.space.connect }
       if$
     }
   if$
@@ -416,7 +416,7 @@ FUNCTION {format.chapter.pages}
 { chapter empty$
     'format.pages
     { type empty$
-        { "chapter" }
+        { "cap." }
         { type "l" change.case$ }
       if$
       chapter tie.or.space.connect
@@ -432,8 +432,8 @@ FUNCTION {format.in.ed.booktitle}
 { booktitle empty$
     { "" }
     { editor empty$
-        { "In " booktitle emphasize * }
-        { "In " format.editors * ", " * booktitle emphasize * }
+        { "In: " booktitle emphasize * }
+        { "In: " format.editors * ", " * booktitle emphasize * }
       if$
     }
   if$
@@ -467,10 +467,10 @@ FUNCTION {format.article.crossref}
 FUNCTION {format.book.crossref}
 { volume empty$
     { "empty volume in " cite$ * "'s crossref of " * crossref * warning$
-      "In "
+      "In: "
     }
     { "Volume" volume tie.or.space.connect
-      " of " *
+      " de " *
     }
   if$
   "\cite{" * crossref * "}" *                           % this is for apalike
@@ -865,7 +865,7 @@ FUNCTION {format.lab.names}
         'skip$
         { s #2 "{ff }{vv }{ll}{ jj}" format.name$ "others" =
             { " et~al." * }
-            { " and " * s #2 "{vv~}{ll}" format.name$ * }
+            { " e " * s #2 "{vv~}{ll}" format.name$ * }
           if$
         }
       if$

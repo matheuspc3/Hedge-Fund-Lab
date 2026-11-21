@@ -7,7 +7,7 @@ A Hipótese de Eficiência de Mercado (\textit{Efficient Market Hypothesis} -- E
 
 A relevância dessa hipótese para o presente trabalho reside no debate sobre a previsibilidade dos retornos. Em um mercado perfeitamente eficiente, estratégias quantitativas baseadas em padrões históricos não gerariam retornos superiores de forma consistente. Contudo, evidências empíricas apontam para anomalias de mercado, como os efeitos momentum e \textit{value premium} \citep{FamaFrench1992, JegadeeshTitman1993}.
 
-A EMH também recebeu críticas da economia comportamental. \citet{Shiller2000} discute como o excesso de confiança e o comportamento de manada podem contribuir para bolhas especulativas. No volume organizado por \citet{Thaler2005}, Barberis e Thaler discutem a aversão à perda e explicam como limites à arbitragem podem permitir que preços se afastem de seus valores fundamentais por períodos prolongados. Buscando reconciliar a racionalidade da EMH com essas evidências, \citet{Lo2004} propôs a Hipótese de Mercados Adaptativos (\textit{Adaptive Markets Hypothesis} -- AMH). Nessa proposta, a eficiência de mercado não é um estado fixo, mas um processo dinâmico que evolui conforme os agentes aprendem e se adaptam às mudanças do ambiente econômico.
+A EMH também recebeu críticas da economia comportamental. \citet{Shiller2000} discute como o excesso de confiança e o comportamento de manada podem contribuir para bolhas especulativas. \citet{BarberisThaler2005} descrevem a aversão à perda e explicam como limites à arbitragem podem permitir que preços se afastem de seus valores fundamentais por períodos prolongados. Buscando reconciliar a racionalidade da EMH com essas evidências, \citet{Lo2004} propôs a Hipótese de Mercados Adaptativos (\textit{Adaptive Markets Hypothesis} -- AMH). Nessa proposta, a eficiência de mercado não é um estado fixo, mas um processo dinâmico que evolui conforme os agentes aprendem e se adaptam às mudanças do ambiente econômico.
 
 Essa perspectiva motiva, mas não garante, o uso de sistemas adaptativos: se a eficiência varia no tempo, regras fixas podem perder validade entre regimes, e sistemas capazes de reinterpretar o contexto tornam-se candidatos à avaliação empírica \citep{Lo2004}. Se essa capacidade se traduz em desempenho ajustado ao risco é o que este trabalho testa.
 
@@ -55,7 +55,7 @@ Entre os indicadores mais utilizados destacam-se o Índice de Força Relativa (\
 \mathrm{BB}^{\pm}_t = \mathrm{SMA}_{n,t} \pm k\,\sigma_{n,t},
 \end{equation}
 
-\noindent em que $\sigma_{n,t}$ é o desvio-padrão do preço na janela de $n$ pregões. O replay adota os parâmetros de Bollinger, $n = 20$ e $k = 2$. O livro usa o desvio-padrão populacional (divisor $n$), enquanto a implementação usa o amostral (divisor $n-1$). Por fim, o MACD (\textit{Moving Average Convergence Divergence}) combina duas médias móveis exponenciais para identificar mudanças de tendência:
+\noindent em que $\sigma_{n,t}$ é o desvio-padrão do preço na janela de $n$ pregões. Este trabalho adota os parâmetros padrão de \citet{Bollinger2001}, $n = 20$ e $k = 2$. O autor calcula o desvio-padrão populacional (divisor $n$), enquanto a implementação deste trabalho usa o amostral (divisor $n-1$). Por fim, o MACD (\textit{Moving Average Convergence Divergence}) combina duas médias móveis exponenciais para identificar mudanças de tendência:
 
 \begin{equation}
 \mathrm{MACD}_t = \mathrm{EMA}_{12,t} - \mathrm{EMA}_{26,t}, \qquad \mathrm{Sinal}_t = \mathrm{EMA}_{9}(\mathrm{MACD})_t,

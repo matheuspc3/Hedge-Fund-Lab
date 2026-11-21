@@ -11,11 +11,12 @@ O grifo leva a "nota" como comentário, para quem abrir o PDF saber qual frase d
 sustenta.
 
 Os originais ficam em output/referencias-originais/ (ignorado pelo Git) e o PDF grifado
-é sempre regerado a partir deles, então rodar de novo não duplica grifos.
+é sempre regerado a partir deles, então rodar de novo não duplica grifos. Se o original
+faltar, ele é refeito a partir do PDF grifado, sem os grifos "TCC 2".
 Sai com código 1 se algum trecho não for encontrado.
 Com --teste, só procura os trechos e não grava nada.
 """
-import json, re, shutil, sys, unicodedata
+import json, re, sys, unicodedata
 from pathlib import Path
 
 import pymupdf
@@ -81,7 +82,16 @@ for e in entradas:
     if chave not in docs:
         destino, original = REFS / f"{chave}.pdf", ORIG / f"{chave}.pdf"
         if not original.exists() and not teste:
-            shutil.copy2(destino, original)
+            # Sem original (ex.: PDF grifado em outra máquina): refaz a partir do grifado,
+            # tirando só os grifos deste script ("TCC 2"); grifos de terceiros ficam.
+            # Lido da memória: no Windows, o arquivo aberto impede salvar o grifado por cima.
+            limpo = pymupdf.open(stream=destino.read_bytes(), filetype="pdf")
+            for pg in limpo:
+                a = pg.first_annot
+                while a:
+                    a = pg.delete_annot(a) if a.info.get("title") == "TCC 2" else a.next
+            limpo.save(original)
+            limpo.close()
         docs[chave] = pymupdf.open(original if original.exists() else destino)
     status = grifar(docs[chave], e.get("pagina"), re.sub(r"\s+", " ", e["trecho"]).strip(), e["nota"])
     falhas += status == "NÃO ENCONTRADO"

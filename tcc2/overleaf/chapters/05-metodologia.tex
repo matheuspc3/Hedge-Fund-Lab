@@ -236,7 +236,7 @@ S = \frac{\bar{r} - r_f/252}{\hat{\sigma}_r}\,\sqrt{252}, \qquad r_f = 0,
 \label{eq:met-sortino}
 \end{equation}
 
-\noindent Na definição de \citet{Sortino1994}, o numerador é o retorno médio menos o MAR. No replay, $r_f/252 = \text{MAR} = 0$, de modo que os numeradores coincidem. O desvio de queda calculado a partir dos retornos diários e o fator de anualização $\sqrt{252}$ são convenções da implementação.
+\noindent Na definição de \citet{Sortino1994}, o numerador é o retorno médio menos o MAR. No replay, $r_f/252 = \text{MAR} = 0$, de modo que os numeradores coincidem. O desvio de queda calculado a partir dos retornos diários e o fator de anualização $\sqrt{252}$ são convenções da implementação. Esses parâmetros são valores técnicos do módulo, não política científica congelada.
 
 \paragraph*{\textit{Maximum Drawdown}.} Maior queda relativa entre um pico e um vale posterior da curva de patrimônio \citep{Magdon2004}, calculada por \texttt{max\_drawdown}, acompanhada da maior sequência de pregões consecutivos abaixo do pico anterior (\texttt{max\_drawdown\_duration}).
 

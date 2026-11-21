@@ -9,7 +9,7 @@ autores pendente**, a começar pelas linhas "sustenta em parte" e "não sustenta
 - **Grifos:** 143, em 68 PDFs, gerados por `tcc2/scripts/grifar_referencias.py` a partir de
   `grifos.jsonl` (nesta pasta). Cada grifo leva como comentário a frase do TCC que sustenta.
   Os PDFs originais, sem grifo, ficam em `output/referencias-originais/` (fora do Git).
-- **Resultado até 20/11:** 148 citações verificadas: **120 sustentam**, **27 sustentam em parte**,
+- **Resultado até 20/11:** 148 citações verificadas: **121 sustentam**, **26 sustentam em parte**,
   **1 não sustenta** (143 nos lotes anteriores e 5 no lote complementar de 20/11).
 - **Correções de acervo feitas durante a verificação:** `Xia2026` passou para a versão 2 do
   arXiv (a que contém os números citados); `BCBCDI2026` passou a ser o PDF dos dados da API
@@ -24,17 +24,20 @@ DP-37 / TCC-02/03. Este lote conferiu oito citações. Foram adicionados doze gr
 em quatro livros e no capítulo de amostra de Wooldridge. A primeira conferência
 encontrou o volume II de Thaler onde a
 bibliografia indicava o volume de 1993. A pedido do autor do TCC, a citação passou
-a usar a coletânea de 2005. As páginas do arquivo contam desde a primeira folha.
+a usar a coletânea de 2005; desde 21/11/2026 cita o capítulo 1, de Barberis e Thaler
+(`BarberisThaler2005`, pp. 1–75), em vez do organizador do volume. Os PDFs desta seção
+e do lote complementar seguem o nome da chave do `.bib`. As páginas do arquivo contam
+desde a primeira folha.
 
 | Livro | Fonte LaTeX | TCC (impressa / arquivo) | PDF do livro (páginas do arquivo) | Resultado |
 |---|---|---|---|---|
-| [Shiller (2000)](shiller2000.pdf) | [02-fundamentacao.tex:10](../chapters/02-fundamentacao.tex#L10) | 5 / 19 | 77, 80, 99 | Sustenta a redação atual. As páginas cobrem excesso de confiança, comportamento de manada e divergência entre preço e valor presente dos dividendos. |
-| [Thaler (2005)](Thaler1993.pdf) | [02-fundamentacao.tex:10](../chapters/02-fundamentacao.tex#L10) | 5 / 19 | 36, 48 | Sustenta a redação atual. O capítulo de Barberis e Thaler cobre limites à arbitragem e persistência de desvios (p. 6 impressa) e aversão à perda (p. 18 impressa). |
-| [Bollinger (2001)](Bollinger2001.pdf) | [02-fundamentacao.tex:46](../chapters/02-fundamentacao.tex#L46) e [linha 58](../chapters/02-fundamentacao.tex#L58) | 6–7 / 20–21 | 213, 219 | Sustenta a redação atual. O padrão 20/2 vem do livro, que usa desvio-padrão populacional (divisor n). A fundamentação explicita a variante do replay com desvio-padrão amostral (divisor n−1). O ISBN 0071373683 do PDF corresponde à primeira edição publicada em 2001 pelo [catálogo da McGraw Hill](https://www.mheducation.com/highered/mhp/product/bollinger-bollinger-bands.html). O expediente do PDF indica copyright de 2002. |
-| [López de Prado (2018)](lopez2018.pdf) | [02-fundamentacao.tex:88](../chapters/02-fundamentacao.tex#L88) e [linha 90](../chapters/02-fundamentacao.tex#L90) | 8 / 22 | — | A busca não encontrou apoio direto para essas duas atribuições. A linha 88 conserva DeMiguel et al. como fonte para o uso de uma referência simples. A linha 90 apresenta Buy & Hold como escolha metodológica do TCC. O expediente da obra está na p. 8 do PDF. |
+| [Shiller (2000)](Shiller2000.pdf) | [02-fundamentacao.tex:10](../chapters/02-fundamentacao.tex#L10) | 5 / 19 | 77, 80, 99 | Sustenta a redação atual. As páginas cobrem excesso de confiança, comportamento de manada e divergência entre preço e valor presente dos dividendos. |
+| [Barberis e Thaler (2005)](BarberisThaler2005.pdf) | [02-fundamentacao.tex:10](../chapters/02-fundamentacao.tex#L10) | 5 / 19 | 36, 48 | Sustenta a redação atual. O capítulo de Barberis e Thaler cobre limites à arbitragem e persistência de desvios (p. 6 impressa) e aversão à perda (p. 18 impressa). |
+| [Bollinger (2001)](Bollinger2001.pdf) | [02-fundamentacao.tex:46](../chapters/02-fundamentacao.tex#L46) e [linha 58](../chapters/02-fundamentacao.tex#L58) | 6–7 / 20–21 | 213, 219 | Sustenta a redação atual. O padrão 20/2 vem do livro, que usa desvio-padrão populacional (divisor n). A fundamentação cita o autor e explicita a variante da implementação com desvio-padrão amostral (divisor n−1). O ISBN 0071373683 do PDF corresponde à primeira edição publicada em 2001 pelo [catálogo da McGraw Hill](https://www.mheducation.com/highered/mhp/product/bollinger-bollinger-bands.html). O expediente do PDF indica copyright de 2002. |
+| [López de Prado (2018)](LopezDePrado2018.pdf) | [02-fundamentacao.tex:88](../chapters/02-fundamentacao.tex#L88) e [linha 90](../chapters/02-fundamentacao.tex#L90) | 8 / 22 | — | A busca não encontrou apoio direto para essas duas atribuições. A linha 88 conserva DeMiguel et al. como fonte para o uso de uma referência simples. A linha 90 apresenta Buy & Hold como escolha metodológica do TCC. O expediente da obra está na p. 8 do PDF. |
 | López de Prado (2018) | [02-fundamentacao.tex:112](../chapters/02-fundamentacao.tex#L112) | 9 / 23 | 264, 419 | Sustenta a avaliação de desempenho, risco e custos de transação. |
 | López de Prado (2018) | [03-relacionados.tex:25](../chapters/03-relacionados.tex#L25) | 14 / 28 | 204 | Sustenta a ressalva sobre mineração de dados e reutilização do conjunto de teste. |
-| [Wooldridge (2009)](Wooldridge2009-cap1.pdf) | [02-fundamentacao.tex:148](../chapters/02-fundamentacao.tex#L148) | 11 / 25 | 3 (p. 5 impressa) | O capítulo 1 de *An Introduction to MultiAgent Systems*, 2ª edição (ISBN 9780470519462), define agentes autônomos e sistemas em que eles interagem. O arquivo grifado contém o capítulo de amostra, publicado pela [Wiley](https://catalogimages.wiley.com/images/db/pdf/9780470519462.excerpt.pdf). O [PDF enviado](Wooldridge2009.pdf) contém a 5ª edição de *Introductory Econometrics*, de Jeffrey M. Wooldridge, e substituiu uma cópia da 4ª edição. |
+| [Wooldridge (2009)](Wooldridge2009.pdf) | [02-fundamentacao.tex:148](../chapters/02-fundamentacao.tex#L148) | 11 / 25 | 3 (p. 5 impressa) | O capítulo 1 de *An Introduction to MultiAgent Systems*, 2ª edição (ISBN 9780470519462), define agentes autônomos e sistemas em que eles interagem. O arquivo grifado contém o capítulo de amostra, publicado pela [Wiley](https://catalogimages.wiley.com/images/db/pdf/9780470519462.excerpt.pdf). Um PDF de *Introductory Econometrics*, de Jeffrey M. Wooldridge, enviado com este nome por engano, foi removido em 21/11/2026. |
 
 ## Lote complementar de 20/11/2026
 
@@ -44,11 +47,11 @@ As linhas são dos capítulos em LaTeX.
 
 | Referência | Fonte LaTeX | TCC (impressa / arquivo) | Referência (arquivo / impressa) | Apoio |
 |---|---|---|---|---|
-| [Clarke et al. (2006)](clarke2006.pdf) | [02-fundamentacao.tex:80](../chapters/02-fundamentacao.tex#L80) | 8 / 22 | 2, 3, 4 / 12, 14, 15 | Sustenta. O caso base com ações dos EUA teve volatilidade anualizada de 11,7% contra 15,4% do mercado e Sharpe de 0,55 contra 0,36. O artigo usa pesos não negativos e também impõe um limite de 3% por ativo no caso base. |
-| [Sortino e Price (1994)](sortino1994.pdf) | [02-fundamentacao.tex:126](../chapters/02-fundamentacao.tex#L126) | 10 / 24 | 2, 4 / 60, 62 | Sustenta. O índice divide o retorno acima do MAR pelo desvio de queda. |
-| [Holm (1979)](holm1979.pdf) | [02-fundamentacao.tex:142](../chapters/02-fundamentacao.tex#L142) | 10 / 24 | 2, 4 / 65, 67 | Sustenta. O resumo e o Teorema 1 cobrem o erro familiar. O Esquema I apresenta a regra sequencial, e o texto discute o ganho de poder sobre Bonferroni simples. |
-| [Sortino e Price (1994)](sortino1994.pdf) | [05-metodologia.tex:232](../chapters/05-metodologia.tex#L232) e [linha 239](../chapters/05-metodologia.tex#L239) | 42 / 56 | 4, 5 / 62, 63 | Sustenta a definição citada na redação atual. O artigo usa o retorno médio menos o MAR no numerador e calcula o desvio de queda por ajuste lognormal e integração no exemplo. O texto explicita que os numeradores coincidem no replay porque a taxa livre de risco e o MAR são zero. O desvio de queda diário e a anualização da Eq. 5.3 são convenções da implementação. |
-| [Holm (1979)](holm1979.pdf) | [05-metodologia.tex:286](../chapters/05-metodologia.tex#L286) | 44 / 58 | 2, 4 / 65, 67 | Sustenta o método sequencial aplicado aos valores-p. A família de cinco contrastes, a regra de superioridade parcial e o teste de interseção–união são definições do TCC. |
+| [Clarke et al. (2006)](Clarke2006.pdf) | [02-fundamentacao.tex:80](../chapters/02-fundamentacao.tex#L80) | 8 / 22 | 2, 3, 4 / 12, 14, 15 | Sustenta. O caso base com ações dos EUA teve volatilidade anualizada de 11,7% contra 15,4% do mercado e Sharpe de 0,55 contra 0,36. O artigo usa pesos não negativos e também impõe um limite de 3% por ativo no caso base. |
+| [Sortino e Price (1994)](Sortino1994.pdf) | [02-fundamentacao.tex:126](../chapters/02-fundamentacao.tex#L126) | 10 / 24 | 2, 4 / 60, 62 | Sustenta. O índice divide o retorno acima do MAR pelo desvio de queda. |
+| [Holm (1979)](Holm1979.pdf) | [02-fundamentacao.tex:142](../chapters/02-fundamentacao.tex#L142) | 10 / 24 | 2, 4 / 65, 67 | Sustenta. O resumo e o Teorema 1 cobrem o erro familiar. O Esquema I apresenta a regra sequencial, e o texto discute o ganho de poder sobre Bonferroni simples. |
+| [Sortino e Price (1994)](Sortino1994.pdf) | [05-metodologia.tex:232](../chapters/05-metodologia.tex#L232) e [linha 239](../chapters/05-metodologia.tex#L239) | 42 / 56 | 4, 5 / 62, 63 | Sustenta a definição citada na redação atual. O artigo usa o retorno médio menos o MAR no numerador e calcula o desvio de queda por ajuste lognormal e integração no exemplo. O texto explicita que os numeradores coincidem no replay porque a taxa livre de risco e o MAR são zero. O desvio de queda diário e a anualização da Eq. 5.3 são convenções da implementação. |
+| [Holm (1979)](Holm1979.pdf) | [05-metodologia.tex:286](../chapters/05-metodologia.tex#L286) | 44 / 58 | 2, 4 / 65, 67 | Sustenta o método sequencial aplicado aos valores-p. A família de cinco contrastes, a regra de superioridade parcial e o teste de interseção–união são definições do TCC. |
 
 ## Correções sugeridas no texto (Lote 3)
 
