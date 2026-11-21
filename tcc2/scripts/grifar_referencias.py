@@ -98,6 +98,6 @@ for e in entradas:
     print(f"{chave:20s} p.{e.get('pagina', '-')!s:>4} {status:24s} {e['trecho'][:60]}")
 for chave, doc in docs.items():
     if not teste:
-        doc.save(REFS / f"{chave}.pdf", garbage=3, deflate=True)
+        doc.save(REFS / f"{chave}.pdf", garbage=4, deflate=True)  # 4 junta objetos duplicados (fontes repetidas incham PDFs salvos pelo macOS)
 print(f"{len(entradas)} grifos em {len(docs)} PDFs; {falhas} não encontrados")
 sys.exit(1 if falhas else 0)
